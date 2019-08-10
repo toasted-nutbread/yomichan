@@ -172,7 +172,12 @@ class Frontend {
             return;
         }
 
-        this.setPrimaryTouch(this.getPrimaryTouch(e.changedTouches));
+        let touch = this.getPrimaryTouch(e.changedTouches);
+        if (this.selectionContainsPoint(window.getSelection(), touch.clientX, touch.clientY)) {
+            touch = null;
+        }
+
+        this.setPrimaryTouch(touch);
     }
 
     onTouchEnd(e) {
@@ -285,7 +290,8 @@ class Frontend {
             if (!hideResults && (!this.textSourceLast || !this.textSourceLast.equals(textSource))) {
                 searched = true;
                 this.pendingLookup = true;
-                hideResults = !await this.searchTerms(textSource) && !await this.searchKanji(textSource);
+                const focus = (type === 'mouse');
+                hideResults = !await this.searchTerms(textSource, focus) && !await this.searchKanji(textSource, focus);
                 success = true;
             }
         } catch (e) {
@@ -308,7 +314,7 @@ class Frontend {
         }
     }
 
-    async searchTerms(textSource) {
+    async searchTerms(textSource, focus) {
         textSource.setEndOffset(this.options.scanning.length);
 
         const {definitions, length} = await apiTermsFind(textSource.text());
@@ -324,7 +330,7 @@ class Frontend {
             textSource.getRect(),
             definitions,
             this.options,
-            {sentence, url}
+            {sentence, url, focus}
         );
 
         this.textSourceLast = textSource;
@@ -335,7 +341,7 @@ class Frontend {
         return true;
     }
 
-    async searchKanji(textSource) {
+    async searchKanji(textSource, focus) {
         textSource.setEndOffset(1);
 
         const definitions = await apiKanjiFind(textSource.text());
@@ -349,7 +355,7 @@ class Frontend {
             textSource.getRect(),
             definitions,
             this.options,
-            {sentence, url}
+            {sentence, url, focus}
         );
 
         this.textSourceLast = textSource;
@@ -451,6 +457,18 @@ class Frontend {
         };
 
         search();
+    }
+
+    selectionContainsPoint(selection, x, y) {
+        for (let i = 0; i < selection.rangeCount; ++i) {
+            const range = selection.getRangeAt(i);
+            for (const rect of range.getClientRects()) {
+                if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
 
