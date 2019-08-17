@@ -214,7 +214,8 @@ function optionsSetDefaults(options) {
             autoHideResults: false,
             delay: 20,
             length: 10,
-            modifier: 'shift'
+            modifier: 'shift',
+            popupNestingMaxDepth: 0
         },
 
         dictionaries: {},
