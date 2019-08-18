@@ -43,6 +43,7 @@ async function formRead() {
     optionsNew.scanning.selectText = $('#select-matched-text').prop('checked');
     optionsNew.scanning.alphanumeric = $('#search-alphanumeric').prop('checked');
     optionsNew.scanning.autoHideResults = $('#auto-hide-results').prop('checked');
+    optionsNew.scanning.enableOnSearchPage = $('#enable-scanning-on-search-page').prop('checked');
     optionsNew.scanning.delay = parseInt($('#scan-delay').val(), 10);
     optionsNew.scanning.length = parseInt($('#scan-length').val(), 10);
     optionsNew.scanning.modifier = $('#scan-modifier-key').val();
@@ -180,6 +181,7 @@ async function onReady() {
     $('#select-matched-text').prop('checked', options.scanning.selectText);
     $('#search-alphanumeric').prop('checked', options.scanning.alphanumeric);
     $('#auto-hide-results').prop('checked', options.scanning.autoHideResults);
+    $('#enable-scanning-on-search-page').prop('checked', options.scanning.enableOnSearchPage);
     $('#scan-delay').val(options.scanning.delay);
     $('#scan-length').val(options.scanning.length);
     $('#scan-modifier-key').val(options.scanning.modifier);

@@ -215,7 +215,8 @@ function optionsSetDefaults(options) {
             delay: 20,
             length: 10,
             modifier: 'shift',
-            popupNestingMaxDepth: 0
+            popupNestingMaxDepth: 0,
+            enableOnSearchPage: true
         },
 
         dictionaries: {},
