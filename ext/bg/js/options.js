@@ -216,6 +216,7 @@ function optionsSetDefaults(options) {
             length: 10,
             modifier: 'shift',
             popupNestingMaxDepth: 0,
+            enableOnPopupExpressions: false,
             enableOnSearchPage: true
         },
 
