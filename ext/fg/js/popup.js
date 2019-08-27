@@ -175,7 +175,7 @@ class Popup {
         }
     }
 
-    containsPoint(point) {
+    async containsPoint(point) {
         if (!this.isVisible()) {
             return false;
         }
@@ -188,14 +188,6 @@ class Popup {
             point.y < rect.bottom;
 
         return contained;
-    }
-
-    async containsPointAsync(point) {
-        return containsPoint(point);
-    }
-
-    containsPointIsAsync() {
-        return false;
     }
 
     async termsShow(elementRect, definitions, options, context) {
