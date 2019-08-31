@@ -133,9 +133,9 @@ class Popup {
     }
 
     hide() {
+        this.hideChildren();
         this.hideContainer();
         this.focusParent();
-        this.hideChildren();
     }
 
     hideChildren() {
@@ -148,7 +148,7 @@ class Popup {
             const target = targets.shift();
             if (target.isContainerHidden()) { continue; }
 
-            target.hideContainer();
+            target.hide();
             for (const child of target.children) {
                 targets.push(child);
             }
@@ -176,10 +176,9 @@ class Popup {
     }
 
     focusParent() {
+        this.container.blur();
         if (this.parent && this.parent.container) {
             this.parent.container.focus();
-        } else {
-            this.container.blur();
         }
     }
 
