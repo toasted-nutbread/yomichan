@@ -224,12 +224,16 @@ class Translator {
     }
 
     async findTermDeinflections(text, text2, titles) {
+        const t = Timer.create('findTermDeinflections');
+        t.sample('getDeinflections');
         const deinflections = (text === text2 ? this.getDeinflections(text) : this.getDeinflections2(text, text2));
 
         if (deinflections.length === 0) {
+            t.complete(false);
             return [];
         }
 
+        t.sample(`createUniqueMapping`);
         const uniqueDeinflectionTerms = [];
         const uniqueDeinflectionArrays = [];
         const uniqueDeinflectionsMap = {};
@@ -247,8 +251,10 @@ class Translator {
             deinflectionArray.push(deinflection);
         }
 
+        t.sample(`findTermsBulk[${uniqueDeinflectionTerms.length}]`);
         const definitions = await this.database.findTermsBulk(uniqueDeinflectionTerms, titles);
 
+        t.sample('definitions.push');
         for (const definition of definitions) {
             for (const deinflection of uniqueDeinflectionArrays[definition.index]) {
                 if (Translator.definitionContainsAnyRule(definition, deinflection.rules)) {
@@ -257,7 +263,10 @@ class Translator {
             }
         }
 
+        t.sample('filter');
+        try {
         return deinflections.filter(e => e.definitions.length > 0);
+        } finally { t.complete(); }
     }
 
     static definitionContainsAnyRule(definition, rules) {
