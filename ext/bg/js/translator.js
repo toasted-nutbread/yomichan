@@ -224,19 +224,27 @@ class Translator {
     }
 
     async findTermDeinflections(text, text2, titles) {
+        const t = Timer.create('findTermDeinflections');
+        t.sample('getDeinflections');
         const deinflections = (text === text2 ? this.getDeinflections(text) : this.getDeinflections2(text, text2));
 
         if (deinflections.length === 0) {
+            t.complete(false);
             return [];
         }
 
+        t.sample(`findTermsBulk[${deinflections.length}]`);
         const definitions = await this.database.findTermsBulk(deinflections.map(e => e.term), titles);
 
+        t.sample('deinflections.map');
         for (const d of definitions) {
             deinflections[d.index].definitions.push(d);
         }
 
-        return deinflections.filter(e => e.definitions.length > 0);
+        t.sample('filter');
+        const result = deinflections.filter(e => e.definitions.length > 0);
+        t.complete();
+        return result;
     }
 
     getDeinflections(text) {
