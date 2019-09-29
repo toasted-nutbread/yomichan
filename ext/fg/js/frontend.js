@@ -290,6 +290,8 @@ class Frontend {
             return;
         }
 
+        const t = Timer.create('searchAt');
+        t.sample('docRangeFromPoint');
         const textSource = docRangeFromPoint(x, y, this.options);
         let hideResults = textSource === null;
         let searched = false;
@@ -300,7 +302,10 @@ class Frontend {
                 searched = true;
                 this.pendingLookup = true;
                 const focus = (cause === 'mouse');
-                hideResults = !await this.searchTerms(textSource, focus) && !await this.searchKanji(textSource, focus);
+                t.sample('searchTerms');
+                const result1 = await this.searchTerms(textSource, focus);
+                t.sample('searchKanji');
+                hideResults = !result1 && !await this.searchKanji(textSource, focus);
                 success = true;
             }
         } catch (e) {
@@ -324,27 +329,38 @@ class Frontend {
             }
 
             this.pendingLookup = false;
+            t.sample('onAfterSearch');
             this.onAfterSearch(this.textSourceLast, cause, searched, success);
+            t.complete(!success);
         }
     }
 
     async searchTerms(textSource, focus) {
+        const t = Timer.create('searchTerms');
+        t.sample('setTextSourceScanLength');
         this.setTextSourceScanLength(textSource, this.options.scanning.length);
 
         const searchText = textSource.text();
         if (searchText.length === 0) {
+            t.complete();
             return;
         }
 
+        t.sample('apiTermsFind');
         const {definitions, length} = await apiTermsFind(searchText, this.getOptionsContext());
+        t.sample('apiTermsFind.end');
         if (definitions.length === 0) {
+            t.complete();
             return false;
         }
 
+        t.sample('textSource.setEndOffset');
         textSource.setEndOffset(length);
 
+        t.sample('docSentenceExtract');
         const sentence = docSentenceExtract(textSource, this.options.anki.sentenceExt);
         const url = window.location.href;
+        t.sample('termsShow');
         this.popup.termsShow(
             textSource.getRect(),
             textSource.getWritingMode(),
@@ -358,6 +374,7 @@ class Frontend {
             textSource.select();
         }
 
+        t.complete();
         return true;
     }
 

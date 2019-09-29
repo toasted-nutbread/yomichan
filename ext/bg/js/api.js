@@ -33,22 +33,30 @@ async function apiOptionsSave(source) {
 }
 
 async function apiTermsFind(text, optionsContext) {
+    const t = Timer.create('apiTermsFind');
+    t.sample('apiOptionsGet');
     const options = await apiOptionsGet(optionsContext);
+    t.sample('utilBackend');
     const translator = utilBackend().translator;
 
+    t.sample('searcher.get');
     const searcher = {
         'merge': translator.findTermsMerged,
         'split': translator.findTermsSplit,
         'group': translator.findTermsGrouped
     }[options.general.resultOutputMode].bind(translator);
 
+    t.sample('dictEnabledSet');
+    const dictionaries = dictEnabledSet(options);
+    t.sample(`searcher[${options.general.resultOutputMode}]`);
     const {definitions, length} = await searcher(
         text,
-        dictEnabledSet(options),
+        dictionaries,
         options.scanning.alphanumeric,
         options
     );
 
+    t.complete();
     return {
         length,
         definitions: definitions.slice(0, options.general.maxResults)
