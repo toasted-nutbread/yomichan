@@ -342,7 +342,9 @@ class Translator {
     }
 
     async buildTermFrequencies(definitions, titles) {
+        const t = Timer.create('findTermsGrouped');
         const terms = [];
+        t.sample('terms.build');
         for (const definition of definitions) {
             if (definition.expressions) {
                 terms.push(...definition.expressions);
@@ -352,10 +354,12 @@ class Translator {
         }
 
         if (terms.length === 0) {
+            t.complete(true);
             return;
         }
 
         // Create mapping of unique terms
+        t.sample('unique.build');
         const expressionsUnique = [];
         const termsUnique = [];
         const termsUniqueMap = {};
@@ -374,7 +378,9 @@ class Translator {
             }
         }
 
+        t.sample('findTermMetaBulk');
         const metas = await this.database.findTermMetaBulk(expressionsUnique, titles);
+        t.sample('frequencies.build');
         for (const meta of metas) {
             if (meta.mode !== 'freq') {
                 continue;
@@ -388,6 +394,8 @@ class Translator {
                 });
             }
         }
+
+        t.complete();
     }
 
     async expandTags(names, title) {
