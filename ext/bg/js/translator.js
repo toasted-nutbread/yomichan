@@ -37,20 +37,26 @@ class Translator {
     }
 
     async findTermsGrouped(text, dictionaries, alphanumeric, options) {
+        const t = Timer.create('findTermsGrouped');
         const titles = Object.keys(dictionaries);
+        t.sample('findTerms');
         const {length, definitions} = await this.findTerms(text, dictionaries, alphanumeric);
 
+        t.sample('dictTermsGroup');
         const definitionsGrouped = dictTermsGroup(definitions, dictionaries);
+        t.sample(`buildTermFrequencies[${definitionsGrouped.length}]`);
         for (const definition of definitionsGrouped) {
             await this.buildTermFrequencies(definition, titles);
         }
 
         if (options.general.compactTags) {
+            t.sample('dictTermsCompressTags');
             for (const definition of definitionsGrouped) {
                 dictTermsCompressTags(definition.definitions);
             }
         }
 
+        t.complete();
         return {length, definitions: definitionsGrouped};
     }
 
@@ -172,13 +178,16 @@ class Translator {
     }
 
     async findTerms(text, dictionaries, alphanumeric) {
+        const t = Timer.create('findTerms');
         if (!alphanumeric && text.length > 0) {
             const c = text[0];
             if (!jpIsKana(c) && !jpIsKanji(c)) {
+                t.complete(true);
                 return {length: 0, definitions: []};
             }
         }
 
+        t.sample('findTermDeinflections');
         const cache = {};
         const titles = Object.keys(dictionaries);
         let deinflections = await this.findTermDeinflections(text, titles, cache);
@@ -187,6 +196,7 @@ class Translator {
             deinflections.push(...await this.findTermDeinflections(textHiragana, titles, cache));
         }
 
+        t.sample('expandTags');
         let definitions = [];
         for (const deinflection of deinflections) {
             for (const definition of deinflection.definitions) {
@@ -210,6 +220,7 @@ class Translator {
             }
         }
 
+        t.sample('dictTermsUndupe');
         definitions = dictTermsUndupe(definitions);
         definitions = dictTermsSort(definitions, dictionaries);
 
@@ -218,6 +229,7 @@ class Translator {
             length = Math.max(length, definition.source.length);
         }
 
+        t.complete();
         return {length, definitions};
     }
 
