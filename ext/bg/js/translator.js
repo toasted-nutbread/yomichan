@@ -234,6 +234,8 @@ class Translator {
     }
 
     async findTermDeinflections(text, titles, cache) {
+        const t = Timer.create('findTermDeinflections');
+        t.sample('definer');
         const definer = async term => {
             if (cache.hasOwnProperty(term)) {
                 return cache[term];
@@ -242,12 +244,14 @@ class Translator {
             }
         };
 
+        t.sample(`deinflect[${text.length}]`);
         let deinflections = [];
         for (let i = text.length; i > 0; --i) {
             const textSlice = text.slice(0, i);
             deinflections.push(...await this.deinflector.deinflect(textSlice, definer));
         }
 
+        t.complete();
         return deinflections;
     }
 
