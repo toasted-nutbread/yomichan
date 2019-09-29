@@ -289,13 +289,16 @@ class Translator {
     }
 
     async buildTermFrequencies(definition, titles) {
+        const t = Timer.create('findTermsGrouped');
         let terms = [];
+        t.sample('terms.build');
         if (definition.expressions) {
             terms.push(...definition.expressions);
         } else {
             terms.push(definition);
         }
 
+        t.sample('findTermMeta');
         for (const term of terms) {
             term.frequencies = [];
             for (const meta of await this.database.findTermMeta(term.expression, titles)) {
@@ -308,6 +311,8 @@ class Translator {
                 }
             }
         }
+
+        t.complete();
     }
 
     async expandTags(names, title) {
