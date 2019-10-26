@@ -233,6 +233,74 @@ class Frontend {
     }
 
 
+    onPointerOver(e) {
+        if (!e.isPrimary) { return; }
+        switch (e.pointerType) {
+            case 'mouse': return this.onMousePointerOver(e);
+        }
+    }
+
+    onPointerDown(e) {
+        if (!e.isPrimary) { return; }
+        switch (e.pointerType) {
+            case 'mouse': return this.onMousePointerDown(e);
+        }
+    }
+
+    onPointerMove(e) {
+        if (!e.isPrimary) { return; }
+        switch (e.pointerType) {
+            case 'mouse': return this.onMousePointerMove(e);
+        }
+    }
+
+    onPointerUp(e) {
+        if (!e.isPrimary) { return; }
+        switch (e.pointerType) {
+            case 'mouse': return this.onMousePointerUp(e);
+        }
+    }
+
+    onPointerCancel(e) {
+        if (!e.isPrimary) { return; }
+        switch (e.pointerType) {
+            case 'mouse': return this.onMousePointerCancel(e);
+        }
+    }
+
+    onPointerOut(e) {
+        if (!e.isPrimary) { return; }
+        switch (e.pointerType) {
+            case 'mouse': return this.onMousePointerOut(e);
+        }
+    }
+
+
+    onMousePointerOver(e) {
+        return this.onMouseOver(e);
+    }
+
+    onMousePointerDown(e) {
+        return this.onMouseDown(e);
+    }
+
+    onMousePointerMove(e) {
+        return this.onMouseMove(e);
+    }
+
+    onMousePointerUp(e) {
+        // NOP
+    }
+
+    onMousePointerCancel(e) {
+        return this.onMouseOut(e);
+    }
+
+    onMousePointerOut(e) {
+        return this.onMouseOut(e);
+    }
+
+
     async onResize() {
         if (this.textSourceCurrent !== null && await this.popup.isVisibleAsync()) {
             const textSource = this.textSourceCurrent;
@@ -281,21 +349,31 @@ class Frontend {
     }
 
     hookEvents() {
-        this.addEventListener(window, 'message', this.onWindowMessage.bind(this));
-        this.addEventListener(window, 'mousedown', this.onMouseDown.bind(this));
-        this.addEventListener(window, 'mousemove', this.onMouseMove.bind(this));
-        this.addEventListener(window, 'mouseover', this.onMouseOver.bind(this));
-        this.addEventListener(window, 'mouseout', this.onMouseOut.bind(this));
-        this.addEventListener(window, 'resize', this.onResize.bind(this));
+        if (typeof window.PointerEvent === 'function') {
+            this.addEventListener(window, 'pointerover', this.onPointerOver.bind(this));
+            this.addEventListener(window, 'pointerdown', this.onPointerDown.bind(this));
+            this.addEventListener(window, 'pointermove', this.onPointerMove.bind(this));
+            this.addEventListener(window, 'pointerup', this.onPointerUp.bind(this));
+            this.addEventListener(window, 'pointercancel', this.onPointerCancel.bind(this));
+            this.addEventListener(window, 'pointerout', this.onPointerOut.bind(this));
+            this.addEventListener(window, 'touchmove', this.onTouchMovePreventScroll.bind(this), {passive: false});
+        } else {
+            this.addEventListener(window, 'message', this.onWindowMessage.bind(this));
+            this.addEventListener(window, 'mousedown', this.onMouseDown.bind(this));
+            this.addEventListener(window, 'mousemove', this.onMouseMove.bind(this));
+            this.addEventListener(window, 'mouseover', this.onMouseOver.bind(this));
+            this.addEventListener(window, 'mouseout', this.onMouseOut.bind(this));
+            this.addEventListener(window, 'resize', this.onResize.bind(this));
 
-        if (this.options.scanning.touchInputEnabled) {
-            this.addEventListener(window, 'click', this.onClick.bind(this));
-            this.addEventListener(window, 'auxclick', this.onAuxClick.bind(this));
-            this.addEventListener(window, 'touchstart', this.onTouchStart.bind(this));
-            this.addEventListener(window, 'touchend', this.onTouchEnd.bind(this));
-            this.addEventListener(window, 'touchcancel', this.onTouchCancel.bind(this));
-            this.addEventListener(window, 'touchmove', this.onTouchMove.bind(this), {passive: false});
-            this.addEventListener(window, 'contextmenu', this.onContextMenu.bind(this));
+            if (this.options.scanning.touchInputEnabled) {
+                this.addEventListener(window, 'click', this.onClick.bind(this));
+                this.addEventListener(window, 'auxclick', this.onAuxClick.bind(this));
+                this.addEventListener(window, 'touchstart', this.onTouchStart.bind(this));
+                this.addEventListener(window, 'touchend', this.onTouchEnd.bind(this));
+                this.addEventListener(window, 'touchcancel', this.onTouchCancel.bind(this));
+                this.addEventListener(window, 'touchmove', this.onTouchMove.bind(this), {passive: false});
+                this.addEventListener(window, 'contextmenu', this.onContextMenu.bind(this));
+            }
         }
     }
 
