@@ -237,6 +237,7 @@ class Frontend {
         if (!e.isPrimary) { return; }
         switch (e.pointerType) {
             case 'mouse': return this.onMousePointerOver(e);
+            case 'touch': return this.onTouchPointerOver(e);
         }
     }
 
@@ -244,6 +245,7 @@ class Frontend {
         if (!e.isPrimary) { return; }
         switch (e.pointerType) {
             case 'mouse': return this.onMousePointerDown(e);
+            case 'touch': return this.onTouchPointerDown(e);
         }
     }
 
@@ -251,6 +253,7 @@ class Frontend {
         if (!e.isPrimary) { return; }
         switch (e.pointerType) {
             case 'mouse': return this.onMousePointerMove(e);
+            case 'touch': return this.onTouchPointerMove(e);
         }
     }
 
@@ -258,6 +261,7 @@ class Frontend {
         if (!e.isPrimary) { return; }
         switch (e.pointerType) {
             case 'mouse': return this.onMousePointerUp(e);
+            case 'touch': return this.onTouchPointerUp(e);
         }
     }
 
@@ -265,6 +269,7 @@ class Frontend {
         if (!e.isPrimary) { return; }
         switch (e.pointerType) {
             case 'mouse': return this.onMousePointerCancel(e);
+            case 'touch': return this.onTouchPointerCancel(e);
         }
     }
 
@@ -272,6 +277,7 @@ class Frontend {
         if (!e.isPrimary) { return; }
         switch (e.pointerType) {
             case 'mouse': return this.onMousePointerOut(e);
+            case 'touch': return this.onTouchPointerOut(e);
         }
     }
 
@@ -298,6 +304,47 @@ class Frontend {
 
     onMousePointerOut(e) {
         return this.onMouseOut(e);
+    }
+
+
+    onTouchPointerOver(e) {
+        // NOP
+    }
+
+    onTouchPointerDown(e) {
+        return this.onPrimaryTouchStart(e);
+    }
+
+    onTouchPointerMove(e) {
+        if (!this.preventScroll || !e.cancelable) {
+            return;
+        }
+
+        this.searchAt(e.clientX, e.clientY, 'touchMove');
+    }
+
+    onTouchPointerUp(e) {
+        return this.onPrimaryTouchEnd();
+    }
+
+    onTouchPointerCancel(e) {
+        if (this.preventScroll) {
+        }
+        return this.onPrimaryTouchEnd();
+    }
+
+    onTouchPointerOut(e) {
+        // NOP
+    }
+
+    onTouchMovePreventScroll(e) {
+        if (!this.preventScroll) { return; }
+
+        if (e.cancelable) {
+            e.preventDefault();
+        } else {
+            this.preventScroll = false;
+        }
     }
 
 
@@ -357,6 +404,9 @@ class Frontend {
             this.addEventListener(window, 'pointercancel', this.onPointerCancel.bind(this));
             this.addEventListener(window, 'pointerout', this.onPointerOut.bind(this));
             this.addEventListener(window, 'touchmove', this.onTouchMovePreventScroll.bind(this), {passive: false});
+            this.addEventListener(window, 'mousedown', this.onMouseDown.bind(this));
+            this.addEventListener(window, 'click', this.onClick.bind(this));
+            this.addEventListener(window, 'auxclick', this.onAuxClick.bind(this));
         } else {
             this.addEventListener(window, 'message', this.onWindowMessage.bind(this));
             this.addEventListener(window, 'mousedown', this.onMouseDown.bind(this));
