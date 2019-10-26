@@ -153,12 +153,48 @@ class Frontend {
             return;
         }
 
+        this.onPrimaryTouchStart(e.changedTouches[0]);
+    }
+
+    onTouchEnd(e) {
+        if (
+            this.primaryTouchIdentifier === null ||
+            this.getIndexOfTouch(e.changedTouches, this.primaryTouchIdentifier) < 0
+        ) {
+            return;
+        }
+
+        this.onPrimaryTouchEnd();
+    }
+
+    onTouchCancel(e) {
+        this.onTouchEnd(e);
+    }
+
+    onTouchMove(e) {
+        if (!this.preventScroll || !e.cancelable || this.primaryTouchIdentifier === null) {
+            return;
+        }
+
+        const touches = e.changedTouches;
+        const index = this.getIndexOfTouch(touches, this.primaryTouchIdentifier);
+        if (index < 0) {
+            return;
+        }
+
+        const primaryTouch = touches[index];
+        this.searchAt(primaryTouch.clientX, primaryTouch.clientY, 'touchMove');
+
+        e.preventDefault(); // Disable scroll
+    }
+
+
+    onPrimaryTouchStart(primaryTouch) {
         this.preventScroll = false;
         this.preventNextContextMenu = false;
         this.preventNextMouseDown = false;
         this.preventNextClick = false;
 
-        const primaryTouch = e.changedTouches[0];
         if (Frontend.selectionContainsPoint(window.getSelection(), primaryTouch.clientX, primaryTouch.clientY)) {
             return;
         }
@@ -186,14 +222,7 @@ class Frontend {
         });
     }
 
-    onTouchEnd(e) {
-        if (
-            this.primaryTouchIdentifier === null ||
-            this.getIndexOfTouch(e.changedTouches, this.primaryTouchIdentifier) < 0
-        ) {
-            return;
-        }
-
+    onPrimaryTouchEnd() {
         this.primaryTouchIdentifier = null;
         this.preventScroll = false;
         this.preventNextClick = false;
@@ -203,26 +232,6 @@ class Frontend {
         // this.preventNextMouseDown = false;
     }
 
-    onTouchCancel(e) {
-        this.onTouchEnd(e);
-    }
-
-    onTouchMove(e) {
-        if (!this.preventScroll || !e.cancelable || this.primaryTouchIdentifier === null) {
-            return;
-        }
-
-        const touches = e.changedTouches;
-        const index = this.getIndexOfTouch(touches, this.primaryTouchIdentifier);
-        if (index < 0) {
-            return;
-        }
-
-        const primaryTouch = touches[index];
-        this.searchAt(primaryTouch.clientX, primaryTouch.clientY, 'touchMove');
-
-        e.preventDefault(); // Disable scroll
-    }
 
     async onResize() {
         if (this.textSourceCurrent !== null && await this.popup.isVisibleAsync()) {
