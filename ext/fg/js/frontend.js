@@ -36,6 +36,7 @@ class Frontend {
         this.preventNextMouseDown = false;
         this.preventNextClick = false;
         this.preventScroll = false;
+        this.penTouched = false;
 
         this.enabled = false;
         this.eventListeners = [];
@@ -189,7 +190,7 @@ class Frontend {
     }
 
 
-    onPrimaryTouchStart(primaryTouch) {
+    onPrimaryTouchStart(primaryTouch, isHover) {
         this.preventScroll = false;
         this.preventNextContextMenu = false;
         this.preventNextMouseDown = false;
@@ -237,6 +238,7 @@ class Frontend {
         if (!e.isPrimary) { return; }
         switch (e.pointerType) {
             case 'mouse': return this.onMousePointerOver(e);
+            case 'pen': return this.onPenPointerOver(e);
             case 'touch': return this.onTouchPointerOver(e);
         }
     }
@@ -245,6 +247,7 @@ class Frontend {
         if (!e.isPrimary) { return; }
         switch (e.pointerType) {
             case 'mouse': return this.onMousePointerDown(e);
+            case 'pen': return this.onPenPointerDown(e);
             case 'touch': return this.onTouchPointerDown(e);
         }
     }
@@ -253,6 +256,7 @@ class Frontend {
         if (!e.isPrimary) { return; }
         switch (e.pointerType) {
             case 'mouse': return this.onMousePointerMove(e);
+            case 'pen': return this.onPenPointerMove(e);
             case 'touch': return this.onTouchPointerMove(e);
         }
     }
@@ -261,6 +265,7 @@ class Frontend {
         if (!e.isPrimary) { return; }
         switch (e.pointerType) {
             case 'mouse': return this.onMousePointerUp(e);
+            case 'pen': return this.onPenPointerUp(e);
             case 'touch': return this.onTouchPointerUp(e);
         }
     }
@@ -269,6 +274,7 @@ class Frontend {
         if (!e.isPrimary) { return; }
         switch (e.pointerType) {
             case 'mouse': return this.onMousePointerCancel(e);
+            case 'pen': return this.onPenPointerCancel(e);
             case 'touch': return this.onTouchPointerCancel(e);
         }
     }
@@ -277,6 +283,7 @@ class Frontend {
         if (!e.isPrimary) { return; }
         switch (e.pointerType) {
             case 'mouse': return this.onMousePointerOut(e);
+            case 'pen': return this.onPenPointerOut(e);
             case 'touch': return this.onTouchPointerOut(e);
         }
     }
@@ -307,6 +314,38 @@ class Frontend {
     }
 
 
+    onPenPointerOver(e) {
+        this.penTouched = false;
+        return this.onPrimaryTouchStart(e, true);
+    }
+
+    onPenPointerDown(e) {
+        this.penTouched = true;
+        return this.onPrimaryTouchStart(e);
+    }
+
+    onPenPointerMove(e) {
+        if (this.penTouched && (!this.preventScroll || !e.cancelable)) {
+            return;
+        }
+
+        this.searchAt(e.clientX, e.clientY, 'touchMove');
+    }
+
+    onPenPointerUp(e) {
+        // TODO
+    }
+
+    onPenPointerCancel(e) {
+        // TODO
+    }
+
+    onPenPointerOut(e) {
+        this.penTouched = false;
+        return this.onPrimaryTouchEnd();
+    }
+
+
     onTouchPointerOver(e) {
         // NOP
     }
@@ -328,8 +367,6 @@ class Frontend {
     }
 
     onTouchPointerCancel(e) {
-        if (this.preventScroll) {
-        }
         return this.onPrimaryTouchEnd();
     }
 
