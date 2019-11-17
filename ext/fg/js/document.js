@@ -229,7 +229,7 @@ function isPointInRange(x, y, range) {
     const nodePre = range.endContainer;
     const offsetPre = range.endOffset;
     try {
-        const {node, offset, content} = TextSourceRange.seekForward(range.endContainer, range.endOffset, 1);
+        const {node, offset, content} = TextSourceRange.seek(range.endContainer, range.endOffset, 1);
         range.setEnd(node, offset);
 
         if (!isWhitespace(content) && DOM.isPointInAnyRect(x, y, range.getClientRects())) {
@@ -240,7 +240,7 @@ function isPointInRange(x, y, range) {
     }
 
     // Scan backward
-    const {node, offset, content} = TextSourceRange.seekBackward(range.startContainer, range.startOffset, 1);
+    const {node, offset, content} = TextSourceRange.seek(range.startContainer, range.startOffset, -1);
     range.setStart(node, offset);
 
     if (!isWhitespace(content) && DOM.isPointInAnyRect(x, y, range.getClientRects())) {

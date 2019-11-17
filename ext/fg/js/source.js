@@ -47,14 +47,14 @@ class TextSourceRange {
     }
 
     setEndOffset(length) {
-        const state = TextSourceRange.seekForward(this.range.startContainer, this.range.startOffset, length);
+        const state = TextSourceRange.seek(this.range.startContainer, this.range.startOffset, length);
         this.range.setEnd(state.node, state.offset);
         this.content = state.content;
         return length - state.remainder;
     }
 
     setStartOffset(length) {
-        const state = TextSourceRange.seekBackward(this.range.startContainer, this.range.startOffset, length);
+        const state = TextSourceRange.seek(this.range.startContainer, this.range.startOffset, -length);
         this.range.setStart(state.node, state.offset);
         this.rangeStartOffset = this.range.startOffset;
         this.content = state.content;
@@ -98,14 +98,25 @@ class TextSourceRange {
         }
     }
 
-    static seekForward(node, offset, length) {
-        const state = {node, offset, remainder: length, content: ''};
-        if (length <= 0) {
+    static seek(node, offset, length) {
+        const forward = (length >= 0);
+        const state = {
+            node,
+            offset,
+            content: '',
+            remainder: (forward ? length : -length)
+        };
+        if (length === 0) {
             return state;
         }
 
         const TEXT_NODE = Node.TEXT_NODE;
         const ELEMENT_NODE = Node.ELEMENT_NODE;
+
+        const seekTextNode = forward ? TextSourceRange._seekForwardTextNode : TextSourceRange._seekBackwardTextNode;
+        const getNextNode = forward ? TextSourceRange._getNextNode : TextSourceRange._getPreviousNode;
+        const shouldEnter = TextSourceRange._shouldEnter;
+
         let resetOffset = false;
 
         const ruby = TextSourceRange._getRubyElement(node);
@@ -120,51 +131,15 @@ class TextSourceRange {
 
             if (nodeType === TEXT_NODE) {
                 state.node = node;
-                if (TextSourceRange._seekForwardTextNode(state, resetOffset)) {
+                if (seekTextNode(state, resetOffset)) {
                     break;
                 }
                 resetOffset = true;
             } else if (nodeType === ELEMENT_NODE) {
-                visitChildren = TextSourceRange._shouldEnter(node);
+                visitChildren = shouldEnter(node);
             }
 
-            node = TextSourceRange._getNextNode(node, visitChildren);
-        }
-
-        return state;
-    }
-
-    static seekBackward(node, offset, length) {
-        const state = {node, offset, remainder: length, content: ''};
-        if (length <= 0) {
-            return state;
-        }
-
-        const TEXT_NODE = Node.TEXT_NODE;
-        const ELEMENT_NODE = Node.ELEMENT_NODE;
-        let resetOffset = false;
-
-        const ruby = TextSourceRange._getRubyElement(node);
-        if (ruby !== null) {
-            node = ruby;
-            resetOffset = true;
-        }
-
-        while (node !== null) {
-            let visitChildren = true;
-            const nodeType = node.nodeType;
-
-            if (nodeType === TEXT_NODE) {
-                state.node = node;
-                if (TextSourceRange._seekBackwardTextNode(state, resetOffset)) {
-                    break;
-                }
-                resetOffset = true;
-            } else if (nodeType === ELEMENT_NODE) {
-                visitChildren = TextSourceRange._shouldEnter(node);
-            }
-
-            node = TextSourceRange._getPreviousNode(node, visitChildren);
+            node = getNextNode(node, visitChildren);
         }
 
         return state;
