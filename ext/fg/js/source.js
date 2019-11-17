@@ -66,7 +66,7 @@ class TextSourceRange {
     }
 
     getWritingMode() {
-        return TextSourceRange.getElementWritingMode(TextSourceRange.getParentElement(this.range.startContainer));
+        return TextSourceRange._getElementWritingMode(TextSourceRange._getParentElement(this.range.startContainer));
     }
 
     select() {
@@ -98,7 +98,7 @@ class TextSourceRange {
         }
     }
 
-    static shouldEnter(node) {
+    static _shouldEnter(node) {
         switch (node.nodeName.toUpperCase()) {
             case 'RT':
             case 'SCRIPT':
@@ -113,8 +113,8 @@ class TextSourceRange {
             parseFloat(style.fontSize) === 0);
     }
 
-    static getRubyElement(node) {
-        node = TextSourceRange.getParentElement(node);
+    static _getRubyElement(node) {
+        node = TextSourceRange._getParentElement(node);
         if (node !== null && node.nodeName.toUpperCase() === 'RT') {
             node = node.parentNode;
             return (node !== null && node.nodeName.toUpperCase() === 'RUBY') ? node : null;
@@ -132,7 +132,7 @@ class TextSourceRange {
         const ELEMENT_NODE = Node.ELEMENT_NODE;
         let resetOffset = false;
 
-        const ruby = TextSourceRange.getRubyElement(node);
+        const ruby = TextSourceRange._getRubyElement(node);
         if (ruby !== null) {
             node = ruby;
             resetOffset = true;
@@ -144,21 +144,21 @@ class TextSourceRange {
 
             if (nodeType === TEXT_NODE) {
                 state.node = node;
-                if (TextSourceRange.seekForwardTextNode(state, resetOffset)) {
+                if (TextSourceRange._seekForwardTextNode(state, resetOffset)) {
                     break;
                 }
                 resetOffset = true;
             } else if (nodeType === ELEMENT_NODE) {
-                visitChildren = TextSourceRange.shouldEnter(node);
+                visitChildren = TextSourceRange._shouldEnter(node);
             }
 
-            node = TextSourceRange.getNextNode(node, visitChildren);
+            node = TextSourceRange._getNextNode(node, visitChildren);
         }
 
         return state;
     }
 
-    static seekForwardTextNode(state, resetOffset) {
+    static _seekForwardTextNode(state, resetOffset) {
         const nodeValue = state.node.nodeValue;
         const nodeValueLength = nodeValue.length;
         let content = state.content;
@@ -194,7 +194,7 @@ class TextSourceRange {
         const ELEMENT_NODE = Node.ELEMENT_NODE;
         let resetOffset = false;
 
-        const ruby = TextSourceRange.getRubyElement(node);
+        const ruby = TextSourceRange._getRubyElement(node);
         if (ruby !== null) {
             node = ruby;
             resetOffset = true;
@@ -206,21 +206,21 @@ class TextSourceRange {
 
             if (nodeType === TEXT_NODE) {
                 state.node = node;
-                if (TextSourceRange.seekBackwardTextNode(state, resetOffset)) {
+                if (TextSourceRange._seekBackwardTextNode(state, resetOffset)) {
                     break;
                 }
                 resetOffset = true;
             } else if (nodeType === ELEMENT_NODE) {
-                visitChildren = TextSourceRange.shouldEnter(node);
+                visitChildren = TextSourceRange._shouldEnter(node);
             }
 
-            node = TextSourceRange.getPreviousNode(node, visitChildren);
+            node = TextSourceRange._getPreviousNode(node, visitChildren);
         }
 
         return state;
     }
 
-    static seekBackwardTextNode(state, resetOffset) {
+    static _seekBackwardTextNode(state, resetOffset) {
         const nodeValue = state.node.nodeValue;
         let content = state.content;
         let offset = resetOffset ? nodeValue.length : state.offset;
@@ -245,25 +245,25 @@ class TextSourceRange {
         return result;
     }
 
-    static getParentElement(node) {
+    static _getParentElement(node) {
         while (node !== null && node.nodeType !== Node.ELEMENT_NODE) {
             node = node.parentNode;
         }
         return node;
     }
 
-    static getElementWritingMode(element) {
+    static _getElementWritingMode(element) {
         if (element !== null) {
             const style = window.getComputedStyle(element);
             const writingMode = style.writingMode;
             if (typeof writingMode === 'string') {
-                return TextSourceRange.normalizeWritingMode(writingMode);
+                return TextSourceRange._normalizeWritingMode(writingMode);
             }
         }
         return 'horizontal-tb';
     }
 
-    static normalizeWritingMode(writingMode) {
+    static _normalizeWritingMode(writingMode) {
         switch (writingMode) {
             case 'lr':
             case 'lr-tb':
@@ -281,14 +281,14 @@ class TextSourceRange {
     static getNodesInRange(range) {
         const end = range.endContainer;
         const nodes = [];
-        for (let node = range.startContainer; node !== null; node = TextSourceRange.getNextNode(node, true)) {
+        for (let node = range.startContainer; node !== null; node = TextSourceRange._getNextNode(node, true)) {
             nodes.push(node);
             if (node === end) { break; }
         }
         return nodes;
     }
 
-    static getNextNode(node, visitChildren) {
+    static _getNextNode(node, visitChildren) {
         let next = visitChildren ? node.firstChild : null;
         if (next === null) {
             while (true) {
@@ -304,7 +304,7 @@ class TextSourceRange {
         return next;
     }
 
-    static getPreviousNode(node, visitChildren) {
+    static _getPreviousNode(node, visitChildren) {
         let next = visitChildren ? node.lastChild : null;
         if (next === null) {
             while (true) {
