@@ -98,30 +98,6 @@ class TextSourceRange {
         }
     }
 
-    static _shouldEnter(node) {
-        switch (node.nodeName.toUpperCase()) {
-            case 'RT':
-            case 'SCRIPT':
-            case 'STYLE':
-                return false;
-        }
-
-        const style = window.getComputedStyle(node);
-        return !(
-            style.visibility === 'hidden' ||
-            style.display === 'none' ||
-            parseFloat(style.fontSize) === 0);
-    }
-
-    static _getRubyElement(node) {
-        node = TextSourceRange._getParentElement(node);
-        if (node !== null && node.nodeName.toUpperCase() === 'RT') {
-            node = node.parentNode;
-            return (node !== null && node.nodeName.toUpperCase() === 'RUBY') ? node : null;
-        }
-        return null;
-    }
-
     static seekForward(node, offset, length) {
         const state = {node, offset, remainder: length, content: ''};
         if (length <= 0) {
@@ -156,32 +132,6 @@ class TextSourceRange {
         }
 
         return state;
-    }
-
-    static _seekForwardTextNode(state, resetOffset) {
-        const nodeValue = state.node.nodeValue;
-        const nodeValueLength = nodeValue.length;
-        let content = state.content;
-        let offset = resetOffset ? 0 : state.offset;
-        let remainder = state.remainder;
-        let result = false;
-
-        for (; offset < nodeValueLength; ++offset) {
-            const c = nodeValue[offset];
-            if (!IGNORE_TEXT_PATTERN.test(c)) {
-                content += c;
-                if (--remainder <= 0) {
-                    result = true;
-                    ++offset;
-                    break;
-                }
-            }
-        }
-
-        state.offset = offset;
-        state.content = content;
-        state.remainder = remainder;
-        return result;
     }
 
     static seekBackward(node, offset, length) {
@@ -220,6 +170,62 @@ class TextSourceRange {
         return state;
     }
 
+    static getNodesInRange(range) {
+        const end = range.endContainer;
+        const nodes = [];
+        for (let node = range.startContainer; node !== null; node = TextSourceRange._getNextNode(node, true)) {
+            nodes.push(node);
+            if (node === end) { break; }
+        }
+        return nodes;
+    }
+
+    static anyNodeMatchesSelector(nodeList, selector) {
+        for (const node of nodeList) {
+            if (TextSourceRange.nodeMatchesSelector(node, selector)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static nodeMatchesSelector(node, selector) {
+        for (; node !== null; node = node.parentNode) {
+            if (node.nodeType === Node.ELEMENT_NODE) {
+                return node.matches(selector);
+            }
+        }
+        return false;
+    }
+
+    // Private functions
+
+    static _seekForwardTextNode(state, resetOffset) {
+        const nodeValue = state.node.nodeValue;
+        const nodeValueLength = nodeValue.length;
+        let content = state.content;
+        let offset = resetOffset ? 0 : state.offset;
+        let remainder = state.remainder;
+        let result = false;
+
+        for (; offset < nodeValueLength; ++offset) {
+            const c = nodeValue[offset];
+            if (!IGNORE_TEXT_PATTERN.test(c)) {
+                content += c;
+                if (--remainder <= 0) {
+                    result = true;
+                    ++offset;
+                    break;
+                }
+            }
+        }
+
+        state.offset = offset;
+        state.content = content;
+        state.remainder = remainder;
+        return result;
+    }
+
     static _seekBackwardTextNode(state, resetOffset) {
         const nodeValue = state.node.nodeValue;
         let content = state.content;
@@ -243,49 +249,6 @@ class TextSourceRange {
         state.content = content;
         state.remainder = remainder;
         return result;
-    }
-
-    static _getParentElement(node) {
-        while (node !== null && node.nodeType !== Node.ELEMENT_NODE) {
-            node = node.parentNode;
-        }
-        return node;
-    }
-
-    static _getElementWritingMode(element) {
-        if (element !== null) {
-            const style = window.getComputedStyle(element);
-            const writingMode = style.writingMode;
-            if (typeof writingMode === 'string') {
-                return TextSourceRange._normalizeWritingMode(writingMode);
-            }
-        }
-        return 'horizontal-tb';
-    }
-
-    static _normalizeWritingMode(writingMode) {
-        switch (writingMode) {
-            case 'lr':
-            case 'lr-tb':
-            case 'rl':
-                return 'horizontal-tb';
-            case 'tb':
-                return 'vertical-lr';
-            case 'tb-rl':
-                return 'vertical-rl';
-            default:
-                return writingMode;
-        }
-    }
-
-    static getNodesInRange(range) {
-        const end = range.endContainer;
-        const nodes = [];
-        for (let node = range.startContainer; node !== null; node = TextSourceRange._getNextNode(node, true)) {
-            nodes.push(node);
-            if (node === end) { break; }
-        }
-        return nodes;
     }
 
     static _getNextNode(node, visitChildren) {
@@ -320,22 +283,61 @@ class TextSourceRange {
         return next;
     }
 
-    static anyNodeMatchesSelector(nodeList, selector) {
-        for (const node of nodeList) {
-            if (TextSourceRange.nodeMatchesSelector(node, selector)) {
-                return true;
-            }
+    static _shouldEnter(node) {
+        switch (node.nodeName.toUpperCase()) {
+            case 'RT':
+            case 'SCRIPT':
+            case 'STYLE':
+                return false;
         }
-        return false;
+
+        const style = window.getComputedStyle(node);
+        return !(
+            style.visibility === 'hidden' ||
+            style.display === 'none' ||
+            parseFloat(style.fontSize) === 0);
     }
 
-    static nodeMatchesSelector(node, selector) {
-        for (; node !== null; node = node.parentNode) {
-            if (node.nodeType === Node.ELEMENT_NODE) {
-                return node.matches(selector);
+    static _getRubyElement(node) {
+        node = TextSourceRange._getParentElement(node);
+        if (node !== null && node.nodeName.toUpperCase() === 'RT') {
+            node = node.parentNode;
+            return (node !== null && node.nodeName.toUpperCase() === 'RUBY') ? node : null;
+        }
+        return null;
+    }
+
+    static _getParentElement(node) {
+        while (node !== null && node.nodeType !== Node.ELEMENT_NODE) {
+            node = node.parentNode;
+        }
+        return node;
+    }
+
+    static _getElementWritingMode(element) {
+        if (element !== null) {
+            const style = window.getComputedStyle(element);
+            const writingMode = style.writingMode;
+            if (typeof writingMode === 'string') {
+                return TextSourceRange._normalizeWritingMode(writingMode);
             }
         }
-        return false;
+        return 'horizontal-tb';
+    }
+
+    static _normalizeWritingMode(writingMode) {
+        switch (writingMode) {
+            case 'lr':
+            case 'lr-tb':
+            case 'rl':
+                return 'horizontal-tb';
+            case 'tb':
+                return 'vertical-lr';
+            case 'tb-rl':
+                return 'vertical-rl';
+            default:
+                return writingMode;
+        }
     }
 }
 
