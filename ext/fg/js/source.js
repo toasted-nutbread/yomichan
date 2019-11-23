@@ -51,7 +51,6 @@ class TextSourceRange {
         const state = TextSourceRange.seek(this.range.startContainer, this.range.startOffset, length);
         this.range.setEnd(state.node, state.offset);
         this.content = state.content;
-        return length - state.remainder;
     }
 
     setStartOffset(length) {
@@ -59,7 +58,6 @@ class TextSourceRange {
         this.range.setStart(state.node, state.offset);
         this.rangeStartOffset = this.range.startOffset;
         this.content = `${state.content}${this.content}`;
-        return length - state.remainder;
     }
 
     getRect() {
@@ -407,12 +405,10 @@ class TextSourceElement {
         }
 
         this.content = content;
-
-        return this.content.length;
     }
 
     setStartOffset() {
-        return 0;
+        // NOP
     }
 
     getRect() {

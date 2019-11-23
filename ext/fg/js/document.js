@@ -156,8 +156,10 @@ function docSentenceExtract(source, extent) {
 
     const sourceLocal = source.clone();
     sourceLocal.setEndOffset(extent);
-    const position = sourceLocal.setStartOffset(extent);
+    const content0 = sourceLocal.text();
+    sourceLocal.setStartOffset(extent);
     const content = sourceLocal.text();
+    const position = content.length - content0.length;
 
     let quoteStack = [];
 
