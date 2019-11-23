@@ -17,6 +17,7 @@
 
 // \u200c (Zero-width non-joiner) appears on Google Docs from Chrome 76 onwards
 const IGNORE_TEXT_PATTERN = /\u200c/;
+const REGEX_DISPLAY = /^\s*([\w\-]+)/;
 
 
 /*
@@ -115,7 +116,8 @@ class TextSourceRange {
 
         const seekTextNode = forward ? TextSourceRange._seekForwardTextNode : TextSourceRange._seekBackwardTextNode;
         const getNextNode = forward ? TextSourceRange._getNextNode : TextSourceRange._getPreviousNode;
-        const shouldEnter = TextSourceRange._shouldEnter;
+        const getElementSeekInfo = TextSourceRange._getElementSeekInfo;
+        const addLineBreak = TextSourceRange._addLineBreak;
 
         let resetOffset = false;
 
@@ -125,18 +127,30 @@ class TextSourceRange {
             resetOffset = true;
         }
 
+        let lineBreak = false;
+        let lineBreak2;
         while (node !== null) {
             let visitChildren = true;
             const nodeType = node.nodeType;
 
             if (nodeType === TEXT_NODE) {
                 state.node = node;
-                if (seekTextNode(state, resetOffset)) {
+                if (resetOffset) {
+                    state.offset = forward ? 0 : node.nodeValue.length;
+                }
+                if (lineBreak) {
+                    if (resetOffset && addLineBreak(state, forward)) {
+                        break;
+                    }
+                    lineBreak = false;
+                }
+                if (seekTextNode(state)) {
                     break;
                 }
                 resetOffset = true;
             } else if (nodeType === ELEMENT_NODE) {
-                visitChildren = shouldEnter(node);
+                [visitChildren, lineBreak2] = getElementSeekInfo(node);
+                if (lineBreak2) { lineBreak = true; }
             }
 
             node = getNextNode(node, visitChildren);
@@ -175,11 +189,16 @@ class TextSourceRange {
 
     // Private functions
 
-    static _seekForwardTextNode(state, resetOffset) {
+    static _addLineBreak(state, forward) {
+        state.content = (forward ? state.content + '\n' : '\n' + state.content);
+        return (--state.remainder <= 0);
+    }
+
+    static _seekForwardTextNode(state) {
         const nodeValue = state.node.nodeValue;
         const nodeValueLength = nodeValue.length;
         let content = state.content;
-        let offset = resetOffset ? 0 : state.offset;
+        let offset = state.offset;
         let remainder = state.remainder;
         let result = false;
 
@@ -201,10 +220,10 @@ class TextSourceRange {
         return result;
     }
 
-    static _seekBackwardTextNode(state, resetOffset) {
+    static _seekBackwardTextNode(state) {
         const nodeValue = state.node.nodeValue;
         let content = state.content;
-        let offset = resetOffset ? nodeValue.length : state.offset;
+        let offset = state.offset;
         let remainder = state.remainder;
         let result = false;
 
@@ -258,19 +277,43 @@ class TextSourceRange {
         return next;
     }
 
-    static _shouldEnter(node) {
-        switch (node.nodeName.toUpperCase()) {
+    static _getElementSeekInfo(element) {
+        // returns: [shouldEnter: boolean, lineBreak: boolean]
+        let shouldEnter = true;
+        let lineBreak = false;
+        switch (element.nodeName.toUpperCase()) {
             case 'RT':
             case 'SCRIPT':
             case 'STYLE':
-                return false;
+                shouldEnter = false;
+                break;
+            case 'BR':
+                lineBreak = true;
+                break;
         }
 
-        const style = window.getComputedStyle(node);
-        return !(
+        const style = window.getComputedStyle(element);
+        const display = style.display;
+        if (
+            display === 'none' ||
             style.visibility === 'hidden' ||
-            style.display === 'none' ||
-            parseFloat(style.fontSize) === 0);
+            parseFloat(style.fontSize) === 0
+        ) {
+            shouldEnter = false;
+        }
+
+        const m = REGEX_DISPLAY.exec(display);
+        if (m !== null && m[1] === 'block') {
+            lineBreak = true;
+        }
+        switch (style.position) {
+            case 'absolute':
+            case 'fixed':
+                lineBreak = true;
+                break;
+        }
+
+        return [shouldEnter, lineBreak && shouldEnter];
     }
 
     static _getRubyElement(node) {
