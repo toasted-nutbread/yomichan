@@ -193,17 +193,26 @@ class TextSourceRange {
     }
 
     static _seekForwardTextNode(state) {
-        const nodeValue = state.node.nodeValue;
+        const node = state.node;
+        const nodeValue = node.nodeValue;
         const nodeValueLength = nodeValue.length;
         let content = state.content;
         let offset = state.offset;
         let remainder = state.remainder;
         let result = false;
 
+        let lineBreaks = false;
+        let lineBreaksDetected = false;
+
         while (offset < nodeValueLength) {
-            const c = nodeValue[offset];
+            let c = nodeValue[offset];
             ++offset;
             if (IGNORE_TEXT_PATTERN.test(c)) { continue; }
+
+            if (c === '\n') {
+                if (!lineBreaksDetected) { lineBreaks = TextSourceRange._getLineBreakMode(node); }
+                if (!lineBreaks) { c = ' '; }
+            }
 
             content += c;
 
@@ -220,16 +229,25 @@ class TextSourceRange {
     }
 
     static _seekBackwardTextNode(state) {
-        const nodeValue = state.node.nodeValue;
+        const node = state.node;
+        const nodeValue = node.nodeValue;
         let content = state.content;
         let offset = state.offset;
         let remainder = state.remainder;
         let result = false;
 
+        let lineBreaks = false;
+        let lineBreaksDetected = false;
+
         while (offset > 0) {
             --offset;
-            const c = nodeValue[offset];
+            let c = nodeValue[offset];
             if (IGNORE_TEXT_PATTERN.test(c)) { continue; }
+
+            if (c === '\n') {
+                if (!lineBreaksDetected) { lineBreaks = TextSourceRange._getLineBreakMode(node); }
+                if (!lineBreaks) { c = ' '; }
+            }
 
             content = c + content;
 
@@ -356,6 +374,21 @@ class TextSourceRange {
             default:
                 return writingMode;
         }
+    }
+
+    static _getLineBreakMode(textNode) {
+        const element = TextSourceRange._getParentElement(textNode);
+        if (element === null) { return false; }
+
+        const style = window.getComputedStyle(element);
+        switch (style.whiteSpace) {
+            case 'pre':
+            case 'pre-wrap':
+            case 'pre-line':
+            case 'break-spaces':
+                return true;
+        }
+        return false;
     }
 }
 
