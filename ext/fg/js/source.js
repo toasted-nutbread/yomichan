@@ -151,7 +151,18 @@ class TextSourceRange {
                 if (lineBreak2) { lineBreak = true; }
             }
 
-            node = getNextNode(node, visitChildren);
+            const exitedNodes = [];
+            node = getNextNode(node, visitChildren, exitedNodes);
+
+            if (!lineBreak) {
+                for (const exitedNode of exitedNodes) {
+                    if (exitedNode.nodeType !== ELEMENT_NODE) { continue; }
+                    if (getElementSeekInfo(exitedNode)[1]) {
+                        lineBreak = true;
+                        break;
+                    }
+                }
+            }
         }
 
         return state;
@@ -160,7 +171,7 @@ class TextSourceRange {
     static getNodesInRange(range) {
         const end = range.endContainer;
         const nodes = [];
-        for (let node = range.startContainer; node !== null; node = TextSourceRange._getNextNode(node, true)) {
+        for (let node = range.startContainer; node !== null; node = TextSourceRange._getNextNode(node, true, null)) {
             nodes.push(node);
             if (node === end) { break; }
         }
@@ -263,10 +274,14 @@ class TextSourceRange {
         return result;
     }
 
-    static _getNextNode(node, visitChildren) {
+    static _getNextNode(node, visitChildren, exitedNodes) {
         let next = visitChildren ? node.firstChild : null;
         if (next === null) {
             while (true) {
+                if (exitedNodes !== null) {
+                    exitedNodes.push(node);
+                }
+
                 next = node.nextSibling;
                 if (next !== null) { break; }
 
@@ -279,10 +294,14 @@ class TextSourceRange {
         return next;
     }
 
-    static _getPreviousNode(node, visitChildren) {
+    static _getPreviousNode(node, visitChildren, exitedNodes) {
         let next = visitChildren ? node.lastChild : null;
         if (next === null) {
             while (true) {
+                if (exitedNodes !== null) {
+                    exitedNodes.push(node);
+                }
+
                 next = node.previousSibling;
                 if (next !== null) { break; }
 
