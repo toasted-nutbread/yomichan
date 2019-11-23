@@ -200,15 +200,16 @@ class TextSourceRange {
         let remainder = state.remainder;
         let result = false;
 
-        for (; offset < nodeValueLength; ++offset) {
+        while (offset < nodeValueLength) {
             const c = nodeValue[offset];
-            if (!IGNORE_TEXT_PATTERN.test(c)) {
-                content += c;
-                if (--remainder <= 0) {
-                    result = true;
-                    ++offset;
-                    break;
-                }
+            ++offset;
+            if (IGNORE_TEXT_PATTERN.test(c)) { continue; }
+
+            content += c;
+
+            if (--remainder <= 0) {
+                result = true;
+                break;
             }
         }
 
@@ -225,15 +226,16 @@ class TextSourceRange {
         let remainder = state.remainder;
         let result = false;
 
-        for (; offset > 0; --offset) {
-            const c = nodeValue[offset - 1];
-            if (!IGNORE_TEXT_PATTERN.test(c)) {
-                content = c + content;
-                if (--remainder <= 0) {
-                    result = true;
-                    --offset;
-                    break;
-                }
+        while (offset > 0) {
+            --offset;
+            const c = nodeValue[offset];
+            if (IGNORE_TEXT_PATTERN.test(c)) { continue; }
+
+            content = c + content;
+
+            if (--remainder <= 0) {
+                result = true;
+                break;
             }
         }
 
