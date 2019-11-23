@@ -155,8 +155,8 @@ function docSentenceExtract(source, extent) {
     const terminators = '…。．.？?！!';
 
     const sourceLocal = source.clone();
+    sourceLocal.setEndOffset(extent);
     const position = sourceLocal.setStartOffset(extent);
-    sourceLocal.setEndOffset(position + extent);
     const content = sourceLocal.text();
 
     let quoteStack = [];
