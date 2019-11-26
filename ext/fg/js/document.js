@@ -368,5 +368,14 @@ function isElementTransparent(element) {
 }
 
 function isColorTransparent(cssColor) {
-    return REGEX_TRANSPARENT_COLOR.test(cssColor);
+    return typeof cssColor === 'string' && REGEX_TRANSPARENT_COLOR.test(cssColor);
+}
+
+function isStyleSelectable(style) {
+    return !(
+        style.userSelect === 'none' ||
+        style.webkitUserSelect === 'none' ||
+        style.MozUserSelect === 'none' ||
+        style.msUserSelect === 'none'
+    );
 }

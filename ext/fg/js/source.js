@@ -115,6 +115,7 @@ class TextSourceRange {
         const seekTextNode = forward ? TextSourceRange._seekForwardTextNode : TextSourceRange._seekBackwardTextNode;
         const getNextNode = forward ? TextSourceRange._getNextNode : TextSourceRange._getPreviousNode;
         const getElementSeekInfo = TextSourceRange._getElementSeekInfo;
+        const shouldSeekTextNode = TextSourceRange._shouldSeekTextNode;
         const addLineBreak = TextSourceRange._addLineBreak;
 
         let resetOffset = false;
@@ -133,17 +134,19 @@ class TextSourceRange {
 
             if (nodeType === TEXT_NODE) {
                 state.node = node;
-                if (resetOffset) {
-                    state.offset = forward ? 0 : node.nodeValue.length;
-                }
-                if (lineBreak) {
-                    if (resetOffset && addLineBreak(state, forward)) {
+                if (!resetOffset || shouldSeekTextNode(node)) {
+                    if (resetOffset) {
+                        state.offset = forward ? 0 : node.nodeValue.length;
+                    }
+                    if (lineBreak) {
+                        if (resetOffset && addLineBreak(state, forward)) {
+                            break;
+                        }
+                        lineBreak = false;
+                    }
+                    if (seekTextNode(state)) {
                         break;
                     }
-                    lineBreak = false;
-                }
-                if (seekTextNode(state)) {
-                    break;
                 }
                 resetOffset = true;
             } else if (nodeType === ELEMENT_NODE) {
@@ -314,6 +317,22 @@ class TextSourceRange {
         return next;
     }
 
+    static _shouldSeekTextNode(node) {
+        const element = TextSourceRange._getParentElement(node);
+        if (element === null) { return true; }
+
+        const style = window.getComputedStyle(element);
+        return !(
+            style.visibility === 'hidden' ||
+            parseFloat(style.opacity) <= 0 ||
+            parseFloat(style.fontSize) <= 0 ||
+            (
+                !isStyleSelectable(style) &&
+                (isColorTransparent(style.color) || isColorTransparent(style.webkitTextFillColor))
+            )
+        );
+    }
+
     static _getElementSeekInfo(element) {
         // returns: [shouldEnter: boolean, lineBreak: boolean]
         let shouldEnter = true;
@@ -331,11 +350,7 @@ class TextSourceRange {
 
         const style = window.getComputedStyle(element);
         const display = style.display;
-        if (
-            display === 'none' ||
-            style.visibility === 'hidden' ||
-            parseFloat(style.fontSize) === 0
-        ) {
+        if (display === 'none') {
             shouldEnter = false;
         }
 
