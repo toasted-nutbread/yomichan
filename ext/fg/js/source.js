@@ -16,7 +16,7 @@
  */
 
 // \u200c (Zero-width non-joiner) appears on Google Docs from Chrome 76 onwards
-const IGNORE_TEXT_PATTERN = /\u200c/;
+const REGEX_IGNORE_CHARACTER = /\u200c/;
 const REGEX_DISPLAY = /^\s*([\w\-]+)/;
 
 
@@ -221,7 +221,7 @@ class TextSourceRange {
         while (offset < nodeValueLength) {
             let c = nodeValue[offset];
             ++offset;
-            if (IGNORE_TEXT_PATTERN.test(c)) { continue; }
+            if (REGEX_IGNORE_CHARACTER.test(c)) { continue; }
 
             if (c === '\n') {
                 if (!lineBreaksDetected) { lineBreaks = TextSourceRange._getLineBreakMode(node); }
@@ -256,7 +256,7 @@ class TextSourceRange {
         while (offset > 0) {
             --offset;
             let c = nodeValue[offset];
-            if (IGNORE_TEXT_PATTERN.test(c)) { continue; }
+            if (REGEX_IGNORE_CHARACTER.test(c)) { continue; }
 
             if (c === '\n') {
                 if (!lineBreaksDetected) { lineBreaks = TextSourceRange._getLineBreakMode(node); }
@@ -467,7 +467,7 @@ class TextSourceElement {
         for (const currentChar of this.content || '') {
             if (consumed >= length) {
                 break;
-            } else if (!currentChar.match(IGNORE_TEXT_PATTERN)) {
+            } else if (!currentChar.match(REGEX_IGNORE_CHARACTER)) {
                 consumed++;
                 content += currentChar;
             }
