@@ -118,6 +118,108 @@ function toIterable(value) {
     throw new Error('Could not convert to iterable');
 }
 
+const getPropertyPathArray = (() => {
+    function getEscapedStringEnd(string, start, quote) {
+        let i = start;
+        const ii = string.length;
+        let escape = false;
+        for (; i < ii; ++i) {
+            const c = string[i];
+            if (escape) {
+                escape = false;
+            } else if (c === quote) {
+                break;
+            } else if (c === '\\') {
+                escape = true;
+            }
+        }
+        return i;
+    }
+
+    function readBracketProperty(string, start, quote) {
+        const end = getEscapedStringEnd(string, start, quote);
+
+        const regexEnd = /\s*\]\s*/g;
+        regexEnd.lastIndex = end + 1;
+        const match = regexEnd.exec(string);
+        if (match === null || match.index !== end + 1) {
+            throw new Error('Expected closing bracket');
+        }
+
+        const result = string.substring(start, end).replace(/\\(['"\\])/g, '$1');
+        return [result, regexEnd.lastIndex];
+    }
+
+    function getPropertyPathArray(pathString) {
+        const regex = /\s*(?:(\.\s*)?(\w+)\s*|\[\s*(\d+)\s*\]\s*|\[\s*(['"]))/g;
+
+        const path = [];
+        let start = 0;
+        let match;
+
+        while ((match = regex.exec(pathString)) !== null) {
+            if (match.index !== start) {
+                throw new Error(`Unexpected characters: ${JSON.stringify(pathString.substring(start, match.index))}`);
+            }
+            let m = match[2];
+            if (typeof m !== 'undefined') {
+                if ((path.length === 0) !== (typeof match[1] === 'undefined')) {
+                    throw new Error(path.length === 0 ? 'Unexpected . character' : 'Expected . character');
+                }
+            } else {
+                m = match[3];
+                if (typeof m !== 'undefined') {
+                    m = parseInt(m, 10);
+                } else {
+                    [m, regex.lastIndex] = readBracketProperty(pathString, regex.lastIndex, match[4]);
+                }
+            }
+            path.push(m);
+            start = regex.lastIndex;
+        }
+        if (start !== pathString.length) {
+            throw new Error(`Unexpected characters: ${JSON.stringify(pathString.substring(start))}`);
+        }
+        return path;
+    }
+
+    return getPropertyPathArray;
+})();
+
+function getPropertyPathString(pathArray) {
+    let pathString = '';
+    const regexShorthand = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
+    let first = true;
+    for (let part of pathArray) {
+        if (typeof part === 'number') {
+            part = `[${part}]`;
+        } else if (!regexShorthand.test(part)) {
+            const escapedPart = part.replace(/["\\]/g, '\\$&');
+            part = `["${escapedPart}"]`;
+        } else {
+            if (!first) {
+                part = `.${part}`;
+            }
+        }
+        pathString += part;
+        first = false;
+    }
+    return pathString;
+}
+
+function getPropertyValue(target, path, pathLength) {
+    let value = target;
+    const ii = typeof pathLength === 'number' ? Math.min(path.length, pathLength) : path.length;
+    for (let i = 0; i < ii; ++i) {
+        const key = path[i];
+        if (!hasOwn(value, key)) {
+            throw new Error(`Invalid path: ${key}`);
+        }
+        value = value[key];
+    }
+    return value;
+}
+
 
 /*
  * Async utilities

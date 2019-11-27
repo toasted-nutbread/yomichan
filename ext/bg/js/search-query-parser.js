@@ -89,7 +89,11 @@ class QueryParser {
     onParserChange(e) {
         const selectedParser = e.target.value;
         this.selectedParser = selectedParser;
-        apiOptionsSet({parsing: {selectedParser}}, this.search.getOptionsContext());
+        apiOptionsSet('search', [{
+            path: 'parsing.selectedParser',
+            value: selectedParser,
+            optionsContext: this.search.getOptionsContext()
+        }]);
         this.renderParseResult(this.getParseResult());
     }
 
@@ -101,7 +105,11 @@ class QueryParser {
             if (this.selectedParser === null || !this.getParseResult()) {
                 const selectedParser = this.parseResults[0].id;
                 this.selectedParser = selectedParser;
-                apiOptionsSet({parsing: {selectedParser}}, this.search.getOptionsContext());
+                apiOptionsSet('search', [{
+                    path: 'parsing.selectedParser',
+                    value: selectedParser,
+                    optionsContext: this.search.getOptionsContext()
+                }]);
             }
         }
     }

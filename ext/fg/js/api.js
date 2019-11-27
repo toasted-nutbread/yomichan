@@ -21,8 +21,8 @@ function apiOptionsGet(optionsContext) {
     return _apiInvoke('optionsGet', {optionsContext});
 }
 
-function apiOptionsSet(changedOptions, optionsContext, source) {
-    return _apiInvoke('optionsSet', {changedOptions, optionsContext, source});
+function apiOptionsSet(source, targets) {
+    return _apiInvoke('optionsSet', {source, targets});
 }
 
 function apiTermsFind(text, details, optionsContext) {

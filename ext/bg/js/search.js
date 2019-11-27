@@ -75,11 +75,19 @@ class DisplaySearch extends Display {
                         if (e.target.checked) {
                             window.wanakana.bind(this.query);
                             this.setQuery(window.wanakana.toKana(query));
-                            apiOptionsSet({general: {enableWanakana: true}}, this.getOptionsContext());
+                            apiOptionsSet('search', [{
+                                path: 'general.enableWanakana',
+                                value: true,
+                                optionsContext: this.getOptionsContext()
+                            }]);
                         } else {
                             window.wanakana.unbind(this.query);
                             this.setQuery(query);
-                            apiOptionsSet({general: {enableWanakana: false}}, this.getOptionsContext());
+                            apiOptionsSet('search', [{
+                                path: 'general.enableWanakana',
+                                value: false,
+                                optionsContext: this.getOptionsContext()
+                            }]);
                         }
                         this.onSearchQueryUpdated(this.query.value, false);
                     });
@@ -109,7 +117,11 @@ class DisplaySearch extends Display {
                             (granted) => {
                                 if (granted) {
                                     this.startClipboardMonitor();
-                                    apiOptionsSet({general: {enableClipboardMonitor: true}}, this.getOptionsContext());
+                                    apiOptionsSet('search', [{
+                                        path: 'general.enableClipboardMonitor',
+                                        value: true,
+                                        optionsContext: this.getOptionsContext()
+                                    }]);
                                 } else {
                                     e.target.checked = false;
                                 }
@@ -117,7 +129,11 @@ class DisplaySearch extends Display {
                         );
                     } else {
                         this.stopClipboardMonitor();
-                        apiOptionsSet({general: {enableClipboardMonitor: false}}, this.getOptionsContext());
+                        apiOptionsSet('search', [{
+                            path: 'general.enableClipboardMonitor',
+                            value: false,
+                            optionsContext: this.getOptionsContext()
+                        }]);
                     }
                 });
             }

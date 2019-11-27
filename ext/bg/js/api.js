@@ -21,44 +21,82 @@ function apiOptionsGet(optionsContext) {
     return utilBackend().getOptions(optionsContext);
 }
 
-async function apiOptionsSet(changedOptions, optionsContext, source) {
-    const options = await apiOptionsGet(optionsContext);
+async function _apiOptionsSetSingle(target) {
+    let error = null;
+    let result = null;
+    try {
+        const optionsContext = target.optionsContext;
+        const options = isObject(optionsContext) ? await apiOptionsGet(optionsContext) : await apiOptionsGetFull();
+        let path = target.path;
+        if (!Array.isArray(path)) {
+            path = getPropertyPathArray(path);
+        }
 
-    function getValuePaths(obj) {
-        const valuePaths = [];
-        const nodes = [{obj, path: []}];
-        while (nodes.length > 0) {
-            const node = nodes.pop();
-            for (const key of Object.keys(node.obj)) {
-                const path = node.path.concat(key);
-                const obj = node.obj[key];
-                if (obj !== null && typeof obj === 'object') {
-                    nodes.unshift({obj, path});
-                } else {
-                    valuePaths.push([obj, path]);
+        const ii = path.length - 1;
+        let pivot = getPropertyValue(options, path, ii);
+        let key = path[ii];
+        const action = target.action;
+        switch (action) {
+            case 'delete':
+                delete pivot[key];
+                break;
+            case 'swap':
+                {
+                    const {index1, index2} = target;
+                    const value1 = pivot[index1];
+                    const value2 = pivot[index2];
+                    pivot[index1] = value2;
+                    pivot[index2] = value1;
                 }
-            }
+                break;
+            case 'clear':
+                pivot = pivot[key];
+                if (pivot !== null && typeof pivot === 'object') {
+                    if (Array.isArray(pivot)) {
+                        pivot.length = 0;
+                    } else {
+                        for (const key of Object.getOwnPropertyNames(pivot)) {
+                            delete pivot[key];
+                        }
+                    }
+                }
+                break;
+            default: // set, add
+                if (action === 'add') {
+                    key = pivot.length;
+                }
+                try {
+                    pivot[key] = target.value;
+                } finally {
+                    try {
+                        result = pivot[key];
+                    } catch (e) {
+                        // NOP
+                    }
+                }
+                break;
         }
-        return valuePaths;
+    } catch (e) {
+        error = errorToJson(e);
+    }
+    result = utilIsolate(result);
+    return {error, result};
+}
+
+async function apiOptionsSet(source, targets) {
+    const results = [];
+
+    let any = false;
+    for (const target of targets) {
+        const result = await _apiOptionsSetSingle(target);
+        if (result.error === null) { any = true; }
+        results.push(result);
     }
 
-    function modifyOption(path, value, options) {
-        let pivot = options;
-        for (const key of path.slice(0, -1)) {
-            if (!hasOwn(pivot, key)) {
-                return false;
-            }
-            pivot = pivot[key];
-        }
-        pivot[path[path.length - 1]] = value;
-        return true;
+    if (any) {
+        await apiOptionsSave(source);
     }
-
-    for (const [value, path] of getValuePaths(changedOptions)) {
-        modifyOption(path, value, options);
-    }
-
-    await apiOptionsSave(source);
+    return results;
 }
 
 function apiOptionsGetFull() {
