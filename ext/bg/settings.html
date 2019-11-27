@@ -29,7 +29,7 @@
 
                 <div class="form-group">
                     <label for="profile-active">Active profile</label>
-                    <select class="form-control" id="profile-active"></select>
+                    <select class="form-control" id="profile-active" data-option-target="profileCurrent" data-option-scope="global" data-option-transform="stringToNumber"></select>
                 </div>
 
                 <div class="form-group">
@@ -131,32 +131,32 @@
                 <h3>General Options</h3>
 
                 <div class="checkbox">
-                    <label><input type="checkbox" id="enable"> Enable content scanning</label>
+                    <label><input type="checkbox" id="enable" data-option-target="general.enable"> Enable content scanning</label>
                 </div>
 
                 <div class="checkbox">
-                    <label><input type="checkbox" id="show-usage-guide"> Show usage guide on startup</label>
+                    <label><input type="checkbox" id="show-usage-guide" data-option-target="general.showGuide"> Show usage guide on startup</label>
                 </div>
 
                 <div class="checkbox">
-                    <label><input type="checkbox" id="compact-tags"> Compact tags</label>
+                    <label><input type="checkbox" id="compact-tags" data-option-target="general.compactTags"> Compact tags</label>
                 </div>
 
                 <div class="checkbox">
-                    <label><input type="checkbox" id="compact-glossaries"> Compact glossaries</label>
+                    <label><input type="checkbox" id="compact-glossaries" data-option-target="general.compactGlossaries"> Compact glossaries</label>
                 </div>
 
                 <div class="checkbox">
-                    <label><input type="checkbox" id="show-advanced-options"> Show advanced options</label>
+                    <label><input type="checkbox" id="show-advanced-options" data-option-target="general.showAdvanced"> Show advanced options</label>
                 </div>
 
                 <div class="checkbox options-advanced">
-                    <label><input type="checkbox" id="show-debug-info"> Show debug information</label>
+                    <label><input type="checkbox" id="show-debug-info" data-option-target="general.debugInfo"> Show debug information</label>
                 </div>
 
                 <div class="form-group">
                     <label for="result-output-mode">Result grouping</label>
-                    <select class="form-control" id="result-output-mode">
+                    <select class="form-control" id="result-output-mode" data-option-target="general.resultOutputMode">
                         <option value="group">Group results by term-reading pairs</option>
                         <option value="merge">Group results by main dictionary entry</option>
                         <option value="split">Split definitions to their own results</option>
@@ -165,7 +165,7 @@
 
                 <div class="form-group">
                     <label for="popup-display-mode">Popup display mode</label>
-                    <select class="form-control" id="popup-display-mode">
+                    <select class="form-control" id="popup-display-mode" data-option-target="general.popupDisplayMode">
                         <option value="default">Default</option>
                         <option value="full-width">Full width</option>
                     </select>
@@ -173,21 +173,21 @@
 
                 <div class="form-group options-advanced">
                     <label for="max-displayed-results">Maximum displayed results</label>
-                    <input type="number" min="1" id="max-displayed-results" class="form-control">
+                    <input type="number" min="1" id="max-displayed-results" data-option-target="general.maxResults" class="form-control">
                 </div>
 
                 <div class="form-group">
                     <div class="row">
                         <div class="col-xs-6">
                             <label for="popup-horizontal-text-position">Popup position for horizontal text</label>
-                            <select class="form-control" id="popup-horizontal-text-position">
+                            <select class="form-control" id="popup-horizontal-text-position" data-option-target="general.popupHorizontalTextPosition">
                                 <option value="below">Below text</option>
                                 <option value="above">Above text</option>
                             </select>
                         </div>
                         <div class="col-xs-6">
                             <label for="popup-vertical-text-position">Popup position for vertical text</label>
-                            <select class="form-control" id="popup-vertical-text-position">
+                            <select class="form-control" id="popup-vertical-text-position" data-option-target="general.popupVerticalTextPosition">
                                 <option value="default">Same as for horizontal text</option>
                                 <option value="before">Before text reading direction</option>
                                 <option value="after">After text reading direction</option>
@@ -202,11 +202,11 @@
                     <div class="row">
                         <div class="col-xs-6">
                             <label for="popup-width">Popup width <span class="label-light">(in pixels)</span></label>
-                            <input type="number" min="1" id="popup-width" class="form-control">
+                            <input type="number" min="1" id="popup-width" data-option-target="general.popupWidth" class="form-control">
                         </div>
                         <div class="col-xs-6">
                             <label for="popup-height">Popup height <span class="label-light">(in pixels)</span></label>
-                            <input type="number" min="1" id="popup-height" class="form-control">
+                            <input type="number" min="1" id="popup-height" data-option-target="general.popupHeight" class="form-control">
                         </div>
                     </div>
                 </div>
@@ -215,11 +215,11 @@
                     <div class="row">
                         <div class="col-xs-6">
                             <label for="popup-horizontal-offset">Horizontal popup offset <span class="label-light">(in pixels)</span></label>
-                            <input type="number" min="0" id="popup-horizontal-offset" class="form-control">
+                            <input type="number" min="0" id="popup-horizontal-offset" data-option-target="general.popupHorizontalOffset" class="form-control">
                         </div>
                         <div class="col-xs-6">
                             <label for="popup-vertical-offset">Vertical popup offset <span class="label-light">(in pixels)</span></label>
-                            <input type="number" min="0" id="popup-vertical-offset" class="form-control">
+                            <input type="number" min="0" id="popup-vertical-offset" data-option-target="general.popupVerticalOffset" class="form-control">
                         </div>
                     </div>
                 </div>
@@ -228,11 +228,11 @@
                     <div class="row">
                         <div class="col-xs-6">
                             <label for="popup-horizontal-offset2">Horizontal popup offset for vertical text <span class="label-light">(in pixels)</span></label>
-                            <input type="number" min="0" id="popup-horizontal-offset2" class="form-control">
+                            <input type="number" min="0" id="popup-horizontal-offset2" data-option-target="general.popupHorizontalOffset2" class="form-control">
                         </div>
                         <div class="col-xs-6">
                             <label for="popup-vertical-offset2">Vertical popup offset for vertical text <span class="label-light">(in pixels)</span></label>
-                            <input type="number" min="0" id="popup-vertical-offset2" class="form-control">
+                            <input type="number" min="0" id="popup-vertical-offset2" data-option-target="general.popupVerticalOffset2" class="form-control">
                         </div>
                     </div>
                 </div>
@@ -241,14 +241,14 @@
                     <div class="row">
                         <div class="col-xs-6">
                             <label for="popup-theme">Popup theme</label>
-                            <select class="form-control" id="popup-theme">
+                            <select class="form-control" id="popup-theme" data-option-target="general.popupTheme">
                                 <option value="default">Light</option>
                                 <option value="dark">Dark</option>
                             </select>
                         </div>
                         <div class="col-xs-6">
                             <label for="popup-outer-theme">Popup shadow theme</label>
-                            <select class="form-control" id="popup-outer-theme">
+                            <select class="form-control" id="popup-outer-theme" data-option-target="general.popupOuterTheme">
                                 <option value="auto">Auto-detect</option>
                                 <option value="default">Light</option>
                                 <option value="dark">Dark</option>
@@ -261,11 +261,11 @@
                     <div class="row">
                         <div class="col-xs-6">
                             <label for="custom-popup-css">Custom popup CSS</label>
-                            <div><textarea autocomplete="off" spellcheck="false" wrap="soft" id="custom-popup-css" class="form-control"></textarea></div>
+                            <div><textarea autocomplete="off" spellcheck="false" wrap="soft" id="custom-popup-css" data-option-target="general.customPopupCss" class="form-control"></textarea></div>
                         </div>
                         <div class="col-xs-6">
                             <label for="custom-popup-outer-css">Custom popup outer CSS</label>
-                            <div><textarea autocomplete="off" spellcheck="false" wrap="soft" id="custom-popup-outer-css" class="form-control" placeholder="iframe.yomichan-float { /*styles*/ }"></textarea></div>
+                            <div><textarea autocomplete="off" spellcheck="false" wrap="soft" id="custom-popup-outer-css" data-option-target="general.customPopupOuterCss" class="form-control" placeholder="iframe.yomichan-float { /*styles*/ }"></textarea></div>
                         </div>
                     </div>
                 </div>
@@ -287,22 +287,22 @@
                 <h3>Audio Options</h3>
 
                 <div class="checkbox">
-                    <label><input type="checkbox" id="audio-playback-enabled"> Enable audio playback in search results</label>
+                    <label><input type="checkbox" id="audio-playback-enabled" data-option-target="audio.enabled"> Enable audio playback in search results</label>
                 </div>
 
                 <div class="checkbox">
-                    <label><input type="checkbox" id="auto-play-audio"> Play audio automatically</label>
+                    <label><input type="checkbox" id="auto-play-audio" data-option-target="audio.autoPlay"> Play audio automatically</label>
                 </div>
 
                 <div class="form-group">
                     <label for="audio-playback-volume">Audio playback volume <span class="label-light">(percent)</span></label>
-                    <input type="number" min="0" max="100" id="audio-playback-volume" class="form-control">
+                    <input type="number" min="0" max="100" id="audio-playback-volume" data-option-target="audio.volume" class="form-control">
                 </div>
 
                 <div class="form-group" id="text-to-speech-voice-container" hidden>
                     <label for="text-to-speech-voice">Text-to-speech voice</label>
                     <div class="input-group">
-                        <select class="form-control" id="text-to-speech-voice"></select>
+                        <select class="form-control" id="text-to-speech-voice" data-option-target="audio.textToSpeechVoice"></select>
                         <div class="input-group-btn">
                             <button class="btn btn-default" id="text-to-speech-voice-test" title="Test voice" data-speech-text="よみちゃん"><span class="glyphicon glyphicon-volume-up"></span></button>
                         </div>
@@ -311,7 +311,7 @@
 
                 <div class="form-group options-advanced">
                     <label for="audio-custom-source">Custom audio source <span class="label-light">(URL)</span></label>
-                    <input type="text" id="audio-custom-source" class="form-control" placeholder="Example: http://localhost/audio.mp3?expression={expression}&reading={reading}">
+                    <input type="text" id="audio-custom-source" data-option-target="audio.customSourceUrl" class="form-control" placeholder="Example: http://localhost/audio.mp3?expression={expression}&reading={reading}">
                 </div>
 
                 <div class="form-group ignore-form-changes">
@@ -340,42 +340,42 @@
                 <h3>Scanning Options</h3>
 
                 <div class="checkbox">
-                    <label><input type="checkbox" id="middle-mouse-button-scan"> Middle mouse button scans</label>
+                    <label><input type="checkbox" id="middle-mouse-button-scan" data-option-target="scanning.middleMouse"> Middle mouse button scans</label>
                 </div>
 
                 <div class="checkbox">
-                    <label><input type="checkbox" id="touch-input-enabled"> Touch input enabled</label>
+                    <label><input type="checkbox" id="touch-input-enabled" data-option-target="scanning.touchInputEnabled"> Touch input enabled</label>
                 </div>
 
                 <div class="checkbox">
-                    <label><input type="checkbox" id="select-matched-text"> Select matched text</label>
+                    <label><input type="checkbox" id="select-matched-text" data-option-target="scanning.selectText"> Select matched text</label>
                 </div>
 
                 <div class="checkbox">
-                    <label><input type="checkbox" id="search-alphanumeric"> Search alphanumeric text</label>
+                    <label><input type="checkbox" id="search-alphanumeric" data-option-target="scanning.alphanumeric"> Search alphanumeric text</label>
                 </div>
 
                 <div class="checkbox">
-                    <label><input type="checkbox" id="auto-hide-results"> Automatically hide results</label>
+                    <label><input type="checkbox" id="auto-hide-results" data-option-target="scanning.autoHideResults"> Automatically hide results</label>
                 </div>
 
                 <div class="checkbox options-advanced">
-                    <label><input type="checkbox" id="deep-dom-scan"> Deep DOM scan</label>
+                    <label><input type="checkbox" id="deep-dom-scan" data-option-target="scanning.deepDomScan"> Deep DOM scan</label>
                 </div>
 
                 <div class="form-group options-advanced">
                     <label for="scan-delay">Scan delay <span class="label-light">(in milliseconds)</span></label>
-                    <input type="number" min="0" id="scan-delay" class="form-control">
+                    <input type="number" min="0" id="scan-delay" data-option-target="scanning.delay" class="form-control">
                 </div>
 
                 <div class="form-group options-advanced">
                     <label for="scan-length">Scan length <span class="label-light">(in characters)</span></label>
-                    <input type="number" min="1" step="1" id="scan-length" class="form-control">
+                    <input type="number" min="1" step="1" id="scan-length" data-option-target="scanning.length" class="form-control">
                 </div>
 
                 <div class="form-group">
                     <label for="scan-modifier-key">Scan modifier key</label>
-                    <select class="form-control" id="scan-modifier-key">
+                    <select class="form-control" id="scan-modifier-key" data-option-target="scanning.modifier">
                         <option value="none">None</option>
                         <option value="alt">Alt</option>
                         <option value="ctrl">Ctrl</option>
@@ -393,20 +393,20 @@
                 </p>
 
                 <div class="checkbox">
-                    <label><input type="checkbox" id="enable-search-within-first-popup"> Enable search when clicking glossary entries</label>
+                    <label><input type="checkbox" id="enable-search-within-first-popup" data-option-target="scanning.enablePopupSearch"> Enable search when clicking glossary entries</label>
                 </div>
 
                 <div class="checkbox">
-                    <label><input type="checkbox" id="enable-scanning-on-search-page"> Enable scanning on search page</label>
+                    <label><input type="checkbox" id="enable-scanning-on-search-page" data-option-target="scanning.enableOnSearchPage"> Enable scanning on search page</label>
                 </div>
 
                 <div class="checkbox">
-                    <label><input type="checkbox" id="enable-scanning-of-popup-expressions"> Enable scanning of expressions in search results</label>
+                    <label><input type="checkbox" id="enable-scanning-of-popup-expressions" data-option-target="scanning.enableOnPopupExpressions"> Enable scanning of expressions in search results</label>
                 </div>
 
                 <div class="form-group">
                     <label for="popup-nesting-max-depth">Maximum number of additional popups</label>
-                    <input type="number" min="0" step="1" id="popup-nesting-max-depth" class="form-control">
+                    <input type="number" min="0" step="1" id="popup-nesting-max-depth" data-option-target="scanning.popupNestingMaxDepth" class="form-control">
                 </div>
             </div>
 
@@ -431,16 +431,16 @@
                 </p>
 
                 <div class="checkbox">
-                    <label><input type="checkbox" id="parsing-scan-enable"> Enable text parsing using installed dictionaries</label>
+                    <label><input type="checkbox" id="parsing-scan-enable" data-option-target="parsing.enableScanningParser"> Enable text parsing using installed dictionaries</label>
                 </div>
 
                 <div class="checkbox">
-                    <label><input type="checkbox" id="parsing-mecab-enable"> Enable text parsing using MeCab</label>
+                    <label><input type="checkbox" id="parsing-mecab-enable" data-option-target="parsing.enableMecabParser"> Enable text parsing using MeCab</label>
                 </div>
 
                 <div class="form-group">
                     <label for="parsing-reading-mode">Reading mode</label>
-                    <select class="form-control" id="parsing-reading-mode">
+                    <select class="form-control" id="parsing-reading-mode" data-option-target="parsing.readingMode">
                         <option value="hiragana">ひらがな</option>
                         <option value="katakana">カタカナ</option>
                         <option value="romaji">Romaji</option>
@@ -638,7 +638,7 @@
                 </p>
 
                 <div class="checkbox">
-                    <label><input type="checkbox" id="anki-enable"> Enable Anki integration</label>
+                    <label><input type="checkbox" id="anki-enable" data-option-target="anki.enable"> Enable Anki integration</label>
                 </div>
 
                 <div id="anki-general">
@@ -654,22 +654,22 @@
 
                     <div class="form-group">
                         <label for="card-tags">Card tags <span class="label-light">(comma or space separated)</span></label>
-                        <input type="text" id="card-tags" class="form-control">
+                        <input type="text" id="card-tags" data-option-target="anki.tags" data-option-transform="stringArray" data-option-transform-data="{&quot;regex&quot;:&quot;[,; ]+&quot;,&quot;joiner&quot;:&quot; &quot;}" class="form-control">
                     </div>
 
                     <div class="form-group options-advanced">
                         <label for="sentence-detection-extent">Sentence detection extent <span class="label-light">(in characters)</span></label>
-                        <input type="number" min="1" step="1" id="sentence-detection-extent" class="form-control">
+                        <input type="number" min="1" step="1" id="sentence-detection-extent" data-option-target="anki.sentenceExt" class="form-control">
                     </div>
 
                     <div class="form-group options-advanced">
                         <label for="interface-server">Interface server</label>
-                        <input type="text" id="interface-server" class="form-control">
+                        <input type="text" id="interface-server" data-option-target="anki.server" class="form-control">
                     </div>
 
                     <div class="form-group options-advanced">
                         <label for="screenshot-format">Screenshot format</label>
-                        <select class="form-control" id="screenshot-format">
+                        <select class="form-control" id="screenshot-format" data-option-target="anki.screenshot.format">
                             <option value="png">PNG</option>
                             <option value="jpeg">JPEG</option>
                         </select>
@@ -677,7 +677,7 @@
 
                     <div class="form-group options-advanced">
                         <label for="screenshot-quality">Screenshot quality <span class="label-light">(JPEG only)</span></label>
-                        <input type="number" min="0" max="100" step="1" id="screenshot-quality" class="form-control">
+                        <input type="number" min="0" max="100" step="1" id="screenshot-quality" data-option-target="anki.screenshot.quality" class="form-control">
                     </div>
 
                     <div id="anki-format">
@@ -698,12 +698,12 @@
                                 <div class="row">
                                     <div class="form-group col-xs-6">
                                         <label for="anki-terms-deck">Deck</label>
-                                        <select class="form-control anki-deck" id="anki-terms-deck" data-anki-card-type="terms"></select>
+                                        <select class="form-control anki-deck" id="anki-terms-deck" data-option-target="anki.terms.deck" data-anki-card-type="terms"></select>
                                     </div>
 
                                     <div class="form-group col-xs-6">
                                         <label for="anki-terms-model">Model</label>
-                                        <select class="form-control anki-model" id="anki-terms-model" data-anki-card-type="terms"></select>
+                                        <select class="form-control anki-model" id="anki-terms-model" data-option-target="anki.terms.model" data-anki-card-type="terms"></select>
                                     </div>
                                 </div>
 
@@ -717,12 +717,12 @@
                                 <div class="row">
                                     <div class="form-group col-xs-6">
                                         <label for="anki-kanji-deck">Deck</label>
-                                        <select class="form-control anki-deck" id="anki-kanji-deck" data-anki-card-type="kanji"></select>
+                                        <select class="form-control anki-deck" id="anki-kanji-deck" data-option-target="anki.kanji.deck" data-anki-card-type="kanji"></select>
                                     </div>
 
                                     <div class="form-group col-xs-6">
                                         <label for="anki-kanji-model">Model</label>
-                                        <select class="form-control anki-model" id="anki-kanji-model" data-anki-card-type="kanji"></select>
+                                        <select class="form-control anki-model" id="anki-kanji-model" data-option-target="anki.kanji.model" data-anki-card-type="kanji"></select>
                                     </div>
                                 </div>
 
@@ -739,7 +739,7 @@
                                 engine. Advanced users can modify these templates for ultimate control of what information gets included in
                                 their Anki cards. If you encounter problems with your changes, you can always reset to the default template settings.
                             </p>
-                            <textarea autocomplete="off" spellcheck="false" wrap="soft" class="form-control" rows="10" id="field-templates"></textarea>
+                            <textarea autocomplete="off" spellcheck="false" wrap="soft" class="form-control" rows="10" id="field-templates" data-option-target="anki.fieldTemplates"></textarea>
                             <div>
                                 <button class="btn btn-danger" id="field-templates-reset">Reset Templates</button>
                             </div>
