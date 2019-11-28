@@ -23,6 +23,8 @@ class Backend {
         this.anki = new AnkiNull();
         this.mecab = new Mecab();
         this.options = null;
+        this.optionsRaw = null;
+        this.optionsSchema = null;
         this.optionsContext = {
             depth: 0,
             url: window.location.href
@@ -38,7 +40,12 @@ class Backend {
 
     async prepare() {
         await this.translator.prepare();
-        this.options = await optionsLoad();
+
+        this.optionsSchema = await requestJson(chrome.runtime.getURL('/bg/data/options-schema.json'), 'GET');
+        this.optionsRaw = await optionsLoad();
+        this.optionsRaw = JsonSchema.getValidValueOrDefault(this.optionsSchema, this.optionsRaw);
+        this.options = JsonSchema.createProxy(this.optionsRaw, this.optionsSchema);
+
         this.onOptionsUpdated('background');
 
         if (chrome.commands !== null && typeof chrome.commands === 'object') {
