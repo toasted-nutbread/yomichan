@@ -84,13 +84,14 @@ async function _ankiDeckAndModelPopulate(options) {
     }
 }
 
-function _ankiCreateFieldTemplate(name, value, markers) {
+function _ankiCreateFieldTemplate(name, value, pathString, markers) {
     const template = document.querySelector('#anki-field-template').content;
     const content = document.importNode(template, true).firstChild;
 
     content.querySelector('.anki-field-name').textContent = name;
 
     const field = content.querySelector('.anki-field-value');
+    field.dataset.optionTarget = pathString;
     field.dataset.field = name;
     field.value = value;
 
@@ -106,18 +107,18 @@ async function _ankiFieldsPopulate(tabId, options) {
 
     const fragment = document.createDocumentFragment();
     const fields = options.anki[tabId].fields;
+    const pathArray = ['anki', tabId, 'fields', null];
     for (const name of Object.keys(fields)) {
+        pathArray[pathArray.length - 1] = name;
+        const pathString = getPropertyPathString(pathArray);
         const value = fields[name];
-        const html = _ankiCreateFieldTemplate(name, value, markers);
+        const html = _ankiCreateFieldTemplate(name, value, pathString, markers);
         fragment.appendChild(html);
     }
 
     container.textContent = '';
     container.appendChild(fragment);
 
-    for (const node of container.querySelectorAll('.anki-field-value')) {
-        node.addEventListener('change', (e) => onFormOptionsChanged(e), false);
-    }
     for (const node of container.querySelectorAll('.marker-link')) {
         node.addEventListener('click', (e) => _onAnkiMarkerClicked(e), false);
     }
@@ -161,22 +162,21 @@ async function _onAnkiModelChanged(e) {
     await _ankiFieldsPopulate(tabId, options);
 }
 
+async function _onAnkiOptionsChanged(options) {
+    if (!options.anki.enable) {
+        _ankiDataPopulated = false;
+        return;
+    }
+
+    if (_ankiDataPopulated) { return; }
+
+    await _ankiDeckAndModelPopulate(options);
+    _ankiDataPopulated = true;
+    await Promise.all([_ankiFieldsPopulate('terms', options), _ankiFieldsPopulate('kanji', options)]);
+}
+
 
 // Public
-
-function ankiErrorShown() {
-    const node = document.querySelector('#anki-error');
-    return node && !node.hidden;
-}
-
-function ankiFieldsToDict(elements) {
-    const result = {};
-    for (const element of elements) {
-        result[element.dataset.field] = element.value;
-    }
-    return result;
-}
-
 
 function ankiGetFieldMarkersHtml(markers) {
     const template = document.querySelector('#anki-field-marker-template').content;
@@ -231,17 +231,9 @@ function ankiInitialize() {
     for (const node of document.querySelectorAll('#anki-terms-model,#anki-kanji-model')) {
         node.addEventListener('change', (e) => _onAnkiModelChanged(e), false);
     }
-}
 
-async function onAnkiOptionsChanged(options) {
-    if (!options.anki.enable) {
-        _ankiDataPopulated = false;
-        return;
+    settings.on('optionsUpdated', ({options}) => _onAnkiOptionsChanged(options));
+    if (settings.hasOptions) {
+        _onAnkiOptionsChanged(settings.options);
     }
-
-    if (_ankiDataPopulated) { return; }
-
-    await _ankiDeckAndModelPopulate(options);
-    _ankiDataPopulated = true;
-    await Promise.all([_ankiFieldsPopulate('terms', options), _ankiFieldsPopulate('kanji', options)]);
 }

@@ -66,7 +66,7 @@ class SettingsDictionaryListUI {
         const removeKeys = Object.keys(this.optionsDictionaries).filter((key) => titles.indexOf(key) < 0);
         if (removeKeys.length > 0) {
             for (const key of toIterable(removeKeys)) {
-                delete this.optionsDictionaries[key];
+                delete this.optionsDictionaries[key]; // TODO
             }
             changed = true;
         }
@@ -85,7 +85,7 @@ class SettingsDictionaryListUI {
             optionsDictionary = optionsDictionaries[title];
         } else {
             optionsDictionary = SettingsDictionaryListUI.createDictionaryOptions();
-            optionsDictionaries[title] = optionsDictionary;
+            optionsDictionaries[title] = optionsDictionary; // TODO
             changed = true;
         }
 
@@ -141,8 +141,10 @@ class SettingsDictionaryListUI {
     updateDictionaryOrder() {
         const sortInfo = this.dictionaryEntries.map((e, i) => [e, i]);
         sortInfo.sort((a, b) => {
-            const i = b[0].optionsDictionary.priority - a[0].optionsDictionary.priority;
-            return (i !== 0 ? i : a[1] - b[1]);
+            return a[1] - b[1];
+            // TODO
+            //const i = b[0].optionsDictionary.priority - a[0].optionsDictionary.priority;
+            //return (i !== 0 ? i : a[1] - b[1]);
         });
 
         for (const [e] of sortInfo) {
@@ -169,10 +171,9 @@ class SettingsDictionaryListUI {
 }
 
 class SettingsDictionaryEntryUI {
-    constructor(parent, dictionaryInfo, content, optionsDictionary) {
+    constructor(parent, dictionaryInfo, content) {
         this.parent = parent;
         this.dictionaryInfo = dictionaryInfo;
-        this.optionsDictionary = optionsDictionary;
         this.counts = null;
         this.eventListeners = [];
         this.isDeleting = false;
@@ -183,6 +184,10 @@ class SettingsDictionaryEntryUI {
         this.priorityInput = this.content.querySelector('.dict-priority');
         this.deleteButton = this.content.querySelector('.dict-delete-button');
 
+        this.enabledCheckbox.dataset.optionTarget = getPropertyPathString(['dictionaries', dictionaryInfo.title, 'enabled']);
+        this.allowSecondarySearchesCheckbox.dataset.optionTarget = getPropertyPathString(['dictionaries', dictionaryInfo.title, 'allowSecondarySearches']);
+        this.priorityInput.dataset.optionTarget = getPropertyPathString(['dictionaries', dictionaryInfo.title, 'priority']);
+
         if (this.dictionaryInfo.version < 3) {
             this.content.querySelector('.dict-outdated').hidden = false;
         }
@@ -190,10 +195,6 @@ class SettingsDictionaryEntryUI {
         this.content.querySelector('.dict-title').textContent = this.dictionaryInfo.title;
         this.content.querySelector('.dict-revision').textContent = `rev.${this.dictionaryInfo.revision}`;
 
-        this.applyValues();
-
-        this.addEventListener(this.enabledCheckbox, 'change', (e) => this.onEnabledChanged(e), false);
-        this.addEventListener(this.allowSecondarySearchesCheckbox, 'change', (e) => this.onAllowSecondarySearchesChanged(e), false);
         this.addEventListener(this.priorityInput, 'change', (e) => this.onPriorityChanged(e), false);
         this.addEventListener(this.deleteButton, 'click', (e) => this.onDeleteButtonClicked(e), false);
     }
@@ -235,12 +236,6 @@ class SettingsDictionaryEntryUI {
         this.eventListeners = [];
     }
 
-    applyValues() {
-        this.enabledCheckbox.checked = this.optionsDictionary.enabled;
-        this.allowSecondarySearchesCheckbox.checked = this.optionsDictionary.allowSecondarySearches;
-        this.priorityInput.value = `${this.optionsDictionary.priority}`;
-    }
-
     async deleteDictionary() {
         if (this.isDeleting) {
             return;
@@ -277,27 +272,8 @@ class SettingsDictionaryEntryUI {
         }
     }
 
-    onEnabledChanged(e) {
-        this.optionsDictionary.enabled = !!e.target.checked;
-        this.save();
-    }
-
-    onAllowSecondarySearchesChanged(e) {
-        this.optionsDictionary.allowSecondarySearches = !!e.target.checked;
-        this.save();
-    }
-
-    onPriorityChanged(e) {
-        let value = Number.parseFloat(e.target.value);
-        if (Number.isNaN(value)) {
-            value = this.optionsDictionary.priority;
-        } else {
-            this.optionsDictionary.priority = value;
-            this.save();
-        }
-
-        e.target.value = `${value}`;
-
+    onPriorityChanged() {
+        // TODO
         this.parent.updateDictionaryOrder();
     }
 
