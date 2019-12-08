@@ -147,6 +147,8 @@ class TextSourceRange {
                     if (seekTextNode(state)) {
                         break;
                     }
+                } else {
+                    state.offset = forward ? 0 : node.nodeValue.length;
                 }
                 resetOffset = true;
             } else if (nodeType === ELEMENT_NODE) {
