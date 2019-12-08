@@ -118,12 +118,12 @@ class TextSourceRange {
         const shouldSeekTextNode = TextSourceRange._shouldSeekTextNode;
         const addLineBreak = TextSourceRange._addLineBreak;
 
-        let resetOffset = false;
+        let first = true;
 
         const ruby = TextSourceRange._getRubyElement(node);
         if (ruby !== null) {
             node = ruby;
-            resetOffset = true;
+            first = false;
         }
 
         let lineBreak = false;
@@ -134,12 +134,12 @@ class TextSourceRange {
 
             if (nodeType === TEXT_NODE) {
                 state.node = node;
-                if (!resetOffset || shouldSeekTextNode(node)) {
-                    if (resetOffset) {
+                if (first || shouldSeekTextNode(node)) {
+                    if (!first) {
                         state.offset = forward ? 0 : node.nodeValue.length;
                     }
                     if (lineBreak) {
-                        if (resetOffset && addLineBreak(state, forward)) {
+                        if (addLineBreak(state, forward)) {
                             break;
                         }
                         lineBreak = false;
@@ -150,7 +150,6 @@ class TextSourceRange {
                 } else {
                     state.offset = forward ? 0 : node.nodeValue.length;
                 }
-                resetOffset = true;
             } else if (nodeType === ELEMENT_NODE) {
                 [visitChildren, lineBreak2] = getElementSeekInfo(node);
                 if (lineBreak2) { lineBreak = true; }
@@ -168,6 +167,8 @@ class TextSourceRange {
                     }
                 }
             }
+
+            first = false;
         }
 
         return state;
