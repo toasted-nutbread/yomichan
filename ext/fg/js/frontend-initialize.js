@@ -16,20 +16,40 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/*global PopupProxyHost, PopupProxy, Frontend*/
+/*global apiOptionsGet, apiFrameInformationGet, PopupProxyHost, PopupProxy, Frontend*/
 
 async function main() {
     const data = window.frontendInitializationData || {};
     const {id, depth=0, parentFrameId, ignoreNodes, url, proxy=false} = data;
 
+    let inIframe = false;
+    if (!proxy) {
+        const {frameId} = await apiFrameInformationGet();
+        if (typeof frameId === 'number' && frameId !== 0) {
+            const optionsContext = {
+                depth,
+                url: window.location.href
+            };
+            const options = await apiOptionsGet(optionsContext);
+            if (options.general.showIframePopupInRootFrame) {
+                inIframe = true;
+            }
+        }
+    }
+
+    const rootId = 'root';
     let popup;
-    if (proxy) {
+    if (inIframe) {
+        // TODO : Due to timing issues, the root frame may not be loaded before this proxy
+        // is used. There needs to be some operation here which awaits for the frame to be loaded.
+        popup = new PopupProxy(rootId, 0, null, 0, url);
+    } else if (proxy) {
         popup = new PopupProxy(null, depth + 1, id, parentFrameId, url);
     } else {
         const popupHost = new PopupProxyHost();
         await popupHost.prepare();
 
-        popup = popupHost.getOrCreatePopup();
+        popup = popupHost.getOrCreatePopup(rootId);
     }
 
     const frontend = new Frontend(popup, ignoreNodes);

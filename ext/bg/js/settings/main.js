@@ -58,6 +58,7 @@ async function formRead(options) {
     options.general.resultOutputMode = $('#result-output-mode').val();
     options.general.debugInfo = $('#show-debug-info').prop('checked');
     options.general.showAdvanced = $('#show-advanced-options').prop('checked');
+    options.general.showIframePopupInRootFrame = $('#show-iframe-popup-in-root-frame').prop('checked');
     options.general.maxResults = parseInt($('#max-displayed-results').val(), 10);
     options.general.popupDisplayMode = $('#popup-display-mode').val();
     options.general.popupHorizontalTextPosition = $('#popup-horizontal-text-position').val();
@@ -135,6 +136,7 @@ async function formWrite(options) {
     $('#result-output-mode').val(options.general.resultOutputMode);
     $('#show-debug-info').prop('checked', options.general.debugInfo);
     $('#show-advanced-options').prop('checked', options.general.showAdvanced);
+    $('#show-iframe-popup-in-root-frame').prop('checked', options.general.showIframePopupInRootFrame);
     $('#max-displayed-results').val(options.general.maxResults);
     $('#popup-display-mode').val(options.general.popupDisplayMode);
     $('#popup-horizontal-text-position').val(options.general.popupHorizontalTextPosition);

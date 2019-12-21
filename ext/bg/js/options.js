@@ -293,7 +293,8 @@ function profileOptionsCreateDefaults() {
             customPopupCss: '',
             customPopupOuterCss: '',
             enableWanakana: true,
-            enableClipboardMonitor: false
+            enableClipboardMonitor: false,
+            showIframePopupInRootFrame: false
         },
 
         audio: {
