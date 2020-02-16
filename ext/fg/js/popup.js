@@ -207,57 +207,58 @@ class Popup {
         }
 
         return new Promise((resolve, reject) => {
-            this._injectPromiseReject = reject;
-
-            const iframe = this._container;
             const parentFrameId = (typeof this._frameId === 'number' ? this._frameId : null);
+            const iframeInjector = new IframeInjector();
 
-            const onNextLoad = () => {
-                iframe.removeEventListener('load', onNextLoad, false);
-
-                const uniqueId = yomichan.generateId(32);
-                Popup._listenForDisplayPrepareCompleted(uniqueId, () => {
-                    this._injectPromiseReject = null;
-                    resolve();
-                });
-
-                this._invokeApi('prepare', {
-                    options: this._options,
-                    popupInfo: {
-                        id: this._id,
-                        depth: this._depth,
-                        parentFrameId
-                    },
-                    url: this.url,
-                    childrenSupported: this._childrenSupported,
-                    scale: this._contentScale,
-                    uniqueId
-                });
-
-                this._observeContainerReload(true);
+            this._injectPromiseReject = (e) => {
+                console.trace('reject');
+                iframeInjector.abort();
+                reject(e);
             };
 
-            try {
-                this._observeContainerReload(false);
-                iframe.addEventListener('load', onNextLoad, false);
+            // Note: setting up the iframe this way will cause the iframe's content to be reverted to
+            // about:blank whenever a hierarchy change for the iframe DOM node occurs. This includes
+            // changes such as addition, removal, or movement of the iframe node or any of its ancestors.
+            // The load event will be re-fired when this occurs.
+            const url = chrome.runtime.getURL('/fg/float.html');
+            iframeInjector.inject(this._container, url)
+                .then(
+                    () => {
+                        const uniqueId = yomichan.generateId(32);
+                        Popup._listenForDisplayPrepareCompleted(uniqueId, () => {
+                            console.log('prepared');
+                            this._injectPromiseReject = null;
+                            resolve();
+                        });
 
-                this._observeFullscreen(true);
-                this._onFullscreenChanged();
+                        this._invokeApi('prepare', {
+                            options: this._options,
+                            popupInfo: {
+                                id: this._id,
+                                depth: this._depth,
+                                parentFrameId
+                            },
+                            url: this.url,
+                            childrenSupported: this._childrenSupported,
+                            scale: this._contentScale,
+                            uniqueId
+                        });
+                    },
+                    (e) => {
+                        this._injectPromiseReject = null;
+                        reject(e);
+                    }
+                )
+                .finally(() => {
+                    this._observeContainerReload(true);
+                });
 
-                if (!this._stylesInjected) {
-                    this._injectStyles();
-                    this._stylesInjected = true;
-                }
+            this._observeFullscreen(true);
+            this._onFullscreenChanged(); // This call adds the iframe to the document
 
-                // Note: changing the URL this way will cause the iframe's content to be reverted to about:blank
-                // whenever a hierarchy change for the iframe DOM node occurs. This includes changes such as
-                // addition, removal, or movement of the iframe node or any of its ancestors.
-                // The load event will be fired when this occurs.
-                iframe.contentDocument.location.href = chrome.runtime.getURL('/fg/float.html');
-            } catch (e) {
-                this._injectPromiseReject = null;
-                this._observeContainerReload(true);
-                reject(e);
+            if (!this._stylesInjected) {
+                this._injectStyles();
+                this._stylesInjected = true;
             }
         });
     }
@@ -685,3 +686,83 @@ class Popup {
 }
 
 Popup._injectedStylesheets = new Map();
+
+class IframeInjector {
+    constructor() {
+        this._promise = null;
+        this._promiseReject = null;
+        this._iframe = null;
+    }
+
+    inject(iframe, url) {
+        if (this._iframe !== null) {
+            return Promise.reject(new Error('Already started'));
+        }
+
+        this._iframe = iframe;
+        this._promise = new Promise((resolve, reject) => {
+            this._promiseReject = reject;
+
+            // Wait for about:blank to load
+            const onLoad1 = () => {
+                iframe.removeEventListener('load', onLoad1, false);
+                if (this._completed()) { return; }
+
+                const contentDocument = iframe.contentDocument;
+                if (contentDocument === null) {
+                    this._reject(new Error('Failed to inject iframe'));
+                    return;
+                }
+
+                iframe.addEventListener('load', onLoad2, false);
+                contentDocument.location.href = url;
+            };
+
+            // Wait for custom URL to load
+            const onLoad2 = () => {
+                iframe.removeEventListener('load', onLoad2, false);
+                if (this._completed()) { return; }
+
+                const contentDocument = iframe.contentDocument;
+                if (contentDocument !== null) {
+                    this._reject(new Error('Failed to assign iframe content'));
+                    return;
+                }
+
+                // Complete
+                this._promiseReject = null;
+                resolve();
+            };
+
+            this._clearIframe(iframe);
+
+            iframe.addEventListener('load', onLoad1, false);
+        });
+        return this._promise;
+    }
+
+    abort() {
+        if (this._promiseReject !== null) {
+            this._clearIframe(this._iframe);
+            this._reject(new Error('Aborted'));
+        }
+    }
+
+    _reject(error) {
+        this._promiseReject(error);
+        this._promiseReject = null;
+    }
+
+    _completed() {
+        return this._promiseReject === null;
+    }
+
+    _clearIframe(iframe) {
+        if (iframe.parentNode !== null) {
+            iframe.parentNode.removeChild(iframe);
+        }
+
+        iframe.removeAttribute('src');
+        iframe.removeAttribute('srcdoc');
+    }
+}
