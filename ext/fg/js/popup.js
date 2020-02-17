@@ -27,7 +27,6 @@ class Popup {
         this._parent = null;
         this._child = null;
         this._childrenSupported = true;
-        this._injectPromise = null;
         this._visible = false;
         this._visibleOverride = null;
         this._options = null;
@@ -44,6 +43,10 @@ class Popup {
         this._container.style.height = '0px';
 
         this._fullscreenEventListeners = new EventListenerCollection();
+        this._injectPromise = null;
+        this._injectPromiseReject = null;
+        this._stylesInjected = false;
+        this._onContainerReload = null;
 
         this._updateVisibility();
     }
@@ -184,12 +187,12 @@ class Popup {
 
     _inject() {
         if (this._injectPromise === null) {
-            this._injectPromise = this._createInjectPromise();
+            this._injectPromise = this._injectInternal();
         }
         return this._injectPromise;
     }
 
-    async _createInjectPromise() {
+    async _injectInternal() {
         try {
             const {frameId} = await this._frameIdPromise;
             if (typeof frameId === 'number') {
@@ -203,12 +206,20 @@ class Popup {
             this._messageToken = await apiGetMessageToken();
         }
 
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
+            this._injectPromiseReject = reject;
+
+            const iframe = this._container;
             const parentFrameId = (typeof this._frameId === 'number' ? this._frameId : null);
-            this._container.setAttribute('src', chrome.runtime.getURL('/fg/float.html'));
-            this._container.addEventListener('load', () => {
+
+            const onNextLoad = () => {
+                iframe.removeEventListener('load', onNextLoad, false);
+
                 const uniqueId = yomichan.generateId(32);
-                Popup._listenForDisplayPrepareCompleted(uniqueId, resolve);
+                Popup._listenForDisplayPrepareCompleted(uniqueId, () => {
+                    this._injectPromiseReject = null;
+                    resolve();
+                });
 
                 this._invokeApi('prepare', {
                     options: this._options,
@@ -222,11 +233,57 @@ class Popup {
                     scale: this._contentScale,
                     uniqueId
                 });
-            });
-            this._observeFullscreen(true);
-            this._onFullscreenChanged();
-            this._injectStyles();
+
+                this._observeContainerReload(true);
+            };
+
+            try {
+                this._observeContainerReload(false);
+                iframe.addEventListener('load', onNextLoad, false);
+
+                this._observeFullscreen(true);
+                this._onFullscreenChanged();
+
+                if (!this._stylesInjected) {
+                    this._injectStyles();
+                    this._stylesInjected = true;
+                }
+
+                // Note: changing the URL this way will cause the iframe's content to be reverted to about:blank
+                // whenever a hierarchy change for the iframe DOM node occurs. This includes changes such as
+                // addition, removal, or movement of the iframe node or any of its ancestors.
+                // The load event will be fired when this occurs.
+                iframe.contentDocument.location.href = chrome.runtime.getURL('/fg/float.html');
+            } catch (e) {
+                this._injectPromiseReject = null;
+                this._observeContainerReload(true);
+                reject(e);
+            }
         });
+    }
+
+    _uninject() {
+        if (this._injectPromiseReject !== null) {
+            this._injectPromiseReject(new Error('Frame has been reloaded'));
+            this._injectPromiseReject = null;
+        }
+        this._injectPromise = null;
+        this._observeFullscreen(false);
+        if (this._container.parentNode !== null) {
+            this._container.parentNode.removeChild(this._container);
+        }
+    }
+
+    _observeContainerReload(observe) {
+        if (observe) {
+            if (this._onContainerReload !== null) { return; }
+            this._onContainerReload = () => this._uninject();
+            this._container.addEventListener('load', this._onContainerReload, false);
+        } else {
+            if (this._onContainerReload === null) { return; }
+            this._container.removeEventListener('load', this._onContainerReload, false);
+            this._onContainerReload = null;
+        }
     }
 
     async _injectStyles() {
