@@ -15,6 +15,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+/*global isStyleSelectable isColorTransparent*/
+
 // \u200c (Zero-width non-joiner) appears on Google Docs from Chrome 76 onwards
 const REGEX_IGNORE_CHARACTER = /\u200c/;
 const REGEX_DISPLAY = /^\s*([\w-]+)/;
