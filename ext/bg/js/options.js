@@ -122,7 +122,10 @@ function profileOptionsCreateDefaults() {
             customPopupCss: '',
             customPopupOuterCss: '',
             enableWanakana: true,
-            enableClipboardMonitor: false
+            enableClipboardMonitor: false,
+            showPitchAccentDownstepNotation: true,
+            showPitchAccentPositionNotation: true,
+            showPitchAccentGraph: false
         },
 
         audio: {
