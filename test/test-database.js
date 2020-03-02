@@ -123,6 +123,17 @@ function countKanjiWithCharacter(kanji, character) {
     return kanji.reduce((i, v) => (i + (v.character === character ? 1 : 0)), 0);
 }
 
+function deepStrictEqualOneOf(actual, expectedArray) {
+    for (const expected of expectedArray) {
+        try {
+            assert.deepStrictEqual(actual, expected);
+            return;
+        } catch (e) {
+            // NOP
+        }
+    }
+    throw new Error('Actual value did not match any of expected values');
+}
 
 function clearDatabase(timeout) {
     return new Promise((resolve, reject) => {
@@ -226,8 +237,8 @@ async function testDatabase1() {
             true
         );
         assert.deepStrictEqual(counts, {
-            counts: [{kanji: 2, kanjiMeta: 2, terms: 32, termMeta: 6, tagMeta: 14}],
-            total: {kanji: 2, kanjiMeta: 2, terms: 32, termMeta: 6, tagMeta: 14}
+            counts: [{kanji: 2, kanjiMeta: 2, terms: 32, termMeta: 12, tagMeta: 14}],
+            total: {kanji: 2, kanjiMeta: 2, terms: 32, termMeta: 12, tagMeta: 14}
         });
 
         // Test find* functions
@@ -617,10 +628,17 @@ async function testFindTermMetaBulk1(database, titles) {
                 }
             ],
             expectedResults: {
-                total: 1,
+                total: 3,
                 modes: [
-                    ['freq', 1]
-                ]
+                    ['freq', 3]
+                ],
+                values: {
+                    freq: [
+                        1,
+                        {'frequency': 1},
+                        {'reading': 'だ', 'frequency': 1}
+                    ]
+                }
             }
         },
         {
@@ -630,10 +648,17 @@ async function testFindTermMetaBulk1(database, titles) {
                 }
             ],
             expectedResults: {
-                total: 1,
+                total: 3,
                 modes: [
-                    ['freq', 1]
-                ]
+                    ['freq', 3]
+                ],
+                values: {
+                    freq: [
+                        2,
+                        {'frequency': 2},
+                        {'reading': 'うつ', 'frequency': 2}
+                    ]
+                }
             }
         },
         {
@@ -643,11 +668,18 @@ async function testFindTermMetaBulk1(database, titles) {
                 }
             ],
             expectedResults: {
-                total: 3,
+                total: 5,
                 modes: [
-                    ['freq', 1],
+                    ['freq', 3],
                     ['pitch', 2]
-                ]
+                ],
+                values: {
+                    freq: [
+                        3,
+                        {'frequency': 3},
+                        {'reading': 'うちこむ', 'frequency': 3}
+                    ]
+                }
             }
         },
         {
@@ -658,7 +690,8 @@ async function testFindTermMetaBulk1(database, titles) {
             ],
             expectedResults: {
                 total: 0,
-                modes: []
+                modes: [],
+                values: {}
             }
         }
     ];
@@ -669,6 +702,12 @@ async function testFindTermMetaBulk1(database, titles) {
             assert.strictEqual(results.length, expectedResults.total);
             for (const [mode, count] of expectedResults.modes) {
                 assert.strictEqual(countMetasWithMode(results, mode), count);
+            }
+            for (const [mode, values] of Object.entries(expectedResults.values)) {
+                for (const result of results) {
+                    if (result.mode !== mode) { continue; }
+                    deepStrictEqualOneOf(result.data, values);
+                }
             }
         }
     }

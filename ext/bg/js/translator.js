@@ -488,7 +488,9 @@ class Translator {
             switch (mode) {
                 case 'freq':
                     for (const term of termsUnique[index]) {
-                        term.frequencies.push({expression, frequency: data, dictionary});
+                        const frequencyData = this.getTermFrequencyData(expression, data, dictionary, term);
+                        if (frequencyData === null) { continue; }
+                        term.frequencies.push(frequencyData);
                     }
                     break;
                 case 'pitch':
@@ -513,7 +515,10 @@ class Translator {
         for (const {character, mode, data, dictionary, index} of metas) {
             switch (mode) {
                 case 'freq':
-                    definitions[index].frequencies.push({character, frequency: data, dictionary});
+                    {
+                        const frequencyData = this.getKanjiFrequencyData(character, data, dictionary);
+                        definitions[index].frequencies.push(frequencyData);
+                    }
                     break;
             }
         }
@@ -579,6 +584,21 @@ class Translator {
         }
 
         return tagMetaList;
+    }
+
+    getTermFrequencyData(expression, data, dictionary, term) {
+        if (typeof data === 'object' && data !== null) {
+            const {reading, frequency} = data;
+            const termReading = term.reading || expression;
+            if (reading !== termReading) { return null; }
+            return {expression, frequency, dictionary};
+        } else {
+            return {expression, frequency: data, dictionary};
+        }
+    }
+
+    getKanjiFrequencyData(character, data, dictionary) {
+        return {character, frequency: data, dictionary};
     }
 
     async getPitchData(expression, data, dictionary, term) {

@@ -2,6 +2,12 @@
     ["打", "freq", 1],
     ["打つ", "freq", 2],
     ["打ち込む", "freq", 3],
+    ["打", "freq", {"frequency": 1}],
+    ["打つ", "freq", {"frequency": 2}],
+    ["打ち込む", "freq", {"frequency": 3}],
+    ["打", "freq", {"reading": "だ", "frequency": 1}],
+    ["打つ", "freq", {"reading": "うつ", "frequency": 2}],
+    ["打ち込む", "freq", {"reading": "うちこむ", "frequency": 3}],
     [
         "打ち込む",
         "pitch",
