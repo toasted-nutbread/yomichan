@@ -366,12 +366,39 @@ class Translator {
             Translator.getTextOptionEntryVariants(translationOptions.convertNumericCharacters),
             Translator.getTextOptionEntryVariants(translationOptions.convertAlphabeticCharacters),
             Translator.getTextOptionEntryVariants(translationOptions.convertHiraganaToKatakana),
-            Translator.getTextOptionEntryVariants(translationOptions.convertKatakanaToHiragana)
+            Translator.getTextOptionEntryVariants(translationOptions.convertKatakanaToHiragana),
+            [false, true]
         ];
+
+        const JP_HIRAGANA_SMALL_TSU_CODE_POINT = 0x3063;
+        const JP_KATAKANA_SMALL_TSU_CODE_POINT = 0x30c3;
+
+        function jpCollapseSmallTsu(sourceText, sourceMapping) {
+            let result = '';
+            let collapseCodePoint = -1;
+            let index = 0;
+            for (const char of sourceText) {
+                const c = char.codePointAt(0);
+                if (c === JP_HIRAGANA_SMALL_TSU_CODE_POINT || c === JP_KATAKANA_SMALL_TSU_CODE_POINT) {
+                    if (collapseCodePoint === c) {
+                        sourceMapping[index - 1] += sourceMapping.splice(index, 1)[0];
+                    } else {
+                        collapseCodePoint = c;
+                        result += char;
+                        ++index;
+                    }
+                } else {
+                    collapseCodePoint = -1;
+                    result += char;
+                    ++index;
+                }
+            }
+            return result;
+        }
 
         const deinflections = [];
         const used = new Set();
-        for (const [halfWidth, numeric, alphabetic, katakana, hiragana] of Translator.getArrayVariants(textOptionVariantArray)) {
+        for (const [halfWidth, numeric, alphabetic, katakana, hiragana, collapseSmallTsu] of Translator.getArrayVariants(textOptionVariantArray)) {
             let text2 = text;
             let sourceMapping = null;
             if (halfWidth) {
@@ -390,6 +417,10 @@ class Translator {
             }
             if (hiragana) {
                 text2 = jpKatakanaToHiragana(text2);
+            }
+            if (collapseSmallTsu) {
+                if (sourceMapping === null) { sourceMapping = Translator.createTextSourceMapping(text2); }
+                text2 = jpCollapseSmallTsu(text2, sourceMapping);
             }
 
             for (let i = text2.length; i > 0; --i) {
