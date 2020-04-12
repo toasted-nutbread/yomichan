@@ -212,5 +212,42 @@
 </span><span>trailing content</span>
     </div>
 
+    <div
+        class="test"
+        data-test-type="text-source-range-seek"
+        data-seek-node-selector="span:nth-of-type(1)"
+        data-seek-node-is-text="true"
+        data-seek-offset="0"
+        data-seek-length="61"
+        data-expected-result-node-selector="span:nth-of-type(1)"
+        data-expected-result-node-is-text="true"
+        data-expected-result-offset="61"
+        data-expected-result-content="
+あいうえお
+かきくけこ
+さしすせそ
+たちつてと
+なにぬねの
+はひふへほ
+まみむめも
+や&#x3000;ゆ&#x3000;よ
+らりるれろ
+わゐ&#x3000;ゑを
+"
+    >
+<span style="white-space: pre;">
+あいうえお
+かきくけこ
+さしすせそ
+たちつてと
+なにぬねの
+はひふへほ
+まみむめも
+や&#x3000;ゆ&#x3000;よ
+らりるれろ
+わゐ&#x3000;ゑを
+</span><span>trailing content</span>
+    </div>
+
 </body>
 </html>
