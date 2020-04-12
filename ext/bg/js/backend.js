@@ -164,7 +164,7 @@ class Backend {
             this._isPrepared = true;
         } catch (e) {
             this._prepareError = true;
-            logError(e);
+            yomichan.logError(e);
             throw e;
         } finally {
             if (this._badgePrepareDelayTimer !== null) {
@@ -260,7 +260,7 @@ class Backend {
             this.options = JsonSchema.getValidValueOrDefault(this.optionsSchema, utilIsolate(options));
         } catch (e) {
             // This shouldn't happen, but catch errors just in case of bugs
-            logError(e);
+            yomichan.logError(e);
         }
     }
 
