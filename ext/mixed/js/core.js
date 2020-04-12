@@ -271,6 +271,8 @@ const yomichan = (() => {
             ]);
 
             chrome.runtime.onMessage.addListener(this._onMessage.bind(this));
+
+            window.addEventListener('unhandledrejection', this._onUnhandledRejection.bind(this));
         }
 
         // Public
@@ -349,7 +351,7 @@ const yomichan = (() => {
 
         // Private
 
-        _log(error, level) {
+        _log(error, level, problem=null) {
             let errorString;
             try {
                 errorString = error.toString();
@@ -381,8 +383,9 @@ const yomichan = (() => {
             }
 
             const manifest = chrome.runtime.getManifest();
-            let message = `${manifest.name} v${manifest.version} has encountered a problem.\n`;
-            message += `Originating URL: ${window.location.href}\n`;
+            let message = `${manifest.name} v${manifest.version}`;
+            message += problem ? problem : ' has encountered a problem.';
+            message += `\nOriginating URL: ${window.location.href}\n`;
             message += errorString;
             if (typeof errorData !== 'undefined') {
                 message += `\nData: ${JSON.stringify(errorData, null, 4)}`;
@@ -417,6 +420,11 @@ const yomichan = (() => {
 
         _onMessageZoomChanged({oldZoomFactor, newZoomFactor}) {
             this.trigger('zoomChanged', {oldZoomFactor, newZoomFactor});
+        }
+
+        _onUnhandledRejection(event) {
+            this._log(event.reason, 'warn', ' has encountered an unhandled promise rejection.');
+            event.preventDefault();
         }
     }
 
