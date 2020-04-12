@@ -68,28 +68,6 @@ function jsonToError(jsonError) {
     return error;
 }
 
-function logError(error, alert) {
-    const manifest = chrome.runtime.getManifest();
-    let errorMessage = `${manifest.name} v${manifest.version} has encountered an error.\n`;
-    errorMessage += `Originating URL: ${window.location.href}\n`;
-
-    const errorString = `${error.toString ? error.toString() : error}`;
-    const stack = `${error.stack}`.trimRight();
-    if (!stack.startsWith(errorString)) { errorMessage += `${errorString}\n`; }
-    errorMessage += stack;
-
-    const data = error.data;
-    if (typeof data !== 'undefined') { errorMessage += `\nData: ${JSON.stringify(data, null, 4)}`; }
-
-    errorMessage += '\n\nIssues can be reported at https://github.com/FooSoft/yomichan/issues';
-
-    console.error(errorMessage);
-
-    if (alert) {
-        window.alert(`${errorString}\n\nCheck the developer console for more details.`);
-    }
-}
-
 
 /*
  * Common helpers
