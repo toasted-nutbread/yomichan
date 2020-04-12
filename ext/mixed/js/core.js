@@ -361,7 +361,64 @@ const yomichan = (() => {
             });
         }
 
+        logWarning(error) {
+            this._log(error, 'warn');
+        }
+
+        logError(error) {
+            this._log(error, 'error');
+        }
+
         // Private
+
+        _log(error, level) {
+            let errorString;
+            try {
+                errorString = error.toString();
+                if (/^\[object \w+\]$/.test(errorString)) {
+                    errorString = JSON.stringify(error);
+                }
+            } catch (e) {
+                errorString = `${error}`;
+            }
+
+            let errorStack;
+            try {
+                errorStack = (typeof error.stack === 'string' ? error.stack.trimRight() : '');
+            } catch (e) {
+                errorStack = '';
+            }
+
+            let errorData;
+            try {
+                errorData = error.data;
+            } catch (e) {
+                // NOP
+            }
+
+            if (errorStack.startsWith(errorString)) {
+                errorString = errorStack;
+            } else if (errorStack.length > 0) {
+                errorString += `\n${errorStack}`;
+            }
+
+            const manifest = chrome.runtime.getManifest();
+            let message = `${manifest.name} v${manifest.version} has encountered a problem.\n`;
+            message += `Originating URL: ${window.location.href}\n`;
+            message += errorString;
+            if (typeof errorData !== 'undefined') {
+                message += `\nData: ${JSON.stringify(errorData, null, 4)}`;
+            }
+            message += '\n\nIssues can be reported at https://github.com/FooSoft/yomichan/issues';
+
+            switch (level) {
+                case 'info': console.info(message); break;
+                case 'debug': console.debug(message); break;
+                case 'warn': console.warn(message); break;
+                case 'error': console.error(message); break;
+                default: console.log(message); break;
+            }
+        }
 
         _onMessage({action, params}, sender, callback) {
             const handler = this._messageHandlers.get(action);
