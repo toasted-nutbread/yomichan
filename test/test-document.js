@@ -197,7 +197,6 @@ async function testTextSourceRangeSeekFunctions(dom, {TextSourceRange}) {
             seekNodeIsText,
             seekOffset,
             seekLength,
-            seekDirection,
             expectedResultNodeSelector,
             expectedResultNodeIsText,
             expectedResultOffset,
@@ -218,11 +217,7 @@ async function testTextSourceRangeSeekFunctions(dom, {TextSourceRange}) {
             expectedResultNode = expectedResultNode.firstChild;
         }
 
-        const {node, offset, content} = (
-            seekDirection === 'forward' ?
-            TextSourceRange.seekForward(seekNode, seekOffset, seekLength) :
-            TextSourceRange.seekBackward(seekNode, seekOffset, seekLength)
-        );
+        const {node, offset, content} = TextSourceRange.seek(seekNode, seekOffset, seekLength);
 
         assert.strictEqual(node, expectedResultNode);
         assert.strictEqual(offset, expectedResultOffset);
