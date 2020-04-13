@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>Yomichan DOMTextScanner Tests</title>
+        <link rel="icon" type="image/gif" href="data:image/gif;base64,R0lGODlhEAAQAKEBAAAAAP///////////yH5BAEKAAIALAAAAAAQABAAAAImFI6Zpt0B4YkS0TCpq07xbmEgcGVRUpLaI46ZG7ppalY0jDCwUAAAOw==" />
+        <link rel="stylesheet" href="test-stylesheet.css" />
+    </head>
+<body>
+
+    <h1>Yomichan DOMTextScanner Tests</h1>
+
+    <div
+        class="test"
+        data-test-data='{
+            "node": "div:nth-of-type(1)",
+            "offset": 0,
+            "length": 15,
+            "expected": {
+                "node": "div:nth-of-type(2)>div::text",
+                "offset": 3,
+                "content": "小ぢん\nまり1\n小ぢん\nまり2"
+            }
+        }'
+    >
+<div><div>小ぢん</div>まり1</div>
+<div>小ぢん<div>まり2</div></div>
+    </div>
+
+    <div
+        class="test"
+        data-test-data='{
+            "node": "div:nth-of-type(1)::text",
+            "offset": 0,
+            "length": 13,
+            "expected": {
+                "node": "div:nth-of-type(2)::text",
+                "offset": 6,
+                "content": "小ぢんまり1\n小ぢんまり2"
+            }
+        }'
+    >
+<div>小ぢんまり1</div><div>小ぢんまり2</div>
+    </div>
+
+    <div
+        class="test"
+        data-test-data='{
+            "node": "span:nth-of-type(1)::text",
+            "offset": 0,
+            "length": 12,
+            "expected": {
+                "node": "span:nth-of-type(2)::text",
+                "offset": 6,
+                "content": "小ぢんまり1小ぢんまり2"
+            }
+        }'
+    >
+<span>小ぢんまり1</span><span>小ぢんまり2</span>
+    </div>
+
+    <div
+        class="test"
+        data-test-type="dom-text-scanner"
+        data-seek-node-selector="span:nth-of-type(1)"
+        data-seek-node-is-text="true"
+        data-seek-offset="0"
+        data-seek-length="11"
+        data-expected-result-node-selector="span:nth-of-type(2)"
+        data-expected-result-node-is-text="true"
+        data-expected-result-offset="5"
+        data-expected-result-content="小ぢんまり 小ぢんまり"
+    >
+<span>小ぢんまり1</span>
+<span>小ぢんまり2</span>
+    </div>
+
+    <div
+        class="test"
+        style="white-space: pre;"
+        data-test-data='{
+            "node": "span:nth-of-type(1)::text",
+            "offset": 0,
+            "length": 13,
+            "expected": {
+                "node": "span:nth-of-type(2)::text",
+                "offset": 6,
+                "content": "小ぢんまり1\n小ぢんまり2"
+            }
+        }'
+    >
+<span>小ぢんまり1</span>
+<span>小ぢんまり2</span>
+    </div>
+
+    <div
+        class="test"
+        style="line-height: 1.5;"
+        data-test-data='{
+            "node": "span:nth-of-type(1)::text",
+            "offset": 0,
+            "length": 12,
+            "expected": {
+                "node": "span:nth-of-type(2)::text",
+                "offset": 6,
+                "content": "小ぢんまり1小ぢんまり2"
+            }
+        }'
+    >
+<span style="display: inline-block;">小ぢんまり1</span><span style="display: inline-block;">小ぢんまり2</span>
+    </div>
+
+    <div
+        class="test"
+        style="line-height: 1.5;"
+        data-test-data='{
+            "node": "div:nth-of-type(1)::text",
+            "offset": 0,
+            "length": 13,
+            "expected": {
+                "node": "div:nth-of-type(2)::text",
+                "offset": 6,
+                "content": "小ぢんまり1\n小ぢんまり2"
+            }
+        }'
+    >
+<div style="margin-bottom: 2em;">小ぢんまり1</div><div>小ぢんまり2</div>
+    </div>
+
+    <div
+        class="test"
+        style="line-height: 1.5;"
+        data-test-data='{
+            "node": "div:nth-of-type(1)::text",
+            "offset": 0,
+            "length": 13,
+            "expected": {
+                "node": "div:nth-of-type(2)::text",
+                "offset": 6,
+                "content": "小ぢんまり1\n小ぢんまり2"
+            }
+        }'
+    >
+<div>小ぢんまり1</div><div style="margin-top: 2em;">小ぢんまり2</div>
+    </div>
+
+    <div
+        class="test"
+        style="line-height: 1.5;"
+        data-test-data='{
+            "node": "div:nth-of-type(1)::text",
+            "offset": 0,
+            "length": 13,
+            "expected": {
+                "node": "div:nth-of-type(2)::text",
+                "offset": 6,
+                "content": "小ぢんまり1\n小ぢんまり2"
+            }
+        }'
+    >
+<div style="margin-bottom: 1em;">小ぢんまり1</div><div style="margin-top: 1em;">小ぢんまり2</div>
+    </div>
+
+    <div
+        class="test"
+        style="line-height: 1.5;"
+        data-test-data='{
+            "node": "div:nth-of-type(1)::text",
+            "offset": 0,
+            "length": 13,
+            "expected": {
+                "node": "div:nth-of-type(2)::text",
+                "offset": 6,
+                "content": "小ぢんまり1\n小ぢんまり2"
+            }
+        }'
+    >
+<div style="padding-bottom: 2em;">小ぢんまり1</div><div>小ぢんまり2</div>
+    </div>
+
+    <div
+        class="test"
+        style="line-height: 1.5;"
+        data-test-data='{
+            "node": "div:nth-of-type(1)::text",
+            "offset": 0,
+            "length": 13,
+            "expected": {
+                "node": "div:nth-of-type(2)::text",
+                "offset": 6,
+                "content": "小ぢんまり1\n小ぢんまり2"
+            }
+        }'
+    >
+<div>小ぢんまり1</div><div style="padding-top: 2em;">小ぢんまり2</div>
+    </div>
+
+    <div
+        class="test"
+        style="line-height: 1.5;"
+        data-test-data='{
+            "node": "div:nth-of-type(1)::text",
+            "offset": 0,
+            "length": 13,
+            "expected": {
+                "node": "div:nth-of-type(2)::text",
+                "offset": 6,
+                "content": "小ぢんまり1\n小ぢんまり2"
+            }
+        }'
+    >
+<div style="padding-bottom: 1em;">小ぢんまり1</div><div style="padding-top: 1em;">小ぢんまり2</div>
+    </div>
+
+    <div
+        class="test"
+        style="line-height: 1.5;"
+        data-test-data='{
+            "node": "div:nth-of-type(1)::text",
+            "offset": 0,
+            "length": 13,
+            "expected": {
+                "node": "div:nth-of-type(3)::text",
+                "offset": 6,
+                "content": "小ぢんまり1\n小ぢんまり2"
+            }
+        }'
+    >
+<div>小ぢんまり1</div><div style="height: 1em;"></div><div>小ぢんまり2</div>
+    </div>
+
+    <div
+        class="test"
+        style="line-height: 1.5;"
+        data-test-data='{
+            "node": "div:nth-of-type(1)::text",
+            "offset": 0,
+            "length": 13,
+            "expected": {
+                "node": "div:nth-of-type(3)::text",
+                "offset": 6,
+                "content": "小ぢんまり1\n小ぢんまり2"
+            }
+        }'
+    >
+<div>小ぢんまり1</div><div style="height: 2em;"></div><div>小ぢんまり2</div>
+    </div>
+
+    <div
+        class="test"
+        style="line-height: 1.5;"
+        data-test-data='{
+            "node": "div:nth-of-type(1)::text",
+            "offset": 0,
+            "length": 13,
+            "expected": {
+                "node": "div:nth-of-type(2)::text",
+                "offset": 6,
+                "content": "小ぢんまり1\n小ぢんまり2"
+            }
+        }'
+    >
+<div style="font-size: 2em;">小ぢんまり1</div><div>小ぢんまり2</div>
+    </div>
+
+    <div
+        class="test"
+        style="line-height: 1.5;"
+        data-test-data='{
+            "node": "div:nth-of-type(1)::text",
+            "offset": 0,
+            "length": 13,
+            "expected": {
+                "node": "div:nth-of-type(2)::text",
+                "offset": 6,
+                "content": "小ぢんまり1\n小ぢんまり2"
+            }
+        }'
+    >
+<div>小ぢんまり1</div><div style="font-size: 2em;">小ぢんまり2</div>
+    </div>
+
+    <div
+        class="test"
+        style="position: relative;"
+        data-test-data='{
+            "node": "div:nth-of-type(1)::text",
+            "offset": 0,
+            "length": 13,
+            "expected": {
+                "node": "div:nth-of-type(2)::text",
+                "offset": 6,
+                "content": "小ぢんまり1\n小ぢんまり2"
+            }
+        }'
+    >
+<div>小ぢんまり1</div><div style="position: relative;">小ぢんまり2</div>
+    </div>
+
+    <div
+        class="test"
+        style="position: relative; overflow: hidden;"
+        data-test-data='{
+            "node": "div:nth-of-type(1)::text",
+            "offset": 0,
+            "length": 14,
+            "expected": {
+                "node": "div:nth-of-type(2)::text",
+                "offset": 6,
+                "content": "小ぢんまり1\n\n小ぢんまり2"
+            }
+        }'
+    >
+<div>小ぢんまり1</div><div style="position: absolute;">小ぢんまり2</div>
+    </div>
+
+    <div
+        class="test"
+        style="position: relative; overflow: hidden;"
+        data-test-data='{
+            "node": "div:nth-of-type(1)::text",
+            "offset": 0,
+            "length": 14,
+            "expected": {
+                "node": "div:nth-of-type(2)::text",
+                "offset": 6,
+                "content": "小ぢんまり1\n\n小ぢんまり2"
+            }
+        }'
+    >
+<div>小ぢんまり1</div><div style="position: fixed;">小ぢんまり2</div>
+    </div>
+
+    <div
+        class="test"
+        style="position: relative;"
+        data-test-data='{
+            "node": "div:nth-of-type(1)::text",
+            "offset": 0,
+            "length": 14,
+            "expected": {
+                "node": "div:nth-of-type(2)::text",
+                "offset": 6,
+                "content": "小ぢんまり1\n\n小ぢんまり2"
+            }
+        }'
+    >
+<div>小ぢんまり1</div><div style="position: sticky;">小ぢんまり2</div>
+    </div>
+
+    <div
+        class="test"
+        style="position: relative;"
+        data-test-data='{
+            "node": "rt",
+            "offset": 0,
+            "length": 6,
+            "expected": {
+                "node": "div::text",
+                "offset": 5,
+                "content": "小ぢんまり1"
+            }
+        }'
+    >
+<div><ruby>小<rp>(</rp><rt>こ</rt><rp>)</rp></ruby>ぢんまり1</div>
+    </div>
+
+    <div
+        class="test"
+        style="position: relative;"
+        data-test-data='{
+            "node": "div",
+            "offset": 0,
+            "length": 6,
+            "expected": {
+                "node": "div::nth-text(2)",
+                "offset": 3,
+                "content": "小ぢんまり1"
+            }
+        }'
+    >
+<div>小ぢん<script>/*comment*/</script>まり1</div>
+    </div>
+
+    <div
+        class="test"
+        style="position: relative;"
+        data-test-data='{
+            "node": "div",
+            "offset": 0,
+            "length": 6,
+            "expected": {
+                "node": "div::nth-text(2)",
+                "offset": 3,
+                "content": "小ぢんまり1"
+            }
+        }'
+    >
+<div>小ぢん<style>/*comment*/</style>まり1</div>
+    </div>
+
+    <div
+        class="test"
+        style="position: relative;"
+        data-test-data='{
+            "node": "div",
+            "offset": 0,
+            "length": 6,
+            "expected": {
+                "node": "div::nth-text(2)",
+                "offset": 3,
+                "content": "小ぢんまり1"
+            }
+        }'
+    >
+<div>小ぢん<textarea>textarea content</textarea>まり1</div>
+    </div>
+
+    <div
+        class="test"
+        style="position: relative;"
+        data-test-data='{
+            "node": "div",
+            "offset": 0,
+            "length": 6,
+            "expected": {
+                "node": "div::nth-text(2)",
+                "offset": 3,
+                "content": "小ぢんまり1"
+            }
+        }'
+    >
+<div>小ぢん<input value="content" />まり1</div>
+    </div>
+
+    <div
+        class="test"
+        style="position: relative;"
+        data-test-data='{
+            "node": "div",
+            "offset": 0,
+            "length": 6,
+            "expected": {
+                "node": "div::nth-text(2)",
+                "offset": 3,
+                "content": "小ぢんまり1"
+            }
+        }'
+    >
+<div>小ぢん<button>content</button>まり1</div>
+    </div>
+
+    <div
+        class="test"
+        style="position: relative;"
+        data-test-data='{
+            "node": "div",
+            "offset": 0,
+            "length": 6,
+            "expected": {
+                "node": "div::nth-text(2)",
+                "offset": 3,
+                "content": "小ぢんまり1"
+            }
+        }'
+    >
+<div>小ぢん<span style="font-size: 0;">content</span>まり1</div>
+    </div>
+
+    <div
+        class="test"
+        style="position: relative;"
+        data-test-data='{
+            "node": "div",
+            "offset": 0,
+            "length": 6,
+            "expected": {
+                "node": "div::nth-text(2)",
+                "offset": 3,
+                "content": "小ぢんまり1"
+            }
+        }'
+    >
+<div>小ぢん<span style="opacity: 0;">content</span>まり1</div>
+    </div>
+
+    <div
+        class="test"
+        style="position: relative;"
+        data-test-data='{
+            "node": "div",
+            "offset": 0,
+            "length": 6,
+            "expected": {
+                "node": "div::nth-text(2)",
+                "offset": 3,
+                "content": "小ぢんまり1"
+            }
+        }'
+    >
+<div>小ぢん<span style="visibility: hidden;">content</span>まり1</div>
+    </div>
+
+    <div
+        class="test"
+        style="position: relative;"
+        data-test-data='{
+            "node": "div",
+            "offset": 0,
+            "length": 6,
+            "expected": {
+                "node": "div::nth-text(2)",
+                "offset": 3,
+                "content": "小ぢんまり1"
+            }
+        }'
+    >
+<div>小ぢん<span style="display: none;">content</span>まり1</div>
+    </div>
+
+    <div
+        class="test"
+        style="position: relative;"
+        data-test-data='{
+            "node": "div",
+            "offset": 0,
+            "length": 6,
+            "expected": {
+                "node": "div::nth-text(2)",
+                "offset": 3,
+                "content": "小ぢんまり1"
+            }
+        }'
+    >
+<div>小ぢ<span style="user-select: none;">ん</span>まり1</div>
+    </div>
+
+    <div
+        class="test"
+        style="position: relative;"
+        data-test-data='{
+            "node": "div",
+            "offset": 0,
+            "length": 6,
+            "expected": {
+                "node": "div::nth-text(2)",
+                "offset": 3,
+                "content": "小ぢんまり1"
+            }
+        }'
+    >
+<div>小ぢん<span style="user-select: none; color: rgba(0, 0, 0, 0);">content</span>まり1</div>
+    </div>
+
+</body>
+</html>
