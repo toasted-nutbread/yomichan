@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Yomichan Settings v2</title>
+    <link rel="icon" type="image/png" href="/mixed/img/icon16.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="/mixed/img/icon19.png" sizes="19x19">
+    <link rel="icon" type="image/png" href="/mixed/img/icon32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/mixed/img/icon38.png" sizes="38x38">
+    <link rel="icon" type="image/png" href="/mixed/img/icon48.png" sizes="48x48">
+    <link rel="icon" type="image/png" href="/mixed/img/icon64.png" sizes="64x64">
+    <link rel="icon" type="image/png" href="/mixed/img/icon128.png" sizes="128x128">
+    <link rel="stylesheet" type="text/css" href="./css/settings2.css">
+</head>
+<body>
+
+<div class="content-outer"><div class="content">
+<div class="content-left"><div class="content-left-inner sidebar">
+
+    <div class="sidebar-top">
+        <a href="#!profile"      class="outline-item"><span class="outline-item-inner"><span class="outline-item-left outline-item-icon outline-item-icon-profile"></span><span class="outline-item-label">Profile</span></span></a>
+        <a href="#!dictionaries" class="outline-item"><span class="outline-item-inner"><span class="outline-item-left outline-item-icon outline-item-icon-dictionaries"></span><span class="outline-item-label">Dictionaries</span></span></a>
+        <a href="#!general"      class="outline-item"><span class="outline-item-inner"><span class="outline-item-left outline-item-icon outline-item-icon-general"></span><span class="outline-item-label">General</span></span></a>
+        <a href="#!appearance"   class="outline-item"><span class="outline-item-inner"><span class="outline-item-left outline-item-icon outline-item-icon-appearance"></span><span class="outline-item-label">Appearance</span></span></a>
+        <a href="#!popup"        class="outline-item"><span class="outline-item-inner"><span class="outline-item-left outline-item-icon outline-item-icon-popup"></span><span class="outline-item-label">Popup</span></span></a>
+        <a href="#!audio"        class="outline-item"><span class="outline-item-inner"><span class="outline-item-left outline-item-icon outline-item-icon-audio"></span><span class="outline-item-label">Audio</span></span></a>
+        <a href="#!scanning"     class="outline-item"><span class="outline-item-inner"><span class="outline-item-left outline-item-icon outline-item-icon-scanning"></span><span class="outline-item-label">Scanning</span></span></a>
+        <a href="#!text-parsing" class="outline-item"><span class="outline-item-inner"><span class="outline-item-left outline-item-icon outline-item-icon-text-parsing"></span><span class="outline-item-label">Text Parsing</span></span></a>
+        <a href="#!translation"  class="outline-item"><span class="outline-item-inner"><span class="outline-item-left outline-item-icon outline-item-icon-translation"></span><span class="outline-item-label">Translation</span></span></a>
+        <a href="#!anki"         class="outline-item"><span class="outline-item-inner"><span class="outline-item-left outline-item-icon outline-item-icon-anki"></span><span class="outline-item-label">Anki</span></span></a>
+        <a href="#!shortcuts"    class="outline-item"><span class="outline-item-inner"><span class="outline-item-left outline-item-icon outline-item-icon-shortcuts"></span><span class="outline-item-label">Shortcuts</span></span></a>
+        <a href="#!backup"       class="outline-item"><span class="outline-item-inner"><span class="outline-item-left outline-item-icon outline-item-icon-backup"></span><span class="outline-item-label">Backup</span></span></a>
+    </div>
+    <div class="sidebar-bottom">
+        <label class="outline-item"><span class="outline-item-inner"><span class="outline-item-left">
+            <label class="toggle"><input id="advanced-checkbox" type="checkbox" data-setting="general.showAdvanced" data-transform-pre="setDocumentAttribute" data-transform-post="setDocumentAttribute" data-document-attribute="data-advanced"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+        </span><span class="outline-item-label">Advanced</span></span></label>
+        <a class="outline-item"><span class="outline-item-inner"><span class="outline-item-left outline-item-icon outline-item-icon-about"></span><span class="outline-item-label">About Yomichan</span></span></a>
+    </div>
+
+</div></div>
+<div class="content-center">
+
+    <span tabindex="-1" id="content-scroll-focus"></span>
+
+    <h1>Yomichan Settings</h1>
+
+    <h2 id="profile">Profile</h2>
+    <div class="settings-group">
+        <div class="settings-item"><div class="settings-item-inner settings-item-inner-wrappable">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Editing profile</div>
+                <div class="settings-item-description">Change which profile is being modified on this page.</div>
+            </div>
+            <div class="settings-item-right">
+                <select>
+                    <option>Default</option>
+                </select>
+            </div>
+        </div></div>
+        <div class="settings-item"><div class="settings-item-inner">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Adjust profiles</div>
+            </div>
+            <div class="settings-item-right open-panel-button-container">
+                <button class="icon-button" data-icon="right-arrow"><span class="icon-button-inner"></span></button>
+            </div>
+        </div></div>
+    </div>
+
+    <h2 id="dictionaries">Dictionaries <span class="heading-sub-text">(# installed)</span></h2>
+    <div class="settings-group">
+        <div class="settings-item"><div class="settings-item-inner">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Configure installed and enabled dictionaries</div>
+            </div>
+            <div class="settings-item-right open-panel-button-container">
+                <button class="icon-button" data-icon="right-arrow"><span class="icon-button-inner"></span></button>
+            </div>
+        </div></div>
+        <div class="settings-item"><div class="settings-item-inner">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Storage</div>
+                <div class="settings-item-description">Yomichan is using approximately # of #.</div>
+            </div>
+        </div></div>
+        <div class="settings-item">
+            <div class="settings-item-inner">
+                <div class="settings-item-left">
+                    <div class="settings-item-label">Persistent storage</div>
+                    <div class="settings-item-description">
+                        Enable to help prevent the browser from unexpectedly clearing the database.
+                        <a class="more-toggle more-only" data-parent-distance="4">More&hellip;</a>
+                    </div>
+                </div>
+                <div class="settings-item-right">
+                    <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+                </div>
+            </div>
+            <div class="settings-item-children more" hidden>
+                <p>
+                    Web browsers will sometimes clear stored data if the device is running low on storage space.
+                    This can result in the dictionaries imported into Yomichan being deleted unexpectedly, causing Yomichan to stop functioning.
+                    Enabling persistent storage tells the browser that the data should not be deleted in those circumstances.
+                </p>
+                <p>
+                    <a class="more-toggle" data-parent-distance="3">Less&hellip;</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <h2 id="general">General</h2>
+    <div class="settings-group">
+        <div class="settings-item"><div class="settings-item-inner">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Enable content scanning</div>
+            </div>
+            <div class="settings-item-right">
+                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+            </div>
+        </div></div>
+        <div class="settings-item"><div class="settings-item-inner">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Show the <a href="welcome.html">welcome guide</a> on browser startup</div>
+                <div class="settings-item-description"></div>
+            </div>
+            <div class="settings-item-right">
+                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+            </div>
+        </div></div>
+        <div class="settings-item"><div class="settings-item-inner">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Compact glossaries</div>
+                <div class="settings-item-description">Display dictionary term glossaries using a more compact layout.</div>
+            </div>
+            <div class="settings-item-right">
+                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+            </div>
+        </div></div>
+        <div class="settings-item"><div class="settings-item-inner">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Compact tags</div>
+                <div class="settings-item-description">Show fewer repeated tags for term glossaries.</div>
+            </div>
+            <div class="settings-item-right">
+                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+            </div>
+        </div></div>
+        <div class="settings-item"><div class="settings-item-inner settings-item-inner-wrappable">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Result grouping mode</div>
+                <div class="settings-item-description">Change how related results are grouped.</div>
+            </div>
+            <div class="settings-item-right">
+                <select>
+                    <option>No grouping</option>
+                    <option>Group by term-reading pairs</option>
+                    <option>Group by main dictionary entry</option>
+                </select>
+            </div>
+        </div></div>
+        <div class="settings-item advanced-only"><div class="settings-item-inner settings-item-inner-wrappable">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Maximum number of results</div>
+                <div class="settings-item-description">Adjust the maximum number of results shown for lookups.</div>
+            </div>
+            <div class="settings-item-right">
+                <input type="number" value="32">
+            </div>
+        </div></div>
+    </div>
+
+    <h2 id="appearance">Popup Appearance</h2>
+    <div class="settings-group">
+        <div class="settings-item"><div class="settings-item-inner settings-item-inner-wrappable">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Theme</div>
+                <div class="settings-item-description">Adjust the style of the popup.</div>
+            </div>
+            <div class="settings-item-right">
+                <select>
+                    <option>Light</option>
+                    <option>Dark</option>
+                </select>
+            </div>
+        </div></div>
+        <div class="settings-item">
+            <div class="settings-item-inner settings-item-inner-wrappable">
+                <div class="settings-item-left">
+                    <div class="settings-item-label">Display mode</div>
+                    <div class="settings-item-description">
+                        Change the layout of the popup.
+                        <a class="more-toggle more-only" data-parent-distance="4">More&hellip;</a>
+                    </div>
+                </div>
+                <div class="settings-item-right">
+                    <select>
+                        <option>Default</option>
+                    </select>
+                </div>
+            </div>
+            <div class="settings-item-children more" hidden>
+                <p>
+                    The "Full Width" mode will anchor the popup to the bottom or top of the screen and take up
+                    the full width of the screen.
+                    This layout can be useful for devices with touch screens.
+                </p>
+                <p>
+                    <a class="more-toggle" data-parent-distance="3">Less&hellip;</a>
+                </p>
+            </div>
+        </div>
+        <div class="settings-item"><div class="settings-item-inner settings-item-inner-wrappable">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Scale</div>
+                <div class="settings-item-description">Control the scaling factor of the popup.</div>
+            </div>
+            <div class="settings-item-right">
+                <select>
+                    <option>100%</option>
+                </select>
+            </div>
+        </div></div>
+        <div class="settings-item advanced-only"><div class="settings-item-inner settings-item-inner-wrappable">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Size</div>
+                <div class="settings-item-description">Control the size of the popup, in pixels.</div>
+            </div>
+            <div class="settings-item-right settings-item-group">
+                <div class="settings-item-group-item">
+                    <div class="settings-item-group-item-label">Width</div>
+                    <input type="number" value="32" class="settings-item-group-item-input">
+                </div>
+                <div class="settings-item-group-item">
+                    <div class="settings-item-group-item-label">Height</div>
+                    <input type="number" value="32" class="settings-item-group-item-input">
+                </div>
+            </div>
+        </div></div>
+        <div class="settings-item advanced-only"><div class="settings-item-inner settings-item-inner-wrappable">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Horizontal text positioning</div>
+                <div class="settings-item-description">Change where the popup is positioned relative to horizontal text.</div>
+            </div>
+            <div class="settings-item-right">
+                <select>
+                    <option>Below text</option>
+                </select>
+            </div>
+        </div></div>
+        <div class="settings-item advanced-only"><div class="settings-item-inner settings-item-inner-wrappable">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Horizontal text offset</div>
+                <div class="settings-item-description">Change the distance the popup is placed relative to horizontal text.</div>
+            </div>
+            <div class="settings-item-right settings-item-group">
+                <div class="settings-item-group-item">
+                    <div class="settings-item-group-item-label">x</div>
+                    <input type="number" value="32" class="settings-item-group-item-input">
+                </div>
+                <div class="settings-item-group-item">
+                    <div class="settings-item-group-item-label">y</div>
+                    <input type="number" value="32" class="settings-item-group-item-input">
+                </div>
+            </div>
+        </div></div>
+        <div class="settings-item advanced-only"><div class="settings-item-inner settings-item-inner-wrappable">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Vertical text positioning</div>
+                <div class="settings-item-description">Change where the popup is positioned relative to vertical text.</div>
+            </div>
+            <div class="settings-item-right">
+                <select>
+                    <option>Before text reading direction</option>
+                </select>
+            </div>
+        </div></div>
+        <div class="settings-item advanced-only"><div class="settings-item-inner settings-item-inner-wrappable">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Vertical text offset</div>
+                <div class="settings-item-description">Change the distance the popup is placed relative to vertical text.</div>
+            </div>
+            <div class="settings-item-right settings-item-group">
+                <div class="settings-item-group-item">
+                    <div class="settings-item-group-item-label">x</div>
+                    <input type="number" value="32" class="settings-item-group-item-input">
+                </div>
+                <div class="settings-item-group-item">
+                    <div class="settings-item-group-item-label">y</div>
+                    <input type="number" value="32" class="settings-item-group-item-input">
+                </div>
+            </div>
+        </div></div>
+        <div class="settings-item advanced-only"><div class="settings-item-inner">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Custom CSS</div>
+            </div>
+            <div class="settings-item-right open-panel-button-container">
+                <button class="icon-button" data-icon="right-arrow"><span class="icon-button-inner"></span></button>
+            </div>
+        </div></div>
+    </div>
+
+    <h2 id="popup">Popup Interactions</h2>
+    <div class="settings-group">
+        <div class="settings-item"><div class="settings-item-inner">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Allow scanning popup content</div>
+                <div class="settings-item-description">Change the limit on the number of popups that can be generated.</div>
+            </div>
+            <div class="settings-item-right">
+                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+            </div>
+        </div></div>
+        <div class="settings-item"><div class="settings-item-inner">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Allow scanning popups on the search page</div>
+            </div>
+            <div class="settings-item-right">
+                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+            </div>
+        </div></div>
+        <div class="settings-item advanced-only"><div class="settings-item-inner">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Allow scanning popup source terms</div>
+            </div>
+            <div class="settings-item-right">
+                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+            </div>
+        </div></div>
+        <div class="settings-item advanced-only"><div class="settings-item-inner">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Search terms when clicking text from the results list</div>
+            </div>
+            <div class="settings-item-right">
+                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+            </div>
+        </div></div>
+        <div class="settings-item"><div class="settings-item-inner">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Show clickable tags for expressions and their readings</div>
+                <!-- Should be combined with the option above, only shown as a sub-option -->
+            </div>
+            <div class="settings-item-right">
+                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+            </div>
+        </div></div>
+    </div>
+
+    <h2 id="audio">Audio</h2>
+    <div class="settings-group">
+        <div class="settings-item"><div class="settings-item-inner">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Enable audio playback of search results</div>
+                <div class="settings-item-description">Show a clickable speaker icon next to result expressions.</div>
+            </div>
+            <div class="settings-item-right">
+                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+            </div>
+        </div></div>
+        <div class="settings-item"><div class="settings-item-inner">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Auto-play search result audio</div>
+                <div class="settings-item-description">The audio for the first result will be played automatically.</div>
+            </div>
+            <div class="settings-item-right">
+                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+            </div>
+        </div></div>
+        <div class="settings-item"><div class="settings-item-inner settings-item-inner-wrappable">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Audio volume</div>
+                <div class="settings-item-description">Adjust the volume audio is played at, in percent.</div>
+            </div>
+            <div class="settings-item-right">
+                <input type="number" value="32">
+            </div>
+        </div></div>
+        <!--
+        TODO
+        <div class="settings-item"><div class="settings-item-inner">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Text-to-speech voice</div>
+                <div class="settings-item-description">Change which voice is used for text-to-speech audio playback.</div>
+            </div>
+        </div></div>
+        <div class="settings-item"><div class="settings-item-inner">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Custom audio source</div>
+                <div class="settings-item-description">URL format used for fetching audio clips in "Custom" mode.</div>
+            </div>
+        </div></div>
+        -->
+        <div class="settings-item"><div class="settings-item-inner">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Audio playback sources</div>
+            </div>
+            <div class="settings-item-right open-panel-button-container">
+                <button class="icon-button" data-icon="right-arrow"><span class="icon-button-inner"></span></button>
+            </div>
+        </div></div>
+    </div>
+
+    <h2 id="scanning">Scanning</h2>
+    <div class="settings-group">
+        <div class="settings-item"><div class="settings-item-inner settings-item-inner-wrappable">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Scan modifier key</div>
+                <div class="settings-item-description">Change which key needs to be held to activate text scanning.</div>
+            </div>
+            <div class="settings-item-right">
+                <select>
+                    <option>TODO</option>
+                </select>
+            </div>
+        </div></div>
+        <div class="settings-item"><div class="settings-item-inner">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Enable middle mouse button scanning</div>
+                <div class="settings-item-description">Scan text under the cursor while the middle mouse button is held down.</div>
+            </div>
+            <div class="settings-item-right">
+                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+            </div>
+        </div></div>
+        <div class="settings-item"><div class="settings-item-inner">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Support touch inputs for devices with touch screens</div>
+            </div>
+            <div class="settings-item-right">
+                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+            </div>
+        </div></div>
+        <div class="settings-item"><div class="settings-item-inner">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Select matched text</div>
+                <div class="settings-item-description"></div>
+            </div>
+            <div class="settings-item-right">
+                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+            </div>
+        </div></div>
+        <div class="settings-item"><div class="settings-item-inner">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Search alphanumeric text characters</div>
+                <div class="settings-item-description"></div>
+            </div>
+            <div class="settings-item-right">
+                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+            </div>
+        </div></div>
+        <div class="settings-item advanced-only"><div class="settings-item-inner">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Deep content scanning</div>
+                <div class="settings-item-description">Enable scanning text that is covered by other layers.</div>
+            </div>
+            <div class="settings-item-right">
+                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+            </div>
+        </div></div>
+        <div class="settings-item advanced-only"><div class="settings-item-inner settings-item-inner-wrappable">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Text scan length</div>
+                <div class="settings-item-description">Change how many characters are read when scanning for terms.</div>
+            </div>
+            <div class="settings-item-right">
+                <input type="number" value="32">
+            </div>
+        </div></div>
+    </div>
+
+    <div>
+        <div class="heading-container">
+            <div class="heading-container-left"><h2 id="text-parsing">Text Parsing</h2></div>
+            <div class="heading-container-right"><a class="more-toggle more-only heading-link-light" data-parent-distance="3">Info&hellip;</a></div>
+        </div>
+        <div class="heading-description more" hidden>
+            <p>
+                Yomichan can attempt to parse entire sentences or longer text blocks on the search page,
+                adding furigana above words and optional space between words.
+            </p>
+            <p>
+                <a class="more-toggle" data-parent-distance="3">Less&hellip;</a>
+            </p>
+        </div>
+    </div>
+    <div class="settings-group">
+        <div class="settings-item"><div class="settings-item-inner">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Parse text using installed dictionaries</div>
+                <div class="settings-item-description">Scan words by automatically advancing in the sentence after a matching word.</div>
+            </div>
+            <div class="settings-item-right">
+                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+            </div>
+        </div></div>
+        <div class="settings-item">
+            <div class="settings-item-inner">
+                <div class="settings-item-left">
+                    <div class="settings-item-label">Parse text using <a href="https://en.wikipedia.org/wiki/MeCab" target="_blank" rel="noopener noreferrer">MeCab</a></div>
+                    <div class="settings-item-description">
+                        Requires a native component to be installed that Yomichan will connect to.
+                        <a class="more-toggle more-only" data-parent-distance="4">More&hellip;</a>
+                    </div>
+                </div>
+                <div class="settings-item-right">
+                    <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+                </div>
+            </div>
+            <div class="settings-item-children more" hidden>
+                <p>
+                    MeCab is a third-party program which uses its own dictionaries and parsing algorithm to decompose sentences into individual words.
+                    In order for Yomichan to use it, both MeCab and a native messaging component must be installed.
+                    A setup guide can be found <a href="https://github.com/siikamiika/yomichan-mecab-installer/blob/master/README.md" target="_blank" rel="noopener noreferrer">here</a>.
+                </p>
+                <p>
+                    <a class="more-toggle" data-parent-distance="3">Less&hellip;</a>
+                </p>
+            </div>
+        </div>
+        <div class="settings-item"><div class="settings-item-inner">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Show space between parsed words</div>
+                <div class="settings-item-description"></div>
+            </div>
+            <div class="settings-item-right">
+                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+            </div>
+        </div></div>
+        <div class="settings-item"><div class="settings-item-inner settings-item-inner-wrappable">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Reading mode</div>
+                <div class="settings-item-description">Change what type of furigana is displayed for parsed text.</div>
+            </div>
+            <div class="settings-item-right">
+                <select>
+                    <option>TODO</option>
+                </select>
+            </div>
+        </div></div>
+    </div>
+
+    <div>
+        <div class="heading-container">
+            <div class="heading-container-left"><h2 id="translation">Translation</h2></div>
+            <div class="heading-container-right"><a class="more-toggle more-only heading-link-light" data-parent-distance="3">Info&hellip;</a></div>
+        </div>
+        <div class="heading-description more" hidden>
+            <p>
+                The following options are used during the translation process to create alternate versions of the input text to search for.
+                This can be helpful when the input text doesn't exactly match the term or expression found in the database.
+            </p>
+            <p>
+                The conversion options below are listed in the order that the conversions are applied to the input text.
+                Conversions commonly have three possible values:
+            </p>
+            <ul>
+                <li>
+                    <strong>Disabled</strong><br>
+                    This conversion will never be applied to the input text.
+                </li>
+                <li>
+                    <strong>Enabled</strong><br>
+                    This conversion will always be applied to the input text.
+                </li>
+                <li>
+                    <strong>Use both variants</strong><br>
+                    The translator will check the database for two variations: the raw input text and the converted input text.
+                    When multiple options use variants, the translator will search for combinations of the converted text.
+                </li>
+            </ul>
+            <p>
+                <a class="more-toggle" data-parent-distance="3">Less&hellip;</a>
+            </p>
+        </div>
+    </div>
+    <div class="settings-group">
+        <div class="settings-item"><div class="settings-item-inner settings-item-inner-wrappable">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Convert half width characters to full width</div>
+                <div class="settings-item-description">ﾖﾐﾁｬﾝ&#x3000;&rarr;&#x3000;ヨミチャン</div>
+            </div>
+            <div class="settings-item-right">
+                <select>
+                    <option>TODO</option>
+                </select>
+            </div>
+        </div></div>
+        <div class="settings-item"><div class="settings-item-inner settings-item-inner-wrappable">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Convert numeric characters to full width</div>
+                <div class="settings-item-description">1234&#x3000;&rarr;&#x3000;１２３４</div>
+            </div>
+            <div class="settings-item-right">
+                <select>
+                    <option>TODO</option>
+                </select>
+            </div>
+        </div></div>
+        <div class="settings-item"><div class="settings-item-inner settings-item-inner-wrappable">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Convert alphabetic characters to hiragana</div>
+                <div class="settings-item-description">yomichan&#x3000;&rarr;&#x3000;よみちゃん</div>
+            </div>
+            <div class="settings-item-right">
+                <select>
+                    <option>TODO</option>
+                </select>
+            </div>
+        </div></div>
+        <div class="settings-item"><div class="settings-item-inner settings-item-inner-wrappable">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Convert hiragana to katakana</div>
+                <div class="settings-item-description">よみちゃん&#x3000;&rarr;&#x3000;ヨミチャン</div>
+            </div>
+            <div class="settings-item-right">
+                <select>
+                    <option>TODO</option>
+                </select>
+            </div>
+        </div></div>
+        <div class="settings-item"><div class="settings-item-inner settings-item-inner-wrappable">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Convert katakana to hiragana</div>
+                <div class="settings-item-description">ヨミチャン&#x3000;&rarr;&#x3000;よみちゃん</div>
+            </div>
+            <div class="settings-item-right">
+                <select>
+                    <option>TODO</option>
+                </select>
+            </div>
+        </div></div>
+        <div class="settings-item"><div class="settings-item-inner settings-item-inner-wrappable">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Collapse emphatic character sequences</div>
+                <div class="settings-item-description">すっっごーーい&#x3000;&rarr;&#x3000;すっごーい / すごい</div>
+            </div>
+            <div class="settings-item-right">
+                <select>
+                    <option>TODO</option>
+                </select>
+            </div>
+        </div></div>
+    </div>
+
+    <div>
+        <div class="heading-container">
+            <div class="heading-container-left"><h2 id="anki">Anki</h2></div>
+            <div class="heading-container-right"><a class="more-toggle more-only heading-link-light" data-parent-distance="3">Info&hellip;</a></div>
+        </div>
+        <div class="heading-description more" hidden>
+            <p>
+                Yomichan supports automatic flashcard creation for <a href="https://apps.ankiweb.net/" target="_blank" rel="noopener noreferrer">Anki</a>,
+                a free application designed to assist in remembering information.
+                This feature requires installation of the <a href="https://foosoft.net/projects/anki-connect/" target="_blank" rel="noopener noreferrer">AnkiConnect</a> plugin.
+            </p>
+            <p>
+                <a class="more-toggle" data-parent-distance="3">Less&hellip;</a>
+            </p>
+        </div>
+    </div>
+    <div class="settings-group">
+        <div class="settings-item">
+            <div class="settings-item-inner settings-item-inner-wrappable">
+                <div class="settings-item-left">
+                    <div class="settings-item-label">AnkiConnect server address</div>
+                    <div class="settings-item-description">
+                        Change the URL of the AnkiConnect server.
+                        <a class="more-toggle more-only" data-parent-distance="4">More&hellip;</a>
+                    </div>
+                </div>
+                <div class="settings-item-right">
+                    <input type="text" value="http://127.0.0.1:8765" spellcheck="false" autocomplete="off">
+                </div>
+            </div>
+            <div class="settings-item-children more" hidden>
+                <p>
+                    The default address for a server on the same device is <a href="http://127.0.0.1:8765" target="_blank" rel="noopener noreferrer">http://127.0.0.1:8765</a>.
+                    If Anki is running, clicking this URL should open a page showing the current version of AnkiConnect.
+                </p>
+                <p>
+                    <a class="more-toggle" data-parent-distance="3">Less&hellip;</a>
+                </p>
+            </div>
+        </div>
+        <div class="settings-item"><div class="settings-item-inner settings-item-inner-wrappable">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Card tags</div>
+                <div class="settings-item-description">List of space or comma separated tags to add to the card.</div>
+            </div>
+            <div class="settings-item-right">
+                <input type="text" value="yomichan" spellcheck="false" autocomplete="off">
+            </div>
+        </div></div>
+        <div class="settings-item">
+            <div class="settings-item-inner settings-item-inner-wrappable">
+                <div class="settings-item-left">
+                    <div class="settings-item-label">
+                        Duplicate card scope
+                        <a class="more-toggle more-only" data-parent-distance="4">(?)</a>
+                    </div>
+                </div>
+                <div class="settings-item-right">
+                    <select>
+                        <option>TODO</option>
+                    </select>
+                </div>
+            </div>
+            <div class="settings-item-children more" hidden>
+                <p>
+                    A card is considered a duplicate if the value of its first field matches that of any other card.
+                    By default, this check will include cards across all decks, but this constraint can be relaxed
+                    to include only the deck that the card will be added to.
+                </p>
+                <p>
+                    <a class="more-toggle" data-parent-distance="3">Less&hellip;</a>
+                </p>
+            </div>
+        </div>
+        <div class="settings-item advanced-only">
+            <div class="settings-item-inner settings-item-inner-wrappable">
+                <div class="settings-item-left">
+                    <div class="settings-item-label">
+                        Sentence scanning extent
+                        <a class="more-toggle more-only" data-parent-distance="4">(?)</a>
+                    </div>
+                </div>
+                <div class="settings-item-right">
+                    <input type="number" value="32">
+                </div>
+            </div>
+            <div class="settings-item-children more" hidden>
+                <p>
+                    This option controls the maximum scanning distance used to determine the bounds of a sentence,
+                    in number of characters.
+                    Sentence scanning is bidirectional and begins from both the start and end of the source term.
+                </p>
+                <p>
+                    <a class="more-toggle" data-parent-distance="3">Less&hellip;</a>
+                </p>
+            </div>
+        </div>
+        <div class="settings-item advanced-only"><div class="settings-item-inner settings-item-inner-wrappable">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Screenshot format</div>
+                <div class="settings-item-description">Adjust the format and quality of screenshots created for cards.</div>
+            </div>
+            <div class="settings-item-right settings-item-group">
+                <div class="settings-item-group-item">
+                    <div class="settings-item-group-item-label">Format</div>
+                    <select class="settings-item-group-item-input">
+                        <option>PNG</option>
+                        <option>JPEG</option>
+                    </select>
+                </div>
+                <div class="settings-item-group-item">
+                    <div class="settings-item-group-item-label">Quality (%)</div>
+                    <input type="number" value="92" class="settings-item-group-item-input">
+                </div>
+            </div>
+        </div></div>
+        <div class="settings-item"><div class="settings-item-inner">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Configure Anki card format</div>
+            </div>
+            <div class="settings-item-right open-panel-button-container">
+                <button class="icon-button" data-icon="right-arrow"><span class="icon-button-inner"></span></button>
+            </div>
+        </div></div>
+    </div>
+
+    <h2 id="shortcuts">Shortcuts</h2>
+    <div class="settings-group">
+        <div class="settings-item"><div class="settings-item-inner">
+            <div class="settings-item-left">
+                <div class="settings-item-label">
+                    <p>
+                        Yomichan includes keyboard shortcuts for some common actions that can be configured
+                        using the web browser's settings.
+                        Instructions on how to access this settings page are listed below for a few browsers.
+                    </p>
+
+                    <h3>Chrome</h3>
+                    <ul>
+                        <li>Open the settings page (<a href="chrome://settings/">chrome://settings/</a>)</li>
+                        <li>Click the "Extensions" link in the left sidebar (<a href="chrome://extensions/">chrome://extensions/</a>)</li>
+                        <li>Open the left side panel using the hamburger (<strong>≡</strong>) menu button, then click "Keyboard shortcuts"</li>
+                    </ul>
+
+                    <h3>Firefox</h3>
+                    <ul>
+                        <li>Open the extensions page (<a href="about:addons">about:addons</a>)</li>
+                        <li>Click the button on the right with the gear icon, then click "Manage Extension Shortcuts"</li>
+                    </ul>
+                </div>
+            </div>
+        </div></div>
+    </div>
+
+    <h2 id="backup">Backup</h2>
+    <div class="settings-group">
+        <div class="settings-item"><div class="settings-item-inner">
+            <div class="settings-item-left">
+                <div class="settings-item-label">
+                    Yomichan can import and export settings files which can be used to restore settings, share settings across devices, and to help to debug problems.
+                    These files will only contain settings and will not contain dictionaries.
+                    Dictionaries must be imported separately.
+                </div>
+            </div>
+        </div></div>
+        <div class="settings-item"><div class="settings-item-inner">
+            <div class="settings-item-right settings-item-button-group-container">
+                <div class="settings-item-button-group">
+                    <div class="settings-item-button-group-item">
+                        <button class="low-emphasis">Import Settings</button>
+                    </div>
+                    <div class="settings-item-button-group-item">
+                        <button class="low-emphasis">Export Settings</button>
+                    </div>
+                    <div class="settings-item-button-group-item">
+                        <button class="low-emphasis danger">Reset Settings</button>
+                    </div>
+                </div>
+            </div>
+        </div></div>
+    </div>
+
+    <div class="footer-padding"></div>
+
+</div>
+<div class="content-right"><div class="content-right-inner preview-sidebar">
+
+    <div class="preview-sidebar-setting">
+        <label class="show-preview-switch"><span class="show-preview-switch-inner"><span class="show-preview-switch-left">
+            <label class="toggle"><input type="checkbox" id="show-preview-checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+        </span><span class="show-preview-switch-label">Show popup preview</span></span></label>
+    </div>
+    <div class="preview-frame-container">
+        <iframe src="/bg/settings-popup-preview.html" class="preview-frame"></iframe>
+    </div>
+
+</div></div>
+</div></div>
+
+
+<!--
+TODO
+<a href="#" class="test">test</a>
+
+<div class="modal-container" tabindex="-1" role="dialog"><div class="modal-content">
+    <a href="#" class="test">test</a>
+</div></div>
+-->
+
+<script src="/mixed/js/core.js"></script>
+<script src="/mixed/js/yomichan.js"></script>
+<script src="/mixed/js/comm.js"></script>
+<script src="/mixed/js/api.js"></script>
+
+<script src="/mixed/js/object-property-accessor.js"></script>
+<script src="/mixed/js/task-accumulator.js"></script>
+<script src="/mixed/js/dom-data-binder.js"></script>
+
+<script src="/bg/js/settings/generic-setting-controller.js"></script>
+<script src="/bg/js/settings/settings-controller.js"></script>
+
+<script src="/bg/js/settings2/settings-main.js"></script>
+
+</body>
+</html>
