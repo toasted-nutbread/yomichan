@@ -1,0 +1,507 @@
+/*
+ * Copyright (C) 2020  Yomichan Authors
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+:root {
+    --size: 680px;
+    --padding: 10px;
+    --shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.185), 0 2px 2px 0 rgba(0, 0, 0, 0.185);
+    --animation-duration: 0s;
+    --animation-duration2: calc(var(--animation-duration) * 2);
+}
+
+:root[data-loaded=true] {
+    --animation-duration: 0.125s;
+}
+
+body {
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #222222;
+    line-height: 1.43;
+    overflow-y: scroll; /* always show scroll bar */
+}
+
+.content-size {
+    max-width: var(--size);
+    margin: 0 auto;
+    padding: 0 var(--padding);
+}
+
+.footer-padding {
+    margin-bottom: 4em;
+}
+
+.header-container {
+    min-height: 4em;
+    display: flex;
+}
+
+.header-container-left {
+    flex: 1 1 0;
+}
+
+.header-container-center {
+    flex: 0 1 calc(var(--size));
+    padding: 0 var(--padding);
+}
+
+.header-container-right {
+    flex: 1 0 0;
+    text-align: right;
+    align-self: center;
+    white-space: nowrap;
+}
+.header-container-right-inner {
+    padding-right: 16px;
+}
+
+h1 {
+    font-size: 2em;
+    line-height: 1.5em;
+    margin: 0;
+    padding: 0.25em 0 0;
+    font-weight: normal;
+    box-sizing: border-box;
+    border-bottom: 1px solid #cccccc;
+}
+
+h2 {
+    font-size: 1.125em;
+    font-weight: normal;
+    line-height: 1.5;
+    margin: 1.75em 0 0.9em;
+}
+
+p,
+ol,
+ul {
+    margin: 0.85em 0;
+}
+
+ol,
+ul {
+    padding: 0 0 0 1.5em;
+}
+
+li {
+    margin: 0.425em 0;
+}
+
+a {
+    color: #2070e0;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #1060c0;
+    text-decoration: underline;
+}
+
+
+.light {
+    color: #666666;
+}
+
+
+.description-group {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.description-item {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.description-item-inner {
+    flex: 0 1 50%;
+    align-self: stretch;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.description-item-inner:nth-child(n+2) {
+    margin-left: 0.75em;
+}
+
+.description-item-inner:nth-last-child(n+2) {
+    margin-right: 0.75em;
+}
+
+.description-item-inner>*:nth-child(1) {
+    margin-top: 0;
+}
+
+.description-item-inner>*:nth-last-child(1) {
+    margin-bottom: 0;
+}
+
+.description-item-inner>div {
+    height: 100%;
+}
+
+
+.settings-group {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: #ffffff;
+    box-shadow: var(--shadow);
+    border-radius: 0.3em;
+}
+
+.settings-item {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.settings-item-left {
+    padding: 0.85em 0.75em 0.85em 1.5em;
+    flex: 0 1 auto;
+    align-self: flex-start;
+}
+
+.settings-item-right {
+    padding: 0.85em 1.5em 0.85em 0.75em;
+    flex: 0 1 auto;
+    align-self: center;
+}
+
+.settings-item-center {
+    padding: 0.85em 1.5em 0.85em 1.5em;
+    flex: 0 1 100%;
+    align-self: flex-start;
+    text-align: center;
+}
+
+.settings-item+.settings-item {
+    border-top: 1px solid #eeeeee;
+}
+
+.settings-item-label {
+}
+
+.settings-item-description {
+    color: #666666;
+}
+
+
+/* Dictionaries */
+
+.dictionary-group {
+    display: flex;
+    flex-flow: row wrap;
+    margin: -5px;
+}
+
+.dictionary {
+    padding: 5px;
+    box-sizing: border-box;
+    flex: 0 1 50%;
+    align-items: stretch;
+}
+
+.dictionary-inner {
+    background-color: #ffffff;
+    padding: 10px;
+    box-sizing: border-box;
+    border-radius: 0.3em;
+    box-shadow: var(--shadow);
+    height: 100%;
+}
+
+.dictionary-heading {
+}
+.dictionary-title {
+}
+.dictionary-version {
+    display: inline-block;
+    color: #666666;
+    margin-left: 0.5em;
+}
+
+
+/* Sidebar */
+
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    overflow-y: auto;
+    width: 250px;
+    display: flex;
+    justify-content: space-between;
+    flex-flow: column nowrap;
+}
+
+.sidebar-top {
+    padding: 2em 0;
+}
+
+.sidebar-bottom {
+    padding-bottom: 2em;
+}
+
+.outline-item {
+    display: block;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 1.5em;
+    cursor: pointer;
+    background-color: rgba(13, 13, 13, 0);
+    transition: background-color var(--animation-duration) ease-in-out;
+}
+
+.outline-item,
+.outline-item:hover {
+    text-decoration: none;
+    color: #222222;
+}
+
+.outline-item:hover {
+    background-color: rgba(13, 13, 13, 0.15);
+}
+
+.outline-item-inner {
+    display: flex;
+    align-items: center;
+}
+
+.outline-item-left {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+}
+
+.outline-item-label {
+    white-space: nowrap;
+    padding-left: 10px;
+}
+
+.outline-item-icon.outline-item-icon-placeholder {
+    line-height: 32px;
+    font-size: 2em;
+    text-align: center;
+    color: #333333;
+}
+
+.outline-item-icon.outline-item-icon-profile {
+    background: transparent url(../../mixed/img/profile.svg) no-repeat;
+    background-size: contain;
+}
+
+.outline-item-icon.outline-item-icon-about {
+    line-height: 32px;
+    font-size: 2em;
+    text-align: center;
+}
+.outline-item-icon.outline-item-icon-about::after {
+    content: "?";
+}
+
+.outline-item-icon.outline-item-icon-translation {
+    line-height: 32px;
+    font-size: 2em;
+    text-align: center;
+    font-weight: bold;
+}
+.outline-item-icon.outline-item-icon-translation::after {
+    content: "あ";
+}
+
+
+/* Material design toggle switch */
+
+.toggle {
+    font-size: 16px;
+    display: inline-block;
+    width: 2em;
+    height: 1em;
+    position: relative;
+    cursor: pointer;
+}
+
+.toggle>input[type=checkbox] {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    display: block;
+}
+
+.toggle-track {
+    display: block;
+    position: absolute;
+    left: 0.125em;
+    right: 0.125em;
+    top: 0.125em;
+    bottom: 0.125em;
+    background-color: #cccccc;
+    border-radius: 0.4375em;
+    transition: background-color var(--animation-duration) ease-in-out;
+}
+
+.toggle-knob {
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1em;
+    height: 1em;
+    background-color: #ffffff;
+    border-radius: 0.5em;
+    box-shadow: var(--shadow);
+    transition: transform var(--animation-duration) ease-in-out,
+                background-color var(--animation-duration) ease-in-out;
+}
+
+.toggle>.toggle-knob::after {
+    position: absolute;
+    display: block;
+    content: "";
+    left: -0.75em;
+    top: -0.75em;
+    right: -0.75em;
+    bottom: -0.75em;
+    border-radius: 2.5em;
+    background-color: rgb(160, 160, 160, 0.25);
+    pointer-events: none;
+    transform: scale(0);
+    opacity: 0;
+    visibility: hidden;
+    transition: transform 0s ease-in-out var(--animation-duration2),
+                background-color var(--animation-duration2) ease-in-out,
+                opacity var(--animation-duration2) ease-in-out,
+                visibility 0s ease-in-out var(--animation-duration2);
+}
+
+.toggle>input[type=checkbox]:focus~.toggle-knob::after,
+.toggle:active>.toggle-knob::after {
+    transform: scale(1);
+    opacity: 1;
+    visibility: visible;
+    transition: transform var(--animation-duration2) ease-in-out,
+                background-color var(--animation-duration2) ease-in-out,
+                opacity var(--animation-duration2) ease-in-out,
+                visibility var(--animation-duration2) ease-in-out;
+}
+
+.toggle>input[type=checkbox]:focus~.toggle-knob::after {
+    opacity: 0.5;
+}
+
+.toggle:active>input[type=checkbox]:focus~.toggle-knob::after {
+    opacity: 1;
+}
+
+.toggle>input[type=checkbox]:checked~.toggle-track {
+    background-color: #8db9f4;
+}
+
+.toggle>input[type=checkbox]:checked~.toggle-knob {
+    transform: translateX(16px);
+    background-color: #1a73e8;
+}
+
+.toggle>input[type=checkbox]:focus:checked~.toggle-knob::after,
+.toggle:active>input[type=checkbox]:checked~.toggle-knob::after {
+    background-color: rgba(28, 116, 233, 0.25);
+}
+
+
+/* Material design select */
+
+select {
+    width: 200px;
+    height: 32px;
+    line-height: 32px;
+    background-color: #f2f2f2;
+    border: 0;
+    border-radius: 0.25em;
+    box-sizing: border-box;
+    padding: 0 0.5em;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    /* TODO : Need arrow background image */
+}
+
+select::-ms-expand {
+    display: none;
+}
+
+
+/* Material design inputs */
+
+input[type=text],
+input[type=number] {
+    width: 100px;
+    height: 32px;
+    line-height: 32px;
+    background-color: #f2f2f2;
+    border: 0;
+    border-radius: 0.25em;
+    box-sizing: border-box;
+    padding: 0 0.5em;
+    -moz-appearance: textfield;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Debug icons */
+
+@font-face {
+    font-family: 'Glyphicons Halflings';
+    src: url('../../mixed/lib/bootstrap/fonts/glyphicons-halflings-regular.eot');
+    src: url('../../mixed/lib/bootstrap/fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('../../mixed/lib/bootstrap/fonts/glyphicons-halflings-regular.woff2') format('woff2'), url('../../mixed/lib/bootstrap/fonts/glyphicons-halflings-regular.woff') format('woff'), url('../../mixed/lib/bootstrap/fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('../../mixed/lib/bootstrap/fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
+}
+
+.glyphicon {
+    position: relative;
+    top: 1px;
+    display: inline-block;
+    font-family: 'Glyphicons Halflings';
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.glyphicon-cog:before { content: "\e019"; }
+.glyphicon-volume-up:before { content: "\e038"; }
+.glyphicon-text-size:before { content: "\e241"; }
+.glyphicon-export:before { content: "\e170"; }
+.glyphicon-book:before { content: "\e043"; }
+.glyphicon-download-alt:before { content: "\e025"; }
+.glyphicon-comment:before { content: "\e111"; }
+.glyphicon-picture:before { content: "\e060"; }
+.glyphicon-flash:before { content: "\e162"; }
+.glyphicon-transfer:before { content: "\e178"; }
+.glyphicon-star:before { content: "\e006"; }
+.glyphicon-list-alt:before { content: "\e032"; }
