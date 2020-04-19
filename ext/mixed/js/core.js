@@ -342,16 +342,14 @@ const yomichan = (() => {
         }
 
         logWarning(error) {
-            this._log(error, 'warn');
+            this.log(error, 'warn');
         }
 
         logError(error) {
-            this._log(error, 'error');
+            this.log(error, 'error');
         }
 
-        // Private
-
-        _log(error, level, problem=null) {
+        log(error, level, type=null) {
             let errorString;
             try {
                 errorString = error.toString();
@@ -383,8 +381,7 @@ const yomichan = (() => {
             }
 
             const manifest = chrome.runtime.getManifest();
-            let message = `${manifest.name} v${manifest.version}`;
-            message += problem ? problem : ' has encountered a problem.';
+            let message = `${manifest.name} v${manifest.version} ${this._getProblemMessage(type)}`;
             message += `\nOriginating URL: ${window.location.href}\n`;
             message += errorString;
             if (typeof errorData !== 'undefined') {
@@ -398,6 +395,15 @@ const yomichan = (() => {
                 case 'warn': console.warn(message); break;
                 case 'error': console.error(message); break;
                 default: console.log(message); break;
+            }
+        }
+
+        // Private
+
+        _getProblemMessage(type) {
+            switch (type) {
+                case 'unhandled-rejection': return 'has encountered an unhandled promise rejection.';
+                default: return 'has encountered a problem.';
             }
         }
 
@@ -423,7 +429,7 @@ const yomichan = (() => {
         }
 
         _onUnhandledRejection(event) {
-            this._log(event.reason, 'warn', ' has encountered an unhandled promise rejection.');
+            this.log(event.reason, 'warn', 'unhandled-rejection');
             event.preventDefault();
         }
     }
