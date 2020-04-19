@@ -18,6 +18,7 @@
 /* global
  * apiCommandExec
  * apiGetEnvironmentInfo
+ * apiLogIndicatorClear
  * apiOptionsGet
  */
 
@@ -53,6 +54,8 @@ function setupButtonEvents(selector, command, url) {
 
 async function mainInner() {
     await yomichan.prepare();
+
+    await apiLogIndicatorClear();
 
     showExtensionInfo();
 

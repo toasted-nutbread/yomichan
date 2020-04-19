@@ -148,6 +148,10 @@ function apiLog(error, level, type) {
     return _apiInvoke('log', {error, level, type});
 }
 
+function apiLogIndicatorClear() {
+    return _apiInvoke('logIndicatorClear');
+}
+
 function _apiInvoke(action, params={}) {
     const data = {action, params};
     return new Promise((resolve, reject) => {

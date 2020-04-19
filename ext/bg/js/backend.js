@@ -114,7 +114,8 @@ class Backend {
             ['getDictionaryCounts', {handler: this._onApiGetDictionaryCounts.bind(this), async: true}],
             ['purgeDatabase', {handler: this._onApiPurgeDatabase.bind(this), async: true}],
             ['getMedia', {handler: this._onApiGetMedia.bind(this), async: true}],
-            ['log', {handler: this._onApiLog.bind(this), async: false}]
+            ['log', {handler: this._onApiLog.bind(this), async: false}],
+            ['logIndicatorClear', {handler: this._onApiLogIndicatorClear.bind(this), async: false}]
         ]);
 
         this._commandHandlers = new Map([
@@ -776,6 +777,12 @@ class Backend {
         if (levelValue <= this._getErrorLevelValue(this._logErrorLevel)) { return; }
 
         this._logErrorLevel = level;
+        this._updateBadge();
+    }
+
+    _onApiLogIndicatorClear() {
+        if (this._logErrorLevel === null) { return; }
+        this._logErrorLevel = null;
         this._updateBadge();
     }
 
