@@ -175,3 +175,11 @@ function _apiInvoke(action, params={}) {
 function _apiCheckLastError() {
     // NOP
 }
+
+yomichan.on('log', async ({error, level, type}) => {
+    try {
+        await apiLog(jsonToError(error), level, type);
+    } catch (e) {
+        // NOP
+    }
+});
