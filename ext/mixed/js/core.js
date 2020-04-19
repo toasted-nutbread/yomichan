@@ -409,6 +409,8 @@ const yomichan = (() => {
                 case 'error': console.error(message); break;
                 default: console.log(message); break;
             }
+
+            this.trigger('log', {error, level, type});
         }
 
         // Private
