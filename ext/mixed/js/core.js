@@ -52,15 +52,28 @@ if (EXTENSION_IS_BROWSER_EDGE) {
  */
 
 function errorToJson(error) {
+    try {
+        if (isObject(error)) {
+            return {
+                name: error.name,
+                message: error.message,
+                stack: error.stack,
+                data: error.data
+            };
+        }
+    } catch (e) {
+        // NOP
+    }
     return {
-        name: error.name,
-        message: error.message,
-        stack: error.stack,
-        data: error.data
+        value: error,
+        hasValue: true
     };
 }
 
 function jsonToError(jsonError) {
+    if (jsonError.hasValue) {
+        return jsonError.value;
+    }
     const error = new Error(jsonError.message);
     error.name = jsonError.name;
     error.stack = jsonError.stack;
