@@ -362,7 +362,11 @@ const yomichan = (() => {
             this.log(error, 'error');
         }
 
-        log(error, level, type=null) {
+        log(error, level, type=null, context=null) {
+            if (!isObject(context)) {
+                context = this._getErrorContext();
+            }
+
             let errorString;
             try {
                 errorString = error.toString();
@@ -395,7 +399,7 @@ const yomichan = (() => {
 
             const manifest = chrome.runtime.getManifest();
             let message = `${manifest.name} v${manifest.version} ${this._getProblemMessage(type)}`;
-            message += `\nOriginating URL: ${window.location.href}\n`;
+            message += `\nOriginating URL: ${context.url}\n`;
             message += errorString;
             if (typeof errorData !== 'undefined') {
                 message += `\nData: ${JSON.stringify(errorData, null, 4)}`;
@@ -410,10 +414,16 @@ const yomichan = (() => {
                 default: console.log(message); break;
             }
 
-            this.trigger('log', {error, level, type});
+            this.trigger('log', {error, level, type, context});
         }
 
         // Private
+
+        _getErrorContext() {
+            return {
+                url: window.location.href
+            };
+        }
 
         _getProblemMessage(type) {
             switch (type) {
