@@ -78,6 +78,7 @@ class Backend {
         this._isPrepared = false;
         this._prepareError = false;
         this._badgePrepareDelayTimer = null;
+        this._logErrorLevel = null;
 
         this._messageHandlers = new Map([
             ['yomichanCoreReady', {handler: this._onApiYomichanCoreReady.bind(this), async: false}],
@@ -770,9 +771,25 @@ class Backend {
 
     _onApiLog({error, level, type}) {
         yomichan.log(jsonToError(error), level, type);
+
+        const levelValue = this._getErrorLevelValue(level);
+        if (levelValue <= this._getErrorLevelValue(this._logErrorLevel)) { return; }
+
+        this._logErrorLevel = level;
+        this._updateBadge();
     }
 
     // Command handlers
+
+    _getErrorLevelValue(errorLevel) {
+        switch (errorLevel) {
+            case 'info': return 0;
+            case 'debug': return 0;
+            case 'warn': return 1;
+            case 'error': return 2;
+            default: return 0;
+        }
+    }
 
     async _onCommandSearch(params) {
         const {mode='existingOrNewTab', query} = params || {};
@@ -895,7 +912,20 @@ class Backend {
         let color = null;
         let status = null;
 
-        if (!this._isPrepared) {
+        if (this._logErrorLevel !== null) {
+            switch (this._logErrorLevel) {
+                case 'error':
+                    text = '!!';
+                    color = '#f04e4e';
+                    status = 'Error';
+                    break;
+                default: // 'warn'
+                    text = '!';
+                    color = '#f0ad4e';
+                    status = 'Warning';
+                    break;
+            }
+        } else if (!this._isPrepared) {
             if (this._prepareError) {
                 text = '!!';
                 color = '#f04e4e';
