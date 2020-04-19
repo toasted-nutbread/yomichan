@@ -112,7 +112,8 @@ class Backend {
             ['getDictionaryInfo', {handler: this._onApiGetDictionaryInfo.bind(this), async: true}],
             ['getDictionaryCounts', {handler: this._onApiGetDictionaryCounts.bind(this), async: true}],
             ['purgeDatabase', {handler: this._onApiPurgeDatabase.bind(this), async: true}],
-            ['getMedia', {handler: this._onApiGetMedia.bind(this), async: true}]
+            ['getMedia', {handler: this._onApiGetMedia.bind(this), async: true}],
+            ['log', {handler: this._onApiLog.bind(this), async: false}]
         ]);
 
         this._commandHandlers = new Map([
@@ -765,6 +766,10 @@ class Backend {
 
     async _onApiGetMedia({targets}) {
         return await this.database.getMedia(targets);
+    }
+
+    _onApiLog({error, level, type}) {
+        yomichan.log(jsonToError(error), level, type);
     }
 
     // Command handlers

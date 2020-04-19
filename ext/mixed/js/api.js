@@ -144,6 +144,10 @@ function apiGetMedia(targets) {
     return _apiInvoke('getMedia', {targets});
 }
 
+function apiLog(error, level, type) {
+    return _apiInvoke('log', {error, level, type});
+}
+
 function _apiInvoke(action, params={}) {
     const data = {action, params};
     return new Promise((resolve, reject) => {
