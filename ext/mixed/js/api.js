@@ -182,7 +182,7 @@ function _apiCheckLastError() {
 
 yomichan.on('log', async ({error, level, type, context}) => {
     try {
-        await apiLog(jsonToError(error), level, type, context);
+        await apiLog(errorToJson(error), level, type, context);
     } catch (e) {
         // NOP
     }
