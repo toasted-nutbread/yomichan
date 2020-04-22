@@ -284,8 +284,6 @@ const yomichan = (() => {
             ]);
 
             chrome.runtime.onMessage.addListener(this._onMessage.bind(this));
-
-            window.addEventListener('unhandledrejection', this._onUnhandledRejection.bind(this));
         }
 
         // Public
@@ -425,11 +423,8 @@ const yomichan = (() => {
             };
         }
 
-        _getProblemMessage(type) {
-            switch (type) {
-                case 'unhandled-rejection': return 'has encountered an unhandled promise rejection.';
-                default: return 'has encountered a problem.';
-            }
+        _getProblemMessage() {
+            return 'has encountered a problem.';
         }
 
         _onMessage({action, params}, sender, callback) {
@@ -451,11 +446,6 @@ const yomichan = (() => {
 
         _onMessageZoomChanged({oldZoomFactor, newZoomFactor}) {
             this.trigger('zoomChanged', {oldZoomFactor, newZoomFactor});
-        }
-
-        _onUnhandledRejection(event) {
-            this.log(event.reason, 'warn', 'unhandled-rejection');
-            event.preventDefault();
         }
     }
 
