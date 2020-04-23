@@ -144,8 +144,8 @@ function apiGetMedia(targets) {
     return _apiInvoke('getMedia', {targets});
 }
 
-function apiLog(error, level, type, context) {
-    return _apiInvoke('log', {error, level, type, context});
+function apiLog(error, level, context) {
+    return _apiInvoke('log', {error, level, context});
 }
 
 function apiLogIndicatorClear() {
@@ -180,9 +180,9 @@ function _apiCheckLastError() {
     // NOP
 }
 
-yomichan.on('log', async ({error, level, type, context}) => {
+yomichan.on('log', async ({error, level, context}) => {
     try {
-        await apiLog(errorToJson(error), level, type, context);
+        await apiLog(errorToJson(error), level, context);
     } catch (e) {
         // NOP
     }

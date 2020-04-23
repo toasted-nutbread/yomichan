@@ -770,8 +770,8 @@ class Backend {
         return await this.database.getMedia(targets);
     }
 
-    _onApiLog({error, level, type, context}) {
-        yomichan.log(jsonToError(error), level, type, context);
+    _onApiLog({error, level, context}) {
+        yomichan.log(jsonToError(error), level, context);
 
         const levelValue = this._getErrorLevelValue(level);
         if (levelValue <= this._getErrorLevelValue(this._logErrorLevel)) { return; }
