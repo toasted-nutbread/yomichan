@@ -362,7 +362,7 @@ const yomichan = (() => {
 
         log(error, level, context=null) {
             if (!isObject(context)) {
-                context = this._getErrorContext();
+                context = this._getLogContext();
             }
 
             let errorString;
@@ -417,7 +417,7 @@ const yomichan = (() => {
 
         // Private
 
-        _getErrorContext() {
+        _getLogContext() {
             return {
                 url: window.location.href
             };
