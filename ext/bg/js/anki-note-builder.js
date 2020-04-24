@@ -34,7 +34,7 @@ class AnkiNoteBuilder {
             deckName: modeOptions.deck,
             modelName: modeOptions.model,
             options: {
-                duplicateScope: 'deck'
+                duplicateScope: options.anki.duplicateScope
             }
         };
 
