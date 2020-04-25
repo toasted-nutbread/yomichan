@@ -18,10 +18,14 @@
 /* global
  * DisplaySearch
  * apiOptionsGet
+ * dynamicLoader
  */
 
-function injectSearchFrontend() {
-    const scriptSrcs = [
+async function injectSearchFrontend() {
+    dynamicLoader.loadStyles([
+        '/fg/css/client.css'
+    ]);
+    await dynamicLoader.loadScripts([
         '/mixed/js/text-scanner.js',
         '/fg/js/frontend-api-receiver.js',
         '/fg/js/frame-offset-forwarder.js',
@@ -29,27 +33,7 @@ function injectSearchFrontend() {
         '/fg/js/popup-proxy-host.js',
         '/fg/js/frontend.js',
         '/fg/js/content-script-main.js'
-    ];
-    for (const src of scriptSrcs) {
-        const node = document.querySelector(`script[src='${src}']`);
-        if (node !== null) { continue; }
-
-        const script = document.createElement('script');
-        script.async = false;
-        script.src = src;
-        document.body.appendChild(script);
-    }
-
-    const styleSrcs = [
-        '/fg/css/client.css'
-    ];
-    for (const src of styleSrcs) {
-        const style = document.createElement('link');
-        style.rel = 'stylesheet';
-        style.type = 'text/css';
-        style.href = src;
-        document.head.appendChild(style);
-    }
+    ]);
 }
 
 (async () => {
@@ -69,7 +53,7 @@ function injectSearchFrontend() {
         yomichan.off('optionsUpdated', applyOptions);
 
         window.frontendInitializationData = {depth: 1, proxy: false, isSearchPage: true};
-        injectSearchFrontend();
+        await injectSearchFrontend();
     };
 
     yomichan.on('optionsUpdated', applyOptions);

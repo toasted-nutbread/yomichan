@@ -18,23 +18,18 @@
 /* global
  * DisplayFloat
  * apiOptionsGet
+ * dynamicLoader
  */
 
-function injectPopupNested() {
-    const scriptSrcs = [
+async function injectPopupNested() {
+    await dynamicLoader.loadScripts([
         '/mixed/js/text-scanner.js',
         '/fg/js/frontend-api-sender.js',
         '/fg/js/popup.js',
         '/fg/js/popup-proxy.js',
         '/fg/js/frontend.js',
         '/fg/js/content-script-main.js'
-    ];
-    for (const src of scriptSrcs) {
-        const script = document.createElement('script');
-        script.async = false;
-        script.src = src;
-        document.body.appendChild(script);
-    }
+    ]);
 }
 
 async function popupNestedInitialize(id, depth, parentFrameId, url) {
@@ -50,7 +45,7 @@ async function popupNestedInitialize(id, depth, parentFrameId, url) {
         yomichan.off('optionsUpdated', applyOptions);
 
         window.frontendInitializationData = {id, depth, parentFrameId, url, proxy: true};
-        injectPopupNested();
+        await injectPopupNested();
     };
 
     yomichan.on('optionsUpdated', applyOptions);
