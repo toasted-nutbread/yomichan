@@ -61,18 +61,15 @@ function injectSearchFrontend() {
     let optionsApplied = false;
 
     const applyOptions = async () => {
-        const optionsContext = {
-            depth: 0,
-            url: window.location.href
-        };
+        const optionsContext = {depth: 0, url: window.location.href};
         const options = await apiOptionsGet(optionsContext);
         if (!options.scanning.enableOnSearchPage || optionsApplied) { return; }
+
         optionsApplied = true;
+        yomichan.off('optionsUpdated', applyOptions);
 
         window.frontendInitializationData = {depth: 1, proxy: false, isSearchPage: true};
         injectSearchFrontend();
-
-        yomichan.off('optionsUpdated', applyOptions);
     };
 
     yomichan.on('optionsUpdated', applyOptions);

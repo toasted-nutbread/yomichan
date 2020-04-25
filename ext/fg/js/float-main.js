@@ -43,23 +43,14 @@ async function popupNestedInitialize(id, depth, parentFrameId, url) {
     const applyOptions = async () => {
         const optionsContext = {depth, url};
         const options = await apiOptionsGet(optionsContext);
-        const popupNestingMaxDepth = options.scanning.popupNestingMaxDepth;
-
-        const maxPopupDepthExceeded = !(
-            typeof popupNestingMaxDepth === 'number' &&
-            typeof depth === 'number' &&
-            depth < popupNestingMaxDepth
-        );
-        if (maxPopupDepthExceeded || optionsApplied) {
-            return;
-        }
+        const maxPopupDepthExceeded = !(typeof depth === 'number' && depth < options.scanning.popupNestingMaxDepth);
+        if (maxPopupDepthExceeded || optionsApplied) { return; }
 
         optionsApplied = true;
+        yomichan.off('optionsUpdated', applyOptions);
 
         window.frontendInitializationData = {id, depth, parentFrameId, url, proxy: true};
         injectPopupNested();
-
-        yomichan.off('optionsUpdated', applyOptions);
     };
 
     yomichan.on('optionsUpdated', applyOptions);
