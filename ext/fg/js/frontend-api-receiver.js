@@ -39,14 +39,16 @@ class FrontendApiReceiver {
         if (typeof handler !== 'function') { return; }
 
         this._sendAck(port, id, senderId);
+        this._invokeHandler(handler, params, port, id, senderId);
+    }
 
-        handler(params).then(
-            (result) => {
-                this._sendResult(port, id, senderId, {result});
-            },
-            (error) => {
-                this._sendResult(port, id, senderId, {error: errorToJson(error)});
-            });
+    async _invokeHandler(handler, params, port, id, senderId) {
+        try {
+            const result = await handler(params);
+            this._sendResult(port, id, senderId, {result});
+        } catch (error) {
+            this._sendResult(port, id, senderId, {error: errorToJson(error)});
+        }
     }
 
     _sendAck(port, id, senderId) {
