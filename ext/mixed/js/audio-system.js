@@ -190,8 +190,8 @@ class AudioSystem {
     _isAudioValid(audio) {
         const duration = audio.duration;
         return (
-            duration !== 5.694694 && // jpod101 invalid audio
-            duration !== 5.720718
+            duration !== 5.694694 && // jpod101 invalid audio (Chrome)
+            duration !== 5.720718 // jpod101 invalid audio (Firefox)
         );
     }
 
