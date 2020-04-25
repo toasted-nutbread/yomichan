@@ -36,7 +36,7 @@ class FrontendApiSender {
         }
 
         if (this.port === null) {
-            this.createPort();
+            this._createPort();
         }
 
         const id = `${this.nextId}`;
@@ -45,40 +45,40 @@ class FrontendApiSender {
         return new Promise((resolve, reject) => {
             const info = {id, resolve, reject, ack: false, timer: null};
             this.callbacks.set(id, info);
-            info.timer = setTimeout(() => this.onError(id, 'Timeout (ack)'), this.ackTimeout);
+            info.timer = setTimeout(() => this._onError(id, 'Timeout (ack)'), this.ackTimeout);
 
             this.port.postMessage({id, action, params, target, senderId: this.senderId});
         });
     }
 
-    createPort() {
+    _createPort() {
         this.port = chrome.runtime.connect(null, {name: 'backend-api-forwarder'});
-        this.port.onDisconnect.addListener(this.onDisconnect.bind(this));
-        this.port.onMessage.addListener(this.onMessage.bind(this));
+        this.port.onDisconnect.addListener(this._onDisconnect.bind(this));
+        this.port.onMessage.addListener(this._onMessage.bind(this));
     }
 
-    onMessage({type, id, data, senderId}) {
+    _onMessage({type, id, data, senderId}) {
         if (senderId !== this.senderId) { return; }
         switch (type) {
             case 'ack':
-                this.onAck(id);
+                this._onAck(id);
                 break;
             case 'result':
-                this.onResult(id, data);
+                this._onResult(id, data);
                 break;
         }
     }
 
-    onDisconnect() {
+    _onDisconnect() {
         this.disconnected = true;
         this.port = null;
 
         for (const id of this.callbacks.keys()) {
-            this.onError(id, 'Disconnected');
+            this._onError(id, 'Disconnected');
         }
     }
 
-    onAck(id) {
+    _onAck(id) {
         const info = this.callbacks.get(id);
         if (typeof info === 'undefined') {
             console.warn(`ID ${id} not found for ack`);
@@ -92,10 +92,10 @@ class FrontendApiSender {
 
         info.ack = true;
         clearTimeout(info.timer);
-        info.timer = setTimeout(() => this.onError(id, 'Timeout (response)'), this.responseTimeout);
+        info.timer = setTimeout(() => this._onError(id, 'Timeout (response)'), this.responseTimeout);
     }
 
-    onResult(id, data) {
+    _onResult(id, data) {
         const info = this.callbacks.get(id);
         if (typeof info === 'undefined') {
             console.warn(`ID ${id} not found`);
@@ -118,7 +118,7 @@ class FrontendApiSender {
         }
     }
 
-    onError(id, reason) {
+    _onError(id, reason) {
         const info = this.callbacks.get(id);
         if (typeof info === 'undefined') { return; }
         this.callbacks.delete(id);
