@@ -20,7 +20,9 @@ class FrontendApiReceiver {
     constructor(source='', handlers=new Map()) {
         this._source = source;
         this._handlers = handlers;
+    }
 
+    prepare() {
         chrome.runtime.onConnect.addListener(this._onConnect.bind(this));
     }
 
