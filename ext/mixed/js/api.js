@@ -152,6 +152,48 @@ function apiLogIndicatorClear() {
     return _apiInvoke('logIndicatorClear');
 }
 
+function _apiCreateActionPort(timeout=5000) {
+    return new Promise((resolve, reject) => {
+        let timer = null;
+        let portNameResolve;
+        let portNameReject;
+        const portNamePromise = new Promise((resolve2, reject2) => {
+            portNameResolve = resolve2;
+            portNameReject = reject2;
+        });
+
+        const onConnect = async (port) => {
+            try {
+                const portName = await portNamePromise;
+                if (port.name !== portName || timer === null) { return; }
+            } catch (e) {
+                return;
+            }
+
+            clearTimeout(timer);
+            timer = null;
+
+            chrome.runtime.onConnect.removeListener(onConnect);
+            resolve(port);
+        };
+
+        const onError = (e) => {
+            if (timer !== null) {
+                clearTimeout(timer);
+                timer = null;
+            }
+            chrome.runtime.onConnect.removeListener(onConnect);
+            portNameReject(e);
+            reject(e);
+        };
+
+        timer = setTimeout(() => onError(new Error('Timeout')), timeout);
+
+        chrome.runtime.onConnect.addListener(onConnect);
+        _apiInvoke('createActionPort').then(portNameResolve, onError);
+    });
+}
+
 function _apiInvoke(action, params={}) {
     const data = {action, params};
     return new Promise((resolve, reject) => {

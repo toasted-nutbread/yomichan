@@ -115,7 +115,8 @@ class Backend {
             ['purgeDatabase', {handler: this._onApiPurgeDatabase.bind(this), async: true}],
             ['getMedia', {handler: this._onApiGetMedia.bind(this), async: true}],
             ['log', {handler: this._onApiLog.bind(this), async: false}],
-            ['logIndicatorClear', {handler: this._onApiLogIndicatorClear.bind(this), async: false}]
+            ['logIndicatorClear', {handler: this._onApiLogIndicatorClear.bind(this), async: false}],
+            ['createActionPort', {handler: this._onApiCreateActionPort.bind(this), async: false}]
         ]);
 
         this._commandHandlers = new Map([
@@ -784,6 +785,26 @@ class Backend {
         if (this._logErrorLevel === null) { return; }
         this._logErrorLevel = null;
         this._updateBadge();
+    }
+
+    _onApiCreateActionPort(params, sender) {
+        let tabId;
+        if (!(
+            sender &&
+            sender.tab &&
+            (typeof (tabId = sender.tab.id)) === 'number'
+        )) {
+            throw new Error('Invalid sender');
+        }
+
+        const frameId = sender.frameId;
+        const id = yomichan.generateId(16);
+        const portName = `action-port-${id}`;
+
+        chrome.tabs.connect(tabId, {name: portName, frameId});
+        // TODO : setup handlers
+
+        return portName;
     }
 
     // Command handlers
