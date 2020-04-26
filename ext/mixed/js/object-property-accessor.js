@@ -24,7 +24,7 @@ class ObjectPropertyAccessor {
         this._setter = (typeof setter === 'function' ? setter : null);
     }
 
-    getProperty(pathArray, pathLength) {
+    get(pathArray, pathLength) {
         let target = this._target;
         const ii = typeof pathLength === 'number' ? Math.min(pathArray.length, pathLength) : pathArray.length;
         for (let i = 0; i < ii; ++i) {
@@ -37,12 +37,12 @@ class ObjectPropertyAccessor {
         return target;
     }
 
-    setProperty(pathArray, value) {
+    set(pathArray, value) {
         if (pathArray.length === 0) {
             throw new Error('Invalid path');
         }
 
-        const target = this.getProperty(pathArray, pathArray.length - 1);
+        const target = this.get(pathArray, pathArray.length - 1);
         const key = pathArray[pathArray.length - 1];
         if (!ObjectPropertyAccessor.isValidPropertyType(target, key)) {
             throw new Error(`Invalid path: ${ObjectPropertyAccessor.getPathString(pathArray)}`);
