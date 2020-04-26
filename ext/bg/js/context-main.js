@@ -17,6 +17,7 @@
 
 /* global
  * apiCommandExec
+ * apiForwardLogsToBackend
  * apiGetEnvironmentInfo
  * apiLogIndicatorClear
  * apiOptionsGet
@@ -53,6 +54,7 @@ function setupButtonEvents(selector, command, url) {
 }
 
 async function mainInner() {
+    apiForwardLogsToBackend();
     await yomichan.prepare();
 
     await apiLogIndicatorClear();

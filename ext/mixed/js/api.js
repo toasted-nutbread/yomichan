@@ -180,10 +180,16 @@ function _apiCheckLastError() {
     // NOP
 }
 
-yomichan.on('log', async ({error, level, context}) => {
-    try {
-        await apiLog(errorToJson(error), level, context);
-    } catch (e) {
-        // NOP
-    }
-});
+let _apiForwardLogsToBackendEnabled = false;
+function apiForwardLogsToBackend() {
+    if (_apiForwardLogsToBackendEnabled) { return; }
+    _apiForwardLogsToBackendEnabled = true;
+
+    yomichan.on('log', async ({error, level, context}) => {
+        try {
+            await apiLog(errorToJson(error), level, context);
+        } catch (e) {
+            // NOP
+        }
+    });
+}
