@@ -346,3 +346,5 @@ Required licensing notices for this project follow below:
 [![Kanji information](https://foosoft.net/projects/yomichan/img/ss-kanji-thumb.png)](https://foosoft.net/projects/yomichan/img/ss-kanji.png)
 [![Dictionary options](https://foosoft.net/projects/yomichan/img/ss-dictionaries-thumb.png)](https://foosoft.net/projects/yomichan/img/ss-dictionaries.png)
 [![Anki options](https://foosoft.net/projects/yomichan/img/ss-anki-thumb.png)](https://foosoft.net/projects/yomichan/img/ss-anki.png)
+
+Test
