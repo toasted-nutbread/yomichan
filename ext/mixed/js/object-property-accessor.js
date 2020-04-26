@@ -38,12 +38,11 @@ class ObjectPropertyAccessor {
     }
 
     set(pathArray, value) {
-        if (pathArray.length === 0) {
-            throw new Error('Invalid path');
-        }
+        const ii = pathArray.length - 1;
+        if (ii < 0) { throw new Error('Invalid path'); }
 
-        const target = this.get(pathArray, pathArray.length - 1);
-        const key = pathArray[pathArray.length - 1];
+        const target = this.get(pathArray, ii);
+        const key = pathArray[ii];
         if (!ObjectPropertyAccessor.isValidPropertyType(target, key)) {
             throw new Error(`Invalid path: ${ObjectPropertyAccessor.getPathString(pathArray)}`);
         }
@@ -52,6 +51,49 @@ class ObjectPropertyAccessor {
             this._setter(target, key, value, pathArray);
         } else {
             target[key] = value;
+        }
+    }
+
+    delete(pathArray) {
+        const ii = pathArray.length - 1;
+        if (ii < 0) { throw new Error('Invalid path'); }
+
+        const target = this.get(pathArray, ii);
+        const key = pathArray[ii];
+        if (!ObjectPropertyAccessor.isValidPropertyType(target, key)) {
+            throw new Error(`Invalid path: ${ObjectPropertyAccessor.getPathString(pathArray)}`);
+        }
+
+        delete target[key];
+    }
+
+    swap(pathArray1, pathArray2) {
+        const ii1 = pathArray1.length - 1;
+        if (ii1 < 0) { throw new Error('Invalid path 1'); }
+        const target1 = this.get(pathArray1, ii1);
+        const key1 = pathArray1[ii1];
+        if (!ObjectPropertyAccessor.isValidPropertyType(target1, key1)) { throw new Error(`Invalid path 1: ${ObjectPropertyAccessor.getPathString(pathArray1)}`); }
+
+        const ii2 = pathArray2.length - 1;
+        if (ii2 < 0) { throw new Error('Invalid path 2'); }
+        const target2 = this.get(pathArray2, ii2);
+        const key2 = pathArray2[ii2];
+        if (!ObjectPropertyAccessor.isValidPropertyType(target2, key2)) { throw new Error(`Invalid path 2: ${ObjectPropertyAccessor.getPathString(pathArray2)}`); }
+
+        const value1 = target1[key1];
+        const value2 = target2[key2];
+
+        target1[key1] = value2;
+        try {
+            target2[key2] = value1;
+        } catch (e) {
+            // Revert
+            try {
+                target1[key1] = value1;
+            } catch (e2) {
+                // NOP
+            }
+            throw e;
         }
     }
 
