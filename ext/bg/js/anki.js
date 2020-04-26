@@ -91,7 +91,7 @@ class AnkiConnect {
         if (!this._enabled) { return []; }
         await this._checkVersion();
         const actions = notes.map((note) => {
-            let query = (duplicateScope === 'deck' ? `deck:"${this._escapeQuery(note.deckName)}" ` : '');
+            let query = (duplicateScope === 'deck' ? `"deck:${this._escapeQuery(note.deckName)}" ` : '');
             query += this._fieldsToQuery(note.fields);
             return {action: 'findNotes', params: {query}};
         });
@@ -131,6 +131,6 @@ class AnkiConnect {
         }
 
         const key = fieldNames[0];
-        return `${key.toLowerCase()}:"${this._escapeQuery(fields[key])}"`;
+        return `"${key.toLowerCase()}:${this._escapeQuery(fields[key])}"`;
     }
 }
