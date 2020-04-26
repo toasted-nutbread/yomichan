@@ -118,6 +118,7 @@ class Backend {
             ['logIndicatorClear', {handler: this._onApiLogIndicatorClear.bind(this), async: false}],
             ['createActionPort', {handler: this._onApiCreateActionPort.bind(this), async: false}]
         ]);
+        this._messageHandlersWithProgress = new Map();
 
         this._commandHandlers = new Map([
             ['search', this._onCommandSearch.bind(this)],
@@ -801,13 +802,69 @@ class Backend {
         const id = yomichan.generateId(16);
         const portName = `action-port-${id}`;
 
-        chrome.tabs.connect(tabId, {name: portName, frameId});
-        // TODO : setup handlers
+        const port = chrome.tabs.connect(tabId, {name: portName, frameId});
+        try {
+            this._createActionListenerPort(port, sender, this._messageHandlersWithProgress);
+        } catch (e) {
+            port.disconnect();
+            throw e;
+        }
 
         return portName;
     }
 
     // Command handlers
+
+    _createActionListenerPort(port, sender, handlers) {
+        let hasStarted = false;
+
+        const onProgress = (data) => {
+            try {
+                if (port === null) { return; }
+                port.postMessage({type: 'progress', data});
+            } catch (e) {
+                // NOP
+            }
+        };
+
+        const onMessage = async ({action, params}) => {
+            if (hasStarted) { return; }
+            hasStarted = true;
+            port.onMessage.removeListener(onMessage);
+
+            try {
+                port.postMessage({type: 'ack'});
+
+                const messageHandler = handlers.get(action);
+                if (typeof messageHandler === 'undefined') {
+                    throw new Error('Invalid action');
+                }
+                const {handler, async} = messageHandler;
+
+                const promiseOrResult = handler(params, sender, onProgress);
+                const result = async ? await promiseOrResult : promiseOrResult;
+                port.postMessage({type: 'complete', data: result});
+            } catch (e) {
+                if (port !== null) {
+                    port.postMessage({type: 'error', data: e});
+                }
+                cleanup();
+            }
+        };
+
+        const cleanup = () => {
+            if (port === null) { return; }
+            if (!hasStarted) {
+                port.onMessage.removeListener(onMessage);
+            }
+            port.onDisconnect.removeListener(cleanup);
+            port = null;
+            handlers = null;
+        };
+
+        port.onMessage.addListener(onMessage);
+        port.onDisconnect.addListener(cleanup);
+    }
 
     _getErrorLevelValue(errorLevel) {
         switch (errorLevel) {

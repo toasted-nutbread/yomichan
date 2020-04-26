@@ -194,6 +194,82 @@ function _apiCreateActionPort(timeout=5000) {
     });
 }
 
+function _apiInvokeWithProgress(action, params, onProgress, timeout=5000) {
+    return new Promise((resolve, reject) => {
+        let timer = null;
+        let port = null;
+
+        if (typeof onProgress !== 'function') {
+            onProgress = () => {};
+        }
+
+        const onMessage = (message) => {
+            switch (message.type) {
+                case 'ack':
+                    if (timer !== null) {
+                        clearTimeout(timer);
+                        timer = null;
+                    }
+                    break;
+                case 'progress':
+                    try {
+                        onProgress(message.data);
+                    } catch (e) {
+                        // NOP
+                    }
+                    break;
+                case 'complete':
+                    cleanup();
+                    resolve(message.data);
+                    break;
+                case 'error':
+                    cleanup();
+                    reject(jsonToError(message.data));
+                    break;
+            }
+        };
+
+        const onDisconnect = () => {
+            cleanup();
+            reject(new Error('Disconnected'));
+        };
+
+        const cleanup = () => {
+            if (timer !== null) {
+                clearTimeout(timer);
+                timer = null;
+            }
+            if (port !== null) {
+                port.onMessage.removeListener(onMessage);
+                port.onDisconnect.removeListener(onDisconnect);
+                port.disconnect();
+                port = null;
+            }
+            onProgress = null;
+        };
+
+        timer = setTimeout(() => {
+            cleanup();
+            reject(new Error('Timeout'));
+        }, timeout);
+
+        (async () => {
+            try {
+                port = await _apiCreateActionPort(timeout);
+                port.onMessage.addListener(onMessage);
+                port.onDisconnect.addListener(onDisconnect);
+                port.postMessage({action, params});
+            } catch (e) {
+                cleanup();
+                reject(e);
+            } finally {
+                action = null;
+                params = null;
+            }
+        })();
+    });
+}
+
 function _apiInvoke(action, params={}) {
     const data = {action, params};
     return new Promise((resolve, reject) => {
