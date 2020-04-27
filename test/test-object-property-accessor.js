@@ -40,7 +40,7 @@ function createTestObject() {
 }
 
 
-function testGetProperty1() {
+function testGet1() {
     const object = createTestObject();
     const accessor = new ObjectPropertyAccessor(object);
 
@@ -58,11 +58,11 @@ function testGetProperty1() {
     ];
 
     for (const [pathArray, expected] of data) {
-        assert.strictEqual(accessor.getProperty(pathArray), expected);
+        assert.strictEqual(accessor.get(pathArray), expected);
     }
 }
 
-function testGetProperty2() {
+function testGet2() {
     const object = createTestObject();
     const accessor = new ObjectPropertyAccessor(object);
 
@@ -89,12 +89,12 @@ function testGetProperty2() {
     ];
 
     for (const [pathArray, message] of data) {
-        assert.throws(() => accessor.getProperty(pathArray), {message});
+        assert.throws(() => accessor.get(pathArray), {message});
     }
 }
 
 
-function testSetProperty1() {
+function testSet1() {
     const object = createTestObject();
     const accessor = new ObjectPropertyAccessor(object);
 
@@ -112,12 +112,12 @@ function testSetProperty1() {
     ];
 
     for (const pathArray of data) {
-        accessor.setProperty(pathArray, testValue);
-        assert.strictEqual(accessor.getProperty(pathArray), testValue);
+        accessor.set(pathArray, testValue);
+        assert.strictEqual(accessor.get(pathArray), testValue);
     }
 }
 
-function testSetProperty2() {
+function testSet2() {
     const object = createTestObject();
     const accessor = new ObjectPropertyAccessor(object);
 
@@ -137,7 +137,7 @@ function testSetProperty2() {
     ];
 
     for (const [pathArray, message] of data) {
-        assert.throws(() => accessor.setProperty(pathArray, testValue), {message});
+        assert.throws(() => accessor.set(pathArray, testValue), {message});
     }
 }
 
@@ -272,10 +272,10 @@ function testIsValidPropertyType() {
 
 
 function main() {
-    testGetProperty1();
-    testGetProperty2();
-    testSetProperty1();
-    testSetProperty2();
+    testGet1();
+    testGet2();
+    testSet1();
+    testSet2();
     testGetPathString1();
     testGetPathString2();
     testGetPathArray1();
