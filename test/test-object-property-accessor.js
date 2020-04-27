@@ -193,6 +193,77 @@ function testDelete2() {
 }
 
 
+function testSwap1() {
+    const data = [
+        [['0'], true],
+        [['value1', 'value2'], true],
+        [['value1', 'value3'], true],
+        [['value1', 'value4'], true],
+        [['value1'], false],
+        [['value5', 0], true],
+        [['value5', 1], true],
+        [['value5', 2], true],
+        [['value5'], false]
+    ];
+
+    for (const [pathArray1, compareValues1] of data) {
+        for (const [pathArray2, compareValues2] of data) {
+            const object = createTestObject();
+            const accessor = new ObjectPropertyAccessor(object);
+
+            const value1a = accessor.get(pathArray1);
+            const value2a = accessor.get(pathArray2);
+
+            accessor.swap(pathArray1, pathArray2);
+
+            if (!compareValues1 || !compareValues2) { continue; }
+
+            const value1b = accessor.get(pathArray1);
+            const value2b = accessor.get(pathArray2);
+
+            assert.deepStrictEqual(value1a, value2b);
+            assert.deepStrictEqual(value2a, value1b);
+        }
+    }
+}
+
+function testSwap2() {
+    const data = [
+        [[], [], false, 'Invalid path 1'],
+        [['0'], [], false, 'Invalid path 2'],
+        [[], ['0'], false, 'Invalid path 1'],
+        [[0], ['0'], false, 'Invalid path 1: [0]'],
+        [['0'], [0], false, 'Invalid path 2: [0]']
+    ];
+
+    for (const [pathArray1, pathArray2, checkRevert, message] of data) {
+        const object = createTestObject();
+        const accessor = new ObjectPropertyAccessor(object);
+
+        let value1a;
+        let value2a;
+        if (checkRevert) {
+            try {
+                value1a = accessor.get(pathArray1);
+                value2a = accessor.get(pathArray2);
+            } catch (e) {
+                // NOP
+            }
+        }
+
+        assert.throws(() => accessor.swap(pathArray1, pathArray2), {message});
+
+        if (!checkRevert) { continue; }
+
+        const value1b = accessor.get(pathArray1);
+        const value2b = accessor.get(pathArray2);
+
+        assert.deepStrictEqual(value1a, value1b);
+        assert.deepStrictEqual(value2a, value2b);
+    }
+}
+
+
 function testGetPathString1() {
     const data = [
         [[], ''],
@@ -329,6 +400,8 @@ function main() {
     testSet2();
     testDelete1();
     testDelete2();
+    testSwap1();
+    testSwap2();
     testGetPathString1();
     testGetPathString2();
     testGetPathArray1();
