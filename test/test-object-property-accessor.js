@@ -124,6 +124,7 @@ function testSet2() {
 
     const testValue = {};
     const data = [
+        [[], 'Invalid path'],
         [[0], 'Invalid path: [0]'],
         [['0', 'invalid'], 'Invalid path: ["0"].invalid'],
         [['value1', 'value2', 0], 'Invalid path: value1.value2[0]'],
@@ -169,6 +170,7 @@ function testDelete1() {
 
 function testDelete2() {
     const data = [
+        [[], 'Invalid path'],
         [[0], 'Invalid path: [0]'],
         [['0', 'invalid'], 'Invalid path: ["0"].invalid'],
         [['value1', 'value2', 0], 'Invalid path: value1.value2[0]'],
