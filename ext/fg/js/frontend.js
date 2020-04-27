@@ -25,14 +25,8 @@
  * docSentenceExtract
  */
 
-class Frontend extends TextScanner {
+class Frontend {
     constructor(popup, getUrl=null) {
-        super(
-            window,
-            () => this.popup.isProxy() ? [] : [this.popup.getContainer()],
-            [(x, y) => this.popup.containsPoint(x, y)]
-        );
-
         this._id = yomichan.generateId(16);
 
         this.popup = popup;
@@ -48,8 +42,22 @@ class Frontend extends TextScanner {
         this._orphaned = false;
         this._lastShowPromise = Promise.resolve();
 
+        this._textScanner = new TextScanner(
+            window,
+            () => this.popup.isProxy() ? [] : [this.popup.getContainer()],
+            [(x, y) => this.popup.containsPoint(x, y)]
+        );
+        const getMouseEventListenersOld = this._textScanner.getMouseEventListeners.bind(this._textScanner);
+        this._textScanner.getMouseEventListeners = () => {
+            return [
+                ...getMouseEventListenersOld(),
+                [window, 'message', this.onWindowMessage.bind(this)]
+            ];
+        };
+        this._textScanner.onSearchSource = (...args) => this.onSearchSource(...args);
+
         this._windowMessageHandlers = new Map([
-            ['popupClose', () => this.clearSelection(false)],
+            ['popupClose', () => this._textScanner.clearSelection(false)],
             ['selectionCopy', () => document.execCommand('copy')]
         ]);
 
@@ -79,7 +87,7 @@ class Frontend extends TextScanner {
             yomichan.on('zoomChanged', this.onZoomChanged.bind(this));
             chrome.runtime.onMessage.addListener(this.onRuntimeMessage.bind(this));
 
-            this.on('clearSelection', this.onClearSelection.bind(this));
+            this._textScanner.on('clearSelection', this.onClearSelection.bind(this));
 
             this._updateContentScale();
             this._broadcastRootPopupInformation();
@@ -129,20 +137,14 @@ class Frontend extends TextScanner {
         this._updateContentScale();
     }
 
-    getMouseEventListeners() {
-        return [
-            ...super.getMouseEventListeners(),
-            [window, 'message', this.onWindowMessage.bind(this)]
-        ];
-    }
-
     setDisabledOverride(disabled) {
         this._disabledOverride = disabled;
-        this.setEnabled(this.options.general.enable, this._canEnable());
+        if (this.options === null) { return; }
+        this._textScanner.setEnabled(this.options.general.enable, this._canEnable());
     }
 
     async setPopup(popup) {
-        this.clearSelection(true);
+        this._textScanner.clearSelection(true);
         this.popup = popup;
         await popup.setOptionsContext(await this.getOptionsContext(), this._id);
     }
@@ -150,21 +152,28 @@ class Frontend extends TextScanner {
     async updateOptions() {
         const optionsContext = await this.getOptionsContext();
         this.options = await apiOptionsGet(optionsContext);
-        this.setOptions(this.options, this._canEnable());
+        this._textScanner.setOptions(this.options, this._canEnable());
 
         const ignoreNodes = ['.scan-disable', '.scan-disable *'];
         if (!this.options.scanning.enableOnPopupExpressions) {
             ignoreNodes.push('.source-text', '.source-text *');
         }
-        this.ignoreNodes = ignoreNodes.join(',');
+        this._textScanner.ignoreNodes = ignoreNodes.join(',');
 
         await this.popup.setOptionsContext(optionsContext, this._id);
 
         this._updateContentScale();
 
-        if (this.textSourceCurrent !== null && this.causeCurrent !== null) {
-            await this.onSearchSource(this.textSourceCurrent, this.causeCurrent);
+        const textSourceCurrent = this._textScanner.getCurrentTextSource();
+        const causeCurrent = this._textScanner.causeCurrent;
+        if (textSourceCurrent !== null && causeCurrent !== null) {
+            await this.onSearchSource(textSourceCurrent, causeCurrent);
         }
+    }
+
+    async setTextSource(textSource) {
+        await this.onSearchSource(textSource, 'script');
+        this._textScanner.setCurrentTextSource(textSource);
     }
 
     async onSearchSource(textSource, cause) {
@@ -192,7 +201,7 @@ class Frontend extends TextScanner {
             }
         } finally {
             if (results === null && this.options.scanning.autoHideResults) {
-                this.clearSelection(false);
+                this._textScanner.clearSelection(false);
             }
         }
 
@@ -215,7 +224,7 @@ class Frontend extends TextScanner {
     }
 
     async findTerms(textSource, optionsContext) {
-        this.setTextSourceScanLength(textSource, this.options.scanning.length);
+        this._textScanner.setTextSourceScanLength(textSource, this.options.scanning.length);
 
         const searchText = textSource.text();
         if (searchText.length === 0) { return null; }
@@ -229,7 +238,7 @@ class Frontend extends TextScanner {
     }
 
     async findKanji(textSource, optionsContext) {
-        this.setTextSourceScanLength(textSource, 1);
+        this._textScanner.setTextSourceScanLength(textSource, 1);
 
         const searchText = textSource.text();
         if (searchText.length === 0) { return null; }
@@ -300,7 +309,7 @@ class Frontend extends TextScanner {
     }
 
     async _updatePopupPosition() {
-        const textSource = this.getCurrentTextSource();
+        const textSource = this._textScanner.getCurrentTextSource();
         if (textSource !== null && await this.popup.isVisible()) {
             this._showPopupContent(textSource, await this.getOptionsContext());
         }

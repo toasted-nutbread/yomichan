@@ -68,8 +68,7 @@ class SettingsPopupPreview {
         this.frontend = new Frontend(this.popup);
 
         this.frontend.getOptionsContext = async () => this.optionsContext;
-        this.frontend.setEnabled = () => {};
-        this.frontend.clearSelection = () => {};
+        this.frontend.setDisabledOverride(true);
 
         await this.frontend.prepare();
 
@@ -169,8 +168,7 @@ class SettingsPopupPreview {
         const source = new TextSourceRange(range, range.toString(), null, null);
 
         try {
-            await this.frontend.onSearchSource(source, 'script');
-            this.frontend.setCurrentTextSource(source);
+            await this.frontend.setTextSource(source);
         } finally {
             source.cleanup();
         }
