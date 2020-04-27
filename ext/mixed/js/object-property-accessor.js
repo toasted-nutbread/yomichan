@@ -19,9 +19,8 @@
  * Class used to get and set generic properties of an object by using path strings.
  */
 class ObjectPropertyAccessor {
-    constructor(target, setter=null) {
+    constructor(target) {
         this._target = target;
-        this._setter = (typeof setter === 'function' ? setter : null);
     }
 
     get(pathArray, pathLength) {
@@ -47,11 +46,7 @@ class ObjectPropertyAccessor {
             throw new Error(`Invalid path: ${ObjectPropertyAccessor.getPathString(pathArray)}`);
         }
 
-        if (this._setter !== null) {
-            this._setter(target, key, value, pathArray);
-        } else {
-            target[key] = value;
-        }
+        target[key] = value;
     }
 
     delete(pathArray) {
