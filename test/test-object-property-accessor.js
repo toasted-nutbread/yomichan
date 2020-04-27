@@ -143,6 +143,54 @@ function testSet2() {
 }
 
 
+function testDelete1() {
+    const hasOwn = (object, property) => Object.prototype.hasOwnProperty.call(object, property);
+
+    const data = [
+        [['0'], (object) => !hasOwn(object, '0')],
+        [['value1', 'value2'], (object) => !hasOwn(object.value1, 'value2')],
+        [['value1', 'value3'], (object) => !hasOwn(object.value1, 'value3')],
+        [['value1', 'value4'], (object) => !hasOwn(object.value1, 'value4')],
+        [['value1'], (object) => !hasOwn(object, 'value1')],
+        [['value5', 0], (object) => !hasOwn(object.value5, 0)],
+        [['value5', 1], (object) => !hasOwn(object.value5, 1)],
+        [['value5', 2], (object) => !hasOwn(object.value5, 2)],
+        [['value5'], (object) => !hasOwn(object, 'value5')]
+    ];
+
+    for (const [pathArray, validate] of data) {
+        const object = createTestObject();
+        const accessor = new ObjectPropertyAccessor(object);
+
+        accessor.delete(pathArray);
+        assert.ok(validate(object));
+    }
+}
+
+function testDelete2() {
+    const data = [
+        [[0], 'Invalid path: [0]'],
+        [['0', 'invalid'], 'Invalid path: ["0"].invalid'],
+        [['value1', 'value2', 0], 'Invalid path: value1.value2[0]'],
+        [['value1', 'value3', 'invalid'], 'Invalid path: value1.value3.invalid'],
+        [['value1', 'value4', 'invalid'], 'Invalid path: value1.value4.invalid'],
+        [['value1', 'value4', 0], 'Invalid path: value1.value4[0]'],
+        [['value5', 1, 'invalid'], 'Invalid path: value5[1].invalid'],
+        [['value5', 2, 'invalid'], 'Invalid path: value5[2].invalid'],
+        [['value5', 2, 0], 'Invalid path: value5[2][0]'],
+        [['value5', 2, 0, 'invalid'], 'Invalid path: value5[2][0]'],
+        [['value5', 2.5], 'Invalid index']
+    ];
+
+    for (const [pathArray, message] of data) {
+        const object = createTestObject();
+        const accessor = new ObjectPropertyAccessor(object);
+
+        assert.throws(() => accessor.delete(pathArray), {message});
+    }
+}
+
+
 function testGetPathString1() {
     const data = [
         [[], ''],
@@ -277,6 +325,8 @@ function main() {
     testGet2();
     testSet1();
     testSet2();
+    testDelete1();
+    testDelete2();
     testGetPathString1();
     testGetPathString2();
     testGetPathArray1();
