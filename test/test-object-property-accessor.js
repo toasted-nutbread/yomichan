@@ -41,23 +41,24 @@ function createTestObject() {
 
 
 function testGet1() {
-    const object = createTestObject();
-    const accessor = new ObjectPropertyAccessor(object);
-
     const data = [
-        [[], object],
-        [['0'], object['0']],
-        [['value1'], object.value1],
-        [['value1', 'value2'], object.value1.value2],
-        [['value1', 'value3'], object.value1.value3],
-        [['value1', 'value4'], object.value1.value4],
-        [['value5'], object.value5],
-        [['value5', 0], object.value5[0]],
-        [['value5', 1], object.value5[1]],
-        [['value5', 2], object.value5[2]]
+        [[], (object) => object],
+        [['0'], (object) => object['0']],
+        [['value1'], (object) => object.value1],
+        [['value1', 'value2'], (object) => object.value1.value2],
+        [['value1', 'value3'], (object) => object.value1.value3],
+        [['value1', 'value4'], (object) => object.value1.value4],
+        [['value5'], (object) => object.value5],
+        [['value5', 0], (object) => object.value5[0]],
+        [['value5', 1], (object) => object.value5[1]],
+        [['value5', 2], (object) => object.value5[2]]
     ];
 
-    for (const [pathArray, expected] of data) {
+    for (const [pathArray, getExpected] of data) {
+        const object = createTestObject();
+        const accessor = new ObjectPropertyAccessor(object);
+        const expected = getExpected(object);
+
         assert.strictEqual(accessor.get(pathArray), expected);
     }
 }
@@ -95,9 +96,6 @@ function testGet2() {
 
 
 function testSet1() {
-    const object = createTestObject();
-    const accessor = new ObjectPropertyAccessor(object);
-
     const testValue = {};
     const data = [
         ['0'],
@@ -112,6 +110,9 @@ function testSet1() {
     ];
 
     for (const pathArray of data) {
+        const object = createTestObject();
+        const accessor = new ObjectPropertyAccessor(object);
+
         accessor.set(pathArray, testValue);
         assert.strictEqual(accessor.get(pathArray), testValue);
     }
