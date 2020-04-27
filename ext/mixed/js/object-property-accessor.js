@@ -83,6 +83,10 @@ class ObjectPropertyAccessor {
             throw new Error(`Invalid path: ${ObjectPropertyAccessor.getPathString(pathArray)}`);
         }
 
+        if (Array.isArray(target)) {
+            throw new Error('Invalid type');
+        }
+
         delete target[key];
     }
 

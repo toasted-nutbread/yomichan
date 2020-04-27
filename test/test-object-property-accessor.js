@@ -153,9 +153,6 @@ function testDelete1() {
         [['value1', 'value3'], (object) => !hasOwn(object.value1, 'value3')],
         [['value1', 'value4'], (object) => !hasOwn(object.value1, 'value4')],
         [['value1'], (object) => !hasOwn(object, 'value1')],
-        [['value5', 0], (object) => !hasOwn(object.value5, 0)],
-        [['value5', 1], (object) => !hasOwn(object.value5, 1)],
-        [['value5', 2], (object) => !hasOwn(object.value5, 2)],
         [['value5'], (object) => !hasOwn(object, 'value5')]
     ];
 
@@ -181,7 +178,10 @@ function testDelete2() {
         [['value5', 2, 'invalid'], 'Invalid path: value5[2].invalid'],
         [['value5', 2, 0], 'Invalid path: value5[2][0]'],
         [['value5', 2, 0, 'invalid'], 'Invalid path: value5[2][0]'],
-        [['value5', 2.5], 'Invalid index']
+        [['value5', 2.5], 'Invalid index'],
+        [['value5', 0], 'Invalid type'],
+        [['value5', 1], 'Invalid type'],
+        [['value5', 2], 'Invalid type']
     ];
 
     for (const [pathArray, message] of data) {
