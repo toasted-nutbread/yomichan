@@ -233,9 +233,9 @@ class TextScanner extends EventDispatcher {
     }
 
     hookEvents() {
-        let eventListenerInfos = this.getMouseEventListeners();
+        const eventListenerInfos = this.getMouseEventListeners();
         if (this.options.scanning.touchInputEnabled) {
-            eventListenerInfos = eventListenerInfos.concat(this.getTouchEventListeners());
+            eventListenerInfos.push(...this.getTouchEventListeners());
         }
 
         for (const [node, type, listener, options] of eventListenerInfos) {
