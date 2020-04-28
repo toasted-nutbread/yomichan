@@ -42,18 +42,12 @@ class Frontend {
         this._orphaned = false;
         this._lastShowPromise = Promise.resolve();
 
+        this._enabledEventListeners = new EventListenerCollection();
         this._textScanner = new TextScanner(
             window,
             () => this.popup.isProxy() ? [] : [this.popup.getContainer()],
             [(x, y) => this.popup.containsPoint(x, y)]
         );
-        const getMouseEventListenersOld = this._textScanner.getMouseEventListeners.bind(this._textScanner);
-        this._textScanner.getMouseEventListeners = () => {
-            return [
-                ...getMouseEventListenersOld(),
-                [window, 'message', this.onWindowMessage.bind(this)]
-            ];
-        };
         this._textScanner.onSearchSource = (...args) => this.onSearchSource(...args);
 
         this._windowMessageHandlers = new Map([
@@ -279,7 +273,11 @@ class Frontend {
             this.popup.depth <= this.options.scanning.popupNestingMaxDepth &&
             !this._disabledOverride
         );
+        this._enabledEventListeners.removeAllEventListeners();
         this._textScanner.setEnabled(enabled);
+        if (enabled) {
+            this._enabledEventListeners.addEventListener(window, 'message', this.onWindowMessage.bind(this));
+        }
     }
 
     _updateContentScale() {
