@@ -48,7 +48,7 @@ class Frontend {
             () => this.popup.isProxy() ? [] : [this.popup.getContainer()],
             [(x, y) => this.popup.containsPoint(x, y)]
         );
-        this._textScanner.onSearchSource = (...args) => this.onSearchSource(...args);
+        this._textScanner.onSearchSource = this.onSearchSource.bind(this);
 
         this._windowMessageHandlers = new Map([
             ['popupClose', () => this._textScanner.clearSelection(false)],
