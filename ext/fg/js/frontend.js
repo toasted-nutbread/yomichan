@@ -139,8 +139,7 @@ class Frontend {
 
     setDisabledOverride(disabled) {
         this._disabledOverride = disabled;
-        if (this.options === null) { return; }
-        this._textScanner.setEnabled(this.options.general.enable, this._canEnable());
+        this._updateTextScannerEnabled();
     }
 
     async setPopup(popup) {
@@ -152,7 +151,8 @@ class Frontend {
     async updateOptions() {
         const optionsContext = await this.getOptionsContext();
         this.options = await apiOptionsGet(optionsContext);
-        this._textScanner.setOptions(this.options, this._canEnable());
+        this._textScanner.setOptions(this.options);
+        this._updateTextScannerEnabled();
 
         const ignoreNodes = ['.scan-disable', '.scan-disable *'];
         if (!this.options.scanning.enableOnPopupExpressions) {
@@ -272,6 +272,16 @@ class Frontend {
         return this._lastShowPromise;
     }
 
+    _updateTextScannerEnabled() {
+        const enabled = (
+            this.options !== null &&
+            this.options.general.enable &&
+            this.popup.depth <= this.options.scanning.popupNestingMaxDepth &&
+            !this._disabledOverride
+        );
+        this._textScanner.setEnabled(enabled);
+    }
+
     _updateContentScale() {
         const {popupScalingFactor, popupScaleRelativeToPageZoom, popupScaleRelativeToVisualViewport} = this.options.general;
         let contentScale = popupScalingFactor;
@@ -302,10 +312,6 @@ class Frontend {
             frameId: this.popup.frameId,
             title: document.title
         });
-    }
-
-    _canEnable() {
-        return this.popup.depth <= this.options.scanning.popupNestingMaxDepth && !this._disabledOverride;
     }
 
     async _updatePopupPosition() {

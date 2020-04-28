@@ -222,9 +222,9 @@ class TextScanner extends EventDispatcher {
         }
     }
 
-    setEnabled(enabled, canEnable) {
+    setEnabled(enabled) {
         this.eventListeners.removeAllEventListeners();
-        this.enabled = enabled && canEnable;
+        this.enabled = enabled;
         if (this.enabled) {
             this.hookEvents();
         } else {
@@ -264,9 +264,8 @@ class TextScanner extends EventDispatcher {
         ];
     }
 
-    setOptions(options, canEnable=true) {
+    setOptions(options) {
         this.options = options;
-        this.setEnabled(this.options.general.enable, canEnable);
     }
 
     async searchAt(x, y, cause) {
