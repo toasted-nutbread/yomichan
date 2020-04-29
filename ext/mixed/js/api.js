@@ -76,6 +76,10 @@ function apiScreenshotGet(options) {
     return _apiInvoke('screenshotGet', {options});
 }
 
+function apiSendMessageToFrame(frameId, action, params) {
+    return _apiInvoke('sendMessageToFrame', {frameId, action, params});
+}
+
 function apiBroadcastTab(action, params) {
     return _apiInvoke('broadcastTab', {action, params});
 }
