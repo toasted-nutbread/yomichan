@@ -19,6 +19,7 @@
  * Display
  * apiBroadcastTab
  * apiGetMessageToken
+ * apiSendMessageToFrame
  * popupNestedInitialize
  */
 
@@ -47,6 +48,7 @@ class DisplayFloat extends Display {
         ]);
 
         this._windowMessageHandlers = new Map([
+            ['initialize', {handler: this._initialize.bind(this), authenticate: false}],
             ['setOptionsContext', {handler: ({optionsContext}) => this.setOptionsContext(optionsContext)}],
             ['setContent', {handler: ({type, details}) => this.setContent(type, details)}],
             ['clearAutoPlayTimer', {handler: () => this.clearAutoPlayTimer()}],
@@ -165,6 +167,19 @@ class DisplayFloat extends Display {
         } catch (e) {
             return '';
         }
+    }
+
+    _initialize(params) {
+        if (this._token !== null) { return; } // Already initialized
+        if (!isObject(params)) { return; } // Invalid data
+
+        const secret = params.secret;
+        if (secret !== this._secret) { return; } // Invalid authentication
+
+        const {token, frameId} = params;
+        this._token = token;
+
+        apiSendMessageToFrame(frameId, 'popupInitialized', {secret, token});
     }
 
     _isMessageAuthenticated(message) {
