@@ -30,8 +30,6 @@ class DisplayFloat extends Display {
         this._secret = yomichan.generateId(16);
         this._token = null;
 
-        this._popupId = null;
-
         this._orphaned = false;
         this._prepareInvoked = false;
 
@@ -48,11 +46,11 @@ class DisplayFloat extends Display {
 
         this._windowMessageHandlers = new Map([
             ['initialize', {handler: this._initialize.bind(this), authenticate: false}],
+            ['configure', {handler: this._configure.bind(this)}],
             ['setOptionsContext', {handler: ({optionsContext}) => this.setOptionsContext(optionsContext)}],
             ['setContent', {handler: ({type, details}) => this.setContent(type, details)}],
             ['clearAutoPlayTimer', {handler: () => this.clearAutoPlayTimer()}],
             ['setCustomCss', {handler: ({css}) => this.setCustomCss(css)}],
-            ['prepare', {handler: ({popupInfo, optionsContext, childrenSupported, scale}) => this.prepare(popupInfo, optionsContext, childrenSupported, scale)}],
             ['setContentScale', {handler: ({scale}) => this.setContentScale(scale)}]
         ]);
 
@@ -60,28 +58,6 @@ class DisplayFloat extends Display {
         window.addEventListener('message', this.onMessage.bind(this), false);
 
         apiBroadcastTab('popupPrepared', {secret: this._secret});
-    }
-
-    async prepare(popupInfo, optionsContext, childrenSupported, scale) {
-        if (this._prepareInvoked) { return; }
-        this._prepareInvoked = true;
-
-        const {id, parentFrameId} = popupInfo;
-        this._popupId = id;
-
-        this.optionsContext = optionsContext;
-
-        await super.prepare();
-        await this.updateOptions();
-
-        if (childrenSupported) {
-            const {depth, url} = optionsContext;
-            popupNestedInitialize(id, depth, parentFrameId, url);
-        }
-
-        this.setContentScale(scale);
-
-        apiBroadcastTab('popupPrepareCompleted', {targetPopupId: this._popupId});
     }
 
     onError(error) {
@@ -181,6 +157,25 @@ class DisplayFloat extends Display {
         this._token = token;
 
         apiSendMessageToFrame(frameId, 'popupInitialized', {secret, token});
+    }
+
+    async _configure({messageId, frameId, popupId, optionsContext, childrenSupported, scale}) {
+        if (this._prepareInvoked) { return; }
+        this._prepareInvoked = true;
+
+        this.optionsContext = optionsContext;
+
+        await super.prepare();
+        await this.updateOptions();
+
+        if (childrenSupported) {
+            const {depth, url} = optionsContext;
+            popupNestedInitialize(popupId, depth, frameId, url);
+        }
+
+        this.setContentScale(scale);
+
+        apiSendMessageToFrame(frameId, 'popupConfigured', {messageId});
     }
 
     _isMessageAuthenticated(message) {

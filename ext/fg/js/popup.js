@@ -304,32 +304,29 @@ class Popup {
         this._containerSecret = secret;
         this._containerToken = token;
 
+        // Configure
+        const messageId = yomichan.generateId(16);
         const popupPreparedPromise = yomichan.getTemporaryListenerResult(
             chrome.runtime.onMessage,
-            ({action, params}, {resolve}) => {
+            (message, {resolve}) => {
                 if (
-                    action === 'popupPrepareCompleted' &&
-                    isObject(params) &&
-                    params.targetPopupId === this._id
+                    isObject(message) &&
+                    message.action === 'popupConfigured' &&
+                    isObject(message.params) &&
+                    message.params.messageId === messageId
                 ) {
                     resolve();
                 }
             }
         );
-
-        const parentFrameId = (typeof this._frameId === 'number' ? this._frameId : null);
-        this._invokeApi('prepare', {
-            popupInfo: {
-                id: this._id,
-                parentFrameId
-            },
+        this._invokeApi('configure', {
+            messageId,
+            frameId: this._frameId,
+            popupId: this._id,
             optionsContext: this._optionsContext,
             childrenSupported: this._childrenSupported,
             scale: this._contentScale
         });
-        this._observeFullscreen(true);
-        this._onFullscreenChanged();
-        this._injectStyles();
 
         return popupPreparedPromise;
     }
