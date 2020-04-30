@@ -46,12 +46,12 @@ class DisplayFloat extends Display {
         ]);
 
         this._windowMessageHandlers = new Map([
-            ['setOptionsContext', ({optionsContext}) => this.setOptionsContext(optionsContext)],
-            ['setContent', ({type, details}) => this.setContent(type, details)],
-            ['clearAutoPlayTimer', () => this.clearAutoPlayTimer()],
-            ['setCustomCss', ({css}) => this.setCustomCss(css)],
-            ['prepare', ({popupInfo, optionsContext, childrenSupported, scale}) => this.prepare(popupInfo, optionsContext, childrenSupported, scale)],
-            ['setContentScale', ({scale}) => this.setContentScale(scale)]
+            ['setOptionsContext', {handler: ({optionsContext}) => this.setOptionsContext(optionsContext)}],
+            ['setContent', {handler: ({type, details}) => this.setContent(type, details)}],
+            ['clearAutoPlayTimer', {handler: () => this.clearAutoPlayTimer()}],
+            ['setCustomCss', {handler: ({css}) => this.setCustomCss(css)}],
+            ['prepare', {handler: ({popupInfo, optionsContext, childrenSupported, scale}) => this.prepare(popupInfo, optionsContext, childrenSupported, scale)}],
+            ['setContentScale', {handler: ({scale}) => this.setContentScale(scale)}]
         ]);
 
         yomichan.on('orphaned', this.onOrphaned.bind(this));
@@ -138,9 +138,10 @@ class DisplayFloat extends Display {
             return;
         }
 
-        const handler = this._windowMessageHandlers.get(action);
-        if (typeof handler !== 'function') { return; }
+        const handlerInfo = this._windowMessageHandlers.get(action);
+        if (typeof handlerInfo === 'undefined') { return; }
 
+        const {handler} = handlerInfo;
         handler(params);
     }
 
