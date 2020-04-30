@@ -86,15 +86,27 @@ class DisplayFloat extends Display {
 
     onMessage(e) {
         const data = e.data;
-        if (typeof data !== 'object' || data === null) { return; } // Invalid data
+        if (typeof data !== 'object' || data === null) {
+            this._logMessageError(e, 'Invalid data');
+            return;
+        }
 
         const action = data.action;
-        if (typeof action !== 'string') { return; } // Invalid data
+        if (typeof action !== 'string') {
+            this._logMessageError(e, 'Invalid data');
+            return;
+        }
 
         const handlerInfo = this._windowMessageHandlers.get(action);
-        if (typeof handlerInfo === 'undefined') { return; } // Invalid handler
+        if (typeof handlerInfo === 'undefined') {
+            this._logMessageError(e, `Invalid action: ${JSON.stringify(action)}`);
+            return;
+        }
 
-        if (handlerInfo.authenticate !== false && !this._isMessageAuthenticated(data)) { return; } // Invalid authentication
+        if (handlerInfo.authenticate !== false && !this._isMessageAuthenticated(data)) {
+            this._logMessageError(e, 'Invalid authentication');
+            return;
+        }
 
         const handler = handlerInfo.handler;
         handler(data.params);
@@ -148,6 +160,10 @@ class DisplayFloat extends Display {
         } catch (e) {
             return '';
         }
+    }
+
+    _logMessageError(event, type) {
+        yomichan.logWarning(new Error(`Popup received invalid message from origin ${JSON.stringify(event.origin)}: ${type}`));
     }
 
     _initialize(params) {
