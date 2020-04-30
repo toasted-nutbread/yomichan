@@ -31,7 +31,7 @@ class DisplayFloat extends Display {
         this._token = null;
 
         this._orphaned = false;
-        this._prepareInvoked = false;
+        this._initializedNestedPopups = false;
 
         this._onKeyDownHandlers = new Map([
             ['C', (e) => {
@@ -164,16 +164,14 @@ class DisplayFloat extends Display {
     }
 
     async _configure({messageId, frameId, popupId, optionsContext, childrenSupported, scale}) {
-        if (this._prepareInvoked) { return; }
-        this._prepareInvoked = true;
-
         this.optionsContext = optionsContext;
 
         await this.updateOptions();
 
-        if (childrenSupported) {
+        if (childrenSupported && !this._initializedNestedPopups) {
             const {depth, url} = optionsContext;
             popupNestedInitialize(popupId, depth, frameId, url);
+            this._initializedNestedPopups = true;
         }
 
         this.setContentScale(scale);
