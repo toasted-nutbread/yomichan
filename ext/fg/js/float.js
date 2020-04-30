@@ -27,6 +27,9 @@ class DisplayFloat extends Display {
         super(document.querySelector('#spinner'), document.querySelector('#definitions'));
         this.autoPlayAudioTimer = null;
 
+        this._secret = yomichan.generateId(16);
+        this._token = null;
+
         this._popupId = null;
 
         this._orphaned = false;
@@ -108,6 +111,8 @@ class DisplayFloat extends Display {
         const handlerInfo = this._windowMessageHandlers.get(action);
         if (typeof handlerInfo === 'undefined') { return; } // Invalid handler
 
+        if (handlerInfo.authenticate !== false && !this._isMessageAuthenticated(data)) { return; } // Invalid authentication
+
         const handler = handlerInfo.handler;
         handler(data.params);
     }
@@ -160,5 +165,13 @@ class DisplayFloat extends Display {
         } catch (e) {
             return '';
         }
+    }
+
+    _isMessageAuthenticated(message) {
+        return (
+            this._token !== null &&
+            this._token === message.token &&
+            this._secret === message.secret
+        );
     }
 }
