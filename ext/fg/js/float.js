@@ -18,7 +18,6 @@
 /* global
  * Display
  * apiBroadcastTab
- * apiGetMessageToken
  * apiSendMessageToFrame
  * popupNestedInitialize
  */

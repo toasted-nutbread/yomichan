@@ -17,7 +17,6 @@
 
 /* global
  * DOM
- * apiGetMessageToken
  * apiInjectStylesheet
  * apiOptionsGet
  */
@@ -39,7 +38,6 @@ class Popup {
         this._contentScale = 1.0;
         this._containerSizeContentScale = null;
         this._targetOrigin = chrome.runtime.getURL('/').replace(/\/$/, '');
-        this._messageToken = null;
         this._previousOptionsContextSource = null;
         this._containerSecret = null;
         this._containerToken = null;
@@ -296,10 +294,6 @@ class Popup {
     }
 
     async _createInjectPromise() {
-        if (this._messageToken === null) {
-            this._messageToken = await apiGetMessageToken();
-        }
-
         this._injectStyles();
 
         const {secret, token} = await this._initializeFrame(this._container, this._targetOrigin, this._frameId, (frame) => {
