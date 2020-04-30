@@ -53,6 +53,10 @@ class DisplayFloat extends Display {
             ['setCustomCss', {handler: ({css}) => this.setCustomCss(css)}],
             ['setContentScale', {handler: ({scale}) => this.setContentScale(scale)}]
         ]);
+    }
+
+    async prepare() {
+        await super.prepare();
 
         yomichan.on('orphaned', this.onOrphaned.bind(this));
         window.addEventListener('message', this.onMessage.bind(this), false);
@@ -165,7 +169,6 @@ class DisplayFloat extends Display {
 
         this.optionsContext = optionsContext;
 
-        await super.prepare();
         await this.updateOptions();
 
         if (childrenSupported) {
