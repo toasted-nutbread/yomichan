@@ -31,8 +31,6 @@ class DisplayFloat extends Display {
 
         this._orphaned = false;
         this._prepareInvoked = false;
-        this._messageToken = null;
-        this._messageTokenPromise = null;
 
         this._onKeyDownHandlers = new Map([
             ['C', (e) => {
@@ -104,45 +102,14 @@ class DisplayFloat extends Display {
         const data = e.data;
         if (typeof data !== 'object' || data === null) { return; } // Invalid data
 
-        const token = data.token;
-        if (typeof token !== 'string') { return; } // Invalid data
-
-        if (this._messageToken === null) {
-            // Async
-            this.getMessageToken()
-                .then(
-                    () => { this.handleAction(token, data); },
-                    () => {}
-                );
-        } else {
-            // Sync
-            this.handleAction(token, data);
-        }
-    }
-
-    async getMessageToken() {
-        // this._messageTokenPromise is used to ensure that only one call to apiGetMessageToken is made.
-        if (this._messageTokenPromise === null) {
-            this._messageTokenPromise = apiGetMessageToken();
-        }
-        const messageToken = await this._messageTokenPromise;
-        if (this._messageToken === null) {
-            this._messageToken = messageToken;
-        }
-        this._messageTokenPromise = null;
-    }
-
-    handleAction(token, {action, params}) {
-        if (token !== this._messageToken) {
-            // Invalid token
-            return;
-        }
+        const action = data.action;
+        if (typeof action !== 'string') { return; } // Invalid data
 
         const handlerInfo = this._windowMessageHandlers.get(action);
-        if (typeof handlerInfo === 'undefined') { return; }
+        if (typeof handlerInfo === 'undefined') { return; } // Invalid handler
 
-        const {handler} = handlerInfo;
-        handler(params);
+        const handler = handlerInfo.handler;
+        handler(data.params);
     }
 
     autoPlayAudio() {
