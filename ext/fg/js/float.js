@@ -59,6 +59,8 @@ class DisplayFloat extends Display {
 
         yomichan.on('orphaned', this.onOrphaned.bind(this));
         window.addEventListener('message', this.onMessage.bind(this), false);
+
+        apiBroadcastTab('popupPrepared', {secret: this._secret});
     }
 
     async prepare(popupInfo, optionsContext, childrenSupported, scale) {
