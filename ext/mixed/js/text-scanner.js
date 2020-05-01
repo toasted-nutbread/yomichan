@@ -45,6 +45,16 @@ class TextScanner extends EventDispatcher {
         this.preventNextMouseDown = false;
         this.preventNextClick = false;
         this.preventScroll = false;
+
+        this._canClearSelection = true;
+    }
+
+    get canClearSelection() {
+        return this._canClearSelection;
+    }
+
+    set canClearSelection(value) {
+        this._canClearSelection = value;
     }
 
     onMouseOver(e) {
@@ -323,6 +333,7 @@ class TextScanner extends EventDispatcher {
     }
 
     clearSelection(passive) {
+        if (!this._canClearSelection) { return; }
         if (this.textSourceCurrent !== null) {
             if (this.textSourceCurrentSelected) {
                 this.textSourceCurrent.deselect();

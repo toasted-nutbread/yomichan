@@ -66,11 +66,10 @@ class SettingsPopupPreview {
         this.popup.setCustomOuterCss = this.popupSetCustomOuterCss.bind(this);
 
         this.frontend = new Frontend(this.popup);
-
         this.frontend.getOptionsContext = async () => this.optionsContext;
-        this.frontend.setDisabledOverride(true);
-
         await this.frontend.prepare();
+        this.frontend.setDisabledOverride(true);
+        this.frontend.canClearSelection = false;
 
         // Update search
         this.updateSearch();

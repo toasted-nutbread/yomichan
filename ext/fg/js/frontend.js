@@ -62,6 +62,14 @@ class Frontend {
         ]);
     }
 
+    get canClearSelection() {
+        return this._textScanner.canClearSelection;
+    }
+
+    set canClearSelection(value) {
+        this._textScanner.canClearSelection = value;
+    }
+
     async prepare() {
         try {
             await this.updateOptions();
@@ -268,7 +276,6 @@ class Frontend {
 
     _updateTextScannerEnabled() {
         const enabled = (
-            this._options !== null &&
             this._options.general.enable &&
             this.popup.depth <= this._options.scanning.popupNestingMaxDepth &&
             !this._disabledOverride
