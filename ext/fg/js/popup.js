@@ -230,6 +230,15 @@ class Popup {
             const postMessage = (action, params) => {
                 const contentWindow = frame.contentWindow;
                 if (contentWindow === null) { throw new Error('Frame missing content window'); }
+
+                let validOrigin = true;
+                try {
+                    validOrigin = (contentWindow.location.origin === targetOrigin);
+                } catch (e) {
+                    // NOP
+                }
+                if (!validOrigin) { throw new Error('Unexpected frame origin'); }
+
                 contentWindow.postMessage({action, params}, targetOrigin);
             };
 
@@ -272,12 +281,31 @@ class Popup {
                 }
             };
 
-            const cleanup = () => {
-                if (timer !== null) {
-                    clearTimeout(timer);
-                    timer = null;
+            const onLoad = () => {
+                if (containerLoadedResolve === null) {
+                    cleanup();
+                    reject(new Error('Unexpected load event'));
+                    return;
                 }
+
+                containerLoadedResolve();
+                containerLoadedResolve = null;
+                containerLoadedReject = null;
+            };
+
+            const cleanup = () => {
+                if (timer === null) { return; } // Done
+                clearTimeout(timer);
+                timer = null;
+
+                containerLoadedResolve = null;
+                if (containerLoadedReject !== null) {
+                    containerLoadedReject(new Error('Terminated'));
+                    containerLoadedReject = null;
+                }
+
                 chrome.runtime.onMessage.removeListener(onMessage);
+                frame.removeEventListener('load', onLoad);
             };
 
             // Start
@@ -287,8 +315,11 @@ class Popup {
             }, timeout);
 
             chrome.runtime.onMessage.addListener(onMessage);
-            frame.addEventListener('load', () => containerLoadedResolve());
-            frame.addEventListener('error', () => containerLoadedReject(new Error('Failed to load container')));
+            frame.addEventListener('load', onLoad);
+
+            // Prevent unhandled rejections
+            containerLoaded.catch(() => {}); // NOP
+
             setupFrame(frame);
         });
     }
