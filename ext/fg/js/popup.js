@@ -31,6 +31,7 @@ class Popup {
         this._child = null;
         this._childrenSupported = true;
         this._injectPromise = null;
+        this._injectPromiseComplete = false;
         this._visible = false;
         this._visibleOverride = null;
         this._options = null;
@@ -47,6 +48,7 @@ class Popup {
         this._container.addEventListener('scroll', (e) => e.stopPropagation());
         this._container.style.width = '0px';
         this._container.style.height = '0px';
+        this._container.addEventListener('load', this._onFrameLoad.bind(this));
 
         this._fullscreenEventListeners = new EventListenerCollection();
 
@@ -201,6 +203,9 @@ class Popup {
     _inject() {
         if (this._injectPromise === null) {
             this._injectPromise = this._createInjectPromise();
+            this._injectPromise.then(
+                () => { this._injectPromiseComplete = true; },
+                () => { this._resetFrame(); });
         }
         return this._injectPromise;
     }
@@ -241,6 +246,25 @@ class Popup {
         this._injectStyles();
 
         return popupPreparedPromise;
+    }
+
+    _onFrameLoad() {
+        if (!(this._injectPromise !== null && this._injectPromiseComplete)) { return; }
+        this._resetFrame();
+    }
+
+    _resetFrame() {
+        const parent = this._container.parentNode;
+        if (parent !== null) {
+            parent.removeChild(this._container);
+        }
+        this._container.removeAttribute('src');
+        this._container.removeAttribute('srcdoc');
+
+        this._containerSecret = null;
+        this._containerToken = null;
+        this._injectPromise = null;
+        this._injectPromiseComplete = false;
     }
 
     async _injectStyles() {
