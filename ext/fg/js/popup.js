@@ -375,6 +375,8 @@ class Popup {
         this._container.removeAttribute('src');
         this._container.removeAttribute('srcdoc');
 
+        this._containerSecret = null;
+        this._containerToken = null;
         this._injectPromise = null;
         this._injectPromiseComplete = false;
     }
