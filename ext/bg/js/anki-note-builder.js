@@ -76,8 +76,9 @@ class AnkiNoteBuilder {
             const expressions = definition.expressions;
             const audioSourceDefinition = Array.isArray(expressions) ? expressions[0] : definition;
 
-            const filename = this._createInjectedAudioFileName(audioSourceDefinition);
+            let filename = this._createInjectedAudioFileName(audioSourceDefinition);
             if (filename === null) { return; }
+            filename = AnkiNoteBuilder.replaceInvalidFileNameCharacters(filename);
 
             const {audio} = await this._audioSystem.getDefinitionAudio(
                 audioSourceDefinition,
@@ -103,7 +104,8 @@ class AnkiNoteBuilder {
         if (!this._containsMarker(fields, 'screenshot')) { return; }
 
         const now = new Date(Date.now());
-        const filename = `yomichan_browser_screenshot_${definition.reading}_${this._dateToString(now)}.${screenshot.format}`;
+        let filename = `yomichan_browser_screenshot_${definition.reading}_${this._dateToString(now)}.${screenshot.format}`;
+        filename = AnkiNoteBuilder.replaceInvalidFileNameCharacters(filename);
         const data = screenshot.dataUrl.replace(/^data:[\w\W]*?,/, '');
 
         try {
@@ -145,6 +147,11 @@ class AnkiNoteBuilder {
             }
         }
         return false;
+    }
+
+    static replaceInvalidFileNameCharacters(fileName) {
+        // eslint-disable-next-line no-control-regex
+        return fileName.replace(/[<>:"/\\|?*\x00-\x1F]/g, '-');
     }
 
     static arrayBufferToBase64(arrayBuffer) {
