@@ -213,7 +213,7 @@ function _apiInvokeWithProgress(action, params, onProgress, timeout=5000) {
                     break;
                 case 'progress':
                     try {
-                        onProgress(message.data);
+                        onProgress(...message.data);
                     } catch (e) {
                         // NOP
                     }

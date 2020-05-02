@@ -814,7 +814,7 @@ class Backend {
     _createActionListenerPort(port, sender, handlers) {
         let hasStarted = false;
 
-        const onProgress = (data) => {
+        const onProgress = (...data) => {
             try {
                 if (port === null) { return; }
                 port.postMessage({type: 'progress', data});
