@@ -814,12 +814,12 @@ class Backend {
 
     async _onApiImportDictionaryArchive({archiveContent, details}, sender, onProgress) {
         this._validatePrivilegedMessageSender(sender);
-        return await this.dictionaryImporter.import(this.database, archiveContent, onProgress, details);
+        return await this.dictionaryImporter.import(this.database, archiveContent, details, onProgress);
     }
 
     async _onApiDeleteDictionary({dictionaryName}, sender, onProgress) {
         this._validatePrivilegedMessageSender(sender);
-        return await this.translator.deleteDictionary(dictionaryName, onProgress, {rate: 1000});
+        return await this.translator.deleteDictionary(dictionaryName, {rate: 1000}, onProgress);
     }
 
     // Command handlers
