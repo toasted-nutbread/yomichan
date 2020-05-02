@@ -76,9 +76,9 @@ class AnkiNoteBuilder {
             const expressions = definition.expressions;
             const audioSourceDefinition = Array.isArray(expressions) ? expressions[0] : definition;
 
-            let filename = this._createInjectedAudioFileName(audioSourceDefinition);
-            if (filename === null) { return; }
-            filename = AnkiNoteBuilder.replaceInvalidFileNameCharacters(filename);
+            let fileName = this._createInjectedAudioFileName(audioSourceDefinition);
+            if (fileName === null) { return; }
+            fileName = AnkiNoteBuilder.replaceInvalidFileNameCharacters(fileName);
 
             const {audio} = await this._audioSystem.getDefinitionAudio(
                 audioSourceDefinition,
@@ -92,9 +92,9 @@ class AnkiNoteBuilder {
             );
 
             const data = AnkiNoteBuilder.arrayBufferToBase64(audio);
-            await this._anki.storeMediaFile(filename, data);
+            await this._anki.storeMediaFile(fileName, data);
 
-            definition.audioFileName = filename;
+            definition.audioFileName = fileName;
         } catch (e) {
             // NOP
         }
@@ -104,29 +104,29 @@ class AnkiNoteBuilder {
         if (!this._containsMarker(fields, 'screenshot')) { return; }
 
         const now = new Date(Date.now());
-        let filename = `yomichan_browser_screenshot_${definition.reading}_${this._dateToString(now)}.${screenshot.format}`;
-        filename = AnkiNoteBuilder.replaceInvalidFileNameCharacters(filename);
+        let fileName = `yomichan_browser_screenshot_${definition.reading}_${this._dateToString(now)}.${screenshot.format}`;
+        fileName = AnkiNoteBuilder.replaceInvalidFileNameCharacters(fileName);
         const data = screenshot.dataUrl.replace(/^data:[\w\W]*?,/, '');
 
         try {
-            await this._anki.storeMediaFile(filename, data);
+            await this._anki.storeMediaFile(fileName, data);
         } catch (e) {
             return;
         }
 
-        definition.screenshotFileName = filename;
+        definition.screenshotFileName = fileName;
     }
 
     _createInjectedAudioFileName(definition) {
         const {reading, expression} = definition;
         if (!reading && !expression) { return null; }
 
-        let filename = 'yomichan';
-        if (reading) { filename += `_${reading}`; }
-        if (expression) { filename += `_${expression}`; }
-        filename += '.mp3';
-        filename = filename.replace(/\]/g, '');
-        return filename;
+        let fileName = 'yomichan';
+        if (reading) { fileName += `_${reading}`; }
+        if (expression) { fileName += `_${expression}`; }
+        fileName += '.mp3';
+        fileName = fileName.replace(/\]/g, '');
+        return fileName;
     }
 
     _dateToString(date) {
