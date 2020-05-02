@@ -536,10 +536,11 @@ class Popup {
             }
         }
 
+        const body = document.body;
         return {
             left: 0,
             top: 0,
-            right: document.body.clientWidth,
+            right: (body !== null ? body.clientWidth : 0),
             bottom: window.innerHeight
         };
     }
