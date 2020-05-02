@@ -19,6 +19,7 @@
  * PageExitPrevention
  * apiGetDictionaryCounts
  * apiGetDictionaryInfo
+ * apiImportDictionaryArchive
  * apiOptionsGet
  * apiOptionsGetFull
  * apiPurgeDatabase
@@ -30,7 +31,6 @@
  * storageUpdateStats
  * utilBackgroundIsolate
  * utilDatabaseDeleteDictionary
- * utilDatabaseImport
  */
 
 let dictionaryUI = null;
@@ -679,7 +679,8 @@ async function onDictionaryImport(e) {
                 dictImportInfo.textContent = `(${i + 1} of ${ii})`;
             }
 
-            const {result, errors} = await utilDatabaseImport(files[i], updateProgress, importDetails);
+            const archiveContent = await dictReadFile(files[i]);
+            const {result, errors} = await apiImportDictionaryArchive(archiveContent, importDetails, updateProgress);
             for (const {options} of toIterable((await getOptionsFullMutable()).profiles)) {
                 const dictionaryOptions = SettingsDictionaryListUI.createDictionaryOptions();
                 dictionaryOptions.enabled = true;
@@ -711,6 +712,15 @@ async function onDictionaryImport(e) {
         dictControls.show();
         dictProgress.hide();
     }
+}
+
+function dictReadFile(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(reader.error);
+        reader.readAsBinaryString(file);
+    });
 }
 
 

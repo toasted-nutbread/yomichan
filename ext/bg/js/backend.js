@@ -119,7 +119,9 @@ class Backend {
             ['logIndicatorClear', {handler: this._onApiLogIndicatorClear.bind(this), async: false}],
             ['createActionPort', {handler: this._onApiCreateActionPort.bind(this), async: false}]
         ]);
-        this._messageHandlersWithProgress = new Map();
+        this._messageHandlersWithProgress = new Map([
+            ['importDictionaryArchive', {handler: this._onApiImportDictionaryArchive.bind(this), async: true}]
+        ]);
 
         this._commandHandlers = new Map([
             ['search', this._onCommandSearch.bind(this)],
@@ -807,6 +809,11 @@ class Backend {
         }
 
         return portName;
+    }
+
+    async _onApiImportDictionaryArchive({archiveContent, details}, sender, onProgress) {
+        this._validatePrivilegedMessageSender(sender);
+        return await this.dictionaryImporter.import(this.database, archiveContent, onProgress, details);
     }
 
     // Command handlers
