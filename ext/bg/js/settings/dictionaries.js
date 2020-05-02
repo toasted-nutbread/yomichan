@@ -17,6 +17,7 @@
 
 /* global
  * PageExitPrevention
+ * apiDeleteDictionary
  * apiGetDictionaryCounts
  * apiGetDictionaryInfo
  * apiImportDictionaryArchive
@@ -30,7 +31,6 @@
  * storageEstimate
  * storageUpdateStats
  * utilBackgroundIsolate
- * utilDatabaseDeleteDictionary
  */
 
 let dictionaryUI = null;
@@ -312,7 +312,7 @@ class SettingsDictionaryEntryUI {
                 progressBar.style.width = `${percent}%`;
             };
 
-            await utilDatabaseDeleteDictionary(this.dictionaryInfo.title, onProgress, {rate: 1000});
+            await apiDeleteDictionary(this.dictionaryInfo.title, onProgress);
         } catch (e) {
             dictionaryErrorsShow([e]);
         } finally {

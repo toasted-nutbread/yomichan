@@ -156,6 +156,10 @@ function apiImportDictionaryArchive(archiveContent, details, onProgress) {
     return _apiInvokeWithProgress('importDictionaryArchive', {archiveContent, details}, onProgress);
 }
 
+function apiDeleteDictionary(dictionaryName, onProgress) {
+    return _apiInvokeWithProgress('deleteDictionary', {dictionaryName}, onProgress);
+}
+
 function _apiCreateActionPort(timeout=5000) {
     return new Promise((resolve, reject) => {
         let timer = null;
