@@ -201,13 +201,19 @@ class Popup {
     // Private functions
 
     _inject() {
-        if (this._injectPromise === null) {
-            this._injectPromise = this._createInjectPromise();
-            this._injectPromise.then(
-                () => { this._injectPromiseComplete = true; },
-                () => { this._resetFrame(); });
+        let injectPromise = this._injectPromise;
+        if (injectPromise === null) {
+            injectPromise = this._createInjectPromise();
+            this._injectPromise = injectPromise;
+            injectPromise.then(
+                () => {
+                    if (injectPromise !== this._injectPromise) { return; }
+                    this._injectPromiseComplete = true;
+                },
+                () => { this._resetFrame(); }
+            );
         }
-        return this._injectPromise;
+        return injectPromise;
     }
 
     async _createInjectPromise() {
