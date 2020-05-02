@@ -769,7 +769,8 @@ class Backend {
 
     async _onApiPurgeDatabase(params, sender) {
         this._validatePrivilegedMessageSender(sender);
-        return await this.translator.purgeDatabase();
+        this.translator.clearDatabaseCaches();
+        await this.database.purge();
     }
 
     async _onApiGetMedia({targets}) {
@@ -819,7 +820,8 @@ class Backend {
 
     async _onApiDeleteDictionary({dictionaryName}, sender, onProgress) {
         this._validatePrivilegedMessageSender(sender);
-        return await this.translator.deleteDictionary(dictionaryName, {rate: 1000}, onProgress);
+        this.translator.clearDatabaseCaches();
+        await this.database.deleteDictionary(dictionaryName, {rate: 1000}, onProgress);
     }
 
     // Command handlers
