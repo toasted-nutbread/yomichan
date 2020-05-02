@@ -288,6 +288,10 @@ class Popup {
                     return;
                 }
 
+                if (Popup.isFrameAboutBlank(frame)) {
+                    return;
+                }
+
                 containerLoadedResolve();
                 containerLoadedResolve = null;
                 containerLoadedReject = null;
@@ -765,6 +769,17 @@ class Popup {
         // Add to map
         injectedStylesheets.set(id, styleNode);
         return styleNode;
+    }
+
+    static isFrameAboutBlank(frame) {
+        try {
+            const contentDocument = frame.contentDocument;
+            if (contentDocument === null) { return false; }
+            const url = contentDocument.location.href;
+            return /^about:blank(?:[#?]|$)/.test(url);
+        } catch (e) {
+            return false;
+        }
     }
 }
 
