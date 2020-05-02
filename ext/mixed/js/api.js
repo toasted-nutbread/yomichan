@@ -112,10 +112,6 @@ function apiGetZoom() {
     return _apiInvoke('getZoom');
 }
 
-function apiGetMessageToken() {
-    return _apiInvoke('getMessageToken');
-}
-
 function apiGetDefaultAnkiFieldTemplates() {
     return _apiInvoke('getDefaultAnkiFieldTemplates');
 }
