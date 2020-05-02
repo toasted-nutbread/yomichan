@@ -789,14 +789,9 @@ class Backend {
     }
 
     _onApiCreateActionPort(params, sender) {
-        let tabId;
-        if (!(
-            sender &&
-            sender.tab &&
-            (typeof (tabId = sender.tab.id)) === 'number'
-        )) {
-            throw new Error('Invalid sender');
-        }
+        if (!sender || !sender.tab) { throw new Error('Invalid sender'); }
+        const tabId = sender.tab.id;
+        if (typeof tabId !== 'number') { throw new Error('Sender has invalid tab ID'); }
 
         const frameId = sender.frameId;
         const id = yomichan.generateId(16);
