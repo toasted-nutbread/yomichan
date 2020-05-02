@@ -328,6 +328,8 @@ class Popup {
         this._injectStyles();
 
         const {secret, token} = await this._initializeFrame(this._container, this._targetOrigin, this._frameId, (frame) => {
+            frame.removeAttribute('src');
+            frame.removeAttribute('srcdoc');
             frame.setAttribute('src', chrome.runtime.getURL('/fg/float.html'));
             this._observeFullscreen(true);
             this._onFullscreenChanged();
