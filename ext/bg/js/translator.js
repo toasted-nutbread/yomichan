@@ -50,9 +50,9 @@ class Translator {
         await this.database.purge();
     }
 
-    async deleteDictionary(dictionaryName) {
+    async deleteDictionary(dictionaryName, progressSettings, onProgress) {
         this.tagCache.clear();
-        await this.database.deleteDictionary(dictionaryName);
+        await this.database.deleteDictionary(dictionaryName, progressSettings, onProgress);
     }
 
     async getSequencedDefinitions(definitions, mainDictionary) {
