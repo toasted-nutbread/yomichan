@@ -255,7 +255,7 @@ class Popup {
     }
 
     _onFrameLoad() {
-        if (!(this._injectPromise !== null && this._injectPromiseComplete)) { return; }
+        if (!this._injectPromiseComplete) { return; }
         this._resetFrame();
     }
 
