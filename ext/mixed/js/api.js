@@ -160,6 +160,10 @@ function apiDeleteDictionary(dictionaryName, onProgress) {
     return _apiInvokeWithProgress('deleteDictionary', {dictionaryName}, onProgress);
 }
 
+function apiModifySettings(targets, source) {
+    return _apiInvoke('modifySettings', {targets, source});
+}
+
 function _apiCreateActionPort(timeout=5000) {
     return new Promise((resolve, reject) => {
         let timer = null;

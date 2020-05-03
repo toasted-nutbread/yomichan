@@ -26,6 +26,7 @@
  * DictionaryImporter
  * JsonSchema
  * Mecab
+ * ObjectPropertyAccessor
  * Translator
  * conditionsTestValue
  * dictTermsSort
@@ -115,7 +116,8 @@ class Backend {
             ['getMedia', {handler: this._onApiGetMedia.bind(this), async: true}],
             ['log', {handler: this._onApiLog.bind(this), async: false}],
             ['logIndicatorClear', {handler: this._onApiLogIndicatorClear.bind(this), async: false}],
-            ['createActionPort', {handler: this._onApiCreateActionPort.bind(this), async: false}]
+            ['createActionPort', {handler: this._onApiCreateActionPort.bind(this), async: false}],
+            ['modifySettings', {handler: this._onApiModifySettings.bind(this), async: true}]
         ]);
         this._messageHandlersWithProgress = new Map([
             ['importDictionaryArchive', {handler: this._onApiImportDictionaryArchive.bind(this), async: true}],
@@ -831,6 +833,20 @@ class Backend {
         await this.database.deleteDictionary(dictionaryName, {rate: 1000}, onProgress);
     }
 
+    async _onApiModifySettings({targets, source}) {
+        const results = [];
+        for (const target of targets) {
+            try {
+                this._modifySetting(target);
+                results.push({result: true});
+            } catch (e) {
+                results.push({error: errorToJson(e)});
+            }
+        }
+        await this._onApiOptionsSave({source});
+        return results;
+    }
+
     // Command handlers
 
     _createActionListenerPort(port, sender, handlers) {
@@ -989,6 +1005,50 @@ class Backend {
     }
 
     // Utilities
+    async _modifySetting(target) {
+        const optionsContext = target.optionsContext;
+        const options = isObject(optionsContext) ? this.getOptions(optionsContext, true) : this.getFullOptions(true);
+        const accessor = new ObjectPropertyAccessor(options);
+        const action = target.action;
+        switch (action) {
+            case 'set':
+                {
+                    const {path, value} = target;
+                    if (typeof path !== 'string') { throw new Error('Invalid path'); }
+                    accessor.set(ObjectPropertyAccessor.getPathArray(path), value);
+                }
+                break;
+            case 'delete':
+                {
+                    const {path} = target;
+                    if (typeof path !== 'string') { throw new Error('Invalid path'); }
+                    accessor.delete(ObjectPropertyAccessor.getPathArray(path));
+                }
+                break;
+            case 'swap':
+                {
+                    const {path1, path2} = target;
+                    if (typeof path1 !== 'string') { throw new Error('Invalid path1'); }
+                    if (typeof path2 !== 'string') { throw new Error('Invalid path2'); }
+                    accessor.swap(ObjectPropertyAccessor.getPathArray(path1), ObjectPropertyAccessor.getPathArray(path2));
+                }
+                break;
+            case 'splice':
+                {
+                    const {path, start, deleteCount, items} = target;
+                    if (typeof path !== 'string') { throw new Error('Invalid path'); }
+                    if (typeof start !== 'number' || Math.floor(start) !== start) { throw new Error('Invalid start'); }
+                    if (typeof deleteCount !== 'number' || Math.floor(deleteCount) !== start) { throw new Error('Invalid deleteCount'); }
+                    if (!Array.isArray(items)) { throw new Error('Invalid items'); }
+                    const array = accessor.get(ObjectPropertyAccessor.getPathArray(path));
+                    if (!Array.isArray(array)) { throw new Error('Invalid target type'); }
+                    array.splice(start, deleteCount, ...items);
+                }
+                break;
+            default:
+                throw new Error(`Unknown action: ${action}`);
+        }
+    }
 
     _validatePrivilegedMessageSender(sender) {
         const url = sender.url;
