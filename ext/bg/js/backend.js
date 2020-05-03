@@ -85,7 +85,6 @@ class Backend {
             ['optionsSchemaGet', {handler: this._onApiOptionsSchemaGet.bind(this), async: false}],
             ['optionsGet', {handler: this._onApiOptionsGet.bind(this), async: false}],
             ['optionsGetFull', {handler: this._onApiOptionsGetFull.bind(this), async: false}],
-            ['optionsSet', {handler: this._onApiOptionsSet.bind(this), async: true}],
             ['optionsSave', {handler: this._onApiOptionsSave.bind(this), async: true}],
             ['kanjiFind', {handler: this._onApiKanjiFind.bind(this), async: true}],
             ['termsFind', {handler: this._onApiTermsFind.bind(this), async: true}],
@@ -415,46 +414,6 @@ class Backend {
 
     _onApiOptionsGetFull() {
         return this.getFullOptions();
-    }
-
-    async _onApiOptionsSet({changedOptions, optionsContext, source}) {
-        const options = this.getOptions(optionsContext);
-
-        function getValuePaths(obj) {
-            const valuePaths = [];
-            const nodes = [{obj, path: []}];
-            while (nodes.length > 0) {
-                const node = nodes.pop();
-                for (const key of Object.keys(node.obj)) {
-                    const path = node.path.concat(key);
-                    const obj2 = node.obj[key];
-                    if (obj2 !== null && typeof obj2 === 'object') {
-                        nodes.unshift({obj: obj2, path});
-                    } else {
-                        valuePaths.push([obj2, path]);
-                    }
-                }
-            }
-            return valuePaths;
-        }
-
-        function modifyOption(path, value) {
-            let pivot = options;
-            for (const key of path.slice(0, -1)) {
-                if (!hasOwn(pivot, key)) {
-                    return false;
-                }
-                pivot = pivot[key];
-            }
-            pivot[path[path.length - 1]] = value;
-            return true;
-        }
-
-        for (const [value, path] of getValuePaths(changedOptions)) {
-            modifyOption(path, value);
-        }
-
-        await this._onApiOptionsSave({source});
     }
 
     async _onApiOptionsSave({source}) {
