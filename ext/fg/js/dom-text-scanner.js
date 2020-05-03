@@ -85,6 +85,7 @@ class DOMTextScanner {
 
         const generateLayoutContent = this._generateLayoutContent;
         let node = this._node;
+        let lastNode = node;
         let resetOffset = this._resetOffset;
         let newlines = 0;
         while (node !== null) {
@@ -92,6 +93,7 @@ class DOMTextScanner {
             const nodeType = node.nodeType;
 
             if (nodeType === TEXT_NODE) {
+                lastNode = node;
                 if (!(
                     forward ?
                     this._seekTextNodeForward(node, resetOffset) :
@@ -101,6 +103,8 @@ class DOMTextScanner {
                     break;
                 }
             } else if (nodeType === ELEMENT_NODE) {
+                lastNode = node;
+                this._offset = 0;
                 [enterable, newlines] = DOMTextScanner.getElementSeekInfo(node);
                 if (newlines > this._newlines && generateLayoutContent) {
                     this._newlines = newlines;
@@ -121,7 +125,7 @@ class DOMTextScanner {
             resetOffset = true;
         }
 
-        this._node = node;
+        this._node = lastNode;
         this._resetOffset = resetOffset;
 
         return this;
