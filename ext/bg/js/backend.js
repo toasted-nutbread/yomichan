@@ -258,8 +258,9 @@ class Backend {
         return this.optionsSchema;
     }
 
-    getFullOptions() {
-        return this.options;
+    getFullOptions(useSchema=false) {
+        const options = this.options;
+        return useSchema ? JsonSchema.createProxy(options, this.optionsSchema) : options;
     }
 
     setFullOptions(options) {
@@ -271,12 +272,12 @@ class Backend {
         }
     }
 
-    getOptions(optionsContext) {
-        return this.getProfile(optionsContext).options;
+    getOptions(optionsContext, useSchema=false) {
+        return this.getProfile(optionsContext, useSchema).options;
     }
 
-    getProfile(optionsContext) {
-        const options = this.getFullOptions();
+    getProfile(optionsContext, useSchema=false) {
+        const options = this.getFullOptions(useSchema);
         const profiles = options.profiles;
         if (typeof optionsContext.index === 'number') {
             return profiles[optionsContext.index];
