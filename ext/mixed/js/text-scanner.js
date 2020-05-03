@@ -127,7 +127,7 @@ class TextScanner extends EventDispatcher {
         if (this._ignoreNodes !== null && clonedTextSource.range) {
             length = clonedTextSource.text().length;
             while (clonedTextSource.range && length > 0) {
-                const nodes = TextSourceRange.getNodesInRange(clonedTextSource.range);
+                const nodes = DOM.getNodesInRange(clonedTextSource.range);
                 if (!TextSourceRange.anyNodeMatchesSelector(nodes, this._ignoreNodes)) {
                     break;
                 }

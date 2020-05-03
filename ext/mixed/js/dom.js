@@ -86,4 +86,30 @@ class DOM {
             null
         );
     }
+
+    static getNodesInRange(range) {
+        const end = range.endContainer;
+        const nodes = [];
+        for (let node = range.startContainer; node !== null; node = DOM.getNextNode(node)) {
+            nodes.push(node);
+            if (node === end) { break; }
+        }
+        return nodes;
+    }
+
+    static getNextNode(node) {
+        let next = node.firstChild;
+        if (next === null) {
+            while (true) {
+                next = node.nextSibling;
+                if (next !== null) { break; }
+
+                next = node.parentNode;
+                if (next === null) { break; }
+
+                node = next;
+            }
+        }
+        return next;
+    }
 }
