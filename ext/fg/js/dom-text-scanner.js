@@ -60,6 +60,15 @@ class DOMTextScanner {
     }
 
     /**
+     * Gets the remaining number of characters that weren't scanned in the last seek() call.
+     * This value is usually 0 unless the end of the document was reached.
+     * @returns An integer.
+     */
+    get remainder() {
+        return this._remainder;
+    }
+
+    /**
      * Gets the accumulated content string resulting from calls to seek().
      * @returns A string.
      */
