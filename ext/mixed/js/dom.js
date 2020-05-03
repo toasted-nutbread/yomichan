@@ -112,4 +112,16 @@ class DOM {
         }
         return next;
     }
+
+    static anyNodeMatchesSelector(nodes, selector) {
+        const ELEMENT_NODE = Node.ELEMENT_NODE;
+        for (let node of nodes) {
+            for (; node !== null; node = node.parentNode) {
+                if (node.nodeType !== ELEMENT_NODE) { continue; }
+                if (node.matches(selector)) { return true; }
+                break;
+            }
+        }
+        return false;
+    }
 }
