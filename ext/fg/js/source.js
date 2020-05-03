@@ -15,6 +15,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+/* global
+ * DOMTextScanner
+ */
+
 // \u200c (Zero-width non-joiner) appears on Google Docs from Chrome 76 onwards
 const IGNORE_TEXT_PATTERN = /\u200c/;
 
@@ -49,8 +53,8 @@ class TextSourceRange {
     setEndOffset(length, fromEnd=false) {
         const state = (
             fromEnd ?
-            TextSourceRange.seekForward(this.range.endContainer, this.range.endOffset, length) :
-            TextSourceRange.seekForward(this.range.startContainer, this.range.startOffset, length)
+            new DOMTextScanner(this.range.endContainer, this.range.endOffset, true, false).seek(length) :
+            new DOMTextScanner(this.range.startContainer, this.range.startOffset, true, false).seek(length)
         );
         this.range.setEnd(state.node, state.offset);
         this.content = (fromEnd ? this.content + state.content : state.content);
@@ -58,7 +62,7 @@ class TextSourceRange {
     }
 
     setStartOffset(length) {
-        const state = TextSourceRange.seekBackward(this.range.startContainer, this.range.startOffset, length);
+        const state = new DOMTextScanner(this.range.startContainer, this.range.startOffset, true, false).seek(-length);
         this.range.setStart(state.node, state.offset);
         this.rangeStartOffset = this.range.startOffset;
         this.content = state.content + this.content;
