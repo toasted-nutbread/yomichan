@@ -276,16 +276,17 @@ class Backend {
     }
 
     getProfile(optionsContext) {
-        const profiles = this.options.profiles;
+        const options = this.getFullOptions();
+        const profiles = options.profiles;
         if (typeof optionsContext.index === 'number') {
             return profiles[optionsContext.index];
         }
-        const profile = this.getProfileFromContext(optionsContext);
-        return profile !== null ? profile : this.options.profiles[this.options.profileCurrent];
+        const profile = this.getProfileFromContext(options, optionsContext);
+        return profile !== null ? profile : options.profiles[options.profileCurrent];
     }
 
-    getProfileFromContext(optionsContext) {
-        for (const profile of this.options.profiles) {
+    getProfileFromContext(options, optionsContext) {
+        for (const profile of options.profiles) {
             const conditionGroups = profile.conditionGroups;
             if (conditionGroups.length > 0 && Backend.testConditionGroups(conditionGroups, optionsContext)) {
                 return profile;
