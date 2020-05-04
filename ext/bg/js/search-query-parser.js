@@ -26,12 +26,6 @@
 
 class QueryParser {
     constructor({getOptionsContext, setContent, setSpinnerVisible}) {
-        this._textScanner = new TextScanner(
-            document.querySelector('#query-parser-content'),
-            () => [],
-            []
-        );
-        this._textScanner.onSearchSource = this.onSearchSource.bind(this);
         this._options = null;
         this.getOptionsContext = getOptionsContext;
         this.setContent = setContent;
@@ -43,6 +37,13 @@ class QueryParser {
         this.queryParserSelect = document.querySelector('#query-parser-select-container');
 
         this.queryParserGenerator = new QueryParserGenerator();
+
+        this._textScanner = new TextScanner(
+            this.queryParser,
+            () => [],
+            []
+        );
+        this._textScanner.onSearchSource = this.onSearchSource.bind(this);
     }
 
     async prepare() {
