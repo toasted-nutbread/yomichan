@@ -29,7 +29,7 @@ class Frontend {
     constructor(popup, getUrl=null) {
         this._id = yomichan.generateId(16);
 
-        this.popup = popup;
+        this._popup = popup;
 
         this._getUrl = getUrl;
 
@@ -45,8 +45,8 @@ class Frontend {
         this._enabledEventListeners = new EventListenerCollection();
         this._textScanner = new TextScanner(
             window,
-            () => this.popup.isProxy() ? [] : [this.popup.getContainer()],
-            [(x, y) => this.popup.containsPoint(x, y)]
+            () => this._popup.isProxy() ? [] : [this._popup.getContainer()],
+            [(x, y) => this._popup.containsPoint(x, y)]
         );
         this._textScanner.onSearchSource = this.onSearchSource.bind(this);
 
@@ -59,7 +59,7 @@ class Frontend {
         ]);
 
         this._runtimeMessageHandlers = new Map([
-            ['popupSetVisibleOverride', ({visible}) => { this.popup.setVisibleOverride(visible); }],
+            ['popupSetVisibleOverride', ({visible}) => { this._popup.setVisibleOverride(visible); }],
             ['rootPopupRequestInformationBroadcast', () => { this._broadcastRootPopupInformation(); }],
             ['requestDocumentInformationBroadcast', ({uniqueId}) => { this._broadcastDocumentInformation(uniqueId); }]
         ]);
@@ -116,7 +116,7 @@ class Frontend {
 
     onRuntimeMessage({action, params}, sender, callback) {
         const {targetPopupId} = params || {};
-        if (typeof targetPopupId !== 'undefined' && targetPopupId !== this.popup.id) { return; }
+        if (typeof targetPopupId !== 'undefined' && targetPopupId !== this._popup.id) { return; }
 
         const handler = this._runtimeMessageHandlers.get(action);
         if (typeof handler !== 'function') { return false; }
@@ -150,7 +150,7 @@ class Frontend {
 
     async setPopup(popup) {
         this._textScanner.clearSelection(true);
-        this.popup = popup;
+        this._popup = popup;
         await popup.setOptionsContext(await this.getOptionsContext(), this._id);
     }
 
@@ -166,7 +166,7 @@ class Frontend {
         }
         this._textScanner.ignoreNodes = ignoreNodes.join(',');
 
-        await this.popup.setOptionsContext(optionsContext, this._id);
+        await this._popup.setOptionsContext(optionsContext, this._id);
 
         this._updateContentScale();
 
@@ -261,15 +261,15 @@ class Frontend {
     }
 
     onClearSelection({passive}) {
-        this.popup.hide(!passive);
-        this.popup.clearAutoPlayTimer();
+        this._popup.hide(!passive);
+        this._popup.clearAutoPlayTimer();
         this.updatePendingOptions();
     }
 
     async onActiveModifiersChanged({modifiers}) {
         if (areSetsEqual(modifiers, this._activeModifiers)) { return; }
         this._activeModifiers = modifiers;
-        if (await this.popup.isVisible()) {
+        if (await this._popup.isVisible()) {
             this._optionsUpdatePending = true;
             return;
         }
@@ -278,14 +278,14 @@ class Frontend {
 
     async getOptionsContext() {
         const url = this._getUrl !== null ? await this._getUrl() : window.location.href;
-        const depth = this.popup.depth;
+        const depth = this._popup.depth;
         const modifierKeys = [...this._activeModifiers];
         return {depth, url, modifierKeys};
     }
 
     _showPopupContent(textSource, optionsContext, type=null, details=null) {
         const context = {optionsContext, source: this._id};
-        this._lastShowPromise = this.popup.showContent(
+        this._lastShowPromise = this._popup.showContent(
             textSource.getRect(),
             textSource.getWritingMode(),
             type,
@@ -298,7 +298,7 @@ class Frontend {
     _updateTextScannerEnabled() {
         const enabled = (
             this._options.general.enable &&
-            this.popup.depth <= this._options.scanning.popupNestingMaxDepth &&
+            this._popup.depth <= this._options.scanning.popupNestingMaxDepth &&
             !this._disabledOverride
         );
         this._enabledEventListeners.removeAllEventListeners();
@@ -322,27 +322,27 @@ class Frontend {
         if (contentScale === this._contentScale) { return; }
 
         this._contentScale = contentScale;
-        this.popup.setContentScale(this._contentScale);
+        this._popup.setContentScale(this._contentScale);
         this._updatePopupPosition();
     }
 
     _broadcastRootPopupInformation() {
-        if (!this.popup.isProxy() && this.popup.depth === 0 && this.popup.frameId === 0) {
-            apiBroadcastTab('rootPopupInformation', {popupId: this.popup.id, frameId: this.popup.frameId});
+        if (!this._popup.isProxy() && this._popup.depth === 0 && this._popup.frameId === 0) {
+            apiBroadcastTab('rootPopupInformation', {popupId: this._popup.id, frameId: this._popup.frameId});
         }
     }
 
     _broadcastDocumentInformation(uniqueId) {
         apiBroadcastTab('documentInformationBroadcast', {
             uniqueId,
-            frameId: this.popup.frameId,
+            frameId: this._popup.frameId,
             title: document.title
         });
     }
 
     async _updatePopupPosition() {
         const textSource = this._textScanner.getCurrentTextSource();
-        if (textSource !== null && await this.popup.isVisible()) {
+        if (textSource !== null && await this._popup.isVisible()) {
             this._showPopupContent(textSource, await this.getOptionsContext());
         }
     }
