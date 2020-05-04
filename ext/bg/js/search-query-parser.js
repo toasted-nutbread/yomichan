@@ -42,6 +42,7 @@ class QueryParser extends TextScanner {
 
     async prepare() {
         await this.queryParserGenerator.prepare();
+        this.queryParser.addEventListener('click', this.onClick2.bind(this));
     }
 
     onClick2(e) {
@@ -74,13 +75,6 @@ class QueryParser extends TextScanner {
     onParserChange(e) {
         const selectedParser = e.target.value;
         apiOptionsSet({parsing: {selectedParser}}, this.getOptionsContext());
-    }
-
-    getMouseEventListeners() {
-        return [
-            ...super.getMouseEventListeners(),
-            [this.node, 'click', this.onClick2.bind(this)]
-        ];
     }
 
     setOptions(options) {
