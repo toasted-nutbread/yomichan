@@ -24,9 +24,14 @@
  * docSentenceExtract
  */
 
-class QueryParser extends TextScanner {
+class QueryParser {
     constructor({getOptionsContext, setContent, setSpinnerVisible}) {
-        super(document.querySelector('#query-parser-content'), () => [], []);
+        this._textScanner = new TextScanner(
+            document.querySelector('#query-parser-content'),
+            () => [],
+            []
+        );
+        this._textScanner.onSearchSource = this.onSearchSource.bind(this);
         this._options = null;
         this.getOptionsContext = getOptionsContext;
         this.setContent = setContent;
@@ -46,13 +51,13 @@ class QueryParser extends TextScanner {
     }
 
     onClick2(e) {
-        this.searchAt(e.clientX, e.clientY, 'click');
+        this._textScanner.searchAt(e.clientX, e.clientY, 'click');
     }
 
     async onSearchSource(textSource, cause) {
         if (textSource === null) { return null; }
 
-        const searchText = this.getTextSourceContent(textSource, this._options.scanning.length);
+        const searchText = this._textScanner.getTextSourceContent(textSource, this._options.scanning.length);
         if (searchText.length === 0) { return; }
 
         const {definitions, length} = await apiTermsFind(searchText, {}, this.getOptionsContext());
@@ -79,8 +84,8 @@ class QueryParser extends TextScanner {
 
     setOptions(options) {
         this._options = options;
-        super.setOptions(options);
-        super.setEnabled(true);
+        this._textScanner.setOptions(options);
+        this._textScanner.setEnabled(true);
         this.queryParser.dataset.termSpacing = `${options.parsing.termSpacing}`;
     }
 
