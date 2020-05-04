@@ -28,30 +28,23 @@
 class Frontend {
     constructor(popup, getUrl=null) {
         this._id = yomichan.generateId(16);
-
         this._popup = popup;
-
         this._getUrl = getUrl;
-
         this._disabledOverride = false;
-
         this._options = null;
-
         this._pageZoomFactor = 1.0;
         this._contentScale = 1.0;
         this._orphaned = false;
         this._lastShowPromise = Promise.resolve();
-
         this._enabledEventListeners = new EventListenerCollection();
+        this._activeModifiers = new Set();
+        this._optionsUpdatePending = false;
         this._textScanner = new TextScanner(
             window,
             () => this._popup.isProxy() ? [] : [this._popup.getContainer()],
             [(x, y) => this._popup.containsPoint(x, y)]
         );
         this._textScanner.onSearchSource = this._onSearchSource.bind(this);
-
-        this._activeModifiers = new Set();
-        this._optionsUpdatePending = false;
 
         this._windowMessageHandlers = new Map([
             ['popupClose', () => this._textScanner.clearSelection(false)],
