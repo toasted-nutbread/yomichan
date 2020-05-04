@@ -27,7 +27,7 @@
 class QueryParser extends TextScanner {
     constructor({getOptionsContext, setContent, setSpinnerVisible}) {
         super(document.querySelector('#query-parser-content'), () => [], []);
-
+        this._options = null;
         this.getOptionsContext = getOptionsContext;
         this.setContent = setContent;
         this.setSpinnerVisible = setSpinnerVisible;
@@ -52,13 +52,13 @@ class QueryParser extends TextScanner {
     async onSearchSource(textSource, cause) {
         if (textSource === null) { return null; }
 
-        const searchText = this.getTextSourceContent(textSource, this.options.scanning.length);
+        const searchText = this.getTextSourceContent(textSource, this._options.scanning.length);
         if (searchText.length === 0) { return; }
 
         const {definitions, length} = await apiTermsFind(searchText, {}, this.getOptionsContext());
         if (definitions.length === 0) { return null; }
 
-        const sentence = docSentenceExtract(textSource, this.options.anki.sentenceExt);
+        const sentence = docSentenceExtract(textSource, this._options.anki.sentenceExt);
 
         textSource.setEndOffset(length);
 
@@ -78,6 +78,7 @@ class QueryParser extends TextScanner {
     }
 
     setOptions(options) {
+        this._options = options;
         super.setOptions(options);
         super.setEnabled(true);
         this.queryParser.dataset.termSpacing = `${options.parsing.termSpacing}`;
@@ -93,7 +94,7 @@ class QueryParser extends TextScanner {
     }
 
     getParseResult() {
-        const {selectedParser} = this.options.parsing;
+        const {selectedParser} = this._options.parsing;
         return this.parseResults.find((r) => r.id === selectedParser);
     }
 
@@ -124,7 +125,7 @@ class QueryParser extends TextScanner {
     renderParserSelect() {
         this.queryParserSelect.textContent = '';
         if (this.parseResults.length > 1) {
-            const {selectedParser} = this.options.parsing;
+            const {selectedParser} = this._options.parsing;
             const select = this.queryParserGenerator.createParserSelect(this.parseResults, selectedParser);
             select.addEventListener('change', this.onParserChange.bind(this));
             this.queryParserSelect.appendChild(select);
