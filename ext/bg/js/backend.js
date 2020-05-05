@@ -857,7 +857,7 @@ class Backend {
                 port.postMessage({type: 'complete', data: result});
             } catch (e) {
                 if (port !== null) {
-                    port.postMessage({type: 'error', data: e});
+                    port.postMessage({type: 'error', data: errorToJson(e)});
                 }
                 cleanup();
             }
