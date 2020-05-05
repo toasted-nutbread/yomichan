@@ -15,10 +15,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/* global
- * wanakana
- */
-
 const jp = (() => {
     const ITERATION_MARK_CODE_POINT = 0x3005;
     const HIRAGANA_SMALL_TSU_CODE_POINT = 0x3063;
@@ -143,8 +139,24 @@ const jp = (() => {
         return false;
     }
 
+    function getWanakana() {
+        try {
+            if (typeof wanakana !== 'undefined') {
+                // eslint-disable-next-line no-undef
+                return wanakana;
+            }
+        } catch (e) {
+            // NOP
+        }
+        return null;
+    }
+
 
     class JapaneseUtil {
+        constructor(wanakana=null) {
+            this._wanakana = wanakana;
+        }
+
         // Character code testing functions
 
         isCodePointKanji(codePoint) {
@@ -207,6 +219,7 @@ const jp = (() => {
         // Conversion functions
 
         convertKatakanaToHiragana(text) {
+            const wanakana = this._getWanakana();
             let result = '';
             for (const c of text) {
                 if (wanakana.isKatakana(c)) {
@@ -220,6 +233,7 @@ const jp = (() => {
         }
 
         convertHiraganaToKatakana(text) {
+            const wanakana = this._getWanakana();
             let result = '';
             for (const c of text) {
                 if (wanakana.isHiragana(c)) {
@@ -233,6 +247,7 @@ const jp = (() => {
         }
 
         convertToRomaji(text) {
+            const wanakana = this._getWanakana();
             return wanakana.toRomaji(text);
         }
 
@@ -477,7 +492,14 @@ const jp = (() => {
 
         // Private
 
+        _getWanakana() {
+            const wanakana = this._wanakana;
+            if (wanakana === null) { throw new Error('Functions which use WanaKana are not supported in this context'); }
+            return wanakana;
+        }
+
         _convertAlphabeticPartToKana(text, sourceMap, sourceMapStart) {
+            const wanakana = this._getWanakana();
             const result = wanakana.toHiragana(text);
 
             // Generate source mapping
@@ -522,5 +544,5 @@ const jp = (() => {
     }
 
 
-    return new JapaneseUtil();
+    return new JapaneseUtil(getWanakana());
 })();
