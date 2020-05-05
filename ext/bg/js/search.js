@@ -262,6 +262,7 @@ class DisplaySearch extends Display {
             action: 'set',
             path: 'general.enableWanakana',
             value,
+            scope: 'profile',
             optionsContext: this.getOptionsContext()
         }], 'search');
     }
@@ -277,6 +278,7 @@ class DisplaySearch extends Display {
                             action: 'set',
                             path: 'general.enableClipboardMonitor',
                             value: true,
+                            scope: 'profile',
                             optionsContext: this.getOptionsContext()
                         }], 'search');
                     } else {
@@ -290,6 +292,7 @@ class DisplaySearch extends Display {
                 action: 'set',
                 path: 'general.enableClipboardMonitor',
                 value: false,
+                scope: 'profile',
                 optionsContext: this.getOptionsContext()
             }], 'search');
         }

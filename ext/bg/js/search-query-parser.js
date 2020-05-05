@@ -77,6 +77,7 @@ class QueryParser extends TextScanner {
             action: 'set',
             path: 'parsing.selectedParser',
             value,
+            scope: 'profile',
             optionsContext: this.getOptionsContext()
         }], 'search');
     }
@@ -102,6 +103,7 @@ class QueryParser extends TextScanner {
                     action: 'set',
                     path: 'parsing.selectedParser',
                     value,
+                    scope: 'profile',
                     optionsContext: this.getOptionsContext()
                 }], 'search');
             }

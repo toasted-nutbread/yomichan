@@ -964,9 +964,19 @@ class Backend {
     }
 
     // Utilities
+
+    _getModifySettingObject(target) {
+        switch (target.scope) {
+            case 'profile':
+                if (!isObject(target.optionsContext)) { throw new Error('Invalid optionsContext'); }
+                return this.getOptions(target.optionsContext, true);
+            case 'global':
+                return this.getFullOptions(true);
+        }
+    }
+
     async _modifySetting(target) {
-        const optionsContext = target.optionsContext;
-        const options = isObject(optionsContext) ? this.getOptions(optionsContext, true) : this.getFullOptions(true);
+        const options = this._getModifySettingObject(target);
         const accessor = new ObjectPropertyAccessor(options);
         const action = target.action;
         switch (action) {
