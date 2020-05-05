@@ -66,20 +66,6 @@ const jp = (() => {
     const SMALL_KANA_SET = new Set(Array.from('ぁぃぅぇぉゃゅょゎァィゥェォャュョヮ'));
 
 
-    // Character code testing functions
-
-    function isCodePointKanji(codePoint) {
-        return isCodePointInRanges(codePoint, CJK_UNIFIED_IDEOGRAPHS_RANGES);
-    }
-
-    function isCodePointKana(codePoint) {
-        return isCodePointInRanges(codePoint, KANA_RANGES);
-    }
-
-    function isCodePointJapanese(codePoint) {
-        return isCodePointInRanges(codePoint, JAPANESE_RANGES);
-    }
-
     function isCodePointInRanges(codePoint, ranges) {
         for (const [min, max] of ranges) {
             if (codePoint >= min && codePoint <= max) {
@@ -90,62 +76,67 @@ const jp = (() => {
     }
 
 
-    // String testing functions
+    class JapaneseUtil {
+        // Character code testing functions
 
-    function isStringEntirelyKana(str) {
-        if (str.length === 0) { return false; }
-        for (const c of str) {
-            if (!isCodePointKana(c.codePointAt(0))) {
-                return false;
+        isCodePointKanji(codePoint) {
+            return isCodePointInRanges(codePoint, CJK_UNIFIED_IDEOGRAPHS_RANGES);
+        }
+
+        isCodePointKana(codePoint) {
+            return isCodePointInRanges(codePoint, KANA_RANGES);
+        }
+
+        isCodePointJapanese(codePoint) {
+            return isCodePointInRanges(codePoint, JAPANESE_RANGES);
+        }
+
+        // String testing functions
+
+        isStringEntirelyKana(str) {
+            if (str.length === 0) { return false; }
+            for (const c of str) {
+                if (!isCodePointInRanges(c.codePointAt(0), KANA_RANGES)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        isStringPartiallyJapanese(str) {
+            if (str.length === 0) { return false; }
+            for (const c of str) {
+                if (isCodePointInRanges(c.codePointAt(0), JAPANESE_RANGES)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // Mora functions
+
+        isMoraPitchHigh(moraIndex, pitchAccentPosition) {
+            switch (pitchAccentPosition) {
+                case 0: return (moraIndex > 0);
+                case 1: return (moraIndex < 1);
+                default: return (moraIndex > 0 && moraIndex < pitchAccentPosition);
             }
         }
-        return true;
-    }
 
-    function isStringPartiallyJapanese(str) {
-        if (str.length === 0) { return false; }
-        for (const c of str) {
-            if (isCodePointJapanese(c.codePointAt(0))) {
-                return true;
+        getKanaMorae(text) {
+            const morae = [];
+            let i;
+            for (const c of text) {
+                if (SMALL_KANA_SET.has(c) && (i = morae.length) > 0) {
+                    morae[i - 1] += c;
+                } else {
+                    morae.push(c);
+                }
             }
-        }
-        return false;
-    }
-
-
-    // Mora functions
-
-    function isMoraPitchHigh(moraIndex, pitchAccentPosition) {
-        switch (pitchAccentPosition) {
-            case 0: return (moraIndex > 0);
-            case 1: return (moraIndex < 1);
-            default: return (moraIndex > 0 && moraIndex < pitchAccentPosition);
+            return morae;
         }
     }
 
-    function getKanaMorae(text) {
-        const morae = [];
-        let i;
-        for (const c of text) {
-            if (SMALL_KANA_SET.has(c) && (i = morae.length) > 0) {
-                morae[i - 1] += c;
-            } else {
-                morae.push(c);
-            }
-        }
-        return morae;
-    }
 
-
-    // Exports
-
-    return {
-        isCodePointKanji,
-        isCodePointKana,
-        isCodePointJapanese,
-        isStringEntirelyKana,
-        isStringPartiallyJapanese,
-        isMoraPitchHigh,
-        getKanaMorae
-    };
+    return new JapaneseUtil();
 })();
