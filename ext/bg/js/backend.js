@@ -997,7 +997,7 @@ class Backend {
                     const {path, start, deleteCount, items} = target;
                     if (typeof path !== 'string') { throw new Error('Invalid path'); }
                     if (typeof start !== 'number' || Math.floor(start) !== start) { throw new Error('Invalid start'); }
-                    if (typeof deleteCount !== 'number' || Math.floor(deleteCount) !== start) { throw new Error('Invalid deleteCount'); }
+                    if (typeof deleteCount !== 'number' || Math.floor(deleteCount) !== deleteCount) { throw new Error('Invalid deleteCount'); }
                     if (!Array.isArray(items)) { throw new Error('Invalid items'); }
                     const array = accessor.get(ObjectPropertyAccessor.getPathArray(path));
                     if (!Array.isArray(array)) { throw new Error('Invalid target type'); }
