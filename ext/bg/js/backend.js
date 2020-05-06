@@ -966,12 +966,15 @@ class Backend {
     // Utilities
 
     _getModifySettingObject(target) {
-        switch (target.scope) {
+        const scope = target.scope;
+        switch (scope) {
             case 'profile':
                 if (!isObject(target.optionsContext)) { throw new Error('Invalid optionsContext'); }
                 return this.getOptions(target.optionsContext, true);
             case 'global':
                 return this.getFullOptions(true);
+            default:
+                throw new Error(`Invalid scope: ${scope}`);
         }
     }
 
