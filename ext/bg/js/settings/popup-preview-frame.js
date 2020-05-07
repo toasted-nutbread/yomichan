@@ -56,10 +56,10 @@ class SettingsPopupPreview {
         window.apiOptionsGet = this.apiOptionsGet.bind(this);
 
         // Overwrite frontend
-        const popupHost = new PopupFactory();
-        await popupHost.prepare();
+        const popupFactory = new PopupFactory();
+        await popupFactory.prepare();
 
-        this.popup = popupHost.getOrCreatePopup();
+        this.popup = popupFactory.getOrCreatePopup();
         this.popup.setChildrenSupported(false);
 
         this.popupSetCustomOuterCssOld = this.popup.setCustomOuterCss;

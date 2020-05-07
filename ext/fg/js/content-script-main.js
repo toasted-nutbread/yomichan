@@ -47,10 +47,10 @@ async function createIframePopupProxy(frameOffsetForwarder, setDisabled) {
 }
 
 async function getOrCreatePopup(depth) {
-    const popupHost = new PopupFactory();
-    await popupHost.prepare();
+    const popupFactory = new PopupFactory();
+    await popupFactory.prepare();
 
-    const popup = popupHost.getOrCreatePopup(null, null, depth);
+    const popup = popupFactory.getOrCreatePopup(null, null, depth);
 
     return popup;
 }
