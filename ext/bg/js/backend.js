@@ -81,46 +81,46 @@ class Backend {
         this._logErrorLevel = null;
 
         this._messageHandlers = new Map([
-            ['yomichanCoreReady', {handler: this._onApiYomichanCoreReady.bind(this), async: false}],
-            ['optionsSchemaGet', {handler: this._onApiOptionsSchemaGet.bind(this), async: false}],
-            ['optionsGet', {handler: this._onApiOptionsGet.bind(this), async: false}],
-            ['optionsGetFull', {handler: this._onApiOptionsGetFull.bind(this), async: false}],
-            ['optionsSave', {handler: this._onApiOptionsSave.bind(this), async: true}],
-            ['kanjiFind', {handler: this._onApiKanjiFind.bind(this), async: true}],
-            ['termsFind', {handler: this._onApiTermsFind.bind(this), async: true}],
-            ['textParse', {handler: this._onApiTextParse.bind(this), async: true}],
-            ['definitionAdd', {handler: this._onApiDefinitionAdd.bind(this), async: true}],
-            ['definitionsAddable', {handler: this._onApiDefinitionsAddable.bind(this), async: true}],
-            ['noteView', {handler: this._onApiNoteView.bind(this), async: true}],
-            ['templateRender', {handler: this._onApiTemplateRender.bind(this), async: true}],
-            ['commandExec', {handler: this._onApiCommandExec.bind(this), async: false}],
-            ['audioGetUri', {handler: this._onApiAudioGetUri.bind(this), async: true}],
-            ['screenshotGet', {handler: this._onApiScreenshotGet.bind(this), async: true}],
-            ['sendMessageToFrame', {handler: this._onApiSendMessageToFrame.bind(this), async: false}],
-            ['broadcastTab', {handler: this._onApiBroadcastTab.bind(this), async: false}],
-            ['frameInformationGet', {handler: this._onApiFrameInformationGet.bind(this), async: true}],
-            ['injectStylesheet', {handler: this._onApiInjectStylesheet.bind(this), async: true}],
-            ['getEnvironmentInfo', {handler: this._onApiGetEnvironmentInfo.bind(this), async: true}],
-            ['clipboardGet', {handler: this._onApiClipboardGet.bind(this), async: true}],
-            ['getDisplayTemplatesHtml', {handler: this._onApiGetDisplayTemplatesHtml.bind(this), async: true}],
-            ['getQueryParserTemplatesHtml', {handler: this._onApiGetQueryParserTemplatesHtml.bind(this), async: true}],
-            ['getZoom', {handler: this._onApiGetZoom.bind(this), async: true}],
-            ['getDefaultAnkiFieldTemplates', {handler: this._onApiGetDefaultAnkiFieldTemplates.bind(this), async: false}],
-            ['getAnkiDeckNames', {handler: this._onApiGetAnkiDeckNames.bind(this), async: true}],
-            ['getAnkiModelNames', {handler: this._onApiGetAnkiModelNames.bind(this), async: true}],
-            ['getAnkiModelFieldNames', {handler: this._onApiGetAnkiModelFieldNames.bind(this), async: true}],
-            ['getDictionaryInfo', {handler: this._onApiGetDictionaryInfo.bind(this), async: true}],
-            ['getDictionaryCounts', {handler: this._onApiGetDictionaryCounts.bind(this), async: true}],
-            ['purgeDatabase', {handler: this._onApiPurgeDatabase.bind(this), async: true}],
-            ['getMedia', {handler: this._onApiGetMedia.bind(this), async: true}],
-            ['log', {handler: this._onApiLog.bind(this), async: false}],
-            ['logIndicatorClear', {handler: this._onApiLogIndicatorClear.bind(this), async: false}],
-            ['createActionPort', {handler: this._onApiCreateActionPort.bind(this), async: false}],
-            ['modifySettings', {handler: this._onApiModifySettings.bind(this), async: true}]
+            ['yomichanCoreReady', {handler: this._onApiYomichanCoreReady.bind(this), async: false, contentScript: true}],
+            ['optionsSchemaGet', {handler: this._onApiOptionsSchemaGet.bind(this), async: false, contentScript: true}],
+            ['optionsGet', {handler: this._onApiOptionsGet.bind(this), async: false, contentScript: true}],
+            ['optionsGetFull', {handler: this._onApiOptionsGetFull.bind(this), async: false, contentScript: true}],
+            ['optionsSave', {handler: this._onApiOptionsSave.bind(this), async: true, contentScript: true}],
+            ['kanjiFind', {handler: this._onApiKanjiFind.bind(this), async: true, contentScript: true}],
+            ['termsFind', {handler: this._onApiTermsFind.bind(this), async: true, contentScript: true}],
+            ['textParse', {handler: this._onApiTextParse.bind(this), async: true, contentScript: true}],
+            ['definitionAdd', {handler: this._onApiDefinitionAdd.bind(this), async: true, contentScript: true}],
+            ['definitionsAddable', {handler: this._onApiDefinitionsAddable.bind(this), async: true, contentScript: true}],
+            ['noteView', {handler: this._onApiNoteView.bind(this), async: true, contentScript: true}],
+            ['templateRender', {handler: this._onApiTemplateRender.bind(this), async: true, contentScript: true}],
+            ['commandExec', {handler: this._onApiCommandExec.bind(this), async: false, contentScript: true}],
+            ['audioGetUri', {handler: this._onApiAudioGetUri.bind(this), async: true, contentScript: true}],
+            ['screenshotGet', {handler: this._onApiScreenshotGet.bind(this), async: true, contentScript: true}],
+            ['sendMessageToFrame', {handler: this._onApiSendMessageToFrame.bind(this), async: false, contentScript: true}],
+            ['broadcastTab', {handler: this._onApiBroadcastTab.bind(this), async: false, contentScript: true}],
+            ['frameInformationGet', {handler: this._onApiFrameInformationGet.bind(this), async: true, contentScript: true}],
+            ['injectStylesheet', {handler: this._onApiInjectStylesheet.bind(this), async: true, contentScript: true}],
+            ['getEnvironmentInfo', {handler: this._onApiGetEnvironmentInfo.bind(this), async: true, contentScript: true}],
+            ['clipboardGet', {handler: this._onApiClipboardGet.bind(this), async: true, contentScript: true}],
+            ['getDisplayTemplatesHtml', {handler: this._onApiGetDisplayTemplatesHtml.bind(this), async: true, contentScript: true}],
+            ['getQueryParserTemplatesHtml', {handler: this._onApiGetQueryParserTemplatesHtml.bind(this), async: true, contentScript: true}],
+            ['getZoom', {handler: this._onApiGetZoom.bind(this), async: true, contentScript: true}],
+            ['getDefaultAnkiFieldTemplates', {handler: this._onApiGetDefaultAnkiFieldTemplates.bind(this), async: false, contentScript: true}],
+            ['getAnkiDeckNames', {handler: this._onApiGetAnkiDeckNames.bind(this), async: true, contentScript: false}],
+            ['getAnkiModelNames', {handler: this._onApiGetAnkiModelNames.bind(this), async: true, contentScript: false}],
+            ['getAnkiModelFieldNames', {handler: this._onApiGetAnkiModelFieldNames.bind(this), async: true, contentScript: false}],
+            ['getDictionaryInfo', {handler: this._onApiGetDictionaryInfo.bind(this), async: true, contentScript: false}],
+            ['getDictionaryCounts', {handler: this._onApiGetDictionaryCounts.bind(this), async: true, contentScript: false}],
+            ['purgeDatabase', {handler: this._onApiPurgeDatabase.bind(this), async: true, contentScript: false}],
+            ['getMedia', {handler: this._onApiGetMedia.bind(this), async: true, contentScript: true}],
+            ['log', {handler: this._onApiLog.bind(this), async: false, contentScript: true}],
+            ['logIndicatorClear', {handler: this._onApiLogIndicatorClear.bind(this), async: false, contentScript: true}],
+            ['createActionPort', {handler: this._onApiCreateActionPort.bind(this), async: false, contentScript: true}],
+            ['modifySettings', {handler: this._onApiModifySettings.bind(this), async: true, contentScript: true}]
         ]);
         this._messageHandlersWithProgress = new Map([
-            ['importDictionaryArchive', {handler: this._onApiImportDictionaryArchive.bind(this), async: true}],
-            ['deleteDictionary', {handler: this._onApiDeleteDictionary.bind(this), async: true}]
+            ['importDictionaryArchive', {handler: this._onApiImportDictionaryArchive.bind(this), async: true, contentScript: false}],
+            ['deleteDictionary', {handler: this._onApiDeleteDictionary.bind(this), async: true, contentScript: false}]
         ]);
 
         this._commandHandlers = new Map([
@@ -206,9 +206,13 @@ class Backend {
         const messageHandler = this._messageHandlers.get(action);
         if (typeof messageHandler === 'undefined') { return false; }
 
-        const {handler, async} = messageHandler;
+        const {handler, async, contentScript} = messageHandler;
 
         try {
+            if (!contentScript) {
+                this._validatePrivilegedMessageSender(sender);
+            }
+
             const promiseOrResult = handler(params, sender);
             if (async) {
                 promiseOrResult.then(
@@ -832,7 +836,11 @@ class Backend {
                 if (typeof messageHandler === 'undefined') {
                     throw new Error('Invalid action');
                 }
-                const {handler, async} = messageHandler;
+                const {handler, async, contentScript} = messageHandler;
+
+                if (!contentScript) {
+                    this._validatePrivilegedMessageSender(sender);
+                }
 
                 const promiseOrResult = handler(params, sender, onProgress);
                 const result = async ? await promiseOrResult : promiseOrResult;
