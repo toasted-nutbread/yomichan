@@ -105,8 +105,8 @@ class PopupProxy {
         this._invoke('setContentScale', {id: this._id, scale});
     }
 
-    async getHostUrl() {
-        return await this._invoke('getHostUrl', {});
+    async getUrl() {
+        return await this._invoke('getUrl', {});
     }
 
     // Private

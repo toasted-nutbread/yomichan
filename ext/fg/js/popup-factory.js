@@ -40,7 +40,7 @@ class PopupFactory {
             ['setCustomCss',       {async: false, handler: this._onApiSetCustomCss.bind(this)}],
             ['clearAutoPlayTimer', {async: false, handler: this._onApiClearAutoPlayTimer.bind(this)}],
             ['setContentScale',    {async: false, handler: this._onApiSetContentScale.bind(this)}],
-            ['getHostUrl',         {async: false, handler: this._onApiGetHostUrl.bind(this)}]
+            ['getUrl',             {async: false, handler: this._onApiGetUrl.bind(this)}]
         ]));
         apiReceiver.prepare();
     }
@@ -147,7 +147,7 @@ class PopupFactory {
         return popup.setContentScale(scale);
     }
 
-    _onApiGetHostUrl() {
+    _onApiGetUrl() {
         return window.location.href;
     }
 
