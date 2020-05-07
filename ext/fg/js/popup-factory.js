@@ -29,7 +29,7 @@ class PopupFactory {
     // Public functions
 
     async prepare() {
-        const apiReceiver = new FrontendApiReceiver(`popup-proxy-host#${this._frameId}`, new Map([
+        const apiReceiver = new FrontendApiReceiver(`popup-factory#${this._frameId}`, new Map([
             ['getOrCreatePopup',   {async: false, handler: this._onApiGetOrCreatePopup.bind(this)}],
             ['setOptionsContext',  {async: true,  handler: this._onApiSetOptionsContext.bind(this)}],
             ['hide',               {async: false, handler: this._onApiHide.bind(this)}],

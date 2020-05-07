@@ -115,7 +115,7 @@ class PopupProxy {
         if (typeof this._parentFrameId !== 'number') {
             return Promise.reject(new Error('Invalid frame'));
         }
-        return this._apiSender.invoke(action, params, `popup-proxy-host#${this._parentFrameId}`);
+        return this._apiSender.invoke(action, params, `popup-factory#${this._parentFrameId}`);
     }
 
     async _updateFrameOffset() {
