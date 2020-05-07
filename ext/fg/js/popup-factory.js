@@ -126,14 +126,14 @@ class PopupFactory {
 
     async _onApiContainsPoint({id, x, y}) {
         const popup = this._getPopup(id);
-        [x, y] = PopupFactory._convertPopupPointToRootPagePoint(popup, x, y);
+        [x, y] = this._convertPopupPointToRootPagePoint(popup, x, y);
         return await popup.containsPoint(x, y);
     }
 
     async _onApiShowContent({id, elementRect, writingMode, type, details, context}) {
         const popup = this._getPopup(id);
-        elementRect = PopupFactory._convertJsonRectToDOMRect(popup, elementRect);
-        if (!PopupFactory._popupCanShow(popup)) { return; }
+        elementRect = this._convertJsonRectToDOMRect(popup, elementRect);
+        if (!this._popupCanShow(popup)) { return; }
         return await popup.showContent(elementRect, writingMode, type, details, context);
     }
 
@@ -166,12 +166,12 @@ class PopupFactory {
         return popup;
     }
 
-    static _convertJsonRectToDOMRect(popup, jsonRect) {
-        const [x, y] = PopupFactory._convertPopupPointToRootPagePoint(popup, jsonRect.x, jsonRect.y);
+    _convertJsonRectToDOMRect(popup, jsonRect) {
+        const [x, y] = this._convertPopupPointToRootPagePoint(popup, jsonRect.x, jsonRect.y);
         return new DOMRect(x, y, jsonRect.width, jsonRect.height);
     }
 
-    static _convertPopupPointToRootPagePoint(popup, x, y) {
+    _convertPopupPointToRootPagePoint(popup, x, y) {
         if (popup.parent !== null) {
             const popupRect = popup.parent.getContainerRect();
             x += popupRect.x;
@@ -180,7 +180,7 @@ class PopupFactory {
         return [x, y];
     }
 
-    static _popupCanShow(popup) {
+    _popupCanShow(popup) {
         return popup.parent === null || popup.parent.isVisibleSync();
     }
 }
