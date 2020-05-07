@@ -35,17 +35,17 @@ class PopupFactory {
         this._frameId = frameId;
 
         const apiReceiver = new FrontendApiReceiver(`popup-proxy-host#${this._frameId}`, new Map([
-            ['getOrCreatePopup',   {async: true,  handler: this._onApiGetOrCreatePopup.bind(this)}],
+            ['getOrCreatePopup',   {async: false, handler: this._onApiGetOrCreatePopup.bind(this)}],
             ['setOptionsContext',  {async: true,  handler: this._onApiSetOptionsContext.bind(this)}],
-            ['hide',               {async: true,  handler: this._onApiHide.bind(this)}],
+            ['hide',               {async: false, handler: this._onApiHide.bind(this)}],
             ['isVisible',          {async: true,  handler: this._onApiIsVisibleAsync.bind(this)}],
             ['setVisibleOverride', {async: true,  handler: this._onApiSetVisibleOverride.bind(this)}],
             ['containsPoint',      {async: true,  handler: this._onApiContainsPoint.bind(this)}],
             ['showContent',        {async: true,  handler: this._onApiShowContent.bind(this)}],
             ['setCustomCss',       {async: true,  handler: this._onApiSetCustomCss.bind(this)}],
-            ['clearAutoPlayTimer', {async: true,  handler: this._onApiClearAutoPlayTimer.bind(this)}],
-            ['setContentScale',    {async: true,  handler: this._onApiSetContentScale.bind(this)}],
-            ['getHostUrl',         {async: true,  handler: this._onApiGetHostUrl.bind(this)}]
+            ['clearAutoPlayTimer', {async: false, handler: this._onApiClearAutoPlayTimer.bind(this)}],
+            ['setContentScale',    {async: false, handler: this._onApiSetContentScale.bind(this)}],
+            ['getHostUrl',         {async: false, handler: this._onApiGetHostUrl.bind(this)}]
         ]));
         apiReceiver.prepare();
     }
@@ -97,7 +97,7 @@ class PopupFactory {
 
     // API message handlers
 
-    async _onApiGetOrCreatePopup({id, parentId}) {
+    _onApiGetOrCreatePopup({id, parentId}) {
         const popup = this.getOrCreatePopup(id, parentId);
         return {
             id: popup.id
@@ -109,7 +109,7 @@ class PopupFactory {
         return await popup.setOptionsContext(optionsContext, source);
     }
 
-    async _onApiHide({id, changeFocus}) {
+    _onApiHide({id, changeFocus}) {
         const popup = this._getPopup(id);
         return popup.hide(changeFocus);
     }
@@ -142,17 +142,17 @@ class PopupFactory {
         return popup.setCustomCss(css);
     }
 
-    async _onApiClearAutoPlayTimer({id}) {
+    _onApiClearAutoPlayTimer({id}) {
         const popup = this._getPopup(id);
         return popup.clearAutoPlayTimer();
     }
 
-    async _onApiSetContentScale({id, scale}) {
+    _onApiSetContentScale({id, scale}) {
         const popup = this._getPopup(id);
         return popup.setContentScale(scale);
     }
 
-    async _onApiGetHostUrl() {
+    _onApiGetHostUrl() {
         return window.location.href;
     }
 
