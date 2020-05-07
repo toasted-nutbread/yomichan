@@ -21,7 +21,7 @@
  * apiFrameInformationGet
  */
 
-class PopupProxyHost {
+class PopupFactory {
     constructor() {
         this._popups = new Map();
         this._frameId = null;
@@ -126,14 +126,14 @@ class PopupProxyHost {
 
     async _onApiContainsPoint({id, x, y}) {
         const popup = this._getPopup(id);
-        [x, y] = PopupProxyHost._convertPopupPointToRootPagePoint(popup, x, y);
+        [x, y] = PopupFactory._convertPopupPointToRootPagePoint(popup, x, y);
         return await popup.containsPoint(x, y);
     }
 
     async _onApiShowContent({id, elementRect, writingMode, type, details, context}) {
         const popup = this._getPopup(id);
-        elementRect = PopupProxyHost._convertJsonRectToDOMRect(popup, elementRect);
-        if (!PopupProxyHost._popupCanShow(popup)) { return; }
+        elementRect = PopupFactory._convertJsonRectToDOMRect(popup, elementRect);
+        if (!PopupFactory._popupCanShow(popup)) { return; }
         return await popup.showContent(elementRect, writingMode, type, details, context);
     }
 
@@ -167,7 +167,7 @@ class PopupProxyHost {
     }
 
     static _convertJsonRectToDOMRect(popup, jsonRect) {
-        const [x, y] = PopupProxyHost._convertPopupPointToRootPagePoint(popup, jsonRect.x, jsonRect.y);
+        const [x, y] = PopupFactory._convertPopupPointToRootPagePoint(popup, jsonRect.x, jsonRect.y);
         return new DOMRect(x, y, jsonRect.width, jsonRect.height);
     }
 

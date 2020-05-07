@@ -19,8 +19,8 @@
  * DOM
  * FrameOffsetForwarder
  * Frontend
+ * PopupFactory
  * PopupProxy
- * PopupProxyHost
  * apiBroadcastTab
  * apiForwardLogsToBackend
  * apiOptionsGet
@@ -47,7 +47,7 @@ async function createIframePopupProxy(frameOffsetForwarder, setDisabled) {
 }
 
 async function getOrCreatePopup(depth) {
-    const popupHost = new PopupProxyHost();
+    const popupHost = new PopupFactory();
     await popupHost.prepare();
 
     const popup = popupHost.getOrCreatePopup(null, null, depth);

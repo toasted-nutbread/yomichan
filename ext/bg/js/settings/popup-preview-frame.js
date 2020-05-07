@@ -18,7 +18,7 @@
 /* global
  * Frontend
  * Popup
- * PopupProxyHost
+ * PopupFactory
  * TextSourceRange
  * apiOptionsGet
  */
@@ -56,7 +56,7 @@ class SettingsPopupPreview {
         window.apiOptionsGet = this.apiOptionsGet.bind(this);
 
         // Overwrite frontend
-        const popupHost = new PopupProxyHost();
+        const popupHost = new PopupFactory();
         await popupHost.prepare();
 
         this.popup = popupHost.getOrCreatePopup();
