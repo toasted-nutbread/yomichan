@@ -42,7 +42,7 @@ class PopupFactory {
             ['setVisibleOverride', {async: true,  handler: this._onApiSetVisibleOverride.bind(this)}],
             ['containsPoint',      {async: true,  handler: this._onApiContainsPoint.bind(this)}],
             ['showContent',        {async: true,  handler: this._onApiShowContent.bind(this)}],
-            ['setCustomCss',       {async: true,  handler: this._onApiSetCustomCss.bind(this)}],
+            ['setCustomCss',       {async: false, handler: this._onApiSetCustomCss.bind(this)}],
             ['clearAutoPlayTimer', {async: false, handler: this._onApiClearAutoPlayTimer.bind(this)}],
             ['setContentScale',    {async: false, handler: this._onApiSetContentScale.bind(this)}],
             ['getHostUrl',         {async: false, handler: this._onApiGetHostUrl.bind(this)}]
@@ -137,7 +137,7 @@ class PopupFactory {
         return await popup.showContent(elementRect, writingMode, type, details, context);
     }
 
-    async _onApiSetCustomCss({id, css}) {
+    _onApiSetCustomCss({id, css}) {
         const popup = this._getPopup(id);
         return popup.setCustomCss(css);
     }

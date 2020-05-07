@@ -93,8 +93,8 @@ class PopupProxy {
         return await this._invokeHostApi('showContent', {id: this._id, elementRect, writingMode, type, details, context});
     }
 
-    async setCustomCss(css) {
-        return await this._invokeHostApi('setCustomCss', {id: this._id, css});
+    setCustomCss(css) {
+        this._invokeHostApi('setCustomCss', {id: this._id, css});
     }
 
     clearAutoPlayTimer() {
