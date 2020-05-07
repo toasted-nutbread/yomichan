@@ -714,33 +714,27 @@ class Backend {
         return this.defaultAnkiFieldTemplates;
     }
 
-    async _onApiGetAnkiDeckNames(params, sender) {
-        this._validatePrivilegedMessageSender(sender);
+    async _onApiGetAnkiDeckNames() {
         return await this.anki.getDeckNames();
     }
 
-    async _onApiGetAnkiModelNames(params, sender) {
-        this._validatePrivilegedMessageSender(sender);
+    async _onApiGetAnkiModelNames() {
         return await this.anki.getModelNames();
     }
 
-    async _onApiGetAnkiModelFieldNames({modelName}, sender) {
-        this._validatePrivilegedMessageSender(sender);
+    async _onApiGetAnkiModelFieldNames({modelName}) {
         return await this.anki.getModelFieldNames(modelName);
     }
 
-    async _onApiGetDictionaryInfo(params, sender) {
-        this._validatePrivilegedMessageSender(sender);
+    async _onApiGetDictionaryInfo() {
         return await this.translator.database.getDictionaryInfo();
     }
 
-    async _onApiGetDictionaryCounts({dictionaryNames, getTotal}, sender) {
-        this._validatePrivilegedMessageSender(sender);
+    async _onApiGetDictionaryCounts({dictionaryNames, getTotal}) {
         return await this.translator.database.getDictionaryCounts(dictionaryNames, getTotal);
     }
 
-    async _onApiPurgeDatabase(params, sender) {
-        this._validatePrivilegedMessageSender(sender);
+    async _onApiPurgeDatabase() {
         this.translator.clearDatabaseCaches();
         await this.database.purge();
     }
@@ -786,12 +780,10 @@ class Backend {
     }
 
     async _onApiImportDictionaryArchive({archiveContent, details}, sender, onProgress) {
-        this._validatePrivilegedMessageSender(sender);
         return await this.dictionaryImporter.import(this.database, archiveContent, details, onProgress);
     }
 
     async _onApiDeleteDictionary({dictionaryName}, sender, onProgress) {
-        this._validatePrivilegedMessageSender(sender);
         this.translator.clearDatabaseCaches();
         await this.database.deleteDictionary(dictionaryName, {rate: 1000}, onProgress);
     }
