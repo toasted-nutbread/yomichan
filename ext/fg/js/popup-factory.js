@@ -18,22 +18,17 @@
 /* global
  * FrontendApiReceiver
  * Popup
- * apiFrameInformationGet
  */
 
 class PopupFactory {
-    constructor() {
+    constructor(frameId) {
         this._popups = new Map();
-        this._frameId = null;
+        this._frameId = frameId;
     }
 
     // Public functions
 
     async prepare() {
-        const {frameId} = await apiFrameInformationGet();
-        if (typeof frameId !== 'number') { return; }
-        this._frameId = frameId;
-
         const apiReceiver = new FrontendApiReceiver(`popup-proxy-host#${this._frameId}`, new Map([
             ['getOrCreatePopup',   {async: false, handler: this._onApiGetOrCreatePopup.bind(this)}],
             ['setOptionsContext',  {async: true,  handler: this._onApiSetOptionsContext.bind(this)}],

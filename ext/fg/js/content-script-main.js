@@ -23,6 +23,7 @@
  * PopupProxy
  * apiBroadcastTab
  * apiForwardLogsToBackend
+ * apiFrameInformationGet
  * apiOptionsGet
  */
 
@@ -47,7 +48,14 @@ async function createIframePopupProxy(frameOffsetForwarder, setDisabled) {
 }
 
 async function getOrCreatePopup(depth) {
-    const popupFactory = new PopupFactory();
+    const {frameId} = await apiFrameInformationGet();
+    if (typeof frameId !== 'number') {
+        const error = new Error('Failed to get frameId');
+        yomichan.logError(error);
+        throw error;
+    }
+
+    const popupFactory = new PopupFactory(frameId);
     await popupFactory.prepare();
 
     const popup = popupFactory.getOrCreatePopup(null, null, depth);
