@@ -101,7 +101,7 @@ class PopupProxy {
         this._invokeHostApi('clearAutoPlayTimer', {id: this._id});
     }
 
-    async setContentScale(scale) {
+    setContentScale(scale) {
         this._invokeHostApi('setContentScale', {id: this._id, scale});
     }
 
