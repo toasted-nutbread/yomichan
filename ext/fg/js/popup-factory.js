@@ -35,17 +35,17 @@ class PopupFactory {
         this._frameId = frameId;
 
         const apiReceiver = new FrontendApiReceiver(`popup-proxy-host#${this._frameId}`, new Map([
-            ['getOrCreatePopup', this._onApiGetOrCreatePopup.bind(this)],
-            ['setOptionsContext', this._onApiSetOptionsContext.bind(this)],
-            ['hide', this._onApiHide.bind(this)],
-            ['isVisible', this._onApiIsVisibleAsync.bind(this)],
-            ['setVisibleOverride', this._onApiSetVisibleOverride.bind(this)],
-            ['containsPoint', this._onApiContainsPoint.bind(this)],
-            ['showContent', this._onApiShowContent.bind(this)],
-            ['setCustomCss', this._onApiSetCustomCss.bind(this)],
-            ['clearAutoPlayTimer', this._onApiClearAutoPlayTimer.bind(this)],
-            ['setContentScale', this._onApiSetContentScale.bind(this)],
-            ['getHostUrl', this._onApiGetHostUrl.bind(this)]
+            ['getOrCreatePopup',   {async: true,  handler: this._onApiGetOrCreatePopup.bind(this)}],
+            ['setOptionsContext',  {async: true,  handler: this._onApiSetOptionsContext.bind(this)}],
+            ['hide',               {async: true,  handler: this._onApiHide.bind(this)}],
+            ['isVisible',          {async: true,  handler: this._onApiIsVisibleAsync.bind(this)}],
+            ['setVisibleOverride', {async: true,  handler: this._onApiSetVisibleOverride.bind(this)}],
+            ['containsPoint',      {async: true,  handler: this._onApiContainsPoint.bind(this)}],
+            ['showContent',        {async: true,  handler: this._onApiShowContent.bind(this)}],
+            ['setCustomCss',       {async: true,  handler: this._onApiSetCustomCss.bind(this)}],
+            ['clearAutoPlayTimer', {async: true,  handler: this._onApiClearAutoPlayTimer.bind(this)}],
+            ['setContentScale',    {async: true,  handler: this._onApiSetContentScale.bind(this)}],
+            ['getHostUrl',         {async: true,  handler: this._onApiGetHostUrl.bind(this)}]
         ]));
         apiReceiver.prepare();
     }
