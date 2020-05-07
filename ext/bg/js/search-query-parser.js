@@ -47,6 +47,29 @@ class QueryParser {
         this._queryParser.addEventListener('click', this._onClick.bind(this));
     }
 
+    setOptions(options) {
+        this._options = options;
+        this._textScanner.setOptions(options);
+        this._textScanner.setEnabled(true);
+        this._queryParser.dataset.termSpacing = `${options.parsing.termSpacing}`;
+    }
+
+    async setText(text) {
+        this._setSpinnerVisible(true);
+
+        this._setPreview(text);
+
+        this._parseResults = await apiTextParse(text, this._getOptionsContext());
+        this._refreshSelectedParser();
+
+        this._renderParserSelect();
+        this._renderParseResult();
+
+        this._setSpinnerVisible(false);
+    }
+
+    // Private
+
     _onClick(e) {
         this._textScanner.searchAt(e.clientX, e.clientY, 'click');
     }
@@ -85,13 +108,6 @@ class QueryParser {
         }], 'search');
     }
 
-    setOptions(options) {
-        this._options = options;
-        this._textScanner.setOptions(options);
-        this._textScanner.setEnabled(true);
-        this._queryParser.dataset.termSpacing = `${options.parsing.termSpacing}`;
-    }
-
     _refreshSelectedParser() {
         if (this._parseResults.length > 0) {
             if (!this._getParseResult()) {
@@ -110,20 +126,6 @@ class QueryParser {
     _getParseResult() {
         const {selectedParser} = this._options.parsing;
         return this._parseResults.find((r) => r.id === selectedParser);
-    }
-
-    async setText(text) {
-        this._setSpinnerVisible(true);
-
-        this._setPreview(text);
-
-        this._parseResults = await apiTextParse(text, this._getOptionsContext());
-        this._refreshSelectedParser();
-
-        this._renderParserSelect();
-        this._renderParseResult();
-
-        this._setSpinnerVisible(false);
     }
 
     _setPreview(text) {
