@@ -36,16 +36,16 @@ class Popup {
         this._options = null;
         this._optionsContext = null;
         this._contentScale = 1.0;
-        this._containerSizeContentScale = null;
+        this._frameSizeContentScale = null;
         this._targetOrigin = chrome.runtime.getURL('/').replace(/\/$/, '');
         this._previousOptionsContextSource = null;
-        this._containerSecret = null;
-        this._containerToken = null;
+        this._frameSecret = null;
+        this._frameToken = null;
 
-        this._container = document.createElement('iframe');
-        this._container.className = 'yomichan-float';
-        this._container.style.width = '0px';
-        this._container.style.height = '0px';
+        this._frame = document.createElement('iframe');
+        this._frame.className = 'yomichan-float';
+        this._frame.style.width = '0px';
+        this._frame.style.height = '0px';
 
         this._fullscreenEventListeners = new EventListenerCollection();
 
@@ -77,9 +77,9 @@ class Popup {
     // Public functions
 
     prepare() {
-        this._container.addEventListener('mousedown', (e) => e.stopPropagation());
-        this._container.addEventListener('scroll', (e) => e.stopPropagation());
-        this._container.addEventListener('load', this._onFrameLoad.bind(this));
+        this._frame.addEventListener('mousedown', (e) => e.stopPropagation());
+        this._frame.addEventListener('scroll', (e) => e.stopPropagation());
+        this._frame.addEventListener('load', this._onFrameLoad.bind(this));
     }
 
     isProxy() {
@@ -121,7 +121,7 @@ class Popup {
 
     async containsPoint(x, y) {
         for (let popup = this; popup !== null && popup.isVisibleSync(); popup = this._child) {
-            const rect = this._container.getBoundingClientRect();
+            const rect = this._frame.getBoundingClientRect();
             if (x >= rect.left && y >= rect.top && x < rect.right && y < rect.bottom) {
                 return true;
             }
@@ -176,8 +176,8 @@ class Popup {
     }
 
     updateTheme() {
-        this._container.dataset.yomichanTheme = this._options.general.popupOuterTheme;
-        this._container.dataset.yomichanSiteColor = this._getSiteColor();
+        this._frame.dataset.yomichanTheme = this._options.general.popupOuterTheme;
+        this._frame.dataset.yomichanSiteColor = this._getSiteColor();
     }
 
     async setCustomOuterCss(css, useWebExtensionApi) {
@@ -194,11 +194,11 @@ class Popup {
     }
 
     getContainer() {
-        return this._container;
+        return this._frame;
     }
 
     getContainerRect() {
-        return this._container.getBoundingClientRect();
+        return this._frame.getBoundingClientRect();
     }
 
     // Private functions
@@ -334,15 +334,15 @@ class Popup {
     async _createInjectPromise() {
         this._injectStyles();
 
-        const {secret, token} = await this._initializeFrame(this._container, this._targetOrigin, this._frameId, (frame) => {
+        const {secret, token} = await this._initializeFrame(this._frame, this._targetOrigin, this._frameId, (frame) => {
             frame.removeAttribute('src');
             frame.removeAttribute('srcdoc');
             frame.setAttribute('src', chrome.runtime.getURL('/fg/float.html'));
             this._observeFullscreen(true);
             this._onFullscreenChanged();
         });
-        this._containerSecret = secret;
-        this._containerToken = token;
+        this._frameSecret = secret;
+        this._frameToken = token;
 
         // Configure
         const messageId = yomichan.generateId(16);
@@ -377,15 +377,15 @@ class Popup {
     }
 
     _resetFrame() {
-        const parent = this._container.parentNode;
+        const parent = this._frame.parentNode;
         if (parent !== null) {
-            parent.removeChild(this._container);
+            parent.removeChild(this._frame);
         }
-        this._container.removeAttribute('src');
-        this._container.removeAttribute('srcdoc');
+        this._frame.removeAttribute('src');
+        this._frame.removeAttribute('srcdoc');
 
-        this._containerSecret = null;
-        this._containerToken = null;
+        this._frameSecret = null;
+        this._frameToken = null;
         this._injectPromise = null;
         this._injectPromiseComplete = false;
     }
@@ -429,8 +429,8 @@ class Popup {
 
     _onFullscreenChanged() {
         const parent = this._getFrameParentElement();
-        if (parent !== null && this._container.parentNode !== parent) {
-            parent.appendChild(this._container);
+        if (parent !== null && this._frame.parentNode !== parent) {
+            parent.appendChild(this._frame);
         }
     }
 
@@ -438,17 +438,17 @@ class Popup {
         await this._inject();
 
         const optionsGeneral = this._options.general;
-        const container = this._container;
-        const containerRect = container.getBoundingClientRect();
+        const frame = this._frame;
+        const frameRect = frame.getBoundingClientRect();
 
         const viewport = this._getViewport(optionsGeneral.popupScaleRelativeToVisualViewport);
         const scale = this._contentScale;
-        const scaleRatio = this._containerSizeContentScale === null ? 1.0 : scale / this._containerSizeContentScale;
-        this._containerSizeContentScale = scale;
+        const scaleRatio = this._frameSizeContentScale === null ? 1.0 : scale / this._frameSizeContentScale;
+        this._frameSizeContentScale = scale;
         const getPositionArgs = [
             elementRect,
-            Math.max(containerRect.width * scaleRatio, optionsGeneral.popupWidth * scale),
-            Math.max(containerRect.height * scaleRatio, optionsGeneral.popupHeight * scale),
+            Math.max(frameRect.width * scaleRatio, optionsGeneral.popupWidth * scale),
+            Math.max(frameRect.height * scaleRatio, optionsGeneral.popupHeight * scale),
             viewport,
             scale,
             optionsGeneral,
@@ -461,8 +461,8 @@ class Popup {
         );
 
         const fullWidth = (optionsGeneral.popupDisplayMode === 'full-width');
-        container.classList.toggle('yomichan-float-full-width', fullWidth);
-        container.classList.toggle('yomichan-float-above', !below);
+        frame.classList.toggle('yomichan-float-full-width', fullWidth);
+        frame.classList.toggle('yomichan-float-above', !below);
 
         if (optionsGeneral.popupDisplayMode === 'full-width') {
             x = viewport.left;
@@ -470,10 +470,10 @@ class Popup {
             width = viewport.right - viewport.left;
         }
 
-        container.style.left = `${x}px`;
-        container.style.top = `${y}px`;
-        container.style.width = `${width}px`;
-        container.style.height = `${height}px`;
+        frame.style.left = `${x}px`;
+        frame.style.top = `${y}px`;
+        frame.style.width = `${width}px`;
+        frame.style.height = `${height}px`;
 
         this._setVisible(true);
         if (this._child !== null) {
@@ -487,20 +487,20 @@ class Popup {
     }
 
     _updateVisibility() {
-        this._container.style.setProperty('visibility', this.isVisibleSync() ? 'visible' : 'hidden', 'important');
+        this._frame.style.setProperty('visibility', this.isVisibleSync() ? 'visible' : 'hidden', 'important');
     }
 
     _focusParent() {
         if (this._parent !== null) {
             // Chrome doesn't like focusing iframe without contentWindow.
-            const contentWindow = this._parent._container.contentWindow;
+            const contentWindow = this._parent._frame.contentWindow;
             if (contentWindow !== null) {
                 contentWindow.focus();
             }
         } else {
             // Firefox doesn't like focusing window without first blurring the iframe.
-            // this.container.contentWindow.blur() doesn't work on Firefox for some reason.
-            this._container.blur();
+            // this._frame.contentWindow.blur() doesn't work on Firefox for some reason.
+            this._frame.blur();
             // This is needed for Chrome.
             window.focus();
         }
@@ -520,9 +520,9 @@ class Popup {
     }
 
     _invokeApi(action, params={}) {
-        const secret = this._containerSecret;
-        const token = this._containerToken;
-        const contentWindow = this._container.contentWindow;
+        const secret = this._frameSecret;
+        const token = this._frameToken;
+        const contentWindow = this._frame.contentWindow;
         if (secret === null || token === null || contentWindow === null) { return; }
 
         contentWindow.postMessage({action, params, secret, token}, this._targetOrigin);
