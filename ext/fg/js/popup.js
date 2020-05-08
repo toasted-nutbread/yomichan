@@ -120,8 +120,8 @@ class Popup {
     }
 
     async containsPoint(x, y) {
-        for (let popup = this; popup !== null && popup.isVisibleSync(); popup = this._child) {
-            const rect = this._frame.getBoundingClientRect();
+        for (let popup = this; popup !== null && popup.isVisibleSync(); popup = popup._child) {
+            const rect = popup._frame.getBoundingClientRect();
             if (x >= rect.left && y >= rect.top && x < rect.right && y < rect.bottom) {
                 return true;
             }
