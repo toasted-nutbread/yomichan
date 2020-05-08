@@ -182,9 +182,6 @@ class Frontend {
     }
 
     _onRuntimeMessage({action, params}, sender, callback) {
-        const {targetPopupId} = params || {};
-        if (typeof targetPopupId !== 'undefined' && targetPopupId !== this._popup.id) { return; }
-
         const handler = this._runtimeMessageHandlers.get(action);
         if (typeof handler !== 'function') { return false; }
 
