@@ -169,7 +169,7 @@ class PopupFactory {
 
     _convertPopupPointToRootPagePoint(popup, x, y) {
         if (popup.parent !== null) {
-            const popupRect = popup.parent.getContainerRect();
+            const popupRect = popup.parent.getFrameRect();
             x += popupRect.x;
             y += popupRect.y;
         }

@@ -197,7 +197,7 @@ class Popup {
         return this._frame;
     }
 
-    getContainerRect() {
+    getFrameRect() {
         return this._frame.getBoundingClientRect();
     }
 
