@@ -296,10 +296,8 @@ class TextScanner extends EventDispatcher {
                 return;
             }
 
-            for (const ignorePointFn of this._ignorePoints) {
-                if (await ignorePointFn(x, y)) {
-                    return;
-                }
+            if (typeof this._ignorePoints === 'function' && await this._ignorePoints(x, y)) {
+                return;
             }
 
             const textSource = docRangeFromPoint(x, y, this._options.scanning.deepDomScan);

@@ -42,7 +42,7 @@ class Frontend {
         this._textScanner = new TextScanner({
             node: window,
             ignoreElements: () => this._popup.isProxy() ? [] : [this._popup.getContainer()],
-            ignorePoints: [(x, y) => this._popup.containsPoint(x, y)],
+            ignorePoints: (x, y) => this._popup.containsPoint(x, y),
             search: this._search.bind(this)
         });
 

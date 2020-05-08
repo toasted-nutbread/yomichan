@@ -37,7 +37,7 @@ class QueryParser {
         this._textScanner = new TextScanner({
             node: this._queryParser,
             ignoreElements: () => [],
-            ignorePoints: [],
+            ignorePoints: null,
             search: this._search.bind(this)
         });
     }
