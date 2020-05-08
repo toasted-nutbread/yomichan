@@ -37,9 +37,9 @@ class QueryParser {
         this._textScanner = new TextScanner(
             this._queryParser,
             () => [],
-            []
+            [],
+            this._search.bind(this)
         );
-        this._textScanner.onSearchSource = this._onSearchSource.bind(this);
     }
 
     async prepare() {
@@ -74,7 +74,7 @@ class QueryParser {
         this._textScanner.searchAt(e.clientX, e.clientY, 'click');
     }
 
-    async _onSearchSource(textSource, cause) {
+    async _search(textSource, cause) {
         if (textSource === null) { return null; }
 
         const searchText = this._textScanner.getTextSourceContent(textSource, this._options.scanning.length);

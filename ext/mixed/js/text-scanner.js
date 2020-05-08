@@ -22,11 +22,12 @@
  */
 
 class TextScanner extends EventDispatcher {
-    constructor(node, ignoreElements, ignorePoints) {
+    constructor(node, ignoreElements, ignorePoints, search) {
         super();
         this._node = node;
         this._ignoreElements = ignoreElements;
         this._ignorePoints = ignorePoints;
+        this._search = search;
 
         this._ignoreNodes = null;
 
@@ -221,10 +222,6 @@ class TextScanner extends EventDispatcher {
         e.preventDefault(); // Disable scroll
     }
 
-    async onSearchSource(_textSource, _cause) {
-        throw new Error('Override me');
-    }
-
     async _scanTimerWait() {
         const delay = this._options.scanning.delay;
         const promise = promiseTimeout(delay, true);
@@ -312,7 +309,7 @@ class TextScanner extends EventDispatcher {
                 }
 
                 this._pendingLookup = true;
-                const result = await this.onSearchSource(textSource, cause);
+                const result = await this._search(textSource, cause);
                 if (result !== null) {
                     this._causeCurrent = cause;
                     this.setCurrentTextSource(textSource);
