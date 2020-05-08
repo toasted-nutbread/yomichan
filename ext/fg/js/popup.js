@@ -44,11 +44,8 @@ class Popup {
 
         this._container = document.createElement('iframe');
         this._container.className = 'yomichan-float';
-        this._container.addEventListener('mousedown', (e) => e.stopPropagation());
-        this._container.addEventListener('scroll', (e) => e.stopPropagation());
         this._container.style.width = '0px';
         this._container.style.height = '0px';
-        this._container.addEventListener('load', this._onFrameLoad.bind(this));
 
         this._fullscreenEventListeners = new EventListenerCollection();
 
@@ -78,6 +75,12 @@ class Popup {
     }
 
     // Public functions
+
+    prepare() {
+        this._container.addEventListener('mousedown', (e) => e.stopPropagation());
+        this._container.addEventListener('scroll', (e) => e.stopPropagation());
+        this._container.addEventListener('load', this._onFrameLoad.bind(this));
+    }
 
     isProxy() {
         return false;

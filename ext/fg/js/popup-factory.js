@@ -87,6 +87,7 @@ class PopupFactory {
             popup.setParent(parent);
         }
         this._popups.set(id, popup);
+        popup.prepare();
         return popup;
     }
 
