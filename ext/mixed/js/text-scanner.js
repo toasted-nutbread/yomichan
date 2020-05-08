@@ -22,11 +22,11 @@
  */
 
 class TextScanner extends EventDispatcher {
-    constructor({node, ignoreElements, ignorePoints, search}) {
+    constructor({node, ignoreElements, ignorePoint, search}) {
         super();
         this._node = node;
         this._ignoreElements = ignoreElements;
-        this._ignorePoints = ignorePoints;
+        this._ignorePoint = ignorePoint;
         this._search = search;
 
         this._ignoreNodes = null;
@@ -92,7 +92,7 @@ class TextScanner extends EventDispatcher {
                 return;
             }
 
-            if (typeof this._ignorePoints === 'function' && await this._ignorePoints(x, y)) {
+            if (typeof this._ignorePoint === 'function' && await this._ignorePoint(x, y)) {
                 return;
             }
 
