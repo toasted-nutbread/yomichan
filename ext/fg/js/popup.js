@@ -223,11 +223,11 @@ class Popup {
         return new Promise((resolve, reject) => {
             const tokenMap = new Map();
             let timer = null;
-            let containerLoadedResolve = null;
-            let containerLoadedReject = null;
-            const containerLoaded = new Promise((resolve2, reject2) => {
-                containerLoadedResolve = resolve2;
-                containerLoadedReject = reject2;
+            let frameLoadedResolve = null;
+            let frameLoadedReject = null;
+            const frameLoaded = new Promise((resolve2, reject2) => {
+                frameLoadedResolve = resolve2;
+                frameLoadedReject = reject2;
             });
 
             const postMessage = (action, params) => {
@@ -255,7 +255,7 @@ class Popup {
                     if (!isObject(message)) { return; }
                     const {action, params} = message;
                     if (!isObject(params)) { return; }
-                    await containerLoaded;
+                    await frameLoaded;
                     if (timer === null) { return; } // Done
 
                     switch (action) {
@@ -285,7 +285,7 @@ class Popup {
             };
 
             const onLoad = () => {
-                if (containerLoadedResolve === null) {
+                if (frameLoadedResolve === null) {
                     cleanup();
                     reject(new Error('Unexpected load event'));
                     return;
@@ -295,9 +295,9 @@ class Popup {
                     return;
                 }
 
-                containerLoadedResolve();
-                containerLoadedResolve = null;
-                containerLoadedReject = null;
+                frameLoadedResolve();
+                frameLoadedResolve = null;
+                frameLoadedReject = null;
             };
 
             const cleanup = () => {
@@ -305,10 +305,10 @@ class Popup {
                 clearTimeout(timer);
                 timer = null;
 
-                containerLoadedResolve = null;
-                if (containerLoadedReject !== null) {
-                    containerLoadedReject(new Error('Terminated'));
-                    containerLoadedReject = null;
+                frameLoadedResolve = null;
+                if (frameLoadedReject !== null) {
+                    frameLoadedReject(new Error('Terminated'));
+                    frameLoadedReject = null;
                 }
 
                 chrome.runtime.onMessage.removeListener(onMessage);
@@ -325,7 +325,7 @@ class Popup {
             frame.addEventListener('load', onLoad);
 
             // Prevent unhandled rejections
-            containerLoaded.catch(() => {}); // NOP
+            frameLoaded.catch(() => {}); // NOP
 
             setupFrame(frame);
         });
