@@ -78,7 +78,7 @@ class QueryParser {
         if (textSource === null) { return null; }
 
         const searchText = this._textScanner.getTextSourceContent(textSource, this._options.scanning.length);
-        if (searchText.length === 0) { return; }
+        if (searchText.length === 0) { return null; }
 
         const {definitions, length} = await apiTermsFind(searchText, {}, this._getOptionsContext());
         if (definitions.length === 0) { return null; }
