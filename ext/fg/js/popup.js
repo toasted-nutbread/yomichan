@@ -36,16 +36,16 @@ class Popup {
         this._options = null;
         this._optionsContext = null;
         this._contentScale = 1.0;
-        this._frameSizeContentScale = null;
         this._targetOrigin = chrome.runtime.getURL('/').replace(/\/$/, '');
         this._previousOptionsContextSource = null;
+
+        this._frameSizeContentScale = null;
         this._frameSecret = null;
         this._frameToken = null;
-
         this._frame = document.createElement('iframe');
         this._frame.className = 'yomichan-float';
-        this._frame.style.width = '0px';
-        this._frame.style.height = '0px';
+        this._frame.style.width = '0';
+        this._frame.style.height = '0';
 
         this._fullscreenEventListeners = new EventListenerCollection();
 
