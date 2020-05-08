@@ -47,14 +47,14 @@ class Frontend {
         });
 
         this._windowMessageHandlers = new Map([
-            ['popupClose', () => this._textScanner.clearSelection(false)],
-            ['selectionCopy', () => document.execCommand('copy')]
+            ['popupClose', this._onMessagePopupClose.bind(this)],
+            ['selectionCopy', this._onMessageSelectionCopy.bind()]
         ]);
 
         this._runtimeMessageHandlers = new Map([
-            ['popupSetVisibleOverride', ({visible}) => { this._popup.setVisibleOverride(visible); }],
-            ['rootPopupRequestInformationBroadcast', () => { this._broadcastRootPopupInformation(); }],
-            ['requestDocumentInformationBroadcast', ({uniqueId}) => { this._broadcastDocumentInformation(uniqueId); }]
+            ['popupSetVisibleOverride', this._onMessagePopupSetVisibleOverride.bind(this)],
+            ['rootPopupRequestInformationBroadcast', this._onMessageRootPopupRequestInformationBroadcast.bind(this)],
+            ['requestDocumentInformationBroadcast', this._onMessageRequestDocumentInformationBroadcast.bind(this)]
         ]);
     }
 
@@ -143,6 +143,28 @@ class Frontend {
 
     showContentCompleted() {
         return this._lastShowPromise;
+    }
+
+    // Message handlers
+
+    _onMessagePopupClose() {
+        this._textScanner.clearSelection(false);
+    }
+
+    _onMessageSelectionCopy() {
+        document.execCommand('copy');
+    }
+
+    _onMessagePopupSetVisibleOverride({visible}) {
+        this._popup.setVisibleOverride(visible);
+    }
+
+    _onMessageRootPopupRequestInformationBroadcast() {
+        this._broadcastRootPopupInformation();
+    }
+
+    _onMessageRequestDocumentInformationBroadcast({uniqueId}) {
+        this._broadcastDocumentInformation(uniqueId);
     }
 
     // Private
