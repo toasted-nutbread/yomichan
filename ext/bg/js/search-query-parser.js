@@ -34,12 +34,12 @@ class QueryParser {
         this._queryParser = document.querySelector('#query-parser-content');
         this._queryParserSelect = document.querySelector('#query-parser-select-container');
         this._queryParserGenerator = new QueryParserGenerator();
-        this._textScanner = new TextScanner(
-            this._queryParser,
-            () => [],
-            [],
-            this._search.bind(this)
-        );
+        this._textScanner = new TextScanner({
+            node: this._queryParser,
+            ignoreElements: () => [],
+            ignorePoints: [],
+            search: this._search.bind(this)
+        });
     }
 
     async prepare() {

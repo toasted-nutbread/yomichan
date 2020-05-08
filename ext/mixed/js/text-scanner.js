@@ -22,7 +22,7 @@
  */
 
 class TextScanner extends EventDispatcher {
-    constructor(node, ignoreElements, ignorePoints, search) {
+    constructor({node, ignoreElements, ignorePoints, search}) {
         super();
         this._node = node;
         this._ignoreElements = ignoreElements;

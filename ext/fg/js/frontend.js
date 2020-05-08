@@ -39,12 +39,12 @@ class Frontend {
         this._enabledEventListeners = new EventListenerCollection();
         this._activeModifiers = new Set();
         this._optionsUpdatePending = false;
-        this._textScanner = new TextScanner(
-            window,
-            () => this._popup.isProxy() ? [] : [this._popup.getContainer()],
-            [(x, y) => this._popup.containsPoint(x, y)],
-            this._search.bind(this)
-        );
+        this._textScanner = new TextScanner({
+            node: window,
+            ignoreElements: () => this._popup.isProxy() ? [] : [this._popup.getContainer()],
+            ignorePoints: [(x, y) => this._popup.containsPoint(x, y)],
+            search: this._search.bind(this)
+        });
 
         this._windowMessageHandlers = new Map([
             ['popupClose', () => this._textScanner.clearSelection(false)],
