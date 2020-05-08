@@ -599,6 +599,8 @@ class Popup {
                 return false;
             case 'right':
                 return true;
+            default:
+                return false;
         }
     }
 
