@@ -193,7 +193,7 @@ class Popup {
         this._childrenSupported = value;
     }
 
-    getContainer() {
+    getFrame() {
         return this._frame;
     }
 
@@ -493,7 +493,7 @@ class Popup {
     _focusParent() {
         if (this._parent !== null) {
             // Chrome doesn't like focusing iframe without contentWindow.
-            const contentWindow = this._parent._frame.contentWindow;
+            const contentWindow = this._parent.getFrame().contentWindow;
             if (contentWindow !== null) {
                 contentWindow.focus();
             }
