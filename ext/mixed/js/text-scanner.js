@@ -70,6 +70,103 @@ class TextScanner extends EventDispatcher {
         return this._causeCurrent;
     }
 
+    setEnabled(enabled) {
+        this._eventListeners.removeAllEventListeners();
+        this._enabled = enabled;
+        if (this._enabled) {
+            this._hookEvents();
+        } else {
+            this.clearSelection(true);
+        }
+    }
+
+    setOptions(options) {
+        this._options = options;
+    }
+
+    async searchAt(x, y, cause) {
+        try {
+            this._scanTimerClear();
+
+            if (this._pendingLookup) {
+                return;
+            }
+
+            if (typeof this._ignorePoints === 'function' && await this._ignorePoints(x, y)) {
+                return;
+            }
+
+            const textSource = docRangeFromPoint(x, y, this._options.scanning.deepDomScan);
+            try {
+                if (this._textSourceCurrent !== null && this._textSourceCurrent.equals(textSource)) {
+                    return;
+                }
+
+                this._pendingLookup = true;
+                const result = await this._search(textSource, cause);
+                if (result !== null) {
+                    this._causeCurrent = cause;
+                    this.setCurrentTextSource(textSource);
+                }
+                this._pendingLookup = false;
+            } finally {
+                if (textSource !== null) {
+                    textSource.cleanup();
+                }
+            }
+        } catch (e) {
+            yomichan.logError(e);
+        }
+    }
+
+    getTextSourceContent(textSource, length) {
+        const clonedTextSource = textSource.clone();
+
+        clonedTextSource.setEndOffset(length);
+
+        if (this._ignoreNodes !== null && clonedTextSource.range) {
+            length = clonedTextSource.text().length;
+            while (clonedTextSource.range && length > 0) {
+                const nodes = TextSourceRange.getNodesInRange(clonedTextSource.range);
+                if (!TextSourceRange.anyNodeMatchesSelector(nodes, this._ignoreNodes)) {
+                    break;
+                }
+                --length;
+                clonedTextSource.setEndOffset(length);
+            }
+        }
+
+        return clonedTextSource.text();
+    }
+
+    clearSelection(passive) {
+        if (!this._canClearSelection) { return; }
+        if (this._textSourceCurrent !== null) {
+            if (this._textSourceCurrentSelected) {
+                this._textSourceCurrent.deselect();
+            }
+            this._textSourceCurrent = null;
+            this._textSourceCurrentSelected = false;
+        }
+        this.trigger('clearSelection', {passive});
+    }
+
+    getCurrentTextSource() {
+        return this._textSourceCurrent;
+    }
+
+    setCurrentTextSource(textSource) {
+        this._textSourceCurrent = textSource;
+        if (this._options.scanning.selectText) {
+            this._textSourceCurrent.select();
+            this._textSourceCurrentSelected = true;
+        } else {
+            this._textSourceCurrentSelected = false;
+        }
+    }
+
+    // Private
+
     _onMouseOver(e) {
         if (this._ignoreElements().includes(e.target)) {
             this._scanTimerClear();
@@ -242,16 +339,6 @@ class TextScanner extends EventDispatcher {
         }
     }
 
-    setEnabled(enabled) {
-        this._eventListeners.removeAllEventListeners();
-        this._enabled = enabled;
-        if (this._enabled) {
-            this._hookEvents();
-        } else {
-            this.clearSelection(true);
-        }
-    }
-
     _hookEvents() {
         const eventListenerInfos = this._getMouseEventListeners();
         if (this._options.scanning.touchInputEnabled) {
@@ -282,91 +369,6 @@ class TextScanner extends EventDispatcher {
             [this._node, 'touchmove', this._onTouchMove.bind(this), {passive: false}],
             [this._node, 'contextmenu', this._onContextMenu.bind(this)]
         ];
-    }
-
-    setOptions(options) {
-        this._options = options;
-    }
-
-    async searchAt(x, y, cause) {
-        try {
-            this._scanTimerClear();
-
-            if (this._pendingLookup) {
-                return;
-            }
-
-            if (typeof this._ignorePoints === 'function' && await this._ignorePoints(x, y)) {
-                return;
-            }
-
-            const textSource = docRangeFromPoint(x, y, this._options.scanning.deepDomScan);
-            try {
-                if (this._textSourceCurrent !== null && this._textSourceCurrent.equals(textSource)) {
-                    return;
-                }
-
-                this._pendingLookup = true;
-                const result = await this._search(textSource, cause);
-                if (result !== null) {
-                    this._causeCurrent = cause;
-                    this.setCurrentTextSource(textSource);
-                }
-                this._pendingLookup = false;
-            } finally {
-                if (textSource !== null) {
-                    textSource.cleanup();
-                }
-            }
-        } catch (e) {
-            yomichan.logError(e);
-        }
-    }
-
-    getTextSourceContent(textSource, length) {
-        const clonedTextSource = textSource.clone();
-
-        clonedTextSource.setEndOffset(length);
-
-        if (this._ignoreNodes !== null && clonedTextSource.range) {
-            length = clonedTextSource.text().length;
-            while (clonedTextSource.range && length > 0) {
-                const nodes = TextSourceRange.getNodesInRange(clonedTextSource.range);
-                if (!TextSourceRange.anyNodeMatchesSelector(nodes, this._ignoreNodes)) {
-                    break;
-                }
-                --length;
-                clonedTextSource.setEndOffset(length);
-            }
-        }
-
-        return clonedTextSource.text();
-    }
-
-    clearSelection(passive) {
-        if (!this._canClearSelection) { return; }
-        if (this._textSourceCurrent !== null) {
-            if (this._textSourceCurrentSelected) {
-                this._textSourceCurrent.deselect();
-            }
-            this._textSourceCurrent = null;
-            this._textSourceCurrentSelected = false;
-        }
-        this.trigger('clearSelection', {passive});
-    }
-
-    getCurrentTextSource() {
-        return this._textSourceCurrent;
-    }
-
-    setCurrentTextSource(textSource) {
-        this._textSourceCurrent = textSource;
-        if (this._options.scanning.selectText) {
-            this._textSourceCurrent.select();
-            this._textSourceCurrentSelected = true;
-        } else {
-            this._textSourceCurrentSelected = false;
-        }
     }
 
     _isScanningModifierPressed(scanningModifier, mouseEvent) {
