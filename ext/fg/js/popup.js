@@ -437,18 +437,12 @@ class Popup {
         const optionsGeneral = this._options.general;
         const container = this._container;
         const containerRect = container.getBoundingClientRect();
-        const getPosition = (
-            writingMode === 'horizontal-tb' || optionsGeneral.popupVerticalTextPosition === 'default' ?
-            this._getPositionForHorizontalText :
-            this._getPositionForVerticalText
-        );
 
         const viewport = this._getViewport(optionsGeneral.popupScaleRelativeToVisualViewport);
         const scale = this._contentScale;
         const scaleRatio = this._containerSizeContentScale === null ? 1.0 : scale / this._containerSizeContentScale;
         this._containerSizeContentScale = scale;
-        let [x, y, width, height, below] = getPosition.call(
-            this,
+        const getPositionArgs = [
             elementRect,
             Math.max(containerRect.width * scaleRatio, optionsGeneral.popupWidth * scale),
             Math.max(containerRect.height * scaleRatio, optionsGeneral.popupHeight * scale),
@@ -456,6 +450,11 @@ class Popup {
             scale,
             optionsGeneral,
             writingMode
+        ];
+        let [x, y, width, height, below] = (
+            writingMode === 'horizontal-tb' || optionsGeneral.popupVerticalTextPosition === 'default' ?
+            this._getPositionForHorizontalText(...getPositionArgs) :
+            this._getPositionForVerticalText(...getPositionArgs)
         );
 
         const fullWidth = (optionsGeneral.popupDisplayMode === 'full-width');
