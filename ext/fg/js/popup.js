@@ -48,8 +48,6 @@ class Popup {
         this._frame.style.height = '0';
 
         this._fullscreenEventListeners = new EventListenerCollection();
-
-        this._updateVisibility();
     }
 
     // Public properties
@@ -77,6 +75,7 @@ class Popup {
     // Public functions
 
     prepare() {
+        this._updateVisibility();
         this._frame.addEventListener('mousedown', (e) => e.stopPropagation());
         this._frame.addEventListener('scroll', (e) => e.stopPropagation());
         this._frame.addEventListener('load', this._onFrameLoad.bind(this));
