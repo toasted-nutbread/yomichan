@@ -117,8 +117,8 @@ class Popup {
     }
 
     async containsPoint(x, y) {
-        for (let popup = this; popup !== null && popup.isVisibleSync(); popup = popup._child) {
-            const rect = popup._container.getBoundingClientRect();
+        for (let popup = this; popup !== null && popup.isVisibleSync(); popup = this._child) {
+            const rect = this._container.getBoundingClientRect();
             if (x >= rect.left && y >= rect.top && x < rect.right && y < rect.bottom) {
                 return true;
             }
@@ -178,7 +178,7 @@ class Popup {
     }
 
     async setCustomOuterCss(css, useWebExtensionApi) {
-        return await Popup._injectStylesheet(
+        return await this._injectStylesheet(
             'yomichan-popup-outer-user-stylesheet',
             'code',
             css,
@@ -389,7 +389,7 @@ class Popup {
 
     async _injectStyles() {
         try {
-            await Popup._injectStylesheet('yomichan-popup-outer-stylesheet', 'file', '/fg/css/client.css', true);
+            await this._injectStylesheet('yomichan-popup-outer-stylesheet', 'file', '/fg/css/client.css', true);
         } catch (e) {
             // NOP
         }
@@ -439,15 +439,16 @@ class Popup {
         const containerRect = container.getBoundingClientRect();
         const getPosition = (
             writingMode === 'horizontal-tb' || optionsGeneral.popupVerticalTextPosition === 'default' ?
-            Popup._getPositionForHorizontalText :
-            Popup._getPositionForVerticalText
+            this._getPositionForHorizontalText :
+            this._getPositionForVerticalText
         );
 
-        const viewport = Popup._getViewport(optionsGeneral.popupScaleRelativeToVisualViewport);
+        const viewport = this._getViewport(optionsGeneral.popupScaleRelativeToVisualViewport);
         const scale = this._contentScale;
         const scaleRatio = this._containerSizeContentScale === null ? 1.0 : scale / this._containerSizeContentScale;
         this._containerSizeContentScale = scale;
-        let [x, y, width, height, below] = getPosition(
+        let [x, y, width, height, below] = getPosition.call(
+            this,
             elementRect,
             Math.max(containerRect.width * scaleRatio, optionsGeneral.popupWidth * scale),
             Math.max(containerRect.height * scaleRatio, optionsGeneral.popupHeight * scale),
@@ -541,12 +542,12 @@ class Popup {
         return fullscreenElement;
     }
 
-    static _getPositionForHorizontalText(elementRect, width, height, viewport, offsetScale, optionsGeneral) {
+    _getPositionForHorizontalText(elementRect, width, height, viewport, offsetScale, optionsGeneral) {
         const preferBelow = (optionsGeneral.popupHorizontalTextPosition === 'below');
         const horizontalOffset = optionsGeneral.popupHorizontalOffset * offsetScale;
         const verticalOffset = optionsGeneral.popupVerticalOffset * offsetScale;
 
-        const [x, w] = Popup._getConstrainedPosition(
+        const [x, w] = this._getConstrainedPosition(
             elementRect.right - horizontalOffset,
             elementRect.left + horizontalOffset,
             width,
@@ -554,7 +555,7 @@ class Popup {
             viewport.right,
             true
         );
-        const [y, h, below] = Popup._getConstrainedPositionBinary(
+        const [y, h, below] = this._getConstrainedPositionBinary(
             elementRect.top - verticalOffset,
             elementRect.bottom + verticalOffset,
             height,
@@ -565,12 +566,12 @@ class Popup {
         return [x, y, w, h, below];
     }
 
-    static _getPositionForVerticalText(elementRect, width, height, viewport, offsetScale, optionsGeneral, writingMode) {
-        const preferRight = Popup._isVerticalTextPopupOnRight(optionsGeneral.popupVerticalTextPosition, writingMode);
+    _getPositionForVerticalText(elementRect, width, height, viewport, offsetScale, optionsGeneral, writingMode) {
+        const preferRight = this._isVerticalTextPopupOnRight(optionsGeneral.popupVerticalTextPosition, writingMode);
         const horizontalOffset = optionsGeneral.popupHorizontalOffset2 * offsetScale;
         const verticalOffset = optionsGeneral.popupVerticalOffset2 * offsetScale;
 
-        const [x, w] = Popup._getConstrainedPositionBinary(
+        const [x, w] = this._getConstrainedPositionBinary(
             elementRect.left - horizontalOffset,
             elementRect.right + horizontalOffset,
             width,
@@ -578,7 +579,7 @@ class Popup {
             viewport.right,
             preferRight
         );
-        const [y, h, below] = Popup._getConstrainedPosition(
+        const [y, h, below] = this._getConstrainedPosition(
             elementRect.bottom - verticalOffset,
             elementRect.top + verticalOffset,
             height,
@@ -589,12 +590,12 @@ class Popup {
         return [x, y, w, h, below];
     }
 
-    static _isVerticalTextPopupOnRight(positionPreference, writingMode) {
+    _isVerticalTextPopupOnRight(positionPreference, writingMode) {
         switch (positionPreference) {
             case 'before':
-                return !Popup._isWritingModeLeftToRight(writingMode);
+                return !this._isWritingModeLeftToRight(writingMode);
             case 'after':
-                return Popup._isWritingModeLeftToRight(writingMode);
+                return this._isWritingModeLeftToRight(writingMode);
             case 'left':
                 return false;
             case 'right':
@@ -604,7 +605,7 @@ class Popup {
         }
     }
 
-    static _isWritingModeLeftToRight(writingMode) {
+    _isWritingModeLeftToRight(writingMode) {
         switch (writingMode) {
             case 'vertical-lr':
             case 'sideways-lr':
@@ -614,7 +615,7 @@ class Popup {
         }
     }
 
-    static _getConstrainedPosition(positionBefore, positionAfter, size, minLimit, maxLimit, after) {
+    _getConstrainedPosition(positionBefore, positionAfter, size, minLimit, maxLimit, after) {
         size = Math.min(size, maxLimit - minLimit);
 
         let position;
@@ -629,7 +630,7 @@ class Popup {
         return [position, size, after];
     }
 
-    static _getConstrainedPositionBinary(positionBefore, positionAfter, size, minLimit, maxLimit, after) {
+    _getConstrainedPositionBinary(positionBefore, positionAfter, size, minLimit, maxLimit, after) {
         const overflowBefore = minLimit - (positionBefore - size);
         const overflowAfter = (positionAfter + size) - maxLimit;
 
@@ -677,7 +678,7 @@ class Popup {
         ];
     }
 
-    static _getViewport(useVisualViewport) {
+    _getViewport(useVisualViewport) {
         const visualViewport = window.visualViewport;
         if (visualViewport !== null && typeof visualViewport === 'object') {
             const left = visualViewport.offsetLeft;
@@ -711,7 +712,7 @@ class Popup {
         };
     }
 
-    static async _injectStylesheet(id, type, value, useWebExtensionApi) {
+    async _injectStylesheet(id, type, value, useWebExtensionApi) {
         const injectedStylesheets = Popup._injectedStylesheets;
 
         if (yomichan.isExtensionUrl(window.location.href)) {
