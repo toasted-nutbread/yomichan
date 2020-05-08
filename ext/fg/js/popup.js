@@ -507,10 +507,10 @@ class Popup {
         const color = [255, 255, 255];
         const {documentElement, body} = document;
         if (documentElement !== null) {
-            Popup._addColor(color, Popup._getColorInfo(window.getComputedStyle(documentElement).backgroundColor));
+            this._addColor(color, window.getComputedStyle(documentElement).backgroundColor);
         }
         if (body !== null) {
-            Popup._addColor(color, Popup._getColorInfo(window.getComputedStyle(body).backgroundColor));
+            this._addColor(color, window.getComputedStyle(body).backgroundColor);
         }
         const dark = (color[0] < 128 && color[1] < 128 && color[2] < 128);
         return dark ? 'dark' : 'light';
@@ -649,7 +649,10 @@ class Popup {
         return [position, size, after];
     }
 
-    static _addColor(target, color) {
+    _addColor(target, cssColor) {
+        if (typeof cssColor !== 'string') { return; }
+
+        const color = this._getColorInfo(cssColor);
         if (color === null) { return; }
 
         const a = color[3];
@@ -661,7 +664,7 @@ class Popup {
         }
     }
 
-    static _getColorInfo(cssColor) {
+    _getColorInfo(cssColor) {
         const m = /^\s*rgba?\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+)\s*)?\)\s*$/.exec(cssColor);
         if (m === null) { return null; }
 
