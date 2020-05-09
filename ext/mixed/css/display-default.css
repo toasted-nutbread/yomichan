@@ -39,9 +39,6 @@ h2 {
 
 .tag {
     color: #ffffff;
-}
-
-.tag[data-category=default] {
     background-color: #8a8a91;
 }
 
