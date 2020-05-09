@@ -22,10 +22,9 @@
 class PopupProxy {
     constructor(id, depth, parentId, parentFrameId, getFrameOffset=null, setDisabled=null) {
         this._parentId = parentId;
-        this._parentFrameId = parentFrameId;
         this._id = id;
         this._depth = depth;
-        this._apiSender = new FrontendApiSender(`popup-factory#${this._parentFrameId}`);
+        this._apiSender = new FrontendApiSender(`popup-factory#${parentFrameId}`);
         this._getFrameOffset = getFrameOffset;
         this._setDisabled = setDisabled;
 
@@ -112,9 +111,6 @@ class PopupProxy {
     // Private
 
     _invoke(action, params={}) {
-        if (typeof this._parentFrameId !== 'number') {
-            return Promise.reject(new Error('Invalid frame'));
-        }
         return this._apiSender.invoke(action, params);
     }
 
