@@ -15,34 +15,80 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+body {
+    background-color: #ffffff;
+    color: #333333;
+}
 
-body { background-color: #ffffff; color: #333333; }
-
-h2 { border-bottom-color: #eeeeee; }
+h2 {
+    border-bottom-color: #eeeeee;
+}
 
 .navigation-header {
     background-color: #ffffff;
     border-bottom-color: #eeeeee;
 }
 
-.entry+.entry { border-top-color: #eeeeee; }
+.entry+.entry {
+    border-top-color: #eeeeee;
+}
 
-.kanji-glyph-data>tbody>tr>* { border-top-color: #dddddd; }
+.kanji-glyph-data>tbody>tr>* {
+    border-top-color: #dddddd;
+}
 
-.tag { color: #ffffff; }
-.tag[data-category=default]      { background-color: #8a8a91; }
-.tag[data-category=name]         { background-color: #5cb85c; }
-.tag[data-category=expression]   { background-color: #f0ad4e; }
-.tag[data-category=popular]      { background-color: #0275d8; }
-.tag[data-category=frequent]     { background-color: #5bc0de; }
-.tag[data-category=archaism]     { background-color: #d9534f; }
-.tag[data-category=dictionary]   { background-color: #aa66cc; }
-.tag[data-category=frequency]    { background-color: #5cb85c; }
-.tag[data-category=partOfSpeech] { background-color: #565656; }
-.tag[data-category=search]       { background-color: #8a8a91; }
-.tag[data-category=pitch-accent-dictionary] { background-color: #6640be; }
+.tag {
+    color: #ffffff;
+}
 
-.term-reasons { color: #777777; }
+.tag[data-category=default] {
+    background-color: #8a8a91;
+}
+
+.tag[data-category=name] {
+    background-color: #5cb85c;
+}
+
+.tag[data-category=expression] {
+    background-color: #f0ad4e;
+}
+
+.tag[data-category=popular] {
+    background-color: #0275d8;
+}
+
+.tag[data-category=frequent] {
+    background-color: #5bc0de;
+}
+
+.tag[data-category=archaism] {
+    background-color: #d9534f;
+}
+
+.tag[data-category=dictionary] {
+    background-color: #aa66cc;
+}
+
+.tag[data-category=frequency] {
+    background-color: #5cb85c;
+}
+
+.tag[data-category=partOfSpeech] {
+    background-color: #565656;
+}
+
+.tag[data-category=search] {
+    background-color: #8a8a91;
+}
+
+.tag[data-category=pitch-accent-dictionary] {
+    background-color: #6640be;
+}
+
+
+.term-reasons {
+    color: #777777;
+}
 
 .term-expression>.term-expression-text .kanji-link {
     border-bottom-color: #777777;
@@ -78,9 +124,13 @@ h2 { border-bottom-color: #eeeeee; }
     color: #ffffff;
 }
 
-.term-pitch-accent-container { border-bottom-color: #eeeeee; }
+.term-pitch-accent-container {
+    border-bottom-color: #eeeeee;
+}
 
-.term-pitch-accent-character:before { border-color: #000000; }
+.term-pitch-accent-character:before {
+    border-color: #000000;
+}
 
 .term-pitch-accent-graph-line,
 .term-pitch-accent-graph-line-tail,
@@ -98,6 +148,7 @@ h2 { border-bottom-color: #eeeeee; }
 .term-glossary-image-container {
     background-color: #eeeeee;
 }
+
 .term-glossary-image-container-overlay {
     color: #777777;
 }
