@@ -358,16 +358,16 @@ class TextSourceRange {
  */
 
 class TextSourceElement {
-    constructor(element, fullContent=null, start=0, end=0) {
-        this.element = element;
-        this.fullContent = (typeof fullContent === 'string' ? fullContent : TextSourceElement.getElementContent(element));
-        this.start = start;
-        this.end = end;
-        this.content = this.fullContent.substring(this.start, this.end);
+    constructor(element, fullContent=null, startOffset=0, endOffset=0) {
+        this._element = element;
+        this._fullContent = (typeof fullContent === 'string' ? fullContent : TextSourceElement.getElementContent(element));
+        this._startOffset = startOffset;
+        this._endOffset = endOffset;
+        this._content = this._fullContent.substring(this._startOffset, this._endOffset);
     }
 
     clone() {
-        return new TextSourceElement(this.element, this.fullContent, this.start, this.end);
+        return new TextSourceElement(this._element, this._fullContent, this._startOffset, this._endOffset);
     }
 
     cleanup() {
@@ -375,32 +375,32 @@ class TextSourceElement {
     }
 
     text() {
-        return this.content;
+        return this._content;
     }
 
     setEndOffset(length, fromEnd=false) {
         if (fromEnd) {
-            const delta = Math.min(this.fullContent.length - this.end, length);
-            this.end += delta;
-            this.content = this.fullContent.substring(this.start, this.end);
+            const delta = Math.min(this._fullContent.length - this._endOffset, length);
+            this._endOffset += delta;
+            this._content = this._fullContent.substring(this._startOffset, this._endOffset);
             return delta;
         } else {
-            const delta = Math.min(this.fullContent.length - this.start, length);
-            this.end = this.start + delta;
-            this.content = this.fullContent.substring(this.start, this.end);
+            const delta = Math.min(this._fullContent.length - this._startOffset, length);
+            this._endOffset = this._startOffset + delta;
+            this._content = this._fullContent.substring(this._startOffset, this._endOffset);
             return delta;
         }
     }
 
     setStartOffset(length) {
-        const delta = Math.min(this.start, length);
-        this.start -= delta;
-        this.content = this.fullContent.substring(this.start, this.end);
+        const delta = Math.min(this._startOffset, length);
+        this._startOffset -= delta;
+        this._content = this._fullContent.substring(this._startOffset, this._endOffset);
         return delta;
     }
 
     getRect() {
-        return this.element.getBoundingClientRect();
+        return this._element.getBoundingClientRect();
     }
 
     getWritingMode() {
@@ -420,8 +420,8 @@ class TextSourceElement {
             typeof other === 'object' &&
             other !== null &&
             other instanceof TextSourceElement &&
-            other.element === this.element &&
-            other.content === this.content
+            other._element === this._element &&
+            other._content === this._content
         );
     }
 
