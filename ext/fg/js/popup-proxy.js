@@ -20,10 +20,10 @@
  */
 
 class PopupProxy {
-    constructor(id, depth, parentId, parentFrameId, getFrameOffset=null, setDisabled=null) {
-        this._parentId = parentId;
+    constructor(id, depth, parentPopupId, parentFrameId, getFrameOffset=null, setDisabled=null) {
         this._id = id;
         this._depth = depth;
+        this._parentPopupId = parentPopupId;
         this._apiSender = new FrontendApiSender(`popup-factory#${parentFrameId}`);
         this._getFrameOffset = getFrameOffset;
         this._setDisabled = setDisabled;
@@ -50,7 +50,7 @@ class PopupProxy {
     // Public functions
 
     async prepare() {
-        const {id} = await this._invoke('getOrCreatePopup', {id: this._id, parentId: this._parentId});
+        const {id} = await this._invoke('getOrCreatePopup', {id: this._id, parentId: this._parentPopupId});
         this._id = id;
     }
 
