@@ -15,118 +15,149 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+:root {
+    --background-color: #ffffff;
+    --glossary-image-background-color: #eeeeee;
+
+    --dark-text-color: #000000;
+    --default-text-color: #333333;
+    --light-text-color: #777777;
+    --very-light-text-color: #999999;
+
+    --light-border-color: #eeeeee;
+    --medium-border-color: #dddddd;
+    --dark-border-color: #777777;
+
+    --popuplar-kanji-text-color: #0275d8;
+
+    --pitch-accent-annotation-color: #000000;
+
+    --tag-text-color: #ffffff;
+    --tag-default-background-color: #8a8a91;
+    --tag-name-background-color: #5cb85c;
+    --tag-expression-background-color: #f0ad4e;
+    --tag-popular-background-color: #0275d8;
+    --tag-frequent-background-color: #5bc0de;
+    --tag-archaism-background-color: #d9534f;
+    --tag-dictionary-background-color: #aa66cc;
+    --tag-frequency-background-color: #5cb85c;
+    --tag-part-of-speech-background-color: #565656;
+    --tag-search-background-color: #8a8a91;
+    --tag-pitch-accent-dictionary-background-color: #6640be;
+}
+
 body {
-    background-color: #ffffff;
-    color: #333333;
+    background-color: var(--background-color);
+    color: var(--default-text-color);
 }
 
 h2 {
-    border-bottom-color: #eeeeee;
+    border-bottom-color: var(--light-border-color);
 }
 
 .navigation-header {
-    background-color: #ffffff;
-    border-bottom-color: #eeeeee;
+    background-color: var(--background-color);
+    border-bottom-color: var(--light-border-color);
 }
 
 .entry+.entry {
-    border-top-color: #eeeeee;
+    border-top-color: var(--light-border-color);
 }
 
 .kanji-glyph-data>tbody>tr>* {
-    border-top-color: #dddddd;
+    border-top-color: var(--medium-border-color);
 }
 
 .tag {
-    color: #ffffff;
-    background-color: #8a8a91;
+    color: var(--tag-text-color);
+    background-color: var(--tag-default-background-color);
 }
 
 .tag[data-category=name] {
-    background-color: #5cb85c;
+    background-color: var(--tag-name-background-color);
 }
 
 .tag[data-category=expression] {
-    background-color: #f0ad4e;
+    background-color: var(--tag-expression-background-color);
 }
 
 .tag[data-category=popular] {
-    background-color: #0275d8;
+    background-color: var(--tag-popular-background-color);
 }
 
 .tag[data-category=frequent] {
-    background-color: #5bc0de;
+    background-color: var(--tag-frequent-background-color);
 }
 
 .tag[data-category=archaism] {
-    background-color: #d9534f;
+    background-color: var(--tag-archaism-background-color);
 }
 
 .tag[data-category=dictionary] {
-    background-color: #aa66cc;
+    background-color: var(--tag-dictionary-background-color);
 }
 
 .tag[data-category=frequency] {
-    background-color: #5cb85c;
+    background-color: var(--tag-frequency-background-color);
 }
 
 .tag[data-category=partOfSpeech] {
-    background-color: #565656;
+    background-color: var(--tag-part-of-speech-background-color);
 }
 
 .tag[data-category=search] {
-    background-color: #8a8a91;
+    background-color: var(--tag-search-background-color);
 }
 
 .tag[data-category=pitch-accent-dictionary] {
-    background-color: #6640be;
+    background-color: var(--tag-pitch-accent-dictionary-background-color);
 }
 
 
 .term-reasons {
-    color: #777777;
+    color: var(--light-text-color);
 }
 
 .term-expression>.term-expression-text .kanji-link {
-    border-bottom-color: #777777;
-    color: #333333;
+    border-bottom-color: var(--dark-border-color);
+    color: var(--default-text-color);
 }
 
 .term-expression[data-frequency=popular]>.term-expression-text,
 .term-expression[data-frequency=popular]>.term-expression-text .kanji-link {
-    color: #0275d8;
+    color: var(--popuplar-kanji-text-color);
 }
 
 .term-expression[data-frequency=rare]>.term-expression-text,
 .term-expression[data-frequency=rare]>.term-expression-text .kanji-link {
-    color: #999999;
+    color: var(--very-light-text-color);
 }
 
 .term-definition-list,
 .term-pitch-accent-group-list,
 .term-pitch-accent-disambiguation-list,
 .kanji-glossary-list {
-    color: #777777;
+    color: var(--light-text-color);
 }
 
 .term-glossary,
 .term-pitch-accent,
 .kanji-glossary {
-    color: #000000;
+    color: var(--dark-text-color);
 }
 
 .icon-checkbox:checked + label {
     /* invert colors */
-    background-color: #333333;
-    color: #ffffff;
+    background-color: var(--default-text-color);
+    color: var(--background-color);
 }
 
 .term-pitch-accent-container {
-    border-bottom-color: #eeeeee;
+    border-bottom-color: var(--light-border-color);
 }
 
 .term-pitch-accent-character:before {
-    border-color: #000000;
+    border-color: var(--pitch-accent-annotation-color);
 }
 
 .term-pitch-accent-graph-line,
@@ -134,18 +165,18 @@ h2 {
 #term-pitch-accent-graph-dot,
 #term-pitch-accent-graph-dot-downstep,
 #term-pitch-accent-graph-triangle {
-    stroke: #000000;
+    stroke: var(--pitch-accent-annotation-color);
 }
 
 #term-pitch-accent-graph-dot,
 #term-pitch-accent-graph-dot-downstep>circle:last-of-type {
-    fill: #000000;
+    fill: var(--pitch-accent-annotation-color);
 }
 
 .term-glossary-image-container {
-    background-color: #eeeeee;
+    background-color: var(--glossary-image-background-color);
 }
 
 .term-glossary-image-container-overlay {
-    color: #777777;
+    color: var(--light-text-color);
 }
