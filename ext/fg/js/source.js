@@ -358,13 +358,16 @@ class TextSourceRange {
  */
 
 class TextSourceElement {
-    constructor(element, content='') {
+    constructor(element, fullContent=null, start=0, end=0) {
         this.element = element;
-        this.content = content;
+        this.fullContent = (typeof fullContent === 'string' ? fullContent : TextSourceElement.getElementContent(element));
+        this.start = start;
+        this.end = end;
+        this.content = this.fullContent.substring(this.start, this.end);
     }
 
     clone() {
-        return new TextSourceElement(this.element, this.content);
+        return new TextSourceElement(this.element, this.fullContent, this.start, this.end);
     }
 
     cleanup() {
@@ -375,37 +378,25 @@ class TextSourceElement {
         return this.content;
     }
 
-    setEndOffset(length) {
-        switch (this.element.nodeName.toUpperCase()) {
-            case 'BUTTON':
-                this.content = this.element.textContent;
-                break;
-            case 'IMG':
-                this.content = this.element.getAttribute('alt');
-                break;
-            default:
-                this.content = this.element.value;
-                break;
+    setEndOffset(length, fromEnd=false) {
+        if (fromEnd) {
+            const delta = Math.min(this.fullContent.length - this.end, length);
+            this.end += delta;
+            this.content = this.fullContent.substring(this.start, this.end);
+            return delta;
+        } else {
+            const delta = Math.min(this.fullContent.length - this.start, length);
+            this.end = this.start + delta;
+            this.content = this.fullContent.substring(this.start, this.end);
+            return delta;
         }
-
-        let consumed = 0;
-        let content = '';
-        for (const currentChar of this.content || '') {
-            if (consumed >= length) {
-                break;
-            } else if (!currentChar.match(IGNORE_TEXT_PATTERN)) {
-                consumed++;
-                content += currentChar;
-            }
-        }
-
-        this.content = content;
-
-        return this.content.length;
     }
 
-    setStartOffset() {
-        return 0;
+    setStartOffset(length) {
+        const delta = Math.min(this.start, length);
+        this.start -= delta;
+        this.content = this.fullContent.substring(this.start, this.end);
+        return delta;
     }
 
     getRect() {
@@ -432,5 +423,25 @@ class TextSourceElement {
             other.element === this.element &&
             other.content === this.content
         );
+    }
+
+    static getElementContent(element) {
+        let content;
+        switch (element.nodeName.toUpperCase()) {
+            case 'BUTTON':
+                content = this.element.textContent;
+                break;
+            case 'IMG':
+                content = this.element.getAttribute('alt') || '';
+                break;
+            default:
+                content = `${this.element.value}`;
+                break;
+        }
+
+        // Remove zero-width non-joiner
+        content = content.replace(/\u200c/g, '');
+
+        return content;
     }
 }
