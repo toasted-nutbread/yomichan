@@ -366,6 +366,22 @@ class TextSourceElement {
         this._content = this._fullContent.substring(this._startOffset, this._endOffset);
     }
 
+    get element() {
+        return this._element;
+    }
+
+    get fullContent() {
+        return this._fullContent;
+    }
+
+    get startOffset() {
+        return this._startOffset;
+    }
+
+    get endOffset() {
+        return this._endOffset;
+    }
+
     clone() {
         return new TextSourceElement(this._element, this._fullContent, this._startOffset, this._endOffset);
     }
@@ -420,8 +436,10 @@ class TextSourceElement {
             typeof other === 'object' &&
             other !== null &&
             other instanceof TextSourceElement &&
-            other._element === this._element &&
-            other._content === this._content
+            this._element === other.element &&
+            this._fullContent === other.fullContent &&
+            this._startOffset === other.startOffset &&
+            this._endOffset === other.endOffset
         );
     }
 
