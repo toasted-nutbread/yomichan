@@ -81,6 +81,7 @@
     --tag-pitch-accent-dictionary-background-color: #6640be;
 }
 
+
 /*
  * Fonts
  */
@@ -89,6 +90,7 @@
     font-family: kanji-stroke-orders;
     src: url('/mixed/ttf/kanji-stroke-orders.ttf');
 }
+
 
 /*
  * General
@@ -137,6 +139,7 @@ h2 {
     margin: 0.25em 0 0;
     border-bottom: 0.05714285714285714em solid var(--light-border-color); /* 14px * 1.25em => 1px */
 }
+
 
 /*
  * Navigation
@@ -744,6 +747,11 @@ button.action-button {
     stroke: var(--pitch-accent-annotation-color);
     stroke-width: 5;
 }
+
+
+/*
+ * Glossary images
+ */
 
 .term-glossary-image-container {
     display: inline-block;
