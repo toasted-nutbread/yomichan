@@ -46,6 +46,37 @@
     --tag-pitch-accent-dictionary-background-color: #6640be;
 }
 
+:root[data-yomichan-theme=dark] {
+    --background-color: #1e1e1e;
+    --glossary-image-background-color: #2f2f2f;
+
+    --dark-text-color: #d8d8d8;
+    --default-text-color: #d4d4d4;
+    --light-text-color: #888888;
+    --very-light-text-color: #666666;
+
+    --light-border-color: #2f2f2f;
+    --medium-border-color: #3f3f3f;
+    --dark-border-color: #888888;
+
+    --popuplar-kanji-text-color: #025caa;
+
+    --pitch-accent-annotation-color: #ffffff;
+
+    --tag-text-color: #e1e1e1;
+    --tag-default-background-color: #69696e;
+    --tag-name-background-color: #489148;
+    --tag-expression-background-color: #b07f39;
+    --tag-popular-background-color: #025caa;
+    --tag-frequent-background-color: #4490a7;
+    --tag-archaism-background-color: #b04340;
+    --tag-dictionary-background-color: #9057ad;
+    --tag-frequency-background-color: #489148;
+    --tag-part-of-speech-background-color: #565656;
+    --tag-search-background-color: #69696e;
+    --tag-pitch-accent-dictionary-background-color: #6640be;
+}
+
 body {
     background-color: var(--background-color);
     color: var(--default-text-color);
