@@ -447,13 +447,13 @@ class TextSourceElement {
         let content;
         switch (element.nodeName.toUpperCase()) {
             case 'BUTTON':
-                content = this.element.textContent;
+                content = element.textContent;
                 break;
             case 'IMG':
-                content = this.element.getAttribute('alt') || '';
+                content = element.getAttribute('alt') || '';
                 break;
             default:
-                content = `${this.element.value}`;
+                content = `${element.value}`;
                 break;
         }
 
