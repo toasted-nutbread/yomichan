@@ -380,7 +380,7 @@ button.action-button {
     display: block;
 }
 
-.tag-list>.tag:not(:last-child) {
+.tag-list>.tag {
     margin-right: 0.375em;
 }
 
@@ -527,7 +527,7 @@ button.action-button {
 }
 
 .term-definition-disambiguation-list:after {
-    content: " only)";
+    content: " only) ";
 }
 
 .term-definition-disambiguation+.term-definition-disambiguation:before {
