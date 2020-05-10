@@ -20,14 +20,13 @@
  * Popup
  * PopupFactory
  * TextSourceRange
- * apiFrameInformationGet
- * apiOptionsGet
+ * api
  */
 
 class SettingsPopupPreview {
     constructor() {
         this.frontend = null;
-        this.apiOptionsGetOld = apiOptionsGet;
+        this.apiOptionsGetOld = api.optionsGet;
         this.popup = null;
         this.popupSetCustomOuterCssOld = null;
         this.popupShown = false;
@@ -57,7 +56,7 @@ class SettingsPopupPreview {
         window.apiOptionsGet = this.apiOptionsGet.bind(this);
 
         // Overwrite frontend
-        const {frameId} = await apiFrameInformationGet();
+        const {frameId} = await api.frameInformationGet();
 
         const popupFactory = new PopupFactory(frameId);
         await popupFactory.prepare();
