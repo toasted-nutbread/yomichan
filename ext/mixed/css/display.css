@@ -27,12 +27,11 @@
     --default-text-color: #333333;
     --light-text-color: #777777;
     --very-light-text-color: #999999;
+    --popuplar-kanji-text-color: #0275d8;
 
     --light-border-color: #eeeeee;
     --medium-border-color: #dddddd;
     --dark-border-color: #777777;
-
-    --popuplar-kanji-text-color: #0275d8;
 
     --pitch-accent-annotation-color: #000000;
 
@@ -58,12 +57,11 @@
     --default-text-color: #d4d4d4;
     --light-text-color: #888888;
     --very-light-text-color: #666666;
+    --popuplar-kanji-text-color: #0275d8;
 
     --light-border-color: #2f2f2f;
     --medium-border-color: #3f3f3f;
     --dark-border-color: #888888;
-
-    --popuplar-kanji-text-color: #0275d8;
 
     --pitch-accent-annotation-color: #ffffff;
 
