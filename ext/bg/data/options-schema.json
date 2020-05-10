@@ -316,7 +316,8 @@
                                     "enablePopupSearch",
                                     "enableOnPopupExpressions",
                                     "enableOnSearchPage",
-                                    "enableSearchTags"
+                                    "enableSearchTags",
+                                    "layoutAwareScan"
                                 ],
                                 "properties": {
                                     "middleMouse": {
@@ -376,6 +377,10 @@
                                         "default": true
                                     },
                                     "enableSearchTags": {
+                                        "type": "boolean",
+                                        "default": false
+                                    },
+                                    "layoutAwareScan": {
                                         "type": "boolean",
                                         "default": false
                                     }
