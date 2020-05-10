@@ -60,6 +60,13 @@
 
     --expression-space-size: 0.5em;
 
+    --tag-font-size-no-units: calc(11 / 14);
+    --tag-font-size: calc(1em * var(--tag-font-size-no-units));
+    --tag-border-size-no-units: 0;
+    --tag-border-size: calc(1em * (var(--tag-border-size-no-units) / (var(--font-size-no-units) * var(--tag-font-size-no-units))));
+    --tag-border-style: none;
+    --tag-font-weight: bold;
+
     --animation-duration: 0.125s;
 
     /* Colors */
@@ -86,6 +93,7 @@
     --pitch-accent-annotation-color: #000000;
 
     --tag-text-color: #ffffff;
+    --tag-border-color: transparent;
     --tag-default-background-color: #8a8a91;
     --tag-name-background-color: #5cb85c;
     --tag-expression-background-color: #f0ad4e;
@@ -142,6 +150,7 @@
     --pitch-accent-annotation-color: #ffffff;
 
     --tag-text-color: #e1e1e1;
+    --tag-border-color: transparent;
     --tag-default-background-color: #69696e;
     --tag-name-background-color: #489148;
     --tag-expression-background-color: #b07f39;
@@ -508,8 +517,8 @@ button.action-button {
 .tag {
     display: inline-block;
     padding: 0.2em 0.6em 0.3em;
-    font-size: 75%;
-    font-weight: 700;
+    font-size: var(--tag-font-size);
+    font-weight: var(--tag-font-weight);
     line-height: 1.25;
     text-align: center;
     white-space: nowrap;
@@ -517,6 +526,7 @@ button.action-button {
     border-radius: 0.25em;
     color: var(--tag-text-color);
     background-color: var(--tag-default-background-color);
+    border: var(--tag-border-size) var(--tag-border-style) var(--tag-border-color);
 }
 .tag[data-category=name] {
     background-color: var(--tag-name-background-color);
