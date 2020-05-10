@@ -19,10 +19,6 @@
  * DOMTextScanner
  */
 
-// \u200c (Zero-width non-joiner) appears on Google Docs from Chrome 76 onwards
-const IGNORE_TEXT_PATTERN = /\u200c/;
-
-
 /*
  * TextSourceRange
  */
