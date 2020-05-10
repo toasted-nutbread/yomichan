@@ -358,6 +358,19 @@ function testValidate2() {
                 {expected: false, value: 1}
             ]
         },
+        {
+            schema: {
+                type: 'integer',
+                multipleOf: 2
+            },
+            inputs: [
+                {expected: true,  value: -2},
+                {expected: false, value: -1},
+                {expected: true,  value: 0},
+                {expected: false, value: 1},
+                {expected: true,  value: 2}
+            ]
+        },
 
         // Numeric type tests
         {
