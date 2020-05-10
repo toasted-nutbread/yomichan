@@ -118,10 +118,10 @@ class TextScanner extends EventDispatcher {
         }
     }
 
-    getTextSourceContent(textSource, length) {
+    getTextSourceContent(textSource, length, layoutAwareScan) {
         const clonedTextSource = textSource.clone();
 
-        clonedTextSource.setEndOffset(length);
+        clonedTextSource.setEndOffset(length, layoutAwareScan);
 
         if (this._ignoreNodes !== null && clonedTextSource.range) {
             length = clonedTextSource.text().length;
@@ -131,7 +131,7 @@ class TextScanner extends EventDispatcher {
                     break;
                 }
                 --length;
-                clonedTextSource.setEndOffset(length);
+                clonedTextSource.setEndOffset(length, layoutAwareScan);
             }
         }
 

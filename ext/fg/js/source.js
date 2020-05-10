@@ -50,19 +50,19 @@ class TextSourceRange {
         return this.content;
     }
 
-    setEndOffset(length, fromEnd=false) {
+    setEndOffset(length, layoutAwareScan, fromEnd=false) {
         const state = (
             fromEnd ?
-            new DOMTextScanner(this.range.endContainer, this.range.endOffset, true, false).seek(length) :
-            new DOMTextScanner(this.range.startContainer, this.range.startOffset, true, false).seek(length)
+            new DOMTextScanner(this.range.endContainer, this.range.endOffset, !layoutAwareScan, layoutAwareScan).seek(length) :
+            new DOMTextScanner(this.range.startContainer, this.range.startOffset, !layoutAwareScan, layoutAwareScan).seek(length)
         );
         this.range.setEnd(state.node, state.offset);
         this.content = (fromEnd ? this.content + state.content : state.content);
         return length - state.remainder;
     }
 
-    setStartOffset(length) {
-        const state = new DOMTextScanner(this.range.startContainer, this.range.startOffset, true, false).seek(-length);
+    setStartOffset(length, layoutAwareScan) {
+        const state = new DOMTextScanner(this.range.startContainer, this.range.startOffset, !layoutAwareScan, layoutAwareScan).seek(-length);
         this.range.setStart(state.node, state.offset);
         this.rangeStartOffset = this.range.startOffset;
         this.content = state.content + this.content;

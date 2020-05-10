@@ -153,14 +153,14 @@ function docRangeFromPoint(x, y, deepDomScan) {
     }
 }
 
-function docSentenceExtract(source, extent) {
+function docSentenceExtract(source, extent, layoutAwareScan) {
     const quotesFwd = {'「': '」', '『': '』', "'": "'", '"': '"'};
     const quotesBwd = {'」': '「', '』': '『', "'": "'", '"': '"'};
     const terminators = '…。．.？?！!';
 
     const sourceLocal = source.clone();
-    const position = sourceLocal.setStartOffset(extent);
-    sourceLocal.setEndOffset(extent * 2 - position, true);
+    const position = sourceLocal.setStartOffset(extent, layoutAwareScan);
+    sourceLocal.setEndOffset(extent * 2 - position, layoutAwareScan, true);
     const content = sourceLocal.text();
 
     let quoteStack = [];

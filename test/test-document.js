@@ -181,7 +181,7 @@ async function testDocumentTextScanningFunctions(dom, {docRangeFromPoint, docSen
         if (source === null) { continue; }
 
         // Test docSentenceExtract
-        const sentenceActual = docSentenceExtract(source, sentenceExtent).text;
+        const sentenceActual = docSentenceExtract(source, sentenceExtent, false).text;
         assert.strictEqual(sentenceActual, sentence);
 
         // Clean
