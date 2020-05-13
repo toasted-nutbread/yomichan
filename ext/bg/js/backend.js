@@ -1017,7 +1017,7 @@ class Backend {
         }
     }
 
-    async _modifySetting(target) {
+    _modifySetting(target) {
         const options = this._getModifySettingObject(target);
         const accessor = new ObjectPropertyAccessor(options);
         const action = target.action;
