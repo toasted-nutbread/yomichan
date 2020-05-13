@@ -831,8 +831,8 @@ class Backend {
         const results = [];
         for (const target of targets) {
             try {
-                this._modifySetting(target);
-                results.push({result: true});
+                const result = this._modifySetting(target);
+                results.push({result: utilIsolate(result)});
             } catch (e) {
                 results.push({error: errorToJson(e)});
             }
@@ -1023,39 +1023,38 @@ class Backend {
         const action = target.action;
         switch (action) {
             case 'set':
-                {
-                    const {path, value} = target;
-                    if (typeof path !== 'string') { throw new Error('Invalid path'); }
-                    accessor.set(ObjectPropertyAccessor.getPathArray(path), value);
-                }
-                break;
+            {
+                const {path, value} = target;
+                if (typeof path !== 'string') { throw new Error('Invalid path'); }
+                accessor.set(ObjectPropertyAccessor.getPathArray(path), value);
+                return accessor.get(ObjectPropertyAccessor.getPathArray(path));
+            }
             case 'delete':
-                {
-                    const {path} = target;
-                    if (typeof path !== 'string') { throw new Error('Invalid path'); }
-                    accessor.delete(ObjectPropertyAccessor.getPathArray(path));
-                }
-                break;
+            {
+                const {path} = target;
+                if (typeof path !== 'string') { throw new Error('Invalid path'); }
+                accessor.delete(ObjectPropertyAccessor.getPathArray(path));
+                return true;
+            }
             case 'swap':
-                {
-                    const {path1, path2} = target;
-                    if (typeof path1 !== 'string') { throw new Error('Invalid path1'); }
-                    if (typeof path2 !== 'string') { throw new Error('Invalid path2'); }
-                    accessor.swap(ObjectPropertyAccessor.getPathArray(path1), ObjectPropertyAccessor.getPathArray(path2));
-                }
-                break;
+            {
+                const {path1, path2} = target;
+                if (typeof path1 !== 'string') { throw new Error('Invalid path1'); }
+                if (typeof path2 !== 'string') { throw new Error('Invalid path2'); }
+                accessor.swap(ObjectPropertyAccessor.getPathArray(path1), ObjectPropertyAccessor.getPathArray(path2));
+                return true;
+            }
             case 'splice':
-                {
-                    const {path, start, deleteCount, items} = target;
-                    if (typeof path !== 'string') { throw new Error('Invalid path'); }
-                    if (typeof start !== 'number' || Math.floor(start) !== start) { throw new Error('Invalid start'); }
-                    if (typeof deleteCount !== 'number' || Math.floor(deleteCount) !== deleteCount) { throw new Error('Invalid deleteCount'); }
-                    if (!Array.isArray(items)) { throw new Error('Invalid items'); }
-                    const array = accessor.get(ObjectPropertyAccessor.getPathArray(path));
-                    if (!Array.isArray(array)) { throw new Error('Invalid target type'); }
-                    array.splice(start, deleteCount, ...items);
-                }
-                break;
+            {
+                const {path, start, deleteCount, items} = target;
+                if (typeof path !== 'string') { throw new Error('Invalid path'); }
+                if (typeof start !== 'number' || Math.floor(start) !== start) { throw new Error('Invalid start'); }
+                if (typeof deleteCount !== 'number' || Math.floor(deleteCount) !== deleteCount) { throw new Error('Invalid deleteCount'); }
+                if (!Array.isArray(items)) { throw new Error('Invalid items'); }
+                const array = accessor.get(ObjectPropertyAccessor.getPathArray(path));
+                if (!Array.isArray(array)) { throw new Error('Invalid target type'); }
+                return array.splice(start, deleteCount, ...items);
+            }
             default:
                 throw new Error(`Unknown action: ${action}`);
         }
