@@ -119,7 +119,8 @@ class Backend {
             ['log',                          {async: false, contentScript: true,  handler: this._onApiLog.bind(this)}],
             ['logIndicatorClear',            {async: false, contentScript: true,  handler: this._onApiLogIndicatorClear.bind(this)}],
             ['createActionPort',             {async: false, contentScript: true,  handler: this._onApiCreateActionPort.bind(this)}],
-            ['modifySettings',               {async: true,  contentScript: true,  handler: this._onApiModifySettings.bind(this)}]
+            ['modifySettings',               {async: true,  contentScript: true,  handler: this._onApiModifySettings.bind(this)}],
+            ['getSettings',                  {async: false, contentScript: true,  handler: this._onApiGetSettings.bind(this)}]
         ]);
         this._messageHandlersWithProgress = new Map([
             ['importDictionaryArchive', {async: true,  contentScript: false, handler: this._onApiImportDictionaryArchive.bind(this)}],
@@ -841,6 +842,19 @@ class Backend {
         return results;
     }
 
+    _onApiGetSettings({targets}) {
+        const results = [];
+        for (const target of targets) {
+            try {
+                const result = this._getSetting(target);
+                results.push({result: utilIsolate(result)});
+            } catch (e) {
+                results.push({error: errorToJson(e)});
+            }
+        }
+        return results;
+    }
+
     // Command handlers
 
     _createActionListenerPort(port, sender, handlers) {
@@ -1015,6 +1029,14 @@ class Backend {
             default:
                 throw new Error(`Invalid scope: ${scope}`);
         }
+    }
+
+    _getSetting(target) {
+        const options = this._getModifySettingObject(target);
+        const accessor = new ObjectPropertyAccessor(options);
+        const {path} = target;
+        if (typeof path !== 'string') { throw new Error('Invalid path'); }
+        return accessor.get(ObjectPropertyAccessor.getPathArray(path));
     }
 
     _modifySetting(target) {
