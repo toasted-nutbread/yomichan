@@ -23,7 +23,7 @@
  */
 
 class DOMSettingsBinder {
-    constructor({getOptionsContext}) {
+    constructor({getOptionsContext, transforms=null}) {
         this._getOptionsContext = getOptionsContext;
         this._defaultScope = 'profile';
         this._dataBinder = new DOMDataBinder({
@@ -33,6 +33,7 @@ class DOMSettingsBinder {
             getValues: this._getValues.bind(this),
             setValues: this._setValues.bind(this)
         });
+        this._transforms = new Map(transforms !== null ? transforms : []);
     }
 
     observe(element) {
@@ -52,14 +53,18 @@ class DOMSettingsBinder {
     _createElementMetadata(element) {
         return {
             path: element.dataset.setting,
-            scope: element.dataset.scope
+            scope: element.dataset.scope,
+            transformPre: element.dataset.transformPre,
+            transformPost: element.dataset.transformPost
         };
     }
 
     _compareElementMetadata(metadata1, metadata2) {
         return (
             metadata1.path === metadata2.path &&
-            metadata1.scope === metadata2.scope
+            metadata1.scope === metadata2.scope &&
+            metadata1.transformPre === metadata2.transformPre &&
+            metadata1.transformPost === metadata2.transformPost
         );
     }
 
@@ -75,23 +80,44 @@ class DOMSettingsBinder {
             }
             settingsTargets.push(target);
         }
-        return await apiGetSettings(settingsTargets);
+        return this._transformResults(await apiGetSettings(settingsTargets), targets);
     }
 
     async _setValues(targets) {
         const settingsTargets = [];
-        for (const {metadata: {path, scope}, value} of targets) {
+        for (const {metadata, value, element} of targets) {
+            const {path, scope, transformPre} = metadata;
             const target = {
                 path,
                 scope: scope || this._defaultScope,
                 action: 'set',
-                value
+                value: this._transform(value, transformPre, metadata, element)
             };
             if (target.scope === 'profile') {
                 target.optionsContext = this._getOptionsContext();
             }
             settingsTargets.push(target);
         }
-        return await apiModifySettings(settingsTargets);
+        return this._transformResults(await apiModifySettings(settingsTargets), targets);
+    }
+
+    _transform(value, transform, metadata, element) {
+        if (typeof transform === 'string') {
+            const transformFunction = this._transforms.get(transform);
+            if (typeof transformFunction !== 'undefined') {
+                value = transformFunction(value, metadata, element);
+            }
+        }
+        return value;
+    }
+
+    _transformResults(values, targets) {
+        return values.map((value, i) => {
+            const error = value.error;
+            if (error) { return jsonToError(error); }
+            const {metadata, element} = targets[i];
+            const result = this._transform(value.result, metadata.transformPost, metadata, element);
+            return {result};
+        });
     }
 }
