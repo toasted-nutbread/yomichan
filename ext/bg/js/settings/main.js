@@ -234,15 +234,6 @@ function formUpdateVisibility(options) {
     document.documentElement.dataset.optionsGeneralDebugInfo = `${!!options.general.debugInfo}`;
     document.documentElement.dataset.optionsGeneralShowAdvanced = `${!!options.general.showAdvanced}`;
     document.documentElement.dataset.optionsGeneralResultOutputMode = `${options.general.resultOutputMode}`;
-
-    if (options.general.debugInfo) {
-        const temp = utilIsolate(options);
-        if (typeof temp.anki.fieldTemplates === 'string') {
-            temp.anki.fieldTemplates = '...';
-        }
-        const text = JSON.stringify(temp, null, 4);
-        $('#debug').text(text);
-    }
 }
 
 async function onFormOptionsChanged() {
