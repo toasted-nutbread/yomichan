@@ -189,7 +189,6 @@ async function formWrite(options) {
     $('#screenshot-format').val(options.anki.screenshot.format);
     $('#screenshot-quality').val(options.anki.screenshot.quality);
 
-    await ankiTemplatesUpdateValue();
     await onDictionaryOptionsChanged();
 
     formUpdateVisibility(options);
@@ -260,6 +259,7 @@ async function onOptionsUpdated({source}) {
     const options = await getOptionsMutable(optionsContext);
 
     document.querySelector('#enable-clipboard-popups').checked = options.general.enableClipboardPopups;
+    ankiTemplatesUpdateValue();
     onAnkiOptionsChanged();
 
     await formWrite(options);
