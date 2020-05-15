@@ -189,8 +189,6 @@ async function formWrite(options) {
     $('#screenshot-format').val(options.anki.screenshot.format);
     $('#screenshot-quality').val(options.anki.screenshot.quality);
 
-    await onDictionaryOptionsChanged();
-
     formUpdateVisibility(options);
 }
 
@@ -260,6 +258,7 @@ async function onOptionsUpdated({source}) {
 
     document.querySelector('#enable-clipboard-popups').checked = options.general.enableClipboardPopups;
     ankiTemplatesUpdateValue();
+    onDictionaryOptionsChanged();
     onAnkiOptionsChanged();
 
     await formWrite(options);
