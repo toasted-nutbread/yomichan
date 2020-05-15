@@ -16,8 +16,6 @@
  */
 
 /* global
- * ankiErrorShown
- * ankiFieldsToDict
  * ankiInitialize
  * ankiTemplatesInitialize
  * ankiTemplatesUpdateValue
@@ -127,7 +125,6 @@ async function formRead(options) {
     options.parsing.termSpacing = $('#parsing-term-spacing').prop('checked');
     options.parsing.readingMode = $('#parsing-reading-mode').val();
 
-    const optionsAnkiEnableOld = options.anki.enable;
     options.anki.enable = $('#anki-enable').prop('checked');
     options.anki.tags = utilBackgroundIsolate($('#card-tags').val().split(/[,; ]+/));
     options.anki.sentenceExt = parseInt($('#sentence-detection-extent').val(), 10);
@@ -135,15 +132,6 @@ async function formRead(options) {
     options.anki.duplicateScope = $('#duplicate-scope').val();
     options.anki.screenshot.format = $('#screenshot-format').val();
     options.anki.screenshot.quality = parseInt($('#screenshot-quality').val(), 10);
-
-    if (optionsAnkiEnableOld && !ankiErrorShown()) {
-        options.anki.terms.deck = $('#anki-terms-deck').val();
-        options.anki.terms.model = $('#anki-terms-model').val();
-        options.anki.terms.fields = utilBackgroundIsolate(ankiFieldsToDict(document.querySelectorAll('#terms .anki-field-value')));
-        options.anki.kanji.deck = $('#anki-kanji-deck').val();
-        options.anki.kanji.model = $('#anki-kanji-model').val();
-        options.anki.kanji.fields = utilBackgroundIsolate(ankiFieldsToDict(document.querySelectorAll('#kanji .anki-field-value')));
-    }
 }
 
 async function formWrite(options) {
@@ -219,7 +207,6 @@ async function formWrite(options) {
     $('#screenshot-quality').val(options.anki.screenshot.quality);
 
     await ankiTemplatesUpdateValue();
-    await onAnkiOptionsChanged(options);
     await onDictionaryOptionsChanged();
 
     formUpdateVisibility(options);
@@ -243,8 +230,6 @@ async function onFormOptionsChanged() {
     await formRead(options);
     await settingsSaveOptions();
     formUpdateVisibility(options);
-
-    await onAnkiOptionsChanged(options);
 }
 
 
@@ -265,6 +250,9 @@ async function onOptionsUpdated({source}) {
 
     const optionsContext = getOptionsContext();
     const options = await getOptionsMutable(optionsContext);
+
+    onAnkiOptionsChanged();
+
     await formWrite(options);
 }
 
