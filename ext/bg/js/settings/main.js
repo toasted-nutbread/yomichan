@@ -33,7 +33,6 @@
  * storageInfoInitialize
  * utilBackend
  * utilBackgroundIsolate
- * utilIsolate
  */
 
 function getOptionsMutable(optionsContext) {

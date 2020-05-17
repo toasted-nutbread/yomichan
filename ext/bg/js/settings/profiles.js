@@ -20,7 +20,6 @@
  * apiOptionsGetFull
  * conditionsClearCaches
  * getOptionsFullMutable
- * getOptionsMutable
  * onOptionsUpdated
  * profileConditionsDescriptor
  * profileConditionsDescriptorPromise
