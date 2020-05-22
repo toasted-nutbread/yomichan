@@ -308,10 +308,9 @@ will likely never be possible to use Yomichan with PDF files.
 
 **Is it possible to delete individual dictionaries without purging the database?**
 
-Although it is technically possible to purge specific dictionaries, due to the limitations of the underlying browser
-IndexedDB system, this process is *extremely* slow. For example, it can take up to ten minutes to delete a single
-moderately-sized term dictionary! Instead of including a borderline unusable feature in Yomichan, I have chosen to
-disable dictionary deletion entirely.
+Yomichan is able to delete individual dictionaries, but keep in mind that this process can be *very* slow and can
+cause the browser to become unresponsive. The time it takes to delete a single dictionary can sometimes be roughly
+the same as the time it originally took to import, which can be significant for certain large dictionaries.
 
 **Why aren't EPWING dictionaries bundled with Yomichan?**
 
