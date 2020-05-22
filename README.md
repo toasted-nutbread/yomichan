@@ -37,7 +37,7 @@ Yomichan provides advanced features not available in other browser-based diction
 Yomichan comes in two flavors: *stable* and *testing*. Over the years, this extension has evolved to contain many
 complex features which have become increasingly difficult to test across different browsers, versions, and
 environments. New changes are initially introduced into the *testing* version, and after some time spent ensuring
-that they are bug free, they will be promoted to the *stable* version. If you are technically savvy and don't mind
+that they are relatively bug free, they will be promoted to the *stable* version. If you are technically savvy and don't mind
 submitting issues on GitHub, try the *testing* version; otherwise, the *stable* version will be your best bet.
 
 *   **Google Chrome**
