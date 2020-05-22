@@ -74,12 +74,12 @@ primary language is not English, you may consider also importing the English ver
     *   [jmnedict.zip](https://foosoft.net/projects/yomichan/dl/dict/jmnedict.zip)
 *   **[KireiCake](https://kireicake.com/rikaicakes/)** (Japanese slang)
     *   [kireicake.zip](https://foosoft.net/projects/yomichan/dl/dict/kireicake.zip)
-*   **[KANJIDIC](http://nihongo.monash.edu/kanjidic2/index.html)** (Japanese Kanji)
+*   **[KANJIDIC](http://nihongo.monash.edu/kanjidic2/index.html)** (Japanese kanji)
     *   [kanjidic\_english.zip](https://foosoft.net/projects/yomichan/dl/dict/kanjidic_english.zip)
     *   [kanjidic\_french.zip](https://foosoft.net/projects/yomichan/dl/dict/kanjidic_french.zip)
     *   [kanjidic\_portuguese.zip](https://foosoft.net/projects/yomichan/dl/dict/kanjidic_portuguese.zip)
     *   [kanjidic\_spanish.zip](https://foosoft.net/projects/yomichan/dl/dict/kanjidic_spanish.zip)
-*   **[Innocent Corpus](https://web.archive.org/web/20190309073023/https://forum.koohii.com/thread-9459.html#pid168613)** (Term and Kanji frequencies across 5000+ novels)
+*   **[Innocent Corpus](https://web.archive.org/web/20190309073023/https://forum.koohii.com/thread-9459.html#pid168613)** (Term and kanji frequencies across 5000+ novels)
     *   [innocent\_corpus.zip](https://foosoft.net/projects/yomichan/dl/dict/innocent_corpus.zip)
 *   **[Kanjium](https://github.com/mifunetoshiro/kanjium)** (Pitch dictionary, see [related project page](https://github.com/toasted-nutbread/yomichan-pitch-accent-dictionary) for details)
     *   [kanjium_pitch_accents.zip](https://foosoft.net/projects/yomichan/dl/dict/kanjium_pitch_accents.zip)
@@ -92,7 +92,7 @@ primary language is not English, you may consider also importing the English ver
 
 2.  Click on the *spanner/monkey wrench* icon in the middle to open the options page.
 
-3.  Import the dictionaries you wish to use for term and Kanji searches. If you do not have any dictionaries installed
+3.  Import the dictionaries you wish to use for term and kanji searches. If you do not have any dictionaries installed
     (or enabled), Yomichan will warn you that it is not ready for use by displaying an orange exclamation mark over its
     icon. This exclamation mark will disappear once you have installed and enabled at least one dictionary.
 
@@ -108,7 +108,7 @@ primary language is not English, you may consider also importing the English ver
     not available, you will hear a short click instead. You can configure the sources used to retrieve audio samples in
     the options page.
 
-6.  Click on individual Kanji in the term definition results to view additional information about those characters,
+6.  Click on individual kanji in the term definition results to view additional information about those characters,
     including stroke order diagrams, readings, meanings, as well as other useful data.
 
     [![](https://foosoft.net/projects/yomichan/img/ui-kanji-thumb.png)](https://foosoft.net/projects/yomichan/img/ui-kanji.png)
@@ -134,7 +134,7 @@ Check the respective project page for more information about how to set up this 
 
 ### Flashcard Configuration ###
 
-Before flashcards can be automatically created, you must configure the templates used to create term and/or Kanji notes.
+Before flashcards can be automatically created, you must configure the templates used to create term and/or kanji notes.
 If you are unfamiliar with Anki deck and model management, this would be a good time to reference the [Anki
 Manual](https://docs.ankiweb.net/#/). In short, you must specify what information should be included in the
 flashcards that Yomichan creates through AnkiConnect.
@@ -159,9 +159,9 @@ Flashcard fields can be configured with the following steps:
     `{cloze-suffix}` | Fragment of the containing `{sentence}` starting at the end of `{cloze-body}` until the end of `{sentence}`.
     `{dictionary}` | Name of the dictionary from which the card is being created (unavailable in *grouped* mode).
     `{document-title}` | Title of the web page that the term appeared in.
-    `{expression}` | Term expressed as Kanji (will be displayed in Kana if Kanji is not available).
-    `{furigana}` | Term expressed as Kanji with Furigana displayed above it (e.g. <ruby>日本語<rt>にほんご</rt></ruby>).
-    `{furigana-plain}` | Term expressed as Kanji with Furigana displayed next to it in brackets (e.g. 日本語[にほんご]).
+    `{expression}` | Term expressed as kanji (will be displayed in kana if kanji is not available).
+    `{furigana}` | Term expressed as kanji with furigana displayed above it (e.g. <ruby>日本語<rt>にほんご</rt></ruby>).
+    `{furigana-plain}` | Term expressed as kanji with furigana displayed next to it in brackets (e.g. 日本語[にほんご]).
     `{glossary}` | List of definitions for the term (output format depends on whether running in *grouped* mode).
     `{reading}` | Kana reading for the term (empty for terms where the expression is the reading).
     `{screenshot}` | Screenshot of the web page taken at the time the term was added.
@@ -173,18 +173,18 @@ Flashcard fields can be configured with the following steps:
 
     Marker | Description
     -------|------------
-    `{character}` | Unicode glyph representing the current Kanji.
+    `{character}` | Unicode glyph representing the current kanji.
     `{cloze-body}` | Raw, inflected parent term as it appeared before being reduced to dictionary form by Yomichan.
     `{cloze-prefix}` | Fragment of the containing `{sentence}` starting at the beginning of `{sentence}` until the beginning of `{cloze-body}`.
     `{cloze-suffix}` | Fragment of the containing `{sentence}` starting at the end of `{cloze-body}` until the end of `{sentence}`.
     `{dictionary}` | Name of the dictionary from which the card is being created.
-    `{document-title}` | Title of the web page that the Kanji appeared in.
-    `{glossary}` | List of definitions for the Kanji.
-    `{kunyomi}` | Kunyomi (Japanese reading) for the Kanji expressed as Katakana.
-    `{onyomi}` | Onyomi (Chinese reading) for the Kanji expressed as Hiragana.
-    `{screenshot}` | Screenshot of the web page taken at the time the Kanji was added.
+    `{document-title}` | Title of the web page that the kanji appeared in.
+    `{glossary}` | List of definitions for the kanji.
+    `{kunyomi}` | Kunyomi (Japanese reading) for the kanji expressed as katakana.
+    `{onyomi}` | Onyomi (Chinese reading) for the kanji expressed as hiragana.
+    `{screenshot}` | Screenshot of the web page taken at the time the kanji was added.
     `{sentence}` | Sentence, quote, or phrase that the character appears in from the source content.
-    `{url}` | Address of the web page in which the Kanji appeared in.
+    `{url}` | Address of the web page in which the kanji appeared in.
 
 When creating your model for Yomichan, *make sure that you pick a unique field to be first*; fields that will
 contain `{expression}` or `{character}` are ideal candidates for this. Anki does not allow duplicate flashcards to be
@@ -197,8 +197,8 @@ be able to create a flashcard for <ruby>箸<rt>はし</rt></ruby> because they s
 Once Yomichan is configured, it becomes trivial to create new flashcards with a single click. You will see the following
 icons next to term definitions:
 
-*   Clicking ![](https://foosoft.net/projects/yomichan/img/btn-add-expression.png) adds the current expression as Kanji (e.g. 食べる).
-*   Clicking ![](https://foosoft.net/projects/yomichan/img/btn-add-reading.png) adds the current expression as Hiragana or Katakana (e.g. たべる).
+*   Clicking ![](https://foosoft.net/projects/yomichan/img/btn-add-expression.png) adds the current expression as kanji (e.g. 食べる).
+*   Clicking ![](https://foosoft.net/projects/yomichan/img/btn-add-reading.png) adds the current expression as hiragana or katakana (e.g. たべる).
 
 Below are some troubleshooting tips you can try if you are unable to create new flashcards:
 
@@ -230,7 +230,7 @@ Shortcut | Action
 <kbd>Alt</kbd> + <kbd>e</kbd> | Add current term as expression to Anki.
 <kbd>Alt</kbd> + <kbd>r</kbd> | Add current term as reading to Anki.
 <kbd>Alt</kbd> + <kbd>p</kbd> | Play audio for current term.
-<kbd>Alt</kbd> + <kbd>k</kbd> | Add current Kanji to Anki.
+<kbd>Alt</kbd> + <kbd>k</kbd> | Add current kanji to Anki.
 
 ## Development ##
 
@@ -278,7 +278,7 @@ one of the following solutions should work for you:
     feature to reset your user profile. It appears that the Firefox profile system can corrupt itself preventing
     IndexedDB from being accessible to Yomichan.
 
-**Why does the Kanji results page display "No data found" for several fields?**
+**Why does the kanji results page display "No data found" for several fields?**
 
 You are using data from the KANJIDIC dictionary that was exported for an earlier version of Yomichan. It does not
 contain the additional information which newer versions of Yomichan expect. Unfortunately, since major browser
