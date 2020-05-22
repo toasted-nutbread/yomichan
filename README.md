@@ -319,9 +319,11 @@ this extension for copyright reasons.
 
 **When are you going to add support for $MYLANGUAGE?**
 
-Developing Yomichan requires a significant understanding of Japanese sentence structure and grammar. I have no time
-to invest in learning yet another language; therefore other languages will not be supported. I will also not accept
-pull request containing this functionality, as I will ultimately be the one maintaining your code.
+Developing Yomichan requires a decent understanding of Japanese sentence structure and grammar, and other languages
+are likely to have their own unique set of rules for syntax, grammar, inflection, and so on. Supporting additional
+languages would not only require many additional changes to the codebase, it would also incur significant maintenance
+overhead and knowledge demands for the developers. Therefore, suggestions and contributions for supporting
+new languages will be declined, allowing Yomichan's focus to remain Japanese-centric.
 
 ## Legal ##
 
