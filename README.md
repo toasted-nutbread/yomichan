@@ -2,7 +2,7 @@
 
 Yomichan turns your web browser into a tool for building Japanese language literacy by helping you to decipher texts
 which would be otherwise too difficult tackle. This extension is similar to
-[Rikaichan](https://addons.mozilla.org/en-US/firefox/addon/rikaichan/) for Firefox and
+[Rikaichamp](https://addons.mozilla.org/en-US/firefox/addon/rikaichamp/) for Firefox and
 [Rikaikun](https://chrome.google.com/webstore/detail/rikaikun/jipdnfibhldikgcjhfnomkfpcebammhp?hl=en) for Chrome, but it
 stands apart in its goal of being a all-encompassing learning tool as opposed to a mere browser-based dictionary.
 
