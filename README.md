@@ -18,19 +18,19 @@ Yomichan provides advanced features not available in other browser-based diction
 
 ## Table of Contents ##
 
-*   [Installation](https://foosoft.net/projects/yomichan/#installation)
-*   [Dictionaries](https://foosoft.net/projects/yomichan/#dictionaries)
-*   [Basic Usage](https://foosoft.net/projects/yomichan/#basic-usage)
-*   [Custom Dictionaries](https://foosoft.net/projects/yomichan/#custom-dictionaries)
-*   [Anki Integration](https://foosoft.net/projects/yomichan/#anki-integration)
-    *   [Flashcard Configuration](https://foosoft.net/projects/yomichan/#flashcard-configuration)
-    *   [Flashcard Creation](https://foosoft.net/projects/yomichan/#flashcard-creation)
-*   [Keyboard Shortcuts](https://foosoft.net/projects/yomichan/#keyboard-shortcuts)
-*   [Development](https://foosoft.net/projects/yomichan/#development)
-    *   [Dependencies](https://foosoft.net/projects/yomichan/#dependencies)
-*   [Frequently Asked Questions](https://foosoft.net/projects/yomichan/#frequently-asked-questions)
-*   [Screenshots](https://foosoft.net/projects/yomichan/#screenshots)
-*   [License](https://foosoft.net/projects/yomichan/#license)
+*   [Installation](#installation)
+*   [Dictionaries](#dictionaries)
+*   [Basic Usage](#basic-usage)
+*   [Custom Dictionaries](#custom-dictionaries)
+*   [Anki Integration](#anki-integration)
+    *   [Flashcard Configuration](#flashcard-configuration)
+    *   [Flashcard Creation](#flashcard-creation)
+*   [Keyboard Shortcuts](#keyboard-shortcuts)
+*   [Development](#development)
+    *   [Dependencies](#dependencies)
+*   [Frequently Asked Questions](#frequently-asked-questions)
+*   [Screenshots](#screenshots)
+*   [License](#license)
 
 ## Installation ##
 
