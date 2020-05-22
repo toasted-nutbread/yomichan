@@ -187,10 +187,10 @@ Flashcard fields can be configured with the following steps:
     `{url}` | Address of the web page in which the Kanji appeared in.
 
 When creating your model for Yomichan, *please make sure that you pick a unique field to be first*; fields that will
-contain `{expression}` or `{character}` are ideal candidates for this. Anki does not require duplicate flashcards to be
-added to a deck and uses the first field in the model to check for duplicates. If, for example, you have `{reading}`
-configured to be the first field in your model and already have <ruby>橋<rt>はし</rt></ruby> in your deck, you will not
-be able to create a flashcard for <ruby>箸<rt>はし</rt></ruby>, because they share the same reading.
+contain `{expression}` or `{character}` are ideal candidates for this. Anki does not allow duplicate flashcards to be
+added to a deck by default; it uses the first field in the model to check for duplicates. For example, if you have `{reading}`
+configured to be the first field in your model and <ruby>橋<rt>はし</rt></ruby> is already in your deck, you will not
+be able to create a flashcard for <ruby>箸<rt>はし</rt></ruby> because they share the same reading.
 
 ### Flashcard Creation ###
 
