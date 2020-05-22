@@ -108,14 +108,14 @@ primary language is not English, you may consider also importing the English ver
     not available, you will hear a short click instead. You can configure the sources used to retrieve audio samples in
     the options page.
 
-6.  Click on individual Kanji in the term definition results to view additional information about those characters
+6.  Click on individual Kanji in the term definition results to view additional information about those characters,
     including stroke order diagrams, readings, meanings, as well as other useful data.
 
     [![](https://foosoft.net/projects/yomichan/img/ui-kanji-thumb.png)](https://foosoft.net/projects/yomichan/img/ui-kanji.png)
 
 ## Custom Dictionaries ##
 
-Yomichan supports the use of custom dictionaries including the esoteric but popular
+Yomichan supports the use of custom dictionaries, including the esoteric but popular
 [EPWING](https://ja.wikipedia.org/wiki/EPWING) format. They were often utilized in portable electronic dictionaries
 similar to the ones pictured below. These dictionaries are often sought after by language learners for their correctness
 and excellent coverage of the Japanese language.
@@ -195,7 +195,7 @@ be able to create a flashcard for <ruby>箸<rt>はし</rt></ruby> because they s
 ### Flashcard Creation ###
 
 Once Yomichan is configured, it becomes trivial to create new flashcards with a single click. You will see the following
-icons next to term definitions.
+icons next to term definitions:
 
 *   Clicking ![](https://foosoft.net/projects/yomichan/img/btn-add-expression.png) adds the current expression as Kanji (e.g. 食べる).
 *   Clicking ![](https://foosoft.net/projects/yomichan/img/btn-add-reading.png) adds the current expression as Hiragana or Katakana (e.g. たべる).
@@ -203,7 +203,7 @@ icons next to term definitions.
 Below are some troubleshooting tips you can try if you are unable to create new flashcards:
 
 *   Individual icons will appear grayed out if a flashcard cannot be created for the current definition (e.g. it already exists in the deck).
-*   If all of the buttons appear grayed out then you should double-check your deck and model configuration settings.
+*   If all of the buttons appear grayed out, then you should double-check your deck and model configuration settings.
 *   If no icons appear at all, please make sure that Anki is running in the background and that [AnkiConnect](https://foosoft.net/projects/anki-connect) has been installed.
 
 ## Keyboard Shortcuts ##
@@ -219,7 +219,7 @@ The following shortcuts are available on search results:
 
 Shortcut | Action
 ---------|-------
-<kbd>Esc</kbd> | Cancel current search
+<kbd>Esc</kbd> | Cancel current search.
 <kbd>Alt</kbd> + <kbd>PgUp</kbd> | Page up through results.
 <kbd>Alt</kbd> + <kbd>PgDn</kbd> | Page down through results.
 <kbd>Alt</kbd> + <kbd>End</kbd> | Go to last result.
