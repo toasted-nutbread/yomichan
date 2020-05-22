@@ -35,9 +35,9 @@ Yomichan provides advanced features not available in other browser-based diction
 ## Installation ##
 
 Yomichan comes in two flavors: *stable* and *testing*. Over the years, this extension has evolved to contain many
-complex features, which have become increasingly difficult for me to test across different browsers, versions, and
-environments. All new changes are initially introduced into the *testing* version, and when I am reasonably confident
-that they are bug free, they will get promoted to the *stable* version. If you are technically savvy and don't mind
+complex features which have become increasingly difficult to test across different browsers, versions, and
+environments. New changes are initially introduced into the *testing* version, and after some time spent ensuring
+that they are bug free, they will be promoted to the *stable* version. If you are technically savvy and don't mind
 submitting issues on GitHub, try the *testing* version; otherwise, the *stable* version will be your best bet.
 
 *   **Google Chrome**
@@ -120,8 +120,8 @@ Yomichan supports the use of custom dictionaries, including the esoteric but pop
 similar to the ones pictured below. These dictionaries are often sought after by language learners for their correctness
 and excellent coverage of the Japanese language.
 
-Unfortunately, as most of the dictionaries released in this format are proprietary, I am unable to bundle them with
-Yomichan. You will need to procure these dictionaries yourself and import them with [Yomichan
+Unfortunately, as most of the dictionaries released in this format are proprietary, they are unable to be bundled with
+Yomichan. Instead, you will need to procure these dictionaries yourself and import them using [Yomichan
 Import](https://foosoft.net/projects/yomichan-import). Please see the project page for additional details.
 
 [![Pocket EPWING dictionaries](https://foosoft.net/projects/yomichan/img/epwing-devices-thumb.png)](https://foosoft.net/projects/yomichan/img/epwing-devices.jpg)
@@ -315,8 +315,8 @@ the same as the time it originally took to import, which can be significant for 
 
 **Why aren't EPWING dictionaries bundled with Yomichan?**
 
-The vast majority of EPWING dictionaries are proprietary, so unfortunately I am unable to legally include them in
-this extension for copyright reasons.
+The vast majority of EPWING dictionaries are proprietary, so they are unfortunately not able to be included in
+this extension due to copyright reasons.
 
 **When are you going to add support for $MYLANGUAGE?**
 
