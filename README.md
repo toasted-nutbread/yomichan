@@ -165,7 +165,7 @@ Flashcard fields can be configured with the following steps:
     `{glossary}` | List of definitions for the term (output format depends on whether running in *grouped* mode).
     `{reading}` | Kana reading for the term (empty for terms where the expression is the reading).
     `{screenshot}` | Screenshot of the web page taken at the time the term was added.
-    `{sentence}` | Sentence, quote, or phrase in which the term appears in the source content.
+    `{sentence}` | Sentence, quote, or phrase that the term appears in from the source content.
     `{tags}` | Grammar and usage tags providing information about the term (unavailable in *grouped* mode).
     `{url}` | Address of the web page in which the term appeared in.
 
@@ -183,7 +183,7 @@ Flashcard fields can be configured with the following steps:
     `{kunyomi}` | Kunyomi (Japanese reading) for the Kanji expressed as Katakana.
     `{onyomi}` | Onyomi (Chinese reading) for the Kanji expressed as Hiragana.
     `{screenshot}` | Screenshot of the web page taken at the time the Kanji was added.
-    `{sentence}` | Sentence, quote, or phrase in which the character appears in the source content.
+    `{sentence}` | Sentence, quote, or phrase that the character appears in from the source content.
     `{url}` | Address of the web page in which the Kanji appeared in.
 
 When creating your model for Yomichan, *please make sure that you pick a unique field to be first*; fields that will
