@@ -234,13 +234,14 @@ Shortcut | Action
 
 ## Development ##
 
-Working on Yomichan and related tools is very time consuming and I am always on the lookout for code contributions from
-other developers who want to help out. I take pride in the high quality of the codebase and ask you to follow the
-following basic guidelines when creating pull requests:
+As feature development and improvements to Yomichan can be time consuming, contributions are welcome from
+any developers who want to help out. Below are a few guidelines to ensure contributions have a good level
+of quality and consistency:
 
-*   Please discuss large features before writing code.
+*   Open GitHub issues to discuss large features before writing code.
 *   Follow the [conventions and style](.eslintrc.json) of the existing code.
-*   Write clean, modern ES6 code (`const`/`let`, `await`, arrow functions, etc.)
+*   Test changes using the continuous integration tests included in the repository (`npm ci; npm test`).
+*   Write clean, modern ES6 code (`const`/`let`, `async`/`await`, arrow functions, etc.)
 *   Large pull requests without a clear scope will not be merged.
 *   Incomplete or non-standalone features will not be merged.
 
