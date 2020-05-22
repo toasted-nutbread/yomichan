@@ -289,7 +289,7 @@ your database and install the latest version of the KANJIDIC to see additional i
 
 Developing Yomichan is a constant balance between including useful features and keeping complexity at a minimum.
 With the new user-editable card template system, it is possible to create text-only cards without having to double
-the number field of templates in the extension itself. If you would like to stop HTML tags from being added to your
+the number of field templates in the extension itself. If you would like to stop HTML tags from being added to your
 cards, simply copy the contents of the [text-only field template](https://foosoft.net/projects/yomichan/dl/fields.txt)
 into the template box on the Anki settings page (make sure you have the *Show advanced options* checkbox ticked),
 making sure to replace the existing values.
