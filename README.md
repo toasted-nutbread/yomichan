@@ -295,9 +295,9 @@ making sure to replace the existing values.
 
 **Will you add support for online dictionaries?**
 
-Online dictionaries will never be implemented because it is impossible to support them in a robust way. In order to
-perform Japanese deinflection, Yomichan must execute dozens of database queries per every single word. Factoring in
-network latency and the fragility of web scraping, I do not believe that it is possible to realize a good user
+Online dictionaries will not be implemented because it is not possible to support them in a robust way. In order to
+perform Japanese deinflection, Yomichan must execute dozens of database queries for every single word. Factoring in
+network latency and the fragility of web scraping, it would not be possible to maintain a good and consistent user
 experience.
 
 **Is it possible to use Yomichan with files saved locally on my computer with Chrome?**
