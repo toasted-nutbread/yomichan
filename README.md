@@ -155,8 +155,8 @@ Flashcard fields can be configured with the following steps:
     -------|------------
     `{audio}` | Audio sample of a native speaker's pronunciation in MP3 format (if available).
     `{cloze-body}` | Raw, inflected term as it appeared before being reduced to dictionary form by Yomichan.
-    `{cloze-prefix}` | Text for the containing `{sentence}` from the start up to the value of `{cloze-body}`.
-    `{cloze-suffix}` | Text for the containing `{sentence}` from the value of `{cloze-body}` to the end.
+    `{cloze-prefix}` | Fragment of the containing `{sentence}` starting at the beginning of `{sentence}` until the beginning of `{cloze-body}`.
+    `{cloze-suffix}` | Fragment of the containing `{sentence}` starting at the end of `{cloze-body}` until the end of `{sentence}`.
     `{dictionary}` | Name of the dictionary from which the card is being created (unavailable in *grouped* mode).
     `{document-title}` | Title of the web page that the term appeared in.
     `{expression}` | Term expressed as Kanji (will be displayed in Kana if Kanji is not available).
@@ -175,8 +175,8 @@ Flashcard fields can be configured with the following steps:
     -------|------------
     `{character}` | Unicode glyph representing the current Kanji.
     `{cloze-body}` | Raw, inflected parent term as it appeared before being reduced to dictionary form by Yomichan.
-    `{cloze-prefix}` | Text for the containing `{sentence}` from the start up to the value of `{cloze-body}`.
-    `{cloze-suffix}` | Text for the containing `{sentence}` from the value of `{cloze-body}` to the end.
+    `{cloze-prefix}` | Fragment of the containing `{sentence}` starting at the beginning of `{sentence}` until the beginning of `{cloze-body}`.
+    `{cloze-suffix}` | Fragment of the containing `{sentence}` starting at the end of `{cloze-body}` until the end of `{sentence}`.
     `{dictionary}` | Name of the dictionary from which the card is being created.
     `{document-title}` | Title of the web page that the Kanji appeared in.
     `{glossary}` | List of definitions for the Kanji.
