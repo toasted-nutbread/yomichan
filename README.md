@@ -54,10 +54,10 @@ submitting issues on GitHub, try the *testing* version; otherwise, the *stable* 
 
 There are several free Japanese dictionaries available for Yomichan, with two of them having glossaries available in
 different languages. You must download and import the dictionaries you wish to use in order to enable Yomichan
-definition lookups. If you have proprietary EPWING dictionaries that you would like to use, please see the [Yomichan
+definition lookups. If you have proprietary EPWING dictionaries that you would like to use, check the [Yomichan
 Import](https://foosoft.net/projects/yomichan-import) page to learn how to convert and import them into Yomichan.
 
-Please be aware that the non-English dictionaries contain fewer entries than their English counterparts. Even if your
+Be aware that the non-English dictionaries contain fewer entries than their English counterparts. Even if your
 primary language is not English, you may consider also importing the English version for better coverage.
 
 *   **[JMdict](https://www.edrdg.org/enamdict/enamdict_doc.html)** (Japanese vocabulary)
@@ -122,7 +122,7 @@ and excellent coverage of the Japanese language.
 
 Unfortunately, as most of the dictionaries released in this format are proprietary, they are unable to be bundled with
 Yomichan. Instead, you will need to procure these dictionaries yourself and import them using [Yomichan
-Import](https://foosoft.net/projects/yomichan-import). Please see the project page for additional details.
+Import](https://foosoft.net/projects/yomichan-import). Check the project page for additional details.
 
 [![Pocket EPWING dictionaries](https://foosoft.net/projects/yomichan/img/epwing-devices-thumb.png)](https://foosoft.net/projects/yomichan/img/epwing-devices.jpg)
 
@@ -130,7 +130,7 @@ Import](https://foosoft.net/projects/yomichan-import). Please see the project pa
 
 Yomichan features automatic flashcard creation for [Anki](https://apps.ankiweb.net/), a free application designed to help you
 retain knowledge. This feature requires the prior installation of an Anki plugin called [AnkiConnect](https://foosoft.net/projects/anki-connect).
-Please see the respective project page for more information about how to set up this software.
+Check the respective project page for more information about how to set up this software.
 
 ### Flashcard Configuration ###
 
@@ -186,7 +186,7 @@ Flashcard fields can be configured with the following steps:
     `{sentence}` | Sentence, quote, or phrase that the character appears in from the source content.
     `{url}` | Address of the web page in which the Kanji appeared in.
 
-When creating your model for Yomichan, *please make sure that you pick a unique field to be first*; fields that will
+When creating your model for Yomichan, *make sure that you pick a unique field to be first*; fields that will
 contain `{expression}` or `{character}` are ideal candidates for this. Anki does not allow duplicate flashcards to be
 added to a deck by default; it uses the first field in the model to check for duplicates. For example, if you have `{reading}`
 configured to be the first field in your model and <ruby>橋<rt>はし</rt></ruby> is already in your deck, you will not
@@ -204,7 +204,7 @@ Below are some troubleshooting tips you can try if you are unable to create new 
 
 *   Individual icons will appear grayed out if a flashcard cannot be created for the current definition (e.g. it already exists in the deck).
 *   If all of the buttons appear grayed out, then you should double-check your deck and model configuration settings.
-*   If no icons appear at all, please make sure that Anki is running in the background and that [AnkiConnect](https://foosoft.net/projects/anki-connect) has been installed.
+*   If no icons appear at all, make sure that Anki is running in the background and that [AnkiConnect](https://foosoft.net/projects/anki-connect) has been installed.
 
 ## Keyboard Shortcuts ##
 
