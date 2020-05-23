@@ -181,15 +181,6 @@ class Backend {
 
             this.onOptionsUpdated('background');
 
-            if (isObject(chrome.commands) && isObject(chrome.commands.onCommand)) {
-                chrome.commands.onCommand.addListener(this._runCommand.bind(this));
-            }
-            if (isObject(chrome.tabs) && isObject(chrome.tabs.onZoomChange)) {
-                chrome.tabs.onZoomChange.addListener(this._onZoomChange.bind(this));
-            }
-            chrome.runtime.onMessage.addListener(this.onMessage.bind(this));
-            chrome.runtime.onConnect.addListener(this._onConnect.bind(this));
-
             const options = this.getOptions(this.optionsContext);
             if (options.general.showGuide) {
                 chrome.tabs.create({url: chrome.runtime.getURL('/bg/guide.html')});
@@ -217,6 +208,22 @@ class Backend {
 
     isPrepared() {
         return this._isPrepared;
+    }
+
+    handleCommand(...args) {
+        return this._runCommand(...args);
+    }
+
+    handleZoomChange(...args) {
+        return this._onZoomChange(...args);
+    }
+
+    handleConnect(...args) {
+        return this._onConnect(...args);
+    }
+
+    handleMessage(...args) {
+        return this.onMessage(...args);
     }
 
     _sendMessageAllTabs(action, params={}) {
@@ -1315,5 +1322,59 @@ class Backend {
         } catch (e) {
             // Edge throws exception for no reason here.
         }
+    }
+}
+
+class BackendEventHandler {
+    constructor(backend) {
+        this._backend = backend;
+    }
+
+    prepare() {
+        if (isObject(chrome.commands) && isObject(chrome.commands.onCommand)) {
+            const onCommand = this._createGenericEventHandler((...args) => this._backend.handleCommand(...args));
+            chrome.commands.onCommand.addListener(onCommand);
+        }
+
+        if (isObject(chrome.tabs) && isObject(chrome.tabs.onZoomChange)) {
+            const onZoomChange = this._createGenericEventHandler((...args) => this._backend.handleZoomChange(...args));
+            chrome.tabs.onZoomChange.addListener(onZoomChange);
+        }
+
+        const onConnect = this._createGenericEventHandler((...args) => this._backend.handleConnect(...args));
+        chrome.runtime.onConnect.addListener(onConnect);
+
+        const onMessage = this._onMessage.bind(this);
+        chrome.runtime.onMessage.addListener(onMessage);
+    }
+
+    // Event handlers
+
+    _createGenericEventHandler(handler) {
+        return this._onGenericEvent.bind(this, handler);
+    }
+
+    _onGenericEvent(handler, ...args) {
+        if (this._backend.isPrepared()) {
+            handler(...args);
+            return;
+        }
+
+        this._backend.prepareComplete().then(
+            () => { handler(...args); },
+            () => {} // NOP
+        );
+    }
+
+    _onMessage(message, sender, sendResponse) {
+        if (this._backend.isPrepared()) {
+            return this._backend.handleMessage(message, sender, sendResponse);
+        }
+
+        this._backend.prepareComplete().then(
+            () => { this._backend.handleMessage(message, sender, sendResponse); },
+            () => { sendResponse(); } // NOP
+        );
+        return true;
     }
 }
