@@ -57,12 +57,8 @@ async function createIframePopupProxy(frameOffsetForwarder, setDisabled) {
     return popup;
 }
 
-async function getOrCreatePopup(depth) {
-    const popupFactory = await createPopupFactory();
-
-    const popup = popupFactory.getOrCreatePopup(null, null, depth);
-
-    return popup;
+async function getOrCreatePopup(depth, popupFactory) {
+    return popupFactory.getOrCreatePopup(null, null, depth);
 }
 
 async function createPopupProxy(depth, id, parentFrameId) {
@@ -90,6 +86,7 @@ async function createPopupProxy(depth, id, parentFrameId) {
     let frontend = null;
     let frontendPreparePromise = null;
     let frameOffsetForwarder = null;
+    let popupFactoryPromise = null;
 
     let iframePopupsInRootFrameAvailable = true;
 
@@ -129,8 +126,16 @@ async function createPopupProxy(depth, id, parentFrameId) {
             popup = popups.proxy || await createPopupProxy(depth, id, parentFrameId);
             popups.proxy = popup;
         } else {
-            popup = popups.normal || await getOrCreatePopup(depth);
-            popups.normal = popup;
+            popup = popups.normal;
+            if (!popup) {
+                if (popupFactoryPromise === null) {
+                    popupFactoryPromise = createPopupFactory();
+                }
+                const popupFactory = await popupFactoryPromise;
+                const popupNormal = await getOrCreatePopup(depth, popupFactory);
+                popups.normal = popupNormal;
+                popup = popupNormal;
+            }
         }
 
         if (frontend === null) {
