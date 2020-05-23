@@ -23,6 +23,7 @@ class CrossFrameAPIPort extends EventDispatcher {
         this._messageHandlers = messageHandlers;
         this._activeInvocations = new Map();
         this._invocationId = 0;
+        this._eventListeners = new EventListenerCollection();
     }
 
     get otherFrameId() {
@@ -30,8 +31,8 @@ class CrossFrameAPIPort extends EventDispatcher {
     }
 
     prepare() {
-        this._port.onDisconnect.addListener(this._onDisconnect.bind(this));
-        this._port.onMessage.addListener(this._onMessage.bind(this));
+        this._eventListeners.addListener(this._port.onDisconnect, this._onDisconnect.bind(this));
+        this._eventListeners.addListener(this._port.onMessage, this._onMessage.bind(this));
     }
 
     invoke(action, params, ackTimeout, responseTimeout) {
@@ -70,7 +71,7 @@ class CrossFrameAPIPort extends EventDispatcher {
 
     _onDisconnect() {
         if (this._port === null) { return; }
-        // TODO : Remove event listeners
+        this._eventListeners.removeAllEventListeners();
         this._port = null;
         for (const id of this._activeInvocations.keys()) {
             this._onError(id, new Error('Disconnected'));
