@@ -15,6 +15,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+/* global
+ * CrossFrameAPI
+ */
+
 const api = (() => {
     class API {
         constructor() {
@@ -333,3 +337,6 @@ const api = (() => {
 
     return new API();
 })();
+
+const crossFrame = new CrossFrameAPI();
+crossFrame.prepare();
