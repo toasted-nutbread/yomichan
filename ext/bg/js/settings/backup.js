@@ -22,7 +22,6 @@
  * utilBackend
  * utilBackgroundIsolate
  * utilIsolate
- * utilReadFileArrayBuffer
  */
 
 class SettingsBackup {
@@ -130,6 +129,15 @@ class SettingsBackup {
         const fileName = `yomichan-settings-${this._getSettingsExportDateString(date, '-', '-', '-', 6)}.json`;
         const blob = new Blob([JSON.stringify(data, null, 4)], {type: 'application/json'});
         this._saveBlob(blob, fileName);
+    }
+
+    _readFileArrayBuffer(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = () => reject(reader.error);
+            reader.readAsArrayBuffer(file);
+        });
     }
 
     // Importing
@@ -287,7 +295,7 @@ class SettingsBackup {
     }
 
     async _importSettingsFile(file) {
-        const dataString = this._utf8Decode(await utilReadFileArrayBuffer(file));
+        const dataString = this._utf8Decode(await this._readFileArrayBuffer(file));
         const data = JSON.parse(dataString);
 
         // Type check
