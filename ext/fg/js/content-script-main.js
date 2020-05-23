@@ -24,6 +24,19 @@
  * api
  */
 
+async function createPopupFactory() {
+    const {frameId} = await api.frameInformationGet();
+    if (typeof frameId !== 'number') {
+        const error = new Error('Failed to get frameId');
+        yomichan.logError(error);
+        throw error;
+    }
+
+    const popupFactory = new PopupFactory(frameId);
+    await popupFactory.prepare();
+    return popupFactory;
+}
+
 async function createIframePopupProxy(frameOffsetForwarder, setDisabled) {
     const rootPopupInformationPromise = yomichan.getTemporaryListenerResult(
         chrome.runtime.onMessage,
@@ -45,15 +58,7 @@ async function createIframePopupProxy(frameOffsetForwarder, setDisabled) {
 }
 
 async function getOrCreatePopup(depth) {
-    const {frameId} = await api.frameInformationGet();
-    if (typeof frameId !== 'number') {
-        const error = new Error('Failed to get frameId');
-        yomichan.logError(error);
-        throw error;
-    }
-
-    const popupFactory = new PopupFactory(frameId);
-    await popupFactory.prepare();
+    const popupFactory = await createPopupFactory();
 
     const popup = popupFactory.getOrCreatePopup(null, null, depth);
 
