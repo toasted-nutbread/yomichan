@@ -75,9 +75,15 @@ class Backend {
 
         this.popupWindow = null;
 
-        this._defaultBrowserActionTitle = null;
         this._isPrepared = false;
         this._prepareError = false;
+        this._preparePromise = null;
+        this._prepareCompletePromise = new Promise((resolve, reject) => {
+            this._prepareCompleteResolve = resolve;
+            this._prepareCompleteReject = reject;
+        });
+
+        this._defaultBrowserActionTitle = null;
         this._badgePrepareDelayTimer = null;
         this._logErrorLevel = null;
 
@@ -134,7 +140,26 @@ class Backend {
         ]);
     }
 
-    async prepare() {
+    prepare() {
+        if (this._preparePromise === null) {
+            const promise = this._prepareInternal();
+            promise.then(
+                (value) => {
+                    this._isPrepared = true;
+                    this._prepareCompleteResolve(value);
+                },
+                (error) => {
+                    this._prepareError = true;
+                    this._prepareCompleteReject(error);
+                }
+            );
+            promise.finally(() => this._updateBadge());
+            this._preparePromise = promise;
+        }
+        return this._prepareCompletePromise;
+    }
+
+    async _prepareInternal() {
         try {
             this._defaultBrowserActionTitle = await this._getBrowserIconTitle();
             this._badgePrepareDelayTimer = setTimeout(() => {
@@ -175,10 +200,7 @@ class Backend {
             this._sendMessageAllTabs('backendPrepared');
             const callback = () => this.checkLastError(chrome.runtime.lastError);
             chrome.runtime.sendMessage({action: 'backendPrepared'}, callback);
-
-            this._isPrepared = true;
         } catch (e) {
-            this._prepareError = true;
             yomichan.logError(e);
             throw e;
         } finally {
@@ -186,9 +208,11 @@ class Backend {
                 clearTimeout(this._badgePrepareDelayTimer);
                 this._badgePrepareDelayTimer = null;
             }
-
-            this._updateBadge();
         }
+    }
+
+    prepareComplete() {
+        return this._prepareCompletePromise;
     }
 
     isPrepared() {
