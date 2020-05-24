@@ -53,7 +53,7 @@ class SettingsPopupPreview {
         document.querySelector('#theme-dark-checkbox').addEventListener('change', this.onThemeDarkCheckboxChanged.bind(this), false);
 
         // Overwrite API functions
-        window.apiOptionsGet = this.apiOptionsGet.bind(this);
+        api.optionsGet = this.apiOptionsGet.bind(this);
 
         // Overwrite frontend
         const {frameId} = await api.frameInformationGet();
