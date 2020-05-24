@@ -344,6 +344,6 @@ class DOMDataBinder {
         }
 
         const number = parseFloat(value);
-        return Number.isNaN(number) ? number : null;
+        return !Number.isNaN(number) ? number : null;
     }
 }
