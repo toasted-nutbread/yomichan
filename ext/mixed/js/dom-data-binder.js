@@ -328,10 +328,22 @@ class DOMDataBinder {
         let value = parseFloat(element.value);
         if (!Number.isFinite(value)) { return 0; }
 
-        const {min, max, step} = element;
+        let {min, max, step} = element;
+        min = this._stringValueToNumberOrNull(min);
+        max = this._stringValueToNumberOrNull(max);
+        step = this._stringValueToNumberOrNull(step);
         if (typeof min === 'number') { value = Math.max(value, min); }
         if (typeof max === 'number') { value = Math.min(value, max); }
         if (typeof step === 'number' && step !== 0) { value = Math.round(value / step) * step; }
         return value;
+    }
+
+    _stringValueToNumberOrNull(value) {
+        if (typeof value !== 'string' || value.length === 0) {
+            return null;
+        }
+
+        const number = parseFloat(value);
+        return Number.isNaN(number) ? number : null;
     }
 }
