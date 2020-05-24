@@ -1048,8 +1048,9 @@ class Backend {
             {
                 const {path, value} = target;
                 if (typeof path !== 'string') { throw new Error('Invalid path'); }
-                accessor.set(ObjectPropertyAccessor.getPathArray(path), value);
-                return accessor.get(ObjectPropertyAccessor.getPathArray(path));
+                const pathArray = ObjectPropertyAccessor.getPathArray(path);
+                accessor.set(pathArray, value);
+                return accessor.get(pathArray);
             }
             case 'delete':
             {
