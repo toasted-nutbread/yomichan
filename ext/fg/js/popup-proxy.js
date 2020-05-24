@@ -16,7 +16,7 @@
  */
 
 /* global
- * crossFrame
+ * api
  */
 
 class PopupProxy {
@@ -111,7 +111,7 @@ class PopupProxy {
     // Private
 
     _invoke(action, params={}) {
-        return crossFrame.invoke(this._parentFrameId, action, params);
+        return api.crossFrame.invoke(this._parentFrameId, action, params);
     }
 
     async _updateFrameOffset() {

@@ -23,6 +23,15 @@ const api = (() => {
     class API {
         constructor() {
             this._forwardLogsToBackendEnabled = false;
+            this._crossFrame = new CrossFrameAPI();
+        }
+
+        get crossFrame() {
+            return this._crossFrame;
+        }
+
+        prepare() {
+            this._crossFrame.prepare();
         }
 
         forwardLogsToBackend() {
@@ -335,8 +344,8 @@ const api = (() => {
         }
     }
 
-    return new API();
+    // eslint-disable-next-line no-shadow
+    const api = new API();
+    api.prepare();
+    return api;
 })();
-
-const crossFrame = new CrossFrameAPI();
-crossFrame.prepare();

@@ -17,7 +17,7 @@
 
 /* global
  * Popup
- * crossFrame
+ * api
  */
 
 class PopupFactory {
@@ -29,7 +29,7 @@ class PopupFactory {
     // Public functions
 
     async prepare() {
-        crossFrame.registerHandlers([
+        api.crossFrame.registerHandlers([
             ['getOrCreatePopup',   {async: false, handler: this._onApiGetOrCreatePopup.bind(this)}],
             ['setOptionsContext',  {async: true,  handler: this._onApiSetOptionsContext.bind(this)}],
             ['hide',               {async: false, handler: this._onApiHide.bind(this)}],
