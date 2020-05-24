@@ -17,8 +17,7 @@
 
 /* global
  * DOMDataBinder
- * apiGetSettings
- * apiModifySettings
+ * api
  * getOptionsContext
  */
 
@@ -80,7 +79,7 @@ class DOMSettingsBinder {
             }
             settingsTargets.push(target);
         }
-        return this._transformResults(await apiGetSettings(settingsTargets), targets);
+        return this._transformResults(await api.getSettings(settingsTargets), targets);
     }
 
     async _setValues(targets) {
@@ -98,7 +97,7 @@ class DOMSettingsBinder {
             }
             settingsTargets.push(target);
         }
-        return this._transformResults(await apiModifySettings(settingsTargets), targets);
+        return this._transformResults(await api.modifySettings(settingsTargets), targets);
     }
 
     _transform(value, transform, metadata, element) {
