@@ -69,9 +69,12 @@ const api = (() => {
         getMedia(targets) { return this._invoke('getMedia', {targets}); }
         log(error, level, context) { return this._invoke('log', {error, level, context}); }
         logIndicatorClear() { return this._invoke('logIndicatorClear'); }
+        modifySettings(targets, source) { return this._invoke('modifySettings', {targets, source}); }
+
+        // Invoke functions with progress
+
         importDictionaryArchive(archiveContent, details, onProgress) { return this._invokeWithProgress('importDictionaryArchive', {archiveContent, details}, onProgress); }
         deleteDictionary(dictionaryName, onProgress) { return this._invokeWithProgress('deleteDictionary', {dictionaryName}, onProgress); }
-        modifySettings(targets, source) { return this._invoke('modifySettings', {targets, source}); }
 
         // Utilities
 
