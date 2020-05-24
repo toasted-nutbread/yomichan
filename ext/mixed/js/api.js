@@ -36,45 +36,151 @@ const api = (() => {
 
         // Invoke functions
 
-        optionsSchemaGet() { return this._invoke('optionsSchemaGet'); }
-        optionsGet(optionsContext) { return this._invoke('optionsGet', {optionsContext}); }
-        optionsGetFull() { return this._invoke('optionsGetFull'); }
-        optionsSave(source) { return this._invoke('optionsSave', {source}); }
-        termsFind(text, details, optionsContext) { return this._invoke('termsFind', {text, details, optionsContext}); }
-        textParse(text, optionsContext) { return this._invoke('textParse', {text, optionsContext}); }
-        kanjiFind(text, optionsContext) { return this._invoke('kanjiFind', {text, optionsContext}); }
-        definitionAdd(definition, mode, context, details, optionsContext) { return this._invoke('definitionAdd', {definition, mode, context, details, optionsContext}); }
-        definitionsAddable(definitions, modes, context, optionsContext) { return this._invoke('definitionsAddable', {definitions, modes, context, optionsContext}); }
-        noteView(noteId) { return this._invoke('noteView', {noteId}); }
-        templateRender(template, data) { return this._invoke('templateRender', {data, template}); }
-        audioGetUri(definition, source, details) { return this._invoke('audioGetUri', {definition, source, details}); }
-        commandExec(command, params) { return this._invoke('commandExec', {command, params}); }
-        screenshotGet(options) { return this._invoke('screenshotGet', {options}); }
-        sendMessageToFrame(frameId, action, params) { return this._invoke('sendMessageToFrame', {frameId, action, params}); }
-        broadcastTab(action, params) { return this._invoke('broadcastTab', {action, params}); }
-        frameInformationGet() { return this._invoke('frameInformationGet'); }
-        injectStylesheet(type, value) { return this._invoke('injectStylesheet', {type, value}); }
-        getEnvironmentInfo() { return this._invoke('getEnvironmentInfo'); }
-        clipboardGet() { return this._invoke('clipboardGet'); }
-        getDisplayTemplatesHtml() { return this._invoke('getDisplayTemplatesHtml'); }
-        getQueryParserTemplatesHtml() { return this._invoke('getQueryParserTemplatesHtml'); }
-        getZoom() { return this._invoke('getZoom'); }
-        getDefaultAnkiFieldTemplates() { return this._invoke('getDefaultAnkiFieldTemplates'); }
-        getAnkiDeckNames() { return this._invoke('getAnkiDeckNames'); }
-        getAnkiModelNames() { return this._invoke('getAnkiModelNames'); }
-        getAnkiModelFieldNames(modelName) { return this._invoke('getAnkiModelFieldNames', {modelName}); }
-        getDictionaryInfo() { return this._invoke('getDictionaryInfo'); }
-        getDictionaryCounts(dictionaryNames, getTotal) { return this._invoke('getDictionaryCounts', {dictionaryNames, getTotal}); }
-        purgeDatabase() { return this._invoke('purgeDatabase'); }
-        getMedia(targets) { return this._invoke('getMedia', {targets}); }
-        log(error, level, context) { return this._invoke('log', {error, level, context}); }
-        logIndicatorClear() { return this._invoke('logIndicatorClear'); }
-        modifySettings(targets, source) { return this._invoke('modifySettings', {targets, source}); }
+        optionsSchemaGet() {
+            return this._invoke('optionsSchemaGet');
+        }
+
+        optionsGet(optionsContext) {
+            return this._invoke('optionsGet', {optionsContext});
+        }
+
+        optionsGetFull() {
+            return this._invoke('optionsGetFull');
+        }
+
+        optionsSave(source) {
+            return this._invoke('optionsSave', {source});
+        }
+
+        termsFind(text, details, optionsContext) {
+            return this._invoke('termsFind', {text, details, optionsContext});
+        }
+
+        textParse(text, optionsContext) {
+            return this._invoke('textParse', {text, optionsContext});
+        }
+
+        kanjiFind(text, optionsContext) {
+            return this._invoke('kanjiFind', {text, optionsContext});
+        }
+
+        definitionAdd(definition, mode, context, details, optionsContext) {
+            return this._invoke('definitionAdd', {definition, mode, context, details, optionsContext});
+        }
+
+        definitionsAddable(definitions, modes, context, optionsContext) {
+            return this._invoke('definitionsAddable', {definitions, modes, context, optionsContext});
+        }
+
+        noteView(noteId) {
+            return this._invoke('noteView', {noteId});
+        }
+
+        templateRender(template, data) {
+            return this._invoke('templateRender', {data, template});
+        }
+
+        audioGetUri(definition, source, details) {
+            return this._invoke('audioGetUri', {definition, source, details});
+        }
+
+        commandExec(command, params) {
+            return this._invoke('commandExec', {command, params});
+        }
+
+        screenshotGet(options) {
+            return this._invoke('screenshotGet', {options});
+        }
+
+        sendMessageToFrame(frameId, action, params) {
+            return this._invoke('sendMessageToFrame', {frameId, action, params});
+        }
+
+        broadcastTab(action, params) {
+            return this._invoke('broadcastTab', {action, params});
+        }
+
+        frameInformationGet() {
+            return this._invoke('frameInformationGet');
+        }
+
+        injectStylesheet(type, value) {
+            return this._invoke('injectStylesheet', {type, value});
+        }
+
+        getEnvironmentInfo() {
+            return this._invoke('getEnvironmentInfo');
+        }
+
+        clipboardGet() {
+            return this._invoke('clipboardGet');
+        }
+
+        getDisplayTemplatesHtml() {
+            return this._invoke('getDisplayTemplatesHtml');
+        }
+
+        getQueryParserTemplatesHtml() {
+            return this._invoke('getQueryParserTemplatesHtml');
+        }
+
+        getZoom() {
+            return this._invoke('getZoom');
+        }
+
+        getDefaultAnkiFieldTemplates() {
+            return this._invoke('getDefaultAnkiFieldTemplates');
+        }
+
+        getAnkiDeckNames() {
+            return this._invoke('getAnkiDeckNames');
+        }
+
+        getAnkiModelNames() {
+            return this._invoke('getAnkiModelNames');
+        }
+
+        getAnkiModelFieldNames(modelName) {
+            return this._invoke('getAnkiModelFieldNames', {modelName});
+        }
+
+        getDictionaryInfo() {
+            return this._invoke('getDictionaryInfo');
+        }
+
+        getDictionaryCounts(dictionaryNames, getTotal) {
+            return this._invoke('getDictionaryCounts', {dictionaryNames, getTotal});
+        }
+
+        purgeDatabase() {
+            return this._invoke('purgeDatabase');
+        }
+
+        getMedia(targets) {
+            return this._invoke('getMedia', {targets});
+        }
+
+        log(error, level, context) {
+            return this._invoke('log', {error, level, context});
+        }
+
+        logIndicatorClear() {
+            return this._invoke('logIndicatorClear');
+        }
+
+        modifySettings(targets, source) {
+            return this._invoke('modifySettings', {targets, source});
+        }
 
         // Invoke functions with progress
 
-        importDictionaryArchive(archiveContent, details, onProgress) { return this._invokeWithProgress('importDictionaryArchive', {archiveContent, details}, onProgress); }
-        deleteDictionary(dictionaryName, onProgress) { return this._invokeWithProgress('deleteDictionary', {dictionaryName}, onProgress); }
+        importDictionaryArchive(archiveContent, details, onProgress) {
+            return this._invokeWithProgress('importDictionaryArchive', {archiveContent, details}, onProgress);
+        }
+
+        deleteDictionary(dictionaryName, onProgress) {
+            return this._invokeWithProgress('deleteDictionary', {dictionaryName}, onProgress);
+        }
 
         // Utilities
 
