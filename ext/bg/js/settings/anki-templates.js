@@ -102,7 +102,7 @@ async function ankiTemplatesValidate(infoNode, field, mode, showSuccessResult, i
             };
             let templates = options.anki.fieldTemplates;
             if (typeof templates !== 'string') { templates = await api.getDefaultAnkiFieldTemplates(); }
-            const ankiNoteBuilder = new AnkiNoteBuilder({renderTemplate: api.templateRender});
+            const ankiNoteBuilder = new AnkiNoteBuilder({renderTemplate: api.templateRender.bind(api)});
             result = await ankiNoteBuilder.formatField(field, definition, mode, context, options, templates, exceptions);
         }
     } catch (e) {

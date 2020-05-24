@@ -26,7 +26,7 @@
 class SettingsPopupPreview {
     constructor() {
         this.frontend = null;
-        this.apiOptionsGetOld = api.optionsGet;
+        this.apiOptionsGetOld = api.optionsGet.bind(api);
         this.popup = null;
         this.popupSetCustomOuterCssOld = null;
         this.popupShown = false;
