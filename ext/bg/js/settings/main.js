@@ -23,9 +23,9 @@
  * ProfileController
  * SettingsBackup
  * SettingsController
+ * StorageController
  * api
  * appearanceInitialize
- * storageInfoInitialize
  * utilBackend
  * utilBackgroundIsolate
  */
@@ -318,20 +318,21 @@ async function onReady() {
 
     showExtensionInformation();
 
+    const storageController = new StorageController();
+    storageController.prepare();
+
     await settingsPopulateModifierKeys();
     formSetupEventListeners();
     appearanceInitialize();
     new AudioController().prepare();
     await (new ProfileController()).prepare();
-    dictionaryController = new DictionaryController();
+    dictionaryController = new DictionaryController(storageController);
     dictionaryController.prepare();
     ankiController = new AnkiController();
     ankiController.prepare();
     ankiTemplatesController = new AnkiTemplatesController(ankiController);
     ankiTemplatesController.prepare();
     new SettingsBackup().prepare();
-
-    storageInfoInitialize();
 
     yomichan.on('optionsUpdated', onOptionsUpdated);
 }

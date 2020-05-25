@@ -22,8 +22,6 @@
  * getOptionsFullMutable
  * getOptionsMutable
  * settingsSaveOptions
- * storageEstimate
- * storageUpdateStats
  * utilBackgroundIsolate
  */
 
@@ -386,7 +384,8 @@ class SettingsDictionaryExtraUI {
 }
 
 class DictionaryController {
-    constructor() {
+    constructor(storageController) {
+        this._storageController = storageController;
         this._dictionaryUI = null;
         this._dictionaryErrorToStringOverrides = [
             [
@@ -640,9 +639,7 @@ class DictionaryController {
             dictControls.show();
             dictProgress.hidden = true;
 
-            if (storageEstimate.mostRecent !== null) {
-                storageUpdateStats();
-            }
+            this._storageController.updateStats();
         }
     }
 
@@ -665,9 +662,7 @@ class DictionaryController {
             const setProgress = (percent) => dictProgress.find('.progress-bar').css('width', `${percent}%`);
             const updateProgress = (total, current) => {
                 setProgress(current / total * 100.0);
-                if (storageEstimate.mostRecent !== null && !storageUpdateStats.isUpdating) {
-                    storageUpdateStats();
-                }
+                this._storageController.updateStats();
             };
 
             const optionsFull = await api.optionsGetFull();
