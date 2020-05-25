@@ -25,6 +25,7 @@ class PopupPreviewController {
         this._previewVisible = false;
         this._targetOrigin = chrome.runtime.getURL('/').replace(/\/$/, '');
         this._frame = null;
+        this._previewTextInput = null;
     }
 
     prepare() {
@@ -46,8 +47,9 @@ class PopupPreviewController {
         const text = document.querySelector('#settings-popup-preview-text');
         const customCss = document.querySelector('#custom-popup-css');
         const customOuterCss = document.querySelector('#custom-popup-outer-css');
-
         const frame = document.createElement('iframe');
+
+        this._previewTextInput = text;
         this._frame = frame;
 
         wanakana.bind(text);
@@ -69,11 +71,12 @@ class PopupPreviewController {
     }
 
     _onFrameLoad() {
-        this._invoke('prepare', {optionsContext: getOptionsContext()});
+        this._onOptionsContextChange();
+        this._setText(this._previewTextInput.value);
     }
 
     _onTextChange(e) {
-        this._invoke('setText', {text: e.currentTarget.value});
+        this._setText(e.currentTarget.value);
     }
 
     _onCustomCssChange(e) {
@@ -86,6 +89,10 @@ class PopupPreviewController {
 
     _onOptionsContextChange() {
         this._invoke('updateOptionsContext', {optionsContext: getOptionsContext()});
+    }
+
+    _setText(text) {
+        this._invoke('setText', {text});
     }
 
     _invoke(action, params) {
