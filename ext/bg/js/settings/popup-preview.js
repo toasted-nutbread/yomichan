@@ -20,65 +20,76 @@
  * wanakana
  */
 
-function appearanceInitialize() {
-    let previewVisible = false;
-    $('#settings-popup-preview-button').on('click', () => {
-        if (previewVisible) { return; }
-        showAppearancePreview();
-        previewVisible = true;
-    });
-}
+class PopupPreviewController {
+    constructor() {
+        this._previewVisible = false;
+        this._targetOrigin = chrome.runtime.getURL('/').replace(/\/$/, '');
+        this._frame = null;
+    }
 
-function showAppearancePreview() {
-    const container = $('#settings-popup-preview-container');
-    const buttonContainer = $('#settings-popup-preview-button-container');
-    const settings = $('#settings-popup-preview-settings');
-    const text = $('#settings-popup-preview-text');
-    const customCss = $('#custom-popup-css');
-    const customOuterCss = $('#custom-popup-outer-css');
+    prepare() {
+        document.querySelector('#settings-popup-preview-button').addEventListener('click', this._onShowPopupPreviewButtonClick.bind(this), false);
+    }
 
-    const frame = document.createElement('iframe');
-    frame.src = '/bg/settings-popup-preview.html';
-    frame.id = 'settings-popup-preview-frame';
+    // Private
 
-    wanakana.bind(text[0]);
+    _onShowPopupPreviewButtonClick() {
+        if (this._previewVisible) { return; }
+        this._showAppearancePreview();
+        this._previewVisible = true;
+    }
 
-    const targetOrigin = chrome.runtime.getURL('/').replace(/\/$/, '');
+    _showAppearancePreview() {
+        const container = document.querySelector('#settings-popup-preview-container');
+        const buttonContainer = document.querySelector('#settings-popup-preview-button-container');
+        const settings = document.querySelector('#settings-popup-preview-settings');
+        const text = document.querySelector('#settings-popup-preview-text');
+        const customCss = document.querySelector('#custom-popup-css');
+        const customOuterCss = document.querySelector('#custom-popup-outer-css');
 
-    text.on('input', () => {
-        const action = 'setText';
-        const params = {text: text.val()};
-        frame.contentWindow.postMessage({action, params}, targetOrigin);
-    });
-    customCss.on('input', () => {
-        const action = 'setCustomCss';
-        const params = {css: customCss.val()};
-        frame.contentWindow.postMessage({action, params}, targetOrigin);
-    });
-    customOuterCss.on('input', () => {
-        const action = 'setCustomOuterCss';
-        const params = {css: customOuterCss.val()};
-        frame.contentWindow.postMessage({action, params}, targetOrigin);
-    });
+        const frame = document.createElement('iframe');
+        this._frame = frame;
 
-    const updateOptionsContext = () => {
-        const action = 'updateOptionsContext';
-        const params = {
-            optionsContext: getOptionsContext()
-        };
-        frame.contentWindow.postMessage({action, params}, targetOrigin);
-    };
-    yomichan.on('modifyingProfileChange', updateOptionsContext);
+        wanakana.bind(text);
 
-    frame.addEventListener('load', () => {
-        const action = 'prepare';
-        const params = {
-            optionsContext: getOptionsContext()
-        };
-        frame.contentWindow.postMessage({action, params}, targetOrigin);
-    });
+        frame.addEventListener('load', this._onFrameLoad.bind(this), false);
+        text.addEventListener('input', this._onTextChange.bind(this), false);
+        customCss.addEventListener('input', this._onCustomCssChange.bind(this), false);
+        customOuterCss.addEventListener('input', this._onCustomOuterCssChange.bind(this), false);
+        yomichan.on('modifyingProfileChange', this._onOptionsContextChange.bind(this));
 
-    container.append(frame);
-    buttonContainer.remove();
-    settings.css('display', '');
+        frame.src = '/bg/settings-popup-preview.html';
+        frame.id = 'settings-popup-preview-frame';
+
+        container.appendChild(frame);
+        if (buttonContainer.parentNode !== null) {
+            buttonContainer.parentNode.removeChild(buttonContainer);
+        }
+        settings.style.display = '';
+    }
+
+    _onFrameLoad() {
+        this._invoke('prepare', {optionsContext: getOptionsContext()});
+    }
+
+    _onTextChange(e) {
+        this._invoke('setText', {text: e.currentTarget.value});
+    }
+
+    _onCustomCssChange(e) {
+        this._invoke('setCustomCss', {css: e.currentTarget.value});
+    }
+
+    _onCustomOuterCssChange(e) {
+        this._invoke('setCustomOuterCss', {css: e.currentTarget.value});
+    }
+
+    _onOptionsContextChange() {
+        this._invoke('updateOptionsContext', {optionsContext: getOptionsContext()});
+    }
+
+    _invoke(action, params) {
+        if (this._frame === null || this._frame.contentWindow === null) { return; }
+        this._frame.contentWindow.postMessage({action, params}, this._targetOrigin);
+    }
 }
