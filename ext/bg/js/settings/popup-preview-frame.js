@@ -37,23 +37,23 @@ class SettingsPopupPreview {
 
         this._windowMessageHandlers = new Map([
             ['prepare', ({optionsContext}) => this.prepare(optionsContext)],
-            ['setText', ({text}) => this.setText(text)],
-            ['setCustomCss', ({css}) => this.setCustomCss(css)],
-            ['setCustomOuterCss', ({css}) => this.setCustomOuterCss(css)],
-            ['updateOptionsContext', ({optionsContext}) => this.updateOptionsContext(optionsContext)]
+            ['setText', ({text}) => this._setText(text)],
+            ['setCustomCss', ({css}) => this._setCustomCss(css)],
+            ['setCustomOuterCss', ({css}) => this._setCustomOuterCss(css)],
+            ['updateOptionsContext', ({optionsContext}) => this._updateOptionsContext(optionsContext)]
         ]);
 
-        window.addEventListener('message', this.onMessage.bind(this), false);
+        window.addEventListener('message', this._onMessage.bind(this), false);
     }
 
     async prepare(optionsContext) {
         this._optionsContext = optionsContext;
 
         // Setup events
-        document.querySelector('#theme-dark-checkbox').addEventListener('change', this.onThemeDarkCheckboxChanged.bind(this), false);
+        document.querySelector('#theme-dark-checkbox').addEventListener('change', this._onThemeDarkCheckboxChanged.bind(this), false);
 
         // Overwrite API functions
-        api.optionsGet = this.apiOptionsGet.bind(this);
+        api.optionsGet = this._apiOptionsGet.bind(this);
 
         // Overwrite frontend
         const {frameId} = await api.frameInformationGet();
@@ -65,7 +65,7 @@ class SettingsPopupPreview {
         this._popup.setChildrenSupported(false);
 
         this._popupSetCustomOuterCssOld = this._popup.setCustomOuterCss;
-        this._popup.setCustomOuterCss = this.popupSetCustomOuterCss.bind(this);
+        this._popup.setCustomOuterCss = this._popupSetCustomOuterCss.bind(this);
 
         this._frontend = new Frontend(this._popup);
         this._frontend.getOptionsContext = async () => this._optionsContext;
@@ -74,10 +74,12 @@ class SettingsPopupPreview {
         this._frontend.canClearSelection = false;
 
         // Update search
-        this.updateSearch();
+        this._updateSearch();
     }
 
-    async apiOptionsGet(...args) {
+    // Private
+
+    async _apiOptionsGet(...args) {
         const options = await this._apiOptionsGetOld(...args);
         options.general.enable = true;
         options.general.debugInfo = false;
@@ -93,7 +95,7 @@ class SettingsPopupPreview {
         return options;
     }
 
-    async popupSetCustomOuterCss(...args) {
+    async _popupSetCustomOuterCss(...args) {
         // This simulates the stylesheet priorities when injecting using the web extension API.
         const result = await this._popupSetCustomOuterCssOld.call(this._popup, ...args);
 
@@ -105,7 +107,7 @@ class SettingsPopupPreview {
         return result;
     }
 
-    onMessage(e) {
+    _onMessage(e) {
         if (e.origin !== this._targetOrigin) { return; }
 
         const {action, params} = e.data;
@@ -115,7 +117,7 @@ class SettingsPopupPreview {
         handler(params);
     }
 
-    onThemeDarkCheckboxChanged(e) {
+    _onThemeDarkCheckboxChanged(e) {
         document.documentElement.classList.toggle('dark', e.target.checked);
         if (this._themeChangeTimeout !== null) {
             clearTimeout(this._themeChangeTimeout);
@@ -126,38 +128,38 @@ class SettingsPopupPreview {
         }, 300);
     }
 
-    setText(text) {
+    _setText(text) {
         const exampleText = document.querySelector('#example-text');
         if (exampleText === null) { return; }
 
         exampleText.textContent = text;
-        this.updateSearch();
+        this._updateSearch();
     }
 
-    setInfoVisible(visible) {
+    _setInfoVisible(visible) {
         const node = document.querySelector('.placeholder-info');
         if (node === null) { return; }
 
         node.classList.toggle('placeholder-info-visible', visible);
     }
 
-    setCustomCss(css) {
+    _setCustomCss(css) {
         if (this._frontend === null) { return; }
         this._popup.setCustomCss(css);
     }
 
-    setCustomOuterCss(css) {
+    _setCustomOuterCss(css) {
         if (this._frontend === null) { return; }
         this._popup.setCustomOuterCss(css, false);
     }
 
-    async updateOptionsContext(optionsContext) {
+    async _updateOptionsContext(optionsContext) {
         this._optionsContext = optionsContext;
         await this._frontend.updateOptions();
-        await this.updateSearch();
+        await this._updateSearch();
     }
 
-    async updateSearch() {
+    async _updateSearch() {
         const exampleText = document.querySelector('#example-text');
         if (exampleText === null) { return; }
 
@@ -180,6 +182,6 @@ class SettingsPopupPreview {
             this._popupShown = true;
         }
 
-        this.setInfoVisible(!this._popupShown);
+        this._setInfoVisible(!this._popupShown);
     }
 }
