@@ -20,7 +20,8 @@
  * api
  */
 
-(() => {
+(async () => {
     api.forwardLogsToBackend();
-    new SettingsPopupPreview();
+    const preview = new SettingsPopupPreview();
+    await preview.prepare();
 })();

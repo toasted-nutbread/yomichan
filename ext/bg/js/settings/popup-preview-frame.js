@@ -37,18 +37,15 @@ class SettingsPopupPreview {
         this._targetOrigin = chrome.runtime.getURL('/').replace(/\/$/, '');
 
         this._windowMessageHandlers = new Map([
-            ['prepare', ({optionsContext}) => this.prepare(optionsContext)],
             ['setText', ({text}) => this._setText(text)],
             ['setCustomCss', ({css}) => this._setCustomCss(css)],
             ['setCustomOuterCss', ({css}) => this._setCustomOuterCss(css)],
             ['updateOptionsContext', ({optionsContext}) => this._updateOptionsContext(optionsContext)]
         ]);
-
-        window.addEventListener('message', this._onMessage.bind(this), false);
     }
 
-    async prepare(optionsContext) {
-        this._optionsContext = optionsContext;
+    async prepare() {
+        window.addEventListener('message', this._onMessage.bind(this), false);
 
         // Setup events
         document.querySelector('#theme-dark-checkbox').addEventListener('change', this._onThemeDarkCheckboxChanged.bind(this), false);
