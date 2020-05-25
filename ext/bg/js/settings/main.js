@@ -19,6 +19,7 @@
  * AnkiController
  * AnkiTemplatesController
  * AudioController
+ * ClipboardPopupsController
  * DictionaryController
  * GenericSettingController
  * PopupPreviewController
@@ -54,34 +55,6 @@ function getOptionsMutable(optionsContext) {
 
 function getOptionsFullMutable() {
     return utilBackend().getFullOptions();
-}
-
-function formSetupEventListeners() {
-    document.querySelector('#enable-clipboard-popups').addEventListener('change', onEnableClipboardPopupsChanged, false);
-}
-
-async function onEnableClipboardPopupsChanged(e) {
-    const optionsContext = getOptionsContext();
-    const options = await getOptionsMutable(optionsContext);
-
-    const enableClipboardPopups = e.target.checked;
-    if (enableClipboardPopups) {
-        options.general.enableClipboardPopups = await new Promise((resolve) => {
-            chrome.permissions.request(
-                {permissions: ['clipboardRead']},
-                (granted) => {
-                    if (!granted) {
-                        $('#enable-clipboard-popups').prop('checked', false);
-                    }
-                    resolve(granted);
-                }
-            );
-        });
-    } else {
-        options.general.enableClipboardPopups = false;
-    }
-
-    await settingsSaveOptions();
 }
 
 
@@ -172,7 +145,7 @@ async function onReady() {
     await settingsPopulateModifierKeys();
     genericSettingController = new GenericSettingController();
     genericSettingController.prepare();
-    formSetupEventListeners();
+    new ClipboardPopupsController().prepare();
     new PopupPreviewController().prepare();
     new AudioController().prepare();
     await (new ProfileController()).prepare();
