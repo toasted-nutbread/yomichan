@@ -24,7 +24,6 @@
  * appearanceInitialize
  * audioSettingsInitialize
  * dictSettingsInitialize
- * getOptionsContext
  * onAnkiOptionsChanged
  * onDictionaryOptionsChanged
  * profileOptionsSetup
@@ -32,6 +31,21 @@
  * utilBackend
  * utilBackgroundIsolate
  */
+
+let profileIndex = 0;
+
+function getOptionsContext() {
+    return {index: getProfileIndex()};
+}
+
+function getProfileIndex() {
+    return profileIndex;
+}
+
+function setProfileIndex(value) {
+    profileIndex = value;
+}
+
 
 function getOptionsMutable(optionsContext) {
     return utilBackend().getOptions(

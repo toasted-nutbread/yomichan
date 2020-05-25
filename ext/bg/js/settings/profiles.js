@@ -20,26 +20,21 @@
  * api
  * conditionsClearCaches
  * getOptionsFullMutable
+ * getProfileIndex
  * onOptionsUpdated
  * profileConditionsDescriptor
  * profileConditionsDescriptorPromise
+ * setProfileIndex
  * settingsSaveOptions
  * utilBackgroundIsolate
  */
 
-let currentProfileIndex = 0;
 let profileConditionsContainer = null;
-
-function getOptionsContext() {
-    return {
-        index: currentProfileIndex
-    };
-}
 
 
 async function profileOptionsSetup() {
     const optionsFull = await getOptionsFullMutable();
-    currentProfileIndex = optionsFull.profileCurrent;
+    setProfileIndex(optionsFull.profileCurrent);
 
     profileOptionsSetupEventListeners();
     await profileOptionsUpdateTarget(optionsFull);
@@ -70,6 +65,7 @@ function tryGetIntegerValue(selector, min, max) {
 }
 
 async function profileFormRead(optionsFull) {
+    const currentProfileIndex = getProfileIndex();
     const profile = optionsFull.profiles[currentProfileIndex];
 
     // Current profile
@@ -83,6 +79,7 @@ async function profileFormRead(optionsFull) {
 }
 
 async function profileFormWrite(optionsFull) {
+    const currentProfileIndex = getProfileIndex();
     const profile = optionsFull.profiles[currentProfileIndex];
 
     profileOptionsPopulateSelect($('#profile-active'), optionsFull.profiles, optionsFull.profileCurrent, null);
@@ -180,12 +177,13 @@ async function onProfileOptionsChanged(e) {
 
 async function onTargetProfileChanged() {
     const optionsFull = await getOptionsFullMutable();
+    const currentProfileIndex = getProfileIndex();
     const index = tryGetIntegerValue('#profile-target', 0, optionsFull.profiles.length);
     if (index === null || currentProfileIndex === index) {
         return;
     }
 
-    currentProfileIndex = index;
+    setProfileIndex(index);
 
     await profileOptionsUpdateTarget(optionsFull);
 
@@ -194,11 +192,12 @@ async function onTargetProfileChanged() {
 
 async function onProfileAdd() {
     const optionsFull = await getOptionsFullMutable();
+    const currentProfileIndex = getProfileIndex();
     const profile = utilBackgroundIsolate(optionsFull.profiles[currentProfileIndex]);
     profile.name = profileOptionsCreateCopyName(profile.name, optionsFull.profiles, 100);
     optionsFull.profiles.push(profile);
 
-    currentProfileIndex = optionsFull.profiles.length - 1;
+    setProfileIndex(optionsFull.profiles.length - 1);
 
     await profileOptionsUpdateTarget(optionsFull);
     await settingsSaveOptions();
@@ -216,6 +215,7 @@ async function onProfileRemove(e) {
         return;
     }
 
+    const currentProfileIndex = getProfileIndex();
     const profile = optionsFull.profiles[currentProfileIndex];
 
     $('#profile-remove-modal-profile-name').text(profile.name);
@@ -230,10 +230,11 @@ async function onProfileRemoveConfirm() {
         return;
     }
 
+    const currentProfileIndex = getProfileIndex();
     optionsFull.profiles.splice(currentProfileIndex, 1);
 
     if (currentProfileIndex >= optionsFull.profiles.length) {
-        --currentProfileIndex;
+        setProfileIndex(optionsFull.profiles.length - 1);
     }
 
     if (optionsFull.profileCurrent >= optionsFull.profiles.length) {
@@ -247,11 +248,13 @@ async function onProfileRemoveConfirm() {
 }
 
 function onProfileNameChanged() {
+    const currentProfileIndex = getProfileIndex();
     $('#profile-active, #profile-target').find(`[value="${currentProfileIndex}"]`).text(this.value);
 }
 
 async function onProfileMove(offset) {
     const optionsFull = await getOptionsFullMutable();
+    const currentProfileIndex = getProfileIndex();
     const index = currentProfileIndex + offset;
     if (index < 0 || index >= optionsFull.profiles.length) {
         return;
@@ -265,7 +268,7 @@ async function onProfileMove(offset) {
         optionsFull.profileCurrent = index;
     }
 
-    currentProfileIndex = index;
+    setProfileIndex(index);
 
     await profileOptionsUpdateTarget(optionsFull);
     await settingsSaveOptions();
@@ -279,6 +282,7 @@ async function onProfileCopy() {
         return;
     }
 
+    const currentProfileIndex = getProfileIndex();
     profileOptionsPopulateSelect($('#profile-copy-source'), optionsFull.profiles, currentProfileIndex === 0 ? 1 : 0, [currentProfileIndex]);
     $('#profile-copy-modal').modal('show');
 }
@@ -288,6 +292,7 @@ async function onProfileCopyConfirm() {
 
     const optionsFull = await getOptionsFullMutable();
     const index = tryGetIntegerValue('#profile-copy-source', 0, optionsFull.profiles.length);
+    const currentProfileIndex = getProfileIndex();
     if (index === null || index === currentProfileIndex) {
         return;
     }
