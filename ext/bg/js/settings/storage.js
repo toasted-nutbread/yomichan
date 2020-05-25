@@ -15,10 +15,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/* global
- * api
- */
-
 class StorageController {
     constructor() {
         this._mostRecentStorageEstimate = null;
@@ -26,12 +22,8 @@ class StorageController {
         this._isUpdating = false;
     }
 
-    async prepare() {
+    prepare() {
         this._preparePersistentStorage();
-        const {browser, platform} = await api.getEnvironmentInfo();
-        document.documentElement.dataset.browser = browser;
-        document.documentElement.dataset.operatingSystem = platform.os;
-
         this.updateStats();
         document.querySelector('#storage-refresh').addEventListener('click', this.updateStats.bind(this), false);
     }

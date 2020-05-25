@@ -305,6 +305,12 @@ async function settingsPopulateModifierKeys() {
     }
 }
 
+async function setupEnvironmentInfo() {
+    const {browser, platform} = await api.getEnvironmentInfo();
+    document.documentElement.dataset.browser = browser;
+    document.documentElement.dataset.operatingSystem = platform.os;
+}
+
 let ankiController = null;
 let ankiTemplatesController = null;
 let dictionaryController = null;
@@ -316,6 +322,7 @@ async function onReady() {
     const settingsController = new SettingsController();
     settingsController.prepare();
 
+    setupEnvironmentInfo();
     showExtensionInformation();
 
     const storageController = new StorageController();
