@@ -16,7 +16,6 @@
  */
 
 /* global
- * AudioSourceUI
  * AudioSystem
  * getOptionsContext
  * getOptionsMutable
@@ -37,7 +36,7 @@ class AudioController {
 
         const optionsContext = getOptionsContext();
         const options = await getOptionsMutable(optionsContext);
-        this.audioSourceUI = new AudioSourceUI.Container(
+        this.audioSourceUI = new AudioSourceContainer(
             options.audio.sources,
             document.querySelector('.audio-source-list'),
             document.querySelector('.audio-source-add')
@@ -45,6 +44,12 @@ class AudioController {
         this.audioSourceUI.save = settingsSaveOptions;
 
         this._prepareTextToSpeech();
+    }
+
+    static instantiateTemplate(templateSelector) {
+        const template = document.querySelector(templateSelector);
+        const content = document.importNode(template.content, true);
+        return content.firstChild;
     }
 
     // Private
@@ -127,5 +132,120 @@ class AudioController {
 
     _onTextToSpeechVoiceChange(e) {
         e.currentTarget.dataset.value = e.currentTarget.value;
+    }
+}
+
+class AudioSourceContainer {
+    constructor(audioSources, container, addButton) {
+        this.audioSources = audioSources;
+        this.container = container;
+        this.addButton = addButton;
+        this.children = [];
+
+        this.container.textContent = '';
+
+        for (const audioSource of toIterable(audioSources)) {
+            this.children.push(new AudioSourceEntry(this, audioSource, this.children.length));
+        }
+
+        this._clickListener = this.onAddAudioSource.bind(this);
+        this.addButton.addEventListener('click', this._clickListener, false);
+    }
+
+    cleanup() {
+        for (const child of this.children) {
+            child.cleanup();
+        }
+
+        this.addButton.removeEventListener('click', this._clickListener, false);
+        this.container.textContent = '';
+        this._clickListener = null;
+    }
+
+    save() {
+        // Override
+    }
+
+    remove(child) {
+        const index = this.children.indexOf(child);
+        if (index < 0) {
+            return;
+        }
+
+        child.cleanup();
+        this.children.splice(index, 1);
+        this.audioSources.splice(index, 1);
+
+        for (let i = index; i < this.children.length; ++i) {
+            this.children[i].index = i;
+        }
+    }
+
+    onAddAudioSource() {
+        const audioSource = this.getUnusedAudioSource();
+        this.audioSources.push(audioSource);
+        this.save();
+        this.children.push(new AudioSourceEntry(this, audioSource, this.children.length));
+    }
+
+    getUnusedAudioSource() {
+        const audioSourcesAvailable = [
+            'jpod101',
+            'jpod101-alternate',
+            'jisho',
+            'custom'
+        ];
+        for (const source of audioSourcesAvailable) {
+            if (this.audioSources.indexOf(source) < 0) {
+                return source;
+            }
+        }
+        return audioSourcesAvailable[0];
+    }
+}
+
+class AudioSourceEntry {
+    constructor(parent, audioSource, index) {
+        this.parent = parent;
+        this.audioSource = audioSource;
+        this.index = index;
+
+        this.container = AudioController.instantiateTemplate('#audio-source-template');
+        this.select = this.container.querySelector('.audio-source-select');
+        this.removeButton = this.container.querySelector('.audio-source-remove');
+
+        this.select.value = audioSource;
+
+        this._selectChangeListener = this.onSelectChanged.bind(this);
+        this._removeClickListener = this.onRemoveClicked.bind(this);
+
+        this.select.addEventListener('change', this._selectChangeListener, false);
+        this.removeButton.addEventListener('click', this._removeClickListener, false);
+
+        parent.container.appendChild(this.container);
+    }
+
+    cleanup() {
+        this.select.removeEventListener('change', this._selectChangeListener, false);
+        this.removeButton.removeEventListener('click', this._removeClickListener, false);
+
+        if (this.container.parentNode !== null) {
+            this.container.parentNode.removeChild(this.container);
+        }
+    }
+
+    save() {
+        this.parent.save();
+    }
+
+    onSelectChanged() {
+        this.audioSource = this.select.value;
+        this.parent.audioSources[this.index] = this.audioSource;
+        this.save();
+    }
+
+    onRemoveClicked() {
+        this.parent.remove(this);
+        this.save();
     }
 }
