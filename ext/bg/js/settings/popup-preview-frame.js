@@ -37,10 +37,10 @@ class SettingsPopupPreview {
         this._targetOrigin = chrome.runtime.getURL('/').replace(/\/$/, '');
 
         this._windowMessageHandlers = new Map([
-            ['setText', ({text}) => this._setText(text)],
-            ['setCustomCss', ({css}) => this._setCustomCss(css)],
-            ['setCustomOuterCss', ({css}) => this._setCustomOuterCss(css)],
-            ['updateOptionsContext', ({optionsContext}) => this._updateOptionsContext(optionsContext)]
+            ['setText',              this._setText.bind(this)],
+            ['setCustomCss',         this._setCustomCss.bind(this)],
+            ['setCustomOuterCss',    this._setCustomOuterCss.bind(this)],
+            ['updateOptionsContext', this._updateOptionsContext.bind(this)]
         ]);
     }
 
@@ -135,7 +135,7 @@ class SettingsPopupPreview {
         }, 300);
     }
 
-    _setText(text) {
+    _setText({text}) {
         const exampleText = document.querySelector('#example-text');
         if (exampleText === null) { return; }
 
@@ -150,17 +150,17 @@ class SettingsPopupPreview {
         node.classList.toggle('placeholder-info-visible', visible);
     }
 
-    _setCustomCss(css) {
+    _setCustomCss({css}) {
         if (this._frontend === null) { return; }
         this._popup.setCustomCss(css);
     }
 
-    _setCustomOuterCss(css) {
+    _setCustomOuterCss({css}) {
         if (this._frontend === null) { return; }
         this._popup.setCustomOuterCss(css, false);
     }
 
-    async _updateOptionsContext(optionsContext) {
+    async _updateOptionsContext({optionsContext}) {
         this._optionsContext = optionsContext;
         await this._frontend.updateOptions();
         await this._updateSearch();
