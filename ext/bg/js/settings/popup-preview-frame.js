@@ -26,6 +26,7 @@
 class SettingsPopupPreview {
     constructor() {
         this._frontend = null;
+        this._frontendGetOptionsContextOld = null;
         this._apiOptionsGetOld = api.optionsGet.bind(api);
         this._popup = null;
         this._popupSetCustomOuterCssOld = null;
@@ -64,11 +65,12 @@ class SettingsPopupPreview {
         this._popup = popupFactory.getOrCreatePopup();
         this._popup.setChildrenSupported(false);
 
-        this._popupSetCustomOuterCssOld = this._popup.setCustomOuterCss;
+        this._popupSetCustomOuterCssOld = this._popup.setCustomOuterCss.bind(this._popup);
         this._popup.setCustomOuterCss = this._popupSetCustomOuterCss.bind(this);
 
         this._frontend = new Frontend(this._popup);
-        this._frontend.getOptionsContext = async () => this._optionsContext;
+        this._frontendGetOptionsContextOld = this._frontend.getOptionsContext.bind(this._frontend);
+        this._frontend.getOptionsContext = this._getOptionsContext.bind(this);
         await this._frontend.prepare();
         this._frontend.setDisabledOverride(true);
         this._frontend.canClearSelection = false;
@@ -78,6 +80,14 @@ class SettingsPopupPreview {
     }
 
     // Private
+
+    async _getOptionsContext() {
+        let optionsContext = this._optionsContext;
+        if (optionsContext === null) {
+            optionsContext = this._frontendGetOptionsContextOld();
+        }
+        return optionsContext;
+    }
 
     async _apiOptionsGet(...args) {
         const options = await this._apiOptionsGetOld(...args);
@@ -97,7 +107,7 @@ class SettingsPopupPreview {
 
     async _popupSetCustomOuterCss(...args) {
         // This simulates the stylesheet priorities when injecting using the web extension API.
-        const result = await this._popupSetCustomOuterCssOld.call(this._popup, ...args);
+        const result = await this._popupSetCustomOuterCssOld(...args);
 
         const node = document.querySelector('#client-css');
         if (node !== null && result !== null) {
