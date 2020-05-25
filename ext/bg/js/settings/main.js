@@ -19,13 +19,12 @@
  * AnkiController
  * AnkiTemplatesController
  * AudioController
+ * DictionaryController
  * ProfileController
  * SettingsBackup
  * SettingsController
  * api
  * appearanceInitialize
- * dictSettingsInitialize
- * onDictionaryOptionsChanged
  * storageInfoInitialize
  * utilBackend
  * utilBackgroundIsolate
@@ -270,7 +269,9 @@ async function onOptionsUpdated({source}) {
     if (ankiTemplatesController !== null) {
         ankiTemplatesController.updateValue();
     }
-    onDictionaryOptionsChanged();
+    if (dictionaryController !== null) {
+        dictionaryController.optionsChanged();
+    }
     if (ankiController !== null) {
         ankiController.optionsChanged();
     }
@@ -306,6 +307,7 @@ async function settingsPopulateModifierKeys() {
 
 let ankiController = null;
 let ankiTemplatesController = null;
+let dictionaryController = null;
 
 async function onReady() {
     api.forwardLogsToBackend();
@@ -321,7 +323,8 @@ async function onReady() {
     appearanceInitialize();
     new AudioController().prepare();
     await (new ProfileController()).prepare();
-    await dictSettingsInitialize();
+    dictionaryController = new DictionaryController();
+    dictionaryController.prepare();
     ankiController = new AnkiController();
     ankiController.prepare();
     ankiTemplatesController = new AnkiTemplatesController(ankiController);
