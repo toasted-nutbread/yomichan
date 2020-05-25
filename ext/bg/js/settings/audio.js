@@ -24,24 +24,24 @@
 
 class AudioController {
     constructor() {
-        this.audioSourceUI = null;
-        this.audioSystem = null;
+        this._audioSourceUI = null;
+        this._audioSystem = null;
     }
 
     async prepare() {
-        this.audioSystem = new AudioSystem({
+        this._audioSystem = new AudioSystem({
             audioUriBuilder: null,
             useCache: true
         });
 
         const optionsContext = getOptionsContext();
         const options = await getOptionsMutable(optionsContext);
-        this.audioSourceUI = new AudioSourceContainer(
+        this._audioSourceUI = new AudioSourceContainer(
             options.audio.sources,
             document.querySelector('.audio-source-list'),
             document.querySelector('.audio-source-add')
         );
-        this.audioSourceUI.save = settingsSaveOptions;
+        this._audioSourceUI.save = settingsSaveOptions;
 
         this._prepareTextToSpeech();
     }
@@ -122,7 +122,7 @@ class AudioController {
             const text = document.querySelector('#text-to-speech-voice-test').dataset.speechText || '';
             const voiceUri = document.querySelector('#text-to-speech-voice').value;
 
-            const audio = this.audioSystem.createTextToSpeechAudio(text, voiceUri);
+            const audio = this._audioSystem.createTextToSpeechAudio(text, voiceUri);
             audio.volume = 1.0;
             audio.play();
         } catch (e) {
