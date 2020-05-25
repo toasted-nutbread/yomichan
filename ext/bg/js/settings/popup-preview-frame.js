@@ -27,7 +27,7 @@ class SettingsPopupPreview {
     constructor() {
         this._frontend = null;
         this._frontendGetOptionsContextOld = null;
-        this._apiOptionsGetOld = api.optionsGet.bind(api);
+        this._apiOptionsGetOld = null;
         this._popup = null;
         this._popupSetCustomOuterCssOld = null;
         this._popupShown = false;
@@ -51,6 +51,7 @@ class SettingsPopupPreview {
         document.querySelector('#theme-dark-checkbox').addEventListener('change', this._onThemeDarkCheckboxChanged.bind(this), false);
 
         // Overwrite API functions
+        this._apiOptionsGetOld = api.optionsGet.bind(api);
         api.optionsGet = this._apiOptionsGet.bind(this);
 
         // Overwrite frontend
