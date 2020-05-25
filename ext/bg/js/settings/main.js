@@ -16,16 +16,15 @@
  */
 
 /* global
+ * AnkiController
  * AnkiTemplatesController
  * ProfileController
  * SettingsBackup
  * SettingsController
- * ankiInitialize
  * api
  * appearanceInitialize
  * audioSettingsInitialize
  * dictSettingsInitialize
- * onAnkiOptionsChanged
  * onDictionaryOptionsChanged
  * storageInfoInitialize
  * utilBackend
@@ -272,7 +271,9 @@ async function onOptionsUpdated({source}) {
         ankiTemplatesController.updateValue();
     }
     onDictionaryOptionsChanged();
-    onAnkiOptionsChanged();
+    if (ankiController !== null) {
+        ankiController.optionsChanged();
+    }
 
     await formWrite(options);
 }
@@ -303,6 +304,7 @@ async function settingsPopulateModifierKeys() {
     }
 }
 
+let ankiController = null;
 let ankiTemplatesController = null;
 
 async function onReady() {
@@ -320,8 +322,9 @@ async function onReady() {
     await audioSettingsInitialize();
     await (new ProfileController()).prepare();
     await dictSettingsInitialize();
-    ankiInitialize();
-    ankiTemplatesController = new AnkiTemplatesController();
+    ankiController = new AnkiController();
+    ankiController.prepare();
+    ankiTemplatesController = new AnkiTemplatesController(ankiController);
     ankiTemplatesController.prepare();
     new SettingsBackup().prepare();
 

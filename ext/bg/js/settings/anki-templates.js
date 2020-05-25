@@ -17,8 +17,6 @@
 
 /* global
  * AnkiNoteBuilder
- * ankiGetFieldMarkers
- * ankiGetFieldMarkersHtml
  * api
  * getOptionsContext
  * getOptionsMutable
@@ -26,14 +24,18 @@
  */
 
 class AnkiTemplatesController {
-    constructor() {
+    constructor(ankiController) {
+        this._ankiController = ankiController;
         this._cachedDefinitionValue = null;
         this._cachedDefinitionText = null;
     }
 
     prepare() {
-        const markers = new Set(ankiGetFieldMarkers('terms').concat(ankiGetFieldMarkers('kanji')));
-        const fragment = ankiGetFieldMarkersHtml(markers);
+        const markers = new Set([
+            ...this._ankiController.getFieldMarkers('terms'),
+            ...this._ankiController.getFieldMarkers('kanji')
+        ]);
+        const fragment = this._ankiController.getFieldMarkersHtml(markers);
 
         const list = document.querySelector('#field-templates-list');
         list.appendChild(fragment);
