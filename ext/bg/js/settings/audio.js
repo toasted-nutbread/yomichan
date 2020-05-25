@@ -23,103 +23,109 @@
  * settingsSaveOptions
  */
 
-let audioSourceUI = null;
-let audioSystem = null;
+class AudioController {
+    constructor() {
+        this.audioSourceUI = null;
+        this.audioSystem = null;
+    }
 
-async function audioSettingsInitialize() {
-    audioSystem = new AudioSystem({
-        audioUriBuilder: null,
-        useCache: true
-    });
+    async prepare() {
+        this.audioSystem = new AudioSystem({
+            audioUriBuilder: null,
+            useCache: true
+        });
 
-    const optionsContext = getOptionsContext();
-    const options = await getOptionsMutable(optionsContext);
-    audioSourceUI = new AudioSourceUI.Container(
-        options.audio.sources,
-        document.querySelector('.audio-source-list'),
-        document.querySelector('.audio-source-add')
-    );
-    audioSourceUI.save = settingsSaveOptions;
+        const optionsContext = getOptionsContext();
+        const options = await getOptionsMutable(optionsContext);
+        this.audioSourceUI = new AudioSourceUI.Container(
+            options.audio.sources,
+            document.querySelector('.audio-source-list'),
+            document.querySelector('.audio-source-add')
+        );
+        this.audioSourceUI.save = settingsSaveOptions;
 
-    textToSpeechInitialize();
-}
+        this._prepareTextToSpeech();
+    }
 
-function textToSpeechInitialize() {
-    if (typeof speechSynthesis === 'undefined') { return; }
+    // Private
 
-    speechSynthesis.addEventListener('voiceschanged', updateTextToSpeechVoices, false);
-    updateTextToSpeechVoices();
+    _prepareTextToSpeech() {
+        if (typeof speechSynthesis === 'undefined') { return; }
 
-    document.querySelector('#text-to-speech-voice').addEventListener('change', onTextToSpeechVoiceChange, false);
-    document.querySelector('#text-to-speech-voice-test').addEventListener('click', textToSpeechTest, false);
-}
+        speechSynthesis.addEventListener('voiceschanged', this._updateTextToSpeechVoices.bind(this), false);
+        this._updateTextToSpeechVoices();
 
-function updateTextToSpeechVoices() {
-    const voices = Array.prototype.map.call(speechSynthesis.getVoices(), (voice, index) => ({voice, index}));
-    voices.sort(textToSpeechVoiceCompare);
+        document.querySelector('#text-to-speech-voice').addEventListener('change', this._onTextToSpeechVoiceChange.bind(this), false);
+        document.querySelector('#text-to-speech-voice-test').addEventListener('click', this._testTextToSpeech.bind(this), false);
+    }
 
-    document.querySelector('#text-to-speech-voice-container').hidden = (voices.length === 0);
+    _updateTextToSpeechVoices() {
+        const voices = Array.prototype.map.call(speechSynthesis.getVoices(), (voice, index) => ({voice, index}));
+        voices.sort(this._textToSpeechVoiceCompare.bind(this));
 
-    const fragment = document.createDocumentFragment();
+        document.querySelector('#text-to-speech-voice-container').hidden = (voices.length === 0);
 
-    let option = document.createElement('option');
-    option.value = '';
-    option.textContent = 'None';
-    fragment.appendChild(option);
+        const fragment = document.createDocumentFragment();
 
-    for (const {voice} of voices) {
-        option = document.createElement('option');
-        option.value = voice.voiceURI;
-        option.textContent = `${voice.name} (${voice.lang})`;
+        let option = document.createElement('option');
+        option.value = '';
+        option.textContent = 'None';
         fragment.appendChild(option);
+
+        for (const {voice} of voices) {
+            option = document.createElement('option');
+            option.value = voice.voiceURI;
+            option.textContent = `${voice.name} (${voice.lang})`;
+            fragment.appendChild(option);
+        }
+
+        const select = document.querySelector('#text-to-speech-voice');
+        select.textContent = '';
+        select.appendChild(fragment);
+        select.value = select.dataset.value;
     }
 
-    const select = document.querySelector('#text-to-speech-voice');
-    select.textContent = '';
-    select.appendChild(fragment);
-    select.value = select.dataset.value;
-}
+    _textToSpeechVoiceCompare(a, b) {
+        const aIsJapanese = this._languageTagIsJapanese(a.voice.lang);
+        const bIsJapanese = this._languageTagIsJapanese(b.voice.lang);
+        if (aIsJapanese) {
+            if (!bIsJapanese) { return -1; }
+        } else {
+            if (bIsJapanese) { return 1; }
+        }
 
-function languageTagIsJapanese(languageTag) {
-    return (
-        languageTag.startsWith('ja-') ||
-        languageTag.startsWith('jpn-')
-    );
-}
+        const aIsDefault = a.voice.default;
+        const bIsDefault = b.voice.default;
+        if (aIsDefault) {
+            if (!bIsDefault) { return -1; }
+        } else {
+            if (bIsDefault) { return 1; }
+        }
 
-function textToSpeechVoiceCompare(a, b) {
-    const aIsJapanese = languageTagIsJapanese(a.voice.lang);
-    const bIsJapanese = languageTagIsJapanese(b.voice.lang);
-    if (aIsJapanese) {
-        if (!bIsJapanese) { return -1; }
-    } else {
-        if (bIsJapanese) { return 1; }
+        return a.index - b.index;
     }
 
-    const aIsDefault = a.voice.default;
-    const bIsDefault = b.voice.default;
-    if (aIsDefault) {
-        if (!bIsDefault) { return -1; }
-    } else {
-        if (bIsDefault) { return 1; }
+    _languageTagIsJapanese(languageTag) {
+        return (
+            languageTag.startsWith('ja-') ||
+            languageTag.startsWith('jpn-')
+        );
     }
 
-    return a.index - b.index;
-}
+    _testTextToSpeech() {
+        try {
+            const text = document.querySelector('#text-to-speech-voice-test').dataset.speechText || '';
+            const voiceUri = document.querySelector('#text-to-speech-voice').value;
 
-function textToSpeechTest() {
-    try {
-        const text = document.querySelector('#text-to-speech-voice-test').dataset.speechText || '';
-        const voiceUri = document.querySelector('#text-to-speech-voice').value;
-
-        const audio = audioSystem.createTextToSpeechAudio(text, voiceUri);
-        audio.volume = 1.0;
-        audio.play();
-    } catch (e) {
-        // NOP
+            const audio = this.audioSystem.createTextToSpeechAudio(text, voiceUri);
+            audio.volume = 1.0;
+            audio.play();
+        } catch (e) {
+            // NOP
+        }
     }
-}
 
-function onTextToSpeechVoiceChange(e) {
-    e.currentTarget.dataset.value = e.currentTarget.value;
+    _onTextToSpeechVoiceChange(e) {
+        e.currentTarget.dataset.value = e.currentTarget.value;
+    }
 }
