@@ -24,8 +24,11 @@
 
 class AudioController {
     constructor() {
-        this._audioSourceUI = null;
         this._audioSystem = null;
+        this._settingsAudioSources = null;
+        this._audioSourceContainer = null;
+        this._audioSourceAddButton = null;
+        this._audioSourceEntries = [];
     }
 
     async prepare() {
@@ -36,23 +39,26 @@ class AudioController {
 
         const optionsContext = getOptionsContext();
         const options = await getOptionsMutable(optionsContext);
-        this._audioSourceUI = new AudioSourceContainer(
-            options.audio.sources,
-            document.querySelector('.audio-source-list'),
-            document.querySelector('.audio-source-add')
-        );
-        this._audioSourceUI.save = settingsSaveOptions;
+
+        this._settingsAudioSources = options.audio.sources;
+        this._audioSourceContainer = document.querySelector('.audio-source-list');
+        this._audioSourceAddButton = document.querySelector('.audio-source-add');
+        this._audioSourceContainer.textContent = '';
+
+        this._audioSourceAddButton.addEventListener('click', this._onAddAudioSource.bind(this), false);
+
+        for (const audioSource of toIterable(this._settingsAudioSources)) {
+            this._createAudioSourceEntry(audioSource);
+        }
 
         this._prepareTextToSpeech();
     }
 
-    static instantiateTemplate(templateSelector) {
-        const template = document.querySelector(templateSelector);
-        const content = document.importNode(template.content, true);
-        return content.firstChild;
-    }
-
     // Private
+
+    async _save() {
+        await settingsSaveOptions();
+    }
 
     _prepareTextToSpeech() {
         if (typeof speechSynthesis === 'undefined') { return; }
@@ -130,65 +136,13 @@ class AudioController {
         }
     }
 
-    _onTextToSpeechVoiceChange(e) {
-        e.currentTarget.dataset.value = e.currentTarget.value;
-    }
-}
-
-class AudioSourceContainer {
-    constructor(audioSources, container, addButton) {
-        this.audioSources = audioSources;
-        this.container = container;
-        this.addButton = addButton;
-        this.children = [];
-
-        this.container.textContent = '';
-
-        for (const audioSource of toIterable(audioSources)) {
-            this.children.push(new AudioSourceEntry(this, audioSource, this.children.length));
-        }
-
-        this._clickListener = this.onAddAudioSource.bind(this);
-        this.addButton.addEventListener('click', this._clickListener, false);
+    _instantiateTemplate(templateSelector) {
+        const template = document.querySelector(templateSelector);
+        const content = document.importNode(template.content, true);
+        return content.firstChild;
     }
 
-    cleanup() {
-        for (const child of this.children) {
-            child.cleanup();
-        }
-
-        this.addButton.removeEventListener('click', this._clickListener, false);
-        this.container.textContent = '';
-        this._clickListener = null;
-    }
-
-    save() {
-        // Override
-    }
-
-    remove(child) {
-        const index = this.children.indexOf(child);
-        if (index < 0) {
-            return;
-        }
-
-        child.cleanup();
-        this.children.splice(index, 1);
-        this.audioSources.splice(index, 1);
-
-        for (let i = index; i < this.children.length; ++i) {
-            this.children[i].index = i;
-        }
-    }
-
-    onAddAudioSource() {
-        const audioSource = this.getUnusedAudioSource();
-        this.audioSources.push(audioSource);
-        this.save();
-        this.children.push(new AudioSourceEntry(this, audioSource, this.children.length));
-    }
-
-    getUnusedAudioSource() {
+    _getUnusedAudioSource() {
         const audioSourcesAvailable = [
             'jpod101',
             'jpod101-alternate',
@@ -196,56 +150,73 @@ class AudioSourceContainer {
             'custom'
         ];
         for (const source of audioSourcesAvailable) {
-            if (this.audioSources.indexOf(source) < 0) {
+            if (this._settingsAudioSources.indexOf(source) < 0) {
                 return source;
             }
         }
         return audioSourcesAvailable[0];
     }
-}
 
-class AudioSourceEntry {
-    constructor(parent, audioSource, index) {
-        this.parent = parent;
-        this.audioSource = audioSource;
-        this.index = index;
+    _createAudioSourceEntry(value) {
+        const eventListeners = new EventListenerCollection();
+        const container = this._instantiateTemplate('#audio-source-template');
+        const select = container.querySelector('.audio-source-select');
+        const removeButton = container.querySelector('.audio-source-remove');
 
-        this.container = AudioController.instantiateTemplate('#audio-source-template');
-        this.select = this.container.querySelector('.audio-source-select');
-        this.removeButton = this.container.querySelector('.audio-source-remove');
+        select.value = value;
 
-        this.select.value = audioSource;
+        const entry = {
+            container,
+            eventListeners
+        };
 
-        this._selectChangeListener = this.onSelectChanged.bind(this);
-        this._removeClickListener = this.onRemoveClicked.bind(this);
+        eventListeners.addEventListener(select, 'change', this._onAudioSourceSelectChange.bind(this, entry), false);
+        eventListeners.addEventListener(removeButton, 'click', this._onAudioSourceRemoveClicked.bind(this, entry), false);
 
-        this.select.addEventListener('change', this._selectChangeListener, false);
-        this.removeButton.addEventListener('click', this._removeClickListener, false);
-
-        parent.container.appendChild(this.container);
+        this._audioSourceContainer.appendChild(container);
+        this._audioSourceEntries.push(entry);
     }
 
-    cleanup() {
-        this.select.removeEventListener('change', this._selectChangeListener, false);
-        this.removeButton.removeEventListener('click', this._removeClickListener, false);
+    _removeAudioSourceEntry(entry) {
+        const index = this._audioSourceEntries.indexOf(entry);
+        if (index < 0) { return; }
 
-        if (this.container.parentNode !== null) {
-            this.container.parentNode.removeChild(this.container);
+        const {container, eventListeners} = entry;
+        if (container.parentNode !== null) {
+            container.parentNode.removeChild(container);
+        }
+        eventListeners.removeAllEventListeners();
+
+        this._audioSourceEntries.splice(index, 1);
+        this._settingsAudioSources.splice(index, 1);
+
+        for (let i = index, ii = this._audioSourceEntries.length; i < ii; ++i) {
+            this._audioSourceEntries[i].index = i;
         }
     }
 
-    save() {
-        this.parent.save();
+    _onTextToSpeechVoiceChange(e) {
+        e.currentTarget.dataset.value = e.currentTarget.value;
     }
 
-    onSelectChanged() {
-        this.audioSource = this.select.value;
-        this.parent.audioSources[this.index] = this.audioSource;
-        this.save();
+    _onAddAudioSource() {
+        const audioSource = this._getUnusedAudioSource();
+        this._settingsAudioSources.push(audioSource);
+        this._createAudioSourceEntry(audioSource);
+        this._save();
     }
 
-    onRemoveClicked() {
-        this.parent.remove(this);
-        this.save();
+    _onAudioSourceSelectChange(entry, event) {
+        const index = this._audioSourceEntries.indexOf(entry);
+        if (index < 0) { return; }
+
+        const value = event.currentTarget.value;
+        this._settingsAudioSources[index] = value;
+        this._save();
+    }
+
+    _onAudioSourceRemoveClicked(entry) {
+        this._removeAudioSourceEntry(entry);
+        this._save();
     }
 }
