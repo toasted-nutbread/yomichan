@@ -29,277 +29,280 @@
  * utilBackgroundIsolate
  */
 
-let profileConditionsContainer = null;
-
-
-async function profileOptionsSetup() {
-    const optionsFull = await getOptionsFullMutable();
-    setProfileIndex(optionsFull.profileCurrent);
-
-    profileOptionsSetupEventListeners();
-    await profileOptionsUpdateTarget(optionsFull);
-}
-
-function profileOptionsSetupEventListeners() {
-    $('#profile-target').change(onTargetProfileChanged);
-    $('#profile-name').change(onProfileNameChanged);
-    $('#profile-add').click(onProfileAdd);
-    $('#profile-remove').click(onProfileRemove);
-    $('#profile-remove-confirm').click(onProfileRemoveConfirm);
-    $('#profile-copy').click(onProfileCopy);
-    $('#profile-copy-confirm').click(onProfileCopyConfirm);
-    $('#profile-move-up').click(() => onProfileMove(-1));
-    $('#profile-move-down').click(() => onProfileMove(1));
-    $('.profile-form').find('input, select, textarea').not('.profile-form-manual').change(onProfileOptionsChanged);
-}
-
-function tryGetIntegerValue(selector, min, max) {
-    const value = parseInt($(selector).val(), 10);
-    return (
-        typeof value === 'number' &&
-        Number.isFinite(value) &&
-        Math.floor(value) === value &&
-        value >= min &&
-        value < max
-    ) ? value : null;
-}
-
-async function profileFormRead(optionsFull) {
-    const currentProfileIndex = getProfileIndex();
-    const profile = optionsFull.profiles[currentProfileIndex];
-
-    // Current profile
-    const index = tryGetIntegerValue('#profile-active', 0, optionsFull.profiles.length);
-    if (index !== null) {
-        optionsFull.profileCurrent = index;
+class ProfileController {
+    constructor() {
+        this.profileConditionsContainer = null;
     }
 
-    // Profile name
-    profile.name = $('#profile-name').val();
-}
+    async prepare() {
+        const optionsFull = await getOptionsFullMutable();
+        setProfileIndex(optionsFull.profileCurrent);
 
-async function profileFormWrite(optionsFull) {
-    const currentProfileIndex = getProfileIndex();
-    const profile = optionsFull.profiles[currentProfileIndex];
-
-    profileOptionsPopulateSelect($('#profile-active'), optionsFull.profiles, optionsFull.profileCurrent, null);
-    profileOptionsPopulateSelect($('#profile-target'), optionsFull.profiles, currentProfileIndex, null);
-    $('#profile-remove').prop('disabled', optionsFull.profiles.length <= 1);
-    $('#profile-copy').prop('disabled', optionsFull.profiles.length <= 1);
-    $('#profile-move-up').prop('disabled', currentProfileIndex <= 0);
-    $('#profile-move-down').prop('disabled', currentProfileIndex >= optionsFull.profiles.length - 1);
-
-    $('#profile-name').val(profile.name);
-
-    if (profileConditionsContainer !== null) {
-        profileConditionsContainer.cleanup();
+        this.profileOptionsSetupEventListeners();
+        await this.profileOptionsUpdateTarget(optionsFull);
     }
 
-    await profileConditionsDescriptorPromise;
-    profileConditionsContainer = new ConditionsUI.Container(
-        profileConditionsDescriptor,
-        'popupLevel',
-        profile.conditionGroups,
-        $('#profile-condition-groups'),
-        $('#profile-add-condition-group')
-    );
-    profileConditionsContainer.save = () => {
-        settingsSaveOptions();
-        conditionsClearCaches(profileConditionsDescriptor);
-    };
-    profileConditionsContainer.isolate = utilBackgroundIsolate;
-}
+    profileOptionsSetupEventListeners() {
+        $('#profile-target').change(this.onTargetProfileChanged.bind(this));
+        $('#profile-name').change(this.onProfileNameChanged.bind(this));
+        $('#profile-add').click(this.onProfileAdd.bind(this));
+        $('#profile-remove').click(this.onProfileRemove.bind(this));
+        $('#profile-remove-confirm').click(this.onProfileRemoveConfirm.bind(this));
+        $('#profile-copy').click(this.onProfileCopy.bind(this));
+        $('#profile-copy-confirm').click(this.onProfileCopyConfirm.bind(this));
+        $('#profile-move-up').click(() => this.onProfileMove(-1));
+        $('#profile-move-down').click(() => this.onProfileMove(1));
+        $('.profile-form').find('input, select, textarea').not('.profile-form-manual').change(this.onProfileOptionsChanged.bind(this));
+    }
 
-function profileOptionsPopulateSelect(select, profiles, currentValue, ignoreIndices) {
-    select.empty();
+    tryGetIntegerValue(selector, min, max) {
+        const value = parseInt($(selector).val(), 10);
+        return (
+            typeof value === 'number' &&
+            Number.isFinite(value) &&
+            Math.floor(value) === value &&
+            value >= min &&
+            value < max
+        ) ? value : null;
+    }
 
+    async profileFormRead(optionsFull) {
+        const currentProfileIndex = getProfileIndex();
+        const profile = optionsFull.profiles[currentProfileIndex];
 
-    for (let i = 0; i < profiles.length; ++i) {
-        if (ignoreIndices !== null && ignoreIndices.indexOf(i) >= 0) {
-            continue;
+        // Current profile
+        const index = this.tryGetIntegerValue('#profile-active', 0, optionsFull.profiles.length);
+        if (index !== null) {
+            optionsFull.profileCurrent = index;
         }
-        const profile = profiles[i];
-        select.append($(`<option value="${i}">${profile.name}</option>`));
+
+        // Profile name
+        profile.name = $('#profile-name').val();
     }
 
-    select.val(`${currentValue}`);
-}
+    async profileFormWrite(optionsFull) {
+        const currentProfileIndex = getProfileIndex();
+        const profile = optionsFull.profiles[currentProfileIndex];
 
-async function profileOptionsUpdateTarget(optionsFull) {
-    await profileFormWrite(optionsFull);
-    await onOptionsUpdated({source: null});
-}
+        this.profileOptionsPopulateSelect($('#profile-active'), optionsFull.profiles, optionsFull.profileCurrent, null);
+        this.profileOptionsPopulateSelect($('#profile-target'), optionsFull.profiles, currentProfileIndex, null);
+        $('#profile-remove').prop('disabled', optionsFull.profiles.length <= 1);
+        $('#profile-copy').prop('disabled', optionsFull.profiles.length <= 1);
+        $('#profile-move-up').prop('disabled', currentProfileIndex <= 0);
+        $('#profile-move-down').prop('disabled', currentProfileIndex >= optionsFull.profiles.length - 1);
 
-function profileOptionsCreateCopyName(name, profiles, maxUniqueAttempts) {
-    let space, index, prefix, suffix;
-    const match = /^([\w\W]*\(Copy)((\s+)(\d+))?(\)\s*)$/.exec(name);
-    if (match === null) {
-        prefix = `${name} (Copy`;
-        space = '';
-        index = '';
-        suffix = ')';
-    } else {
-        prefix = match[1];
-        suffix = match[5];
-        if (typeof match[2] === 'string') {
-            space = match[3];
-            index = parseInt(match[4], 10) + 1;
+        $('#profile-name').val(profile.name);
+
+        if (this.profileConditionsContainer !== null) {
+            this.profileConditionsContainer.cleanup();
+        }
+
+        await profileConditionsDescriptorPromise;
+        this.profileConditionsContainer = new ConditionsUI.Container(
+            profileConditionsDescriptor,
+            'popupLevel',
+            profile.conditionGroups,
+            $('#profile-condition-groups'),
+            $('#profile-add-condition-group')
+        );
+        this.profileConditionsContainer.save = () => {
+            settingsSaveOptions();
+            conditionsClearCaches(profileConditionsDescriptor);
+        };
+        this.profileConditionsContainer.isolate = utilBackgroundIsolate;
+    }
+
+    profileOptionsPopulateSelect(select, profiles, currentValue, ignoreIndices) {
+        select.empty();
+
+
+        for (let i = 0; i < profiles.length; ++i) {
+            if (ignoreIndices !== null && ignoreIndices.indexOf(i) >= 0) {
+                continue;
+            }
+            const profile = profiles[i];
+            select.append($(`<option value="${i}">${profile.name}</option>`));
+        }
+
+        select.val(`${currentValue}`);
+    }
+
+    async profileOptionsUpdateTarget(optionsFull) {
+        await this.profileFormWrite(optionsFull);
+        await onOptionsUpdated({source: null});
+    }
+
+    profileOptionsCreateCopyName(name, profiles, maxUniqueAttempts) {
+        let space, index, prefix, suffix;
+        const match = /^([\w\W]*\(Copy)((\s+)(\d+))?(\)\s*)$/.exec(name);
+        if (match === null) {
+            prefix = `${name} (Copy`;
+            space = '';
+            index = '';
+            suffix = ')';
         } else {
-            space = ' ';
-            index = 2;
+            prefix = match[1];
+            suffix = match[5];
+            if (typeof match[2] === 'string') {
+                space = match[3];
+                index = parseInt(match[4], 10) + 1;
+            } else {
+                space = ' ';
+                index = 2;
+            }
+        }
+
+        let i = 0;
+        while (true) {
+            const newName = `${prefix}${space}${index}${suffix}`;
+            if (i++ >= maxUniqueAttempts || profiles.findIndex((profile) => profile.name === newName) < 0) {
+                return newName;
+            }
+            if (typeof index !== 'number') {
+                index = 2;
+                space = ' ';
+            } else {
+                ++index;
+            }
         }
     }
 
-    let i = 0;
-    while (true) {
-        const newName = `${prefix}${space}${index}${suffix}`;
-        if (i++ >= maxUniqueAttempts || profiles.findIndex((profile) => profile.name === newName) < 0) {
-            return newName;
+    async onProfileOptionsChanged(e) {
+        if (!e.originalEvent && !e.isTrigger) {
+            return;
         }
-        if (typeof index !== 'number') {
-            index = 2;
-            space = ' ';
-        } else {
-            ++index;
+
+        const optionsFull = await getOptionsFullMutable();
+        await this.profileFormRead(optionsFull);
+        await settingsSaveOptions();
+    }
+
+    async onTargetProfileChanged() {
+        const optionsFull = await getOptionsFullMutable();
+        const currentProfileIndex = getProfileIndex();
+        const index = this.tryGetIntegerValue('#profile-target', 0, optionsFull.profiles.length);
+        if (index === null || currentProfileIndex === index) {
+            return;
         }
-    }
-}
 
-async function onProfileOptionsChanged(e) {
-    if (!e.originalEvent && !e.isTrigger) {
-        return;
-    }
+        setProfileIndex(index);
 
-    const optionsFull = await getOptionsFullMutable();
-    await profileFormRead(optionsFull);
-    await settingsSaveOptions();
-}
+        await this.profileOptionsUpdateTarget(optionsFull);
 
-async function onTargetProfileChanged() {
-    const optionsFull = await getOptionsFullMutable();
-    const currentProfileIndex = getProfileIndex();
-    const index = tryGetIntegerValue('#profile-target', 0, optionsFull.profiles.length);
-    if (index === null || currentProfileIndex === index) {
-        return;
+        yomichan.trigger('modifyingProfileChange');
     }
 
-    setProfileIndex(index);
+    async onProfileAdd() {
+        const optionsFull = await getOptionsFullMutable();
+        const currentProfileIndex = getProfileIndex();
+        const profile = utilBackgroundIsolate(optionsFull.profiles[currentProfileIndex]);
+        profile.name = this.profileOptionsCreateCopyName(profile.name, optionsFull.profiles, 100);
+        optionsFull.profiles.push(profile);
 
-    await profileOptionsUpdateTarget(optionsFull);
-
-    yomichan.trigger('modifyingProfileChange');
-}
-
-async function onProfileAdd() {
-    const optionsFull = await getOptionsFullMutable();
-    const currentProfileIndex = getProfileIndex();
-    const profile = utilBackgroundIsolate(optionsFull.profiles[currentProfileIndex]);
-    profile.name = profileOptionsCreateCopyName(profile.name, optionsFull.profiles, 100);
-    optionsFull.profiles.push(profile);
-
-    setProfileIndex(optionsFull.profiles.length - 1);
-
-    await profileOptionsUpdateTarget(optionsFull);
-    await settingsSaveOptions();
-
-    yomichan.trigger('modifyingProfileChange');
-}
-
-async function onProfileRemove(e) {
-    if (e.shiftKey) {
-        return await onProfileRemoveConfirm();
-    }
-
-    const optionsFull = await api.optionsGetFull();
-    if (optionsFull.profiles.length <= 1) {
-        return;
-    }
-
-    const currentProfileIndex = getProfileIndex();
-    const profile = optionsFull.profiles[currentProfileIndex];
-
-    $('#profile-remove-modal-profile-name').text(profile.name);
-    $('#profile-remove-modal').modal('show');
-}
-
-async function onProfileRemoveConfirm() {
-    $('#profile-remove-modal').modal('hide');
-
-    const optionsFull = await getOptionsFullMutable();
-    if (optionsFull.profiles.length <= 1) {
-        return;
-    }
-
-    const currentProfileIndex = getProfileIndex();
-    optionsFull.profiles.splice(currentProfileIndex, 1);
-
-    if (currentProfileIndex >= optionsFull.profiles.length) {
         setProfileIndex(optionsFull.profiles.length - 1);
+
+        await this.profileOptionsUpdateTarget(optionsFull);
+        await settingsSaveOptions();
+
+        yomichan.trigger('modifyingProfileChange');
     }
 
-    if (optionsFull.profileCurrent >= optionsFull.profiles.length) {
-        optionsFull.profileCurrent = optionsFull.profiles.length - 1;
+    async onProfileRemove(e) {
+        if (e.shiftKey) {
+            return await this.onProfileRemoveConfirm();
+        }
+
+        const optionsFull = await api.optionsGetFull();
+        if (optionsFull.profiles.length <= 1) {
+            return;
+        }
+
+        const currentProfileIndex = getProfileIndex();
+        const profile = optionsFull.profiles[currentProfileIndex];
+
+        $('#profile-remove-modal-profile-name').text(profile.name);
+        $('#profile-remove-modal').modal('show');
     }
 
-    await profileOptionsUpdateTarget(optionsFull);
-    await settingsSaveOptions();
+    async onProfileRemoveConfirm() {
+        $('#profile-remove-modal').modal('hide');
 
-    yomichan.trigger('modifyingProfileChange');
-}
+        const optionsFull = await getOptionsFullMutable();
+        if (optionsFull.profiles.length <= 1) {
+            return;
+        }
 
-function onProfileNameChanged() {
-    const currentProfileIndex = getProfileIndex();
-    $('#profile-active, #profile-target').find(`[value="${currentProfileIndex}"]`).text(this.value);
-}
+        const currentProfileIndex = getProfileIndex();
+        optionsFull.profiles.splice(currentProfileIndex, 1);
 
-async function onProfileMove(offset) {
-    const optionsFull = await getOptionsFullMutable();
-    const currentProfileIndex = getProfileIndex();
-    const index = currentProfileIndex + offset;
-    if (index < 0 || index >= optionsFull.profiles.length) {
-        return;
+        if (currentProfileIndex >= optionsFull.profiles.length) {
+            setProfileIndex(optionsFull.profiles.length - 1);
+        }
+
+        if (optionsFull.profileCurrent >= optionsFull.profiles.length) {
+            optionsFull.profileCurrent = optionsFull.profiles.length - 1;
+        }
+
+        await this.profileOptionsUpdateTarget(optionsFull);
+        await settingsSaveOptions();
+
+        yomichan.trigger('modifyingProfileChange');
     }
 
-    const profile = optionsFull.profiles[currentProfileIndex];
-    optionsFull.profiles.splice(currentProfileIndex, 1);
-    optionsFull.profiles.splice(index, 0, profile);
-
-    if (optionsFull.profileCurrent === currentProfileIndex) {
-        optionsFull.profileCurrent = index;
+    onProfileNameChanged() {
+        const currentProfileIndex = getProfileIndex();
+        $('#profile-active, #profile-target').find(`[value="${currentProfileIndex}"]`).text(this.value);
     }
 
-    setProfileIndex(index);
+    async onProfileMove(offset) {
+        const optionsFull = await getOptionsFullMutable();
+        const currentProfileIndex = getProfileIndex();
+        const index = currentProfileIndex + offset;
+        if (index < 0 || index >= optionsFull.profiles.length) {
+            return;
+        }
 
-    await profileOptionsUpdateTarget(optionsFull);
-    await settingsSaveOptions();
+        const profile = optionsFull.profiles[currentProfileIndex];
+        optionsFull.profiles.splice(currentProfileIndex, 1);
+        optionsFull.profiles.splice(index, 0, profile);
 
-    yomichan.trigger('modifyingProfileChange');
-}
+        if (optionsFull.profileCurrent === currentProfileIndex) {
+            optionsFull.profileCurrent = index;
+        }
 
-async function onProfileCopy() {
-    const optionsFull = await api.optionsGetFull();
-    if (optionsFull.profiles.length <= 1) {
-        return;
+        setProfileIndex(index);
+
+        await this.profileOptionsUpdateTarget(optionsFull);
+        await settingsSaveOptions();
+
+        yomichan.trigger('modifyingProfileChange');
     }
 
-    const currentProfileIndex = getProfileIndex();
-    profileOptionsPopulateSelect($('#profile-copy-source'), optionsFull.profiles, currentProfileIndex === 0 ? 1 : 0, [currentProfileIndex]);
-    $('#profile-copy-modal').modal('show');
-}
+    async onProfileCopy() {
+        const optionsFull = await api.optionsGetFull();
+        if (optionsFull.profiles.length <= 1) {
+            return;
+        }
 
-async function onProfileCopyConfirm() {
-    $('#profile-copy-modal').modal('hide');
-
-    const optionsFull = await getOptionsFullMutable();
-    const index = tryGetIntegerValue('#profile-copy-source', 0, optionsFull.profiles.length);
-    const currentProfileIndex = getProfileIndex();
-    if (index === null || index === currentProfileIndex) {
-        return;
+        const currentProfileIndex = getProfileIndex();
+        this.profileOptionsPopulateSelect($('#profile-copy-source'), optionsFull.profiles, currentProfileIndex === 0 ? 1 : 0, [currentProfileIndex]);
+        $('#profile-copy-modal').modal('show');
     }
 
-    const profileOptions = utilBackgroundIsolate(optionsFull.profiles[index].options);
-    optionsFull.profiles[currentProfileIndex].options = profileOptions;
+    async onProfileCopyConfirm() {
+        $('#profile-copy-modal').modal('hide');
 
-    await profileOptionsUpdateTarget(optionsFull);
-    await settingsSaveOptions();
+        const optionsFull = await getOptionsFullMutable();
+        const index = this.tryGetIntegerValue('#profile-copy-source', 0, optionsFull.profiles.length);
+        const currentProfileIndex = getProfileIndex();
+        if (index === null || index === currentProfileIndex) {
+            return;
+        }
+
+        const profileOptions = utilBackgroundIsolate(optionsFull.profiles[index].options);
+        optionsFull.profiles[currentProfileIndex].options = profileOptions;
+
+        await this.profileOptionsUpdateTarget(optionsFull);
+        await settingsSaveOptions();
+    }
 }

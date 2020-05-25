@@ -16,6 +16,7 @@
  */
 
 /* global
+ * ProfileController
  * SettingsBackup
  * ankiInitialize
  * ankiTemplatesInitialize
@@ -26,7 +27,6 @@
  * dictSettingsInitialize
  * onAnkiOptionsChanged
  * onDictionaryOptionsChanged
- * profileOptionsSetup
  * storageInfoInitialize
  * utilBackend
  * utilBackgroundIsolate
@@ -312,7 +312,7 @@ async function onReady() {
     formSetupEventListeners();
     appearanceInitialize();
     await audioSettingsInitialize();
-    await profileOptionsSetup();
+    await (new ProfileController()).prepare();
     await dictSettingsInitialize();
     ankiInitialize();
     ankiTemplatesInitialize();
