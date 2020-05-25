@@ -23,7 +23,7 @@
  * api
  */
 
-class SettingsPopupPreview {
+class PopupPreviewFrame {
     constructor() {
         this._frontend = null;
         this._frontendGetOptionsContextOld = null;

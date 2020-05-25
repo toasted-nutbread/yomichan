@@ -16,12 +16,12 @@
  */
 
 /* global
- * SettingsPopupPreview
+ * PopupPreviewFrame
  * api
  */
 
 (async () => {
     api.forwardLogsToBackend();
-    const preview = new SettingsPopupPreview();
+    const preview = new PopupPreviewFrame();
     await preview.prepare();
 })();
