@@ -25,6 +25,18 @@ class HandlebarsRenderer {
         this._cache = new Map();
     }
 
+    render(template, data) {
+        this.handlebarsRegisterHelpers();
+        const cache = this._cache;
+        let instance = cache.get(template);
+        if (typeof instance === 'undefined') {
+            instance = Handlebars.compile(template);
+            cache.set(template, instance);
+        }
+
+        return instance(data).trim();
+    }
+
     handlebarsEscape(text) {
         return Handlebars.Utils.escapeExpression(text);
     }
@@ -161,17 +173,5 @@ class HandlebarsRenderer {
             Handlebars.registerHelper('regexMatch', this.handlebarsRegexMatch.bind(this));
             Handlebars.registerHelper('mergeTags', this.handlebarsMergeTags.bind(this));
         }
-    }
-
-    handlebarsRenderDynamic(template, data) {
-        this.handlebarsRegisterHelpers();
-        const cache = this._cache;
-        let instance = cache.get(template);
-        if (typeof instance === 'undefined') {
-            instance = Handlebars.compile(template);
-            cache.set(template, instance);
-        }
-
-        return instance(data).trim();
     }
 }

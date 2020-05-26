@@ -1176,7 +1176,7 @@ class Backend {
     }
 
     async _renderTemplate(template, data) {
-        return this._handlebarsRenderer.handlebarsRenderDynamic(template, data);
+        return this._handlebarsRenderer.render(template, data);
     }
 
     _getTemplates(options) {
