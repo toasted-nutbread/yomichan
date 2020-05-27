@@ -48,15 +48,15 @@ class HandlebarsRenderer {
         Handlebars.partials = Handlebars.templates;
 
         const helpers = [
-            ['dumpObject',       this.handlebarsDumpObject.bind(this)],
-            ['furigana',         this.handlebarsFurigana.bind(this)],
-            ['furiganaPlain',    this.handlebarsFuriganaPlain.bind(this)],
-            ['kanjiLinks',       this.handlebarsKanjiLinks.bind(this)],
-            ['multiLine',        this.handlebarsMultiLine.bind(this)],
-            ['sanitizeCssClass', this.handlebarsSanitizeCssClass.bind(this)],
-            ['regexReplace',     this.handlebarsRegexReplace.bind(this)],
-            ['regexMatch',       this.handlebarsRegexMatch.bind(this)],
-            ['mergeTags',        this.handlebarsMergeTags.bind(this)]
+            ['dumpObject',       this._dumpObject.bind(this)],
+            ['furigana',         this._furigana.bind(this)],
+            ['furiganaPlain',    this._furiganaPlain.bind(this)],
+            ['kanjiLinks',       this._kanjiLinks.bind(this)],
+            ['multiLine',        this._multiLine.bind(this)],
+            ['sanitizeCssClass', this._sanitizeCssClass.bind(this)],
+            ['regexReplace',     this._regexReplace.bind(this)],
+            ['regexMatch',       this._regexMatch.bind(this)],
+            ['mergeTags',        this._mergeTags.bind(this)]
         ];
 
         for (const [name, helper] of helpers) {
@@ -64,16 +64,16 @@ class HandlebarsRenderer {
         }
     }
 
-    handlebarsEscape(text) {
+    _escape(text) {
         return Handlebars.Utils.escapeExpression(text);
     }
 
-    handlebarsDumpObject(options) {
+    _dumpObject(options) {
         const dump = JSON.stringify(options.fn(this), null, 4);
-        return this.handlebarsEscape(dump);
+        return this._escape(dump);
     }
 
-    handlebarsFurigana(options) {
+    _furigana(options) {
         const definition = options.fn(this);
         const segs = jp.distributeFurigana(definition.expression, definition.reading);
 
@@ -89,7 +89,7 @@ class HandlebarsRenderer {
         return result;
     }
 
-    handlebarsFuriganaPlain(options) {
+    _furiganaPlain(options) {
         const definition = options.fn(this);
         const segs = jp.distributeFurigana(definition.expression, definition.reading);
 
@@ -105,7 +105,7 @@ class HandlebarsRenderer {
         return result.trimLeft();
     }
 
-    handlebarsKanjiLinks(options) {
+    _kanjiLinks(options) {
         let result = '';
         for (const c of options.fn(this)) {
             if (jp.isCodePointKanji(c.codePointAt(0))) {
@@ -118,15 +118,15 @@ class HandlebarsRenderer {
         return result;
     }
 
-    handlebarsMultiLine(options) {
+    _multiLine(options) {
         return options.fn(this).split('\n').join('<br>');
     }
 
-    handlebarsSanitizeCssClass(options) {
+    _sanitizeCssClass(options) {
         return options.fn(this).replace(/[^_a-z0-9\u00a0-\uffff]/ig, '_');
     }
 
-    handlebarsRegexReplace(...args) {
+    _regexReplace(...args) {
         // Usage:
         // {{#regexReplace regex string [flags]}}content{{/regexReplace}}
         // regex: regular expression string
@@ -146,7 +146,7 @@ class HandlebarsRenderer {
         return value;
     }
 
-    handlebarsRegexMatch(...args) {
+    _regexMatch(...args) {
         // Usage:
         // {{#regexMatch regex [flags]}}content{{/regexMatch}}
         // regex: regular expression string
@@ -167,7 +167,7 @@ class HandlebarsRenderer {
         return value;
     }
 
-    handlebarsMergeTags(object, isGroupMode, isMergeMode) {
+    _mergeTags(object, isGroupMode, isMergeMode) {
         const tagSources = [];
         if (isGroupMode || isMergeMode) {
             for (const definition of object.definitions) {
