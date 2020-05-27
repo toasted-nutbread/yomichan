@@ -20,7 +20,7 @@
  * jp
  */
 
-class HandlebarsRenderer {
+class TemplateRenderer {
     constructor() {
         this._cache = new Map();
         this._cacheMaxSize = 5;

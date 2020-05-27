@@ -25,10 +25,10 @@
  * Database
  * DictionaryImporter
  * Environment
- * HandlebarsRenderer
  * JsonSchema
  * Mecab
  * ObjectPropertyAccessor
+ * TemplateRenderer
  * Translator
  * conditionsTestValue
  * dictTermsSort
@@ -64,7 +64,7 @@ class Backend {
             audioSystem: this.audioSystem,
             renderTemplate: this._renderTemplate.bind(this)
         });
-        this._handlebarsRenderer = new HandlebarsRenderer();
+        this._templateRenderer = new TemplateRenderer();
 
         const url = (typeof window === 'object' && window !== null ? window.location.href : '');
         this.optionsContext = {depth: 0, url};
@@ -1176,7 +1176,7 @@ class Backend {
     }
 
     async _renderTemplate(template, data) {
-        return await this._handlebarsRenderer.render(template, data);
+        return await this._templateRenderer.render(template, data);
     }
 
     _getTemplates(options) {
