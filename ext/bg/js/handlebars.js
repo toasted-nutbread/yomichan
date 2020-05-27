@@ -27,7 +27,7 @@ class HandlebarsRenderer {
         this._helpersRegistered = false;
     }
 
-    render(template, data) {
+    async render(template, data) {
         if (!this._helpersRegistered) {
             this._registerHelpers();
             this._helpersRegistered = true;
