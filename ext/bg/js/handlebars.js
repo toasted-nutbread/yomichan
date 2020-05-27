@@ -23,6 +23,7 @@
 class HandlebarsRenderer {
     constructor() {
         this._cache = new Map();
+        this._cacheMaxSize = 5;
         this._helpersRegistered = false;
     }
 
@@ -35,6 +36,7 @@ class HandlebarsRenderer {
         const cache = this._cache;
         let instance = cache.get(template);
         if (typeof instance === 'undefined') {
+            this._updateCacheSize(this._cacheMaxSize - 1);
             instance = Handlebars.compile(template);
             cache.set(template, instance);
         }
@@ -43,6 +45,17 @@ class HandlebarsRenderer {
     }
 
     // Private
+
+    _updateCacheSize(maxSize) {
+        const cache = this._cache;
+        let removeCount = cache.size - maxSize;
+        if (removeCount <= 0) { return; }
+
+        for (const key of cache.keys()) {
+            cache.delete(key);
+            if (--removeCount <= 0) { break; }
+        }
+    }
 
     _registerHelpers() {
         Handlebars.partials = Handlebars.templates;
