@@ -23,10 +23,15 @@
 class HandlebarsRenderer {
     constructor() {
         this._cache = new Map();
+        this._helpersRegistered = false;
     }
 
     render(template, data) {
-        this.handlebarsRegisterHelpers();
+        if (!this._helpersRegistered) {
+            this._registerHelpers();
+            this._helpersRegistered = true;
+        }
+
         const cache = this._cache;
         let instance = cache.get(template);
         if (typeof instance === 'undefined') {
@@ -35,6 +40,28 @@ class HandlebarsRenderer {
         }
 
         return instance(data).trim();
+    }
+
+    // Private
+
+    _registerHelpers() {
+        Handlebars.partials = Handlebars.templates;
+
+        const helpers = [
+            ['dumpObject',       this.handlebarsDumpObject.bind(this)],
+            ['furigana',         this.handlebarsFurigana.bind(this)],
+            ['furiganaPlain',    this.handlebarsFuriganaPlain.bind(this)],
+            ['kanjiLinks',       this.handlebarsKanjiLinks.bind(this)],
+            ['multiLine',        this.handlebarsMultiLine.bind(this)],
+            ['sanitizeCssClass', this.handlebarsSanitizeCssClass.bind(this)],
+            ['regexReplace',     this.handlebarsRegexReplace.bind(this)],
+            ['regexMatch',       this.handlebarsRegexMatch.bind(this)],
+            ['mergeTags',        this.handlebarsMergeTags.bind(this)]
+        ];
+
+        for (const [name, helper] of helpers) {
+            Handlebars.registerHelper(name, helper);
+        }
     }
 
     handlebarsEscape(text) {
@@ -158,20 +185,5 @@ class HandlebarsRenderer {
         }
 
         return [...tags].join(', ');
-    }
-
-    handlebarsRegisterHelpers() {
-        if (Handlebars.partials !== Handlebars.templates) {
-            Handlebars.partials = Handlebars.templates;
-            Handlebars.registerHelper('dumpObject', this.handlebarsDumpObject.bind(this));
-            Handlebars.registerHelper('furigana', this.handlebarsFurigana.bind(this));
-            Handlebars.registerHelper('furiganaPlain', this.handlebarsFuriganaPlain.bind(this));
-            Handlebars.registerHelper('kanjiLinks', this.handlebarsKanjiLinks.bind(this));
-            Handlebars.registerHelper('multiLine', this.handlebarsMultiLine.bind(this));
-            Handlebars.registerHelper('sanitizeCssClass', this.handlebarsSanitizeCssClass.bind(this));
-            Handlebars.registerHelper('regexReplace', this.handlebarsRegexReplace.bind(this));
-            Handlebars.registerHelper('regexMatch', this.handlebarsRegexMatch.bind(this));
-            Handlebars.registerHelper('mergeTags', this.handlebarsMergeTags.bind(this));
-        }
     }
 }
