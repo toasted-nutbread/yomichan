@@ -122,7 +122,8 @@ class Backend {
             ['logIndicatorClear',            {async: false, contentScript: true,  handler: this._onApiLogIndicatorClear.bind(this)}],
             ['createActionPort',             {async: false, contentScript: true,  handler: this._onApiCreateActionPort.bind(this)}],
             ['modifySettings',               {async: true,  contentScript: true,  handler: this._onApiModifySettings.bind(this)}],
-            ['getSettings',                  {async: false, contentScript: true,  handler: this._onApiGetSettings.bind(this)}]
+            ['getSettings',                  {async: false, contentScript: true,  handler: this._onApiGetSettings.bind(this)}],
+            ['setAllSettings',               {async: true,  contentScript: false, handler: this._onApiSetAllSettings.bind(this)}]
         ]);
         this._messageHandlersWithProgress = new Map([
             ['importDictionaryArchive', {async: true,  contentScript: false, handler: this._onApiImportDictionaryArchive.bind(this)}],
@@ -858,6 +859,11 @@ class Backend {
             }
         }
         return results;
+    }
+
+    async _onApiSetAllSettings({value, source}) {
+        this.options = JsonSchema.getValidValueOrDefault(this.optionsSchema, value);
+        await this._onApiOptionsSave({source});
     }
 
     // Command handlers
