@@ -274,10 +274,7 @@ class AnkiController {
             fields[name] = '';
         }
 
-        const options = await this._settingsController.getOptionsMutable();
-        options.anki[tabId].fields = utilBackgroundIsolate(fields);
-        await this._settingsController.save();
-
+        await this._settingsController.setProfileSetting(`anki["${tabId}"].fields`, fields);
         await this._populateFields(tabId, fields);
     }
 
