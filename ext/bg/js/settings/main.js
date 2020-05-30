@@ -56,15 +56,6 @@ async function settingsSaveOptions() {
     await settingsController.save();
 }
 
-async function onOptionsUpdated() {
-    const optionsContext = getOptionsContext();
-    const options = await getOptionsMutable(optionsContext);
-
-    if (genericSettingController !== null) {
-        genericSettingController.optionsChanged(options);
-    }
-}
-
 
 function showExtensionInformation() {
     const node = document.getElementById('extension-info');
@@ -98,7 +89,6 @@ async function setupEnvironmentInfo() {
 }
 
 let settingsController = null;
-let genericSettingController = null;
 
 async function onReady() {
     api.forwardLogsToBackend();
@@ -115,7 +105,7 @@ async function onReady() {
     const storageController = new StorageController();
     storageController.prepare();
 
-    genericSettingController = new GenericSettingController();
+    const genericSettingController = new GenericSettingController(settingsController);
     genericSettingController.prepare();
     new ClipboardPopupsController(settingsController).prepare();
     new PopupPreviewController(settingsController).prepare();
@@ -127,9 +117,6 @@ async function onReady() {
     ankiController.prepare();
     new AnkiTemplatesController(settingsController, ankiController).prepare();
     new SettingsBackup(settingsController).prepare();
-
-    settingsController.on('optionsChanged', onOptionsUpdated);
-    onOptionsUpdated();
 }
 
 $(document).ready(() => onReady());
