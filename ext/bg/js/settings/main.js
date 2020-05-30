@@ -110,7 +110,7 @@ async function onReady() {
     new ClipboardPopupsController(settingsController).prepare();
     new PopupPreviewController(settingsController).prepare();
     new AudioController(settingsController).prepare();
-    new ProfileController().prepare();
+    new ProfileController(settingsController).prepare();
     const dictionaryController = new DictionaryController(settingsController, storageController);
     dictionaryController.prepare();
     const ankiController = new AnkiController(settingsController);
