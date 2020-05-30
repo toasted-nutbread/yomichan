@@ -25,10 +25,12 @@ class AnkiController {
     }
 
     async prepare() {
-        $('#anki-fields-container input,#anki-fields-container select,#anki-fields-container textarea').change(this._onFieldsChanged.bind(this));
+        for (const element of document.querySelectorAll('#anki-fields-container input,#anki-fields-container select')) {
+            element.addEventListener('change', this._onFieldsChanged.bind(this), false);
+        }
 
-        for (const node of document.querySelectorAll('#anki-terms-model,#anki-kanji-model')) {
-            node.addEventListener('change', this._onModelChanged.bind(this), false);
+        for (const element of document.querySelectorAll('#anki-terms-model,#anki-kanji-model')) {
+            element.addEventListener('change', this._onModelChanged.bind(this), false);
         }
 
         this._settingsController.on('optionsChanged', this._onOptionsChanged.bind(this));
