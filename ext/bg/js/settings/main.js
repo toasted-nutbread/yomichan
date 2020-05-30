@@ -60,10 +60,6 @@ async function onOptionsUpdated() {
     const optionsContext = getOptionsContext();
     const options = await getOptionsMutable(optionsContext);
 
-    if (dictionaryController !== null) {
-        dictionaryController.optionsChanged();
-    }
-
     if (genericSettingController !== null) {
         genericSettingController.optionsChanged(options);
     }
@@ -102,7 +98,6 @@ async function setupEnvironmentInfo() {
 }
 
 let settingsController = null;
-let dictionaryController = null;
 let genericSettingController = null;
 
 async function onReady() {
@@ -126,7 +121,7 @@ async function onReady() {
     new PopupPreviewController(settingsController).prepare();
     new AudioController(settingsController).prepare();
     new ProfileController().prepare();
-    dictionaryController = new DictionaryController(storageController);
+    const dictionaryController = new DictionaryController(settingsController, storageController);
     dictionaryController.prepare();
     const ankiController = new AnkiController(settingsController);
     ankiController.prepare();
