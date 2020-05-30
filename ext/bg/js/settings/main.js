@@ -131,7 +131,7 @@ async function onReady() {
     const ankiController = new AnkiController(settingsController);
     ankiController.prepare();
     new AnkiTemplatesController(settingsController, ankiController).prepare();
-    new SettingsBackup().prepare();
+    new SettingsBackup(settingsController).prepare();
 
     settingsController.on('optionsChanged', onOptionsUpdated);
     onOptionsUpdated();
