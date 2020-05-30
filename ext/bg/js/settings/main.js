@@ -60,7 +60,6 @@ async function onOptionsUpdated() {
     const optionsContext = getOptionsContext();
     const options = await getOptionsMutable(optionsContext);
 
-    document.querySelector('#enable-clipboard-popups').checked = options.general.enableClipboardPopups;
     if (ankiTemplatesController !== null) {
         ankiTemplatesController.updateValue();
     }
@@ -130,7 +129,7 @@ async function onReady() {
     await settingsPopulateModifierKeys();
     genericSettingController = new GenericSettingController();
     genericSettingController.prepare();
-    new ClipboardPopupsController().prepare();
+    new ClipboardPopupsController(settingsController).prepare();
     new PopupPreviewController(settingsController).prepare();
     new AudioController().prepare();
     await (new ProfileController()).prepare();
