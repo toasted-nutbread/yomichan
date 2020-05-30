@@ -131,7 +131,7 @@ async function onReady() {
     genericSettingController = new GenericSettingController();
     genericSettingController.prepare();
     new ClipboardPopupsController().prepare();
-    new PopupPreviewController().prepare();
+    new PopupPreviewController(settingsController).prepare();
     new AudioController().prepare();
     await (new ProfileController()).prepare();
     dictionaryController = new DictionaryController(storageController);

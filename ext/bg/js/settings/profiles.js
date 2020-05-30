@@ -188,8 +188,6 @@ class ProfileController {
         setProfileIndex(index);
 
         await this._updateTarget(optionsFull);
-
-        yomichan.trigger('modifyingProfileChange');
     }
 
     async _onAdd() {
@@ -203,8 +201,6 @@ class ProfileController {
 
         await this._updateTarget(optionsFull);
         await settingsSaveOptions();
-
-        yomichan.trigger('modifyingProfileChange');
     }
 
     async _onRemove(e) {
@@ -245,8 +241,6 @@ class ProfileController {
 
         await this._updateTarget(optionsFull);
         await settingsSaveOptions();
-
-        yomichan.trigger('modifyingProfileChange');
     }
 
     _onNameChanged() {
@@ -274,8 +268,6 @@ class ProfileController {
 
         await this._updateTarget(optionsFull);
         await settingsSaveOptions();
-
-        yomichan.trigger('modifyingProfileChange');
     }
 
     async _onCopy() {
