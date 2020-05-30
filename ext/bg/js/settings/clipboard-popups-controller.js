@@ -24,10 +24,11 @@
 class ClipboardPopupsController {
     constructor(settingsController) {
         this._settingsController = settingsController;
+        this._checkbox = document.querySelector('#enable-clipboard-popups');
     }
 
     async prepare() {
-        document.querySelector('#enable-clipboard-popups').addEventListener('change', this._onEnableClipboardPopupsChanged.bind(this), false);
+        this._checkbox.addEventListener('change', this._onEnableClipboardPopupsChanged.bind(this), false);
         this._settingsController.on('optionsChanged', this._onOptionsChanged.bind(this));
 
         const options = await this._settingsController.getOptions();
@@ -37,7 +38,7 @@ class ClipboardPopupsController {
     // Private
 
     _onOptionsChanged({options}) {
-        document.querySelector('#enable-clipboard-popups').checked = options.general.enableClipboardPopups;
+        this._checkbox.checked = options.general.enableClipboardPopups;
     }
 
     async _onEnableClipboardPopupsChanged(e) {
@@ -51,7 +52,7 @@ class ClipboardPopupsController {
                     {permissions: ['clipboardRead']},
                     (granted) => {
                         if (!granted) {
-                            $('#enable-clipboard-popups').prop('checked', false);
+                            this._checkbox.checked = false;
                         }
                         resolve(granted);
                     }
