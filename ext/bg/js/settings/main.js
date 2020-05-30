@@ -28,51 +28,35 @@
  * SettingsController
  * StorageController
  * api
- * utilBackend
- * utilBackgroundIsolate
  */
 
-let profileIndex = 0;
-
 function getOptionsContext() {
-    return {index: getProfileIndex()};
+    return settingsController.getOptionsContext();
 }
 
 function getProfileIndex() {
-    return profileIndex;
+    return settingsController.profileIndex;
 }
 
 function setProfileIndex(value) {
-    profileIndex = value;
+    settingsController.profileIndex = value;
 }
 
 
-function getOptionsMutable(optionsContext) {
-    return utilBackend().getOptions(
-        utilBackgroundIsolate(optionsContext)
-    );
+async function getOptionsMutable() {
+    return await settingsController.getOptionsMutable();
 }
 
-function getOptionsFullMutable() {
-    return utilBackend().getFullOptions();
+async function getOptionsFullMutable() {
+    return await settingsController.getOptionsFullMutable();
 }
 
-
-function settingsGetSource() {
-    return new Promise((resolve) => {
-        chrome.tabs.getCurrent((tab) => resolve(`settings${tab ? tab.id : ''}`));
-    });
-}
 
 async function settingsSaveOptions() {
-    const source = await settingsGetSource();
-    await api.optionsSave(source);
+    await settingsController.save();
 }
 
-async function onOptionsUpdated({source}) {
-    const thisSource = await settingsGetSource();
-    if (source === thisSource) { return; }
-
+async function onOptionsUpdated() {
     const optionsContext = getOptionsContext();
     const options = await getOptionsMutable(optionsContext);
 
@@ -124,6 +108,7 @@ async function setupEnvironmentInfo() {
     document.documentElement.dataset.operatingSystem = platform.os;
 }
 
+let settingsController = null;
 let ankiController = null;
 let ankiTemplatesController = null;
 let dictionaryController = null;
@@ -133,7 +118,7 @@ async function onReady() {
     api.forwardLogsToBackend();
     await yomichan.prepare();
 
-    const settingsController = new SettingsController();
+    settingsController = new SettingsController();
     settingsController.prepare();
 
     setupEnvironmentInfo();
@@ -157,7 +142,8 @@ async function onReady() {
     ankiTemplatesController.prepare();
     new SettingsBackup().prepare();
 
-    yomichan.on('optionsUpdated', onOptionsUpdated);
+    settingsController.on('optionsChanged', onOptionsUpdated);
+    onOptionsUpdated();
 }
 
 $(document).ready(() => onReady());

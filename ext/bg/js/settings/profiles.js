@@ -21,7 +21,6 @@
  * conditionsClearCaches
  * getOptionsFullMutable
  * getProfileIndex
- * onOptionsUpdated
  * profileConditionsDescriptor
  * profileConditionsDescriptorPromise
  * setProfileIndex
@@ -131,7 +130,6 @@ class ProfileController {
 
     async _updateTarget(optionsFull) {
         await this._formWrite(optionsFull);
-        await onOptionsUpdated({source: null});
     }
 
     _createCopyName(name, profiles, maxUniqueAttempts) {
