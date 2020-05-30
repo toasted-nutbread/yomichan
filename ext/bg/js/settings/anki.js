@@ -17,7 +17,6 @@
 
 /* global
  * api
- * utilBackgroundIsolate
  */
 
 class AnkiController {
@@ -279,15 +278,22 @@ class AnkiController {
     }
 
     async _onFieldsChanged() {
-        const options = await this._settingsController.getOptionsMutable();
+        const termsDeck = document.querySelector('#anki-terms-deck').value;
+        const termsModel = document.querySelector('#anki-terms-model').value;
+        const termsFields = this._fieldsToDict(document.querySelectorAll('#terms .anki-field-value'));
+        const kanjiDeck = document.querySelector('#anki-kanji-deck').value;
+        const kanjiModel = document.querySelector('#anki-kanji-model').value;
+        const kanjiFields = this._fieldsToDict(document.querySelectorAll('#kanji .anki-field-value'));
 
-        options.anki.terms.deck = $('#anki-terms-deck').val();
-        options.anki.terms.model = $('#anki-terms-model').val();
-        options.anki.terms.fields = utilBackgroundIsolate(this._fieldsToDict(document.querySelectorAll('#terms .anki-field-value')));
-        options.anki.kanji.deck = $('#anki-kanji-deck').val();
-        options.anki.kanji.model = $('#anki-kanji-model').val();
-        options.anki.kanji.fields = utilBackgroundIsolate(this._fieldsToDict(document.querySelectorAll('#kanji .anki-field-value')));
+        const targets = [
+            {action: 'set', path: 'anki.terms.deck',   value: termsDeck},
+            {action: 'set', path: 'anki.terms.model',  value: termsModel},
+            {action: 'set', path: 'anki.terms.fields', value: termsFields},
+            {action: 'set', path: 'anki.kanji.deck',   value: kanjiDeck},
+            {action: 'set', path: 'anki.kanji.model',  value: kanjiModel},
+            {action: 'set', path: 'anki.kanji.fields', value: kanjiFields}
+        ];
 
-        await this._settingsController.save();
+        await this._settingsController.modifyProfileSettings(targets);
     }
 }
