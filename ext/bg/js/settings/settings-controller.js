@@ -82,7 +82,8 @@ class SettingsController extends EventDispatcher {
     }
 
     async _onOptionsUpdatedInternal() {
+        const optionsContext = this.getOptionsContext();
         const options = await this.getOptions();
-        this.trigger('optionsChanged', {options});
+        this.trigger('optionsChanged', {options, optionsContext});
     }
 }
