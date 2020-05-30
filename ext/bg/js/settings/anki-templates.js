@@ -26,9 +26,12 @@ class AnkiTemplatesController {
         this._ankiController = ankiController;
         this._cachedDefinitionValue = null;
         this._cachedDefinitionText = null;
+        this._defaultFieldTemplates = null;
     }
 
     async prepare() {
+        this._defaultFieldTemplates = await api.getDefaultAnkiFieldTemplates();
+
         const markers = new Set([
             ...this._ankiController.getFieldMarkers('terms'),
             ...this._ankiController.getFieldMarkers('kanji')
@@ -52,15 +55,15 @@ class AnkiTemplatesController {
         this._onOptionsChanged({options});
     }
 
-    async _onOptionsChanged({options}) {
+    // Private
+
+    _onOptionsChanged({options}) {
         let templates = options.anki.fieldTemplates;
-        if (typeof templates !== 'string') { templates = await api.getDefaultAnkiFieldTemplates(); }
+        if (typeof templates !== 'string') { templates = this._defaultFieldTemplates; }
         $('#field-templates').val(templates);
 
         this._onValidateCompile();
     }
-
-    // Private
 
     _onReset(e) {
         e.preventDefault();
