@@ -97,8 +97,8 @@ class AnkiController {
 
         await this._deckAndModelPopulate(options);
         await Promise.all([
-            this._fieldsPopulate('terms', options),
-            this._fieldsPopulate('kanji', options)
+            this._populateFields('terms', options.anki.terms.fields),
+            this._populateFields('kanji', options.anki.kanji.fields)
         ]);
     }
 
@@ -222,15 +222,13 @@ class AnkiController {
         return content;
     }
 
-    async _fieldsPopulate(tabId, options) {
+    async _populateFields(tabId, fields) {
         const tab = document.querySelector(`.tab-pane[data-anki-card-type=${tabId}]`);
         const container = tab.querySelector('tbody');
         const markers = this.getFieldMarkers(tabId);
 
         const fragment = document.createDocumentFragment();
-        const fields = options.anki[tabId].fields;
-        for (const name of Object.keys(fields)) {
-            const value = fields[name];
+        for (const [name, value] of Object.entries(fields)) {
             const html = this._createFieldTemplate(name, value, markers);
             fragment.appendChild(html);
         }
@@ -280,7 +278,7 @@ class AnkiController {
         options.anki[tabId].fields = utilBackgroundIsolate(fields);
         await this._settingsController.save();
 
-        await this._fieldsPopulate(tabId, options);
+        await this._populateFields(tabId, fields);
     }
 
     async _onFieldsChanged() {
