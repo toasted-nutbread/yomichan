@@ -110,12 +110,8 @@ class AnkiController {
     }
 
     _spinnerShow(show) {
-        const spinner = $('#anki-spinner');
-        if (show) {
-            spinner.show();
-        } else {
-            spinner.hide();
-        }
+        const spinner = document.querySelector('#anki-spinner');
+        spinner.hidden = !show;
     }
 
     _setError(error) {
