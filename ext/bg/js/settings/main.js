@@ -30,33 +30,6 @@
  * api
  */
 
-function getOptionsContext() {
-    return settingsController.getOptionsContext();
-}
-
-function getProfileIndex() {
-    return settingsController.profileIndex;
-}
-
-function setProfileIndex(value) {
-    settingsController.profileIndex = value;
-}
-
-
-async function getOptionsMutable() {
-    return await settingsController.getOptionsMutable();
-}
-
-async function getOptionsFullMutable() {
-    return await settingsController.getOptionsFullMutable();
-}
-
-
-async function settingsSaveOptions() {
-    await settingsController.save();
-}
-
-
 function showExtensionInformation() {
     const node = document.getElementById('extension-info');
     if (node === null) { return; }
@@ -88,7 +61,6 @@ async function setupEnvironmentInfo() {
     document.documentElement.dataset.operatingSystem = platform.os;
 }
 
-let settingsController = null;
 
 async function onReady() {
     api.forwardLogsToBackend();
@@ -99,7 +71,7 @@ async function onReady() {
     settingsPopulateModifierKeys();
 
     const optionsFull = await api.optionsGetFull();
-    settingsController = new SettingsController(optionsFull.profileCurrent);
+    const settingsController = new SettingsController(optionsFull.profileCurrent);
     settingsController.prepare();
 
     const storageController = new StorageController();
