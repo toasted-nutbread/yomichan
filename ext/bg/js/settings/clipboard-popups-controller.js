@@ -15,12 +15,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/* globals
- * getOptionsContext
- * getOptionsMutable
- * settingsSaveOptions
- */
-
 class ClipboardPopupsController {
     constructor(settingsController) {
         this._settingsController = settingsController;
@@ -42,10 +36,9 @@ class ClipboardPopupsController {
     }
 
     async _onEnableClipboardPopupsChanged(e) {
-        const optionsContext = getOptionsContext();
-        const options = await getOptionsMutable(optionsContext);
-
         const enableClipboardPopups = e.target.checked;
+        const options = await this._settingsController.getOptionsMutable();
+
         if (enableClipboardPopups) {
             options.general.enableClipboardPopups = await new Promise((resolve) => {
                 chrome.permissions.request(
@@ -62,6 +55,6 @@ class ClipboardPopupsController {
             options.general.enableClipboardPopups = false;
         }
 
-        await settingsSaveOptions();
+        await this._settingsController.save();
     }
 }
