@@ -137,7 +137,7 @@ class AnkiTemplatesController {
             const optionsContext = this._settingsController.getOptionsContext();
             const definition = await this._getDefinition(text, optionsContext);
             if (definition !== null) {
-                const options = await api.optionsGet(optionsContext);
+                const options = await this._settingsController.getOptions();
                 const context = {
                     document: {
                         title: document.title

@@ -429,7 +429,7 @@ class DictionaryController {
 
         this._dictionaryUI.setOptionsDictionaries(options.dictionaries);
 
-        const optionsFull = await api.optionsGetFull();
+        const optionsFull = await this._settingsController.getOptionsFull();
         document.querySelector('#database-enable-prefix-wildcard-searches').checked = optionsFull.global.database.prefixWildcardsSupported;
 
         await this._updateMainDictionarySelectValue();
@@ -660,7 +660,7 @@ class DictionaryController {
                 this._storageController.updateStats();
             };
 
-            const optionsFull = await api.optionsGetFull();
+            const optionsFull = await this._settingsController.getOptionsFull();
 
             const importDetails = {
                 prefixWildcardsSupported: optionsFull.global.database.prefixWildcardsSupported
