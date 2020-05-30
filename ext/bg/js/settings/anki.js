@@ -242,7 +242,7 @@ class AnkiController {
     _onMarkerClicked(e) {
         e.preventDefault();
         const link = e.currentTarget;
-        const input = $(link).closest('.input-group').find('.anki-field-value')[0];
+        const input = link.closest('.input-group').querySelector('.anki-field-value');
         input.value = `{${link.textContent}}`;
         input.dispatchEvent(new Event('change'));
     }
