@@ -117,13 +117,13 @@ async function onReady() {
     api.forwardLogsToBackend();
     await yomichan.prepare();
 
-    const optionsFull = await api.optionsGetFull();
-    settingsController = new SettingsController(optionsFull.profileCurrent);
-    settingsController.prepare();
-
     setupEnvironmentInfo();
     showExtensionInformation();
     settingsPopulateModifierKeys();
+
+    const optionsFull = await api.optionsGetFull();
+    settingsController = new SettingsController(optionsFull.profileCurrent);
+    settingsController.prepare();
 
     const storageController = new StorageController();
     storageController.prepare();
