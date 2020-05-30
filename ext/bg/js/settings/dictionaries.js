@@ -616,7 +616,7 @@ class DictionaryController {
             this._dictionarySpinnerShow(true);
 
             await api.purgeDatabase();
-            const optionsFull = this._settingsController.getOptionsFullMutable();
+            const optionsFull = await this._settingsController.getOptionsFullMutable();
             for (const {options} of toIterable(optionsFull.profiles)) {
                 options.dictionaries = utilBackgroundIsolate({});
                 options.general.mainDictionary = '';
@@ -675,7 +675,7 @@ class DictionaryController {
 
                 const archiveContent = await this._dictReadFile(files[i]);
                 const {result, errors} = await api.importDictionaryArchive(archiveContent, importDetails, updateProgress);
-                const optionsFull2 = this._settingsController.getOptionsFullMutable();
+                const optionsFull2 = await this._settingsController.getOptionsFullMutable();
                 for (const {options} of toIterable(optionsFull2.profiles)) {
                     const dictionaryOptions = SettingsDictionaryListUI.createDictionaryOptions();
                     dictionaryOptions.enabled = true;
