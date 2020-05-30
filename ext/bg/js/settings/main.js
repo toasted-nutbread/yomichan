@@ -123,17 +123,17 @@ async function onReady() {
 
     setupEnvironmentInfo();
     showExtensionInformation();
+    settingsPopulateModifierKeys();
 
     const storageController = new StorageController();
     storageController.prepare();
 
-    await settingsPopulateModifierKeys();
     genericSettingController = new GenericSettingController();
     genericSettingController.prepare();
     new ClipboardPopupsController(settingsController).prepare();
     new PopupPreviewController(settingsController).prepare();
     new AudioController().prepare();
-    await (new ProfileController()).prepare();
+    new ProfileController().prepare();
     dictionaryController = new DictionaryController(storageController);
     dictionaryController.prepare();
     ankiController = new AnkiController();
