@@ -340,9 +340,6 @@ class SettingsBackup {
 
         // Assign options
         await this._settingsImportSetOptionsFull(optionsFull);
-
-        // Reload settings page
-        window.location.reload();
     }
 
     _onSettingsImportClick() {
@@ -376,8 +373,5 @@ class SettingsBackup {
 
         // Assign options
         await this._settingsImportSetOptionsFull(optionsFull);
-
-        // Reload settings page
-        window.location.reload();
     }
 }
