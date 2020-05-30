@@ -318,15 +318,6 @@ class Backend {
         return useSchema ? JsonSchema.createProxy(options, this.optionsSchema) : options;
     }
 
-    setFullOptions(options) {
-        try {
-            this.options = JsonSchema.getValidValueOrDefault(this.optionsSchema, utilIsolate(options));
-        } catch (e) {
-            // This shouldn't happen, but catch errors just in case of bugs
-            yomichan.logError(e);
-        }
-    }
-
     getOptions(optionsContext, useSchema=false) {
         return this.getProfile(optionsContext, useSchema).options;
     }

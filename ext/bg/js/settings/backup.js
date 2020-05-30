@@ -141,7 +141,7 @@ class SettingsBackup {
     // Importing
 
     async _settingsImportSetOptionsFull(optionsFull) {
-        await this._settingsController.setOptionsFull(optionsFull);
+        await this._settingsController.setAllSettings(optionsFull);
     }
 
     _showSettingsImportError(error) {
