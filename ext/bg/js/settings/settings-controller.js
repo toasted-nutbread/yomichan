@@ -73,12 +73,20 @@ class SettingsController extends EventDispatcher {
         this._setProfileIndex(profileIndex);
     }
 
+    async getSettings(targets) {
+        return await this._getSettings(targets, {});
+    }
+
     async getGlobalSettings(targets) {
         return await this._getSettings(targets, {scope: 'global'});
     }
 
     async getProfileSettings(targets) {
         return await this._getSettings(targets, {scope: 'profile'});
+    }
+
+    async modifySettings(targets) {
+        return await this._modifySettings(targets, {});
     }
 
     async modifyGlobalSettings(targets) {
