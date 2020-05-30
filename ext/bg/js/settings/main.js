@@ -63,9 +63,6 @@ async function onOptionsUpdated() {
     if (dictionaryController !== null) {
         dictionaryController.optionsChanged();
     }
-    if (ankiController !== null) {
-        ankiController.optionsChanged();
-    }
 
     if (genericSettingController !== null) {
         genericSettingController.optionsChanged(options);
@@ -105,7 +102,6 @@ async function setupEnvironmentInfo() {
 }
 
 let settingsController = null;
-let ankiController = null;
 let dictionaryController = null;
 let genericSettingController = null;
 
@@ -132,7 +128,7 @@ async function onReady() {
     new ProfileController().prepare();
     dictionaryController = new DictionaryController(storageController);
     dictionaryController.prepare();
-    ankiController = new AnkiController();
+    const ankiController = new AnkiController(settingsController);
     ankiController.prepare();
     new AnkiTemplatesController(settingsController, ankiController).prepare();
     new SettingsBackup().prepare();
