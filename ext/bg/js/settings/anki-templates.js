@@ -91,9 +91,7 @@ class AnkiTemplatesController {
         }
 
         // Overwrite
-        const options = await this._settingsController.getOptionsMutable();
-        options.anki.fieldTemplates = templates;
-        await this._settingsController.save();
+        await this._settingsController.setProfileSetting('anki.fieldTemplates', templates);
 
         // Compile
         this._onValidateCompile();
