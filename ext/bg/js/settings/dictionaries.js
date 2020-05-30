@@ -21,8 +21,9 @@
  * utilBackgroundIsolate
  */
 
-class SettingsDictionaryListUI {
+class SettingsDictionaryListUI extends EventDispatcher {
     constructor(container, template, extraContainer, extraTemplate) {
+        super();
         this.container = container;
         this.template = template;
         this.extraContainer = extraContainer;
@@ -305,7 +306,7 @@ class SettingsDictionaryEntryUI {
             this.isDeleting = false;
             progress.hidden = true;
 
-            this.onDatabaseUpdated();
+            this.parent.trigger('databaseUpdated');
         }
     }
 
@@ -408,6 +409,7 @@ class DictionaryController {
             document.querySelector('#dict-extra-template')
         );
         this._dictionaryUI.save = () => this._settingsController.save();
+        this._dictionaryUI.on('databaseUpdated', this._onDatabaseUpdated.bind(this));
 
         document.querySelector('#dict-purge-button').addEventListener('click', this._onPurgeButtonClick.bind(this), false);
         document.querySelector('#dict-purge-confirm').addEventListener('click', this._onPurgeConfirmButtonClick.bind(this), false);
