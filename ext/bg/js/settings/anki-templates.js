@@ -44,10 +44,10 @@ class AnkiTemplatesController {
             node.addEventListener('click', this._onMarkerClicked.bind(this), false);
         }
 
-        $('#field-templates').on('change', this._onChanged.bind(this));
-        $('#field-template-render').on('click', this._onRender.bind(this));
-        $('#field-templates-reset').on('click', this._onReset.bind(this));
-        $('#field-templates-reset-confirm').on('click', this._onResetConfirm.bind(this));
+        document.querySelector('#field-templates').addEventListener('change', this._onChanged.bind(this), false);
+        document.querySelector('#field-template-render').addEventListener('click', this._onRender.bind(this), false);
+        document.querySelector('#field-templates-reset').addEventListener('click', this._onReset.bind(this), false);
+        document.querySelector('#field-templates-reset-confirm').addEventListener('click', this._onResetConfirm.bind(this), false);
 
         this._settingsController.on('optionsChanged', this._onOptionsChanged.bind(this));
 
@@ -60,7 +60,7 @@ class AnkiTemplatesController {
     _onOptionsChanged({options}) {
         let templates = options.anki.fieldTemplates;
         if (typeof templates !== 'string') { templates = this._defaultFieldTemplates; }
-        $('#field-templates').val(templates);
+        document.querySelector('#field-templates').value = templates;
 
         this._onValidateCompile();
     }
