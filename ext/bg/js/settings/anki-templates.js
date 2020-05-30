@@ -18,19 +18,17 @@
 /* global
  * AnkiNoteBuilder
  * api
- * getOptionsContext
- * getOptionsMutable
- * settingsSaveOptions
  */
 
 class AnkiTemplatesController {
-    constructor(ankiController) {
+    constructor(settingsController, ankiController) {
+        this._settingsController = settingsController;
         this._ankiController = ankiController;
         this._cachedDefinitionValue = null;
         this._cachedDefinitionText = null;
     }
 
-    prepare() {
+    async prepare() {
         const markers = new Set([
             ...this._ankiController.getFieldMarkers('terms'),
             ...this._ankiController.getFieldMarkers('kanji')
@@ -48,12 +46,13 @@ class AnkiTemplatesController {
         $('#field-templates-reset').on('click', this._onReset.bind(this));
         $('#field-templates-reset-confirm').on('click', this._onResetConfirm.bind(this));
 
-        this.updateValue();
+        this._settingsController.on('optionsChanged', this._onOptionsChanged.bind(this));
+
+        const options = await this._settingsController.getOptions();
+        this._onOptionsChanged({options});
     }
 
-    async updateValue() {
-        const optionsContext = getOptionsContext();
-        const options = await api.optionsGet(optionsContext);
+    async _onOptionsChanged({options}) {
         let templates = options.anki.fieldTemplates;
         if (typeof templates !== 'string') { templates = await api.getDefaultAnkiFieldTemplates(); }
         $('#field-templates').val(templates);
@@ -89,10 +88,9 @@ class AnkiTemplatesController {
         }
 
         // Overwrite
-        const optionsContext = getOptionsContext();
-        const options = await getOptionsMutable(optionsContext);
+        const options = await this._settingsController.getOptionsMutable();
         options.anki.fieldTemplates = templates;
-        await settingsSaveOptions();
+        await this._settingsController.save();
 
         // Compile
         this._onValidateCompile();
@@ -133,7 +131,7 @@ class AnkiTemplatesController {
         const exceptions = [];
         let result = `No definition found for ${text}`;
         try {
-            const optionsContext = getOptionsContext();
+            const optionsContext = this._settingsController.getOptionsContext();
             const definition = await this._getDefinition(text, optionsContext);
             if (definition !== null) {
                 const options = await api.optionsGet(optionsContext);

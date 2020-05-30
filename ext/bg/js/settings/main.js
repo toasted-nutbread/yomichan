@@ -60,9 +60,6 @@ async function onOptionsUpdated() {
     const optionsContext = getOptionsContext();
     const options = await getOptionsMutable(optionsContext);
 
-    if (ankiTemplatesController !== null) {
-        ankiTemplatesController.updateValue();
-    }
     if (dictionaryController !== null) {
         dictionaryController.optionsChanged();
     }
@@ -109,7 +106,6 @@ async function setupEnvironmentInfo() {
 
 let settingsController = null;
 let ankiController = null;
-let ankiTemplatesController = null;
 let dictionaryController = null;
 let genericSettingController = null;
 
@@ -138,8 +134,7 @@ async function onReady() {
     dictionaryController.prepare();
     ankiController = new AnkiController();
     ankiController.prepare();
-    ankiTemplatesController = new AnkiTemplatesController(ankiController);
-    ankiTemplatesController.prepare();
+    new AnkiTemplatesController(settingsController, ankiController).prepare();
     new SettingsBackup().prepare();
 
     settingsController.on('optionsChanged', onOptionsUpdated);
