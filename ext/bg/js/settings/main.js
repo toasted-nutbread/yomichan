@@ -117,7 +117,8 @@ async function onReady() {
     api.forwardLogsToBackend();
     await yomichan.prepare();
 
-    settingsController = new SettingsController();
+    const optionsFull = await api.optionsGetFull();
+    settingsController = new SettingsController(optionsFull.profileCurrent);
     settingsController.prepare();
 
     setupEnvironmentInfo();

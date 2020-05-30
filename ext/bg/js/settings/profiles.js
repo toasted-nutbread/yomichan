@@ -35,8 +35,6 @@ class ProfileController {
 
     async prepare() {
         const optionsFull = await getOptionsFullMutable();
-        setProfileIndex(optionsFull.profileCurrent);
-
         this._setupEventListeners();
         await this._updateTarget(optionsFull);
     }
