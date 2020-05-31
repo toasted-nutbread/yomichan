@@ -236,7 +236,6 @@ const api = (() => {
 
         _invokeWithProgress(action, params, onProgress, timeout=5000) {
             return new Promise((resolve, reject) => {
-                let timer = null;
                 let port = null;
 
                 if (typeof onProgress !== 'function') {
@@ -245,12 +244,6 @@ const api = (() => {
 
                 const onMessage = (message) => {
                     switch (message.type) {
-                        case 'ack':
-                            if (timer !== null) {
-                                clearTimeout(timer);
-                                timer = null;
-                            }
-                            break;
                         case 'progress':
                             try {
                                 onProgress(...message.data);
@@ -275,10 +268,6 @@ const api = (() => {
                 };
 
                 const cleanup = () => {
-                    if (timer !== null) {
-                        clearTimeout(timer);
-                        timer = null;
-                    }
                     if (port !== null) {
                         port.onMessage.removeListener(onMessage);
                         port.onDisconnect.removeListener(onDisconnect);
@@ -287,11 +276,6 @@ const api = (() => {
                     }
                     onProgress = null;
                 };
-
-                timer = setTimeout(() => {
-                    cleanup();
-                    reject(new Error('Timeout'));
-                }, timeout);
 
                 (async () => {
                     try {
