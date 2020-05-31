@@ -893,19 +893,19 @@ class Backend {
                 const result = async ? await promiseOrResult : promiseOrResult;
                 port.postMessage({type: 'complete', data: result});
             } catch (e) {
-                if (port !== null) {
-                    port.postMessage({type: 'error', data: errorToJson(e)});
-                }
-                cleanup();
+                cleanup(e);
             }
         };
 
         const onDisconnect = () => {
-            cleanup();
+            cleanup(null);
         };
 
-        const cleanup = () => {
+        const cleanup = (error) => {
             if (port === null) { return; }
+            if (error !== null) {
+                port.postMessage({type: 'error', data: errorToJson(error)});
+            }
             if (!hasStarted) {
                 port.onMessage.removeListener(onMessage);
             }
