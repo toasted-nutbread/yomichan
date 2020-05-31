@@ -861,6 +861,7 @@ class Backend {
 
     _createActionListenerPort(port, sender, handlers) {
         let hasStarted = false;
+        let messageString = '';
 
         const onProgress = (...data) => {
             try {
@@ -871,11 +872,31 @@ class Backend {
             }
         };
 
-        const onMessage = async ({action, params}) => {
+        const onMessage = ({action, data}) => {
             if (hasStarted) { return; }
-            hasStarted = true;
-            port.onMessage.removeListener(onMessage);
 
+            try {
+                switch (action) {
+                    case 'fragment':
+                        messageString += data;
+                        break;
+                    case 'invoke':
+                        {
+                            hasStarted = true;
+                            port.onMessage.removeListener(onMessage);
+
+                            const messageData = JSON.parse(messageString);
+                            messageString = null;
+                            onMessageComplete(messageData);
+                        }
+                        break;
+                }
+            } catch (e) {
+                cleanup(e);
+            }
+        };
+
+        const onMessageComplete = async ({action, params}) => {
             try {
                 port.postMessage({type: 'ack'});
 
