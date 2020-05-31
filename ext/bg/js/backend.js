@@ -900,18 +900,22 @@ class Backend {
             }
         };
 
+        const onDisconnect = () => {
+            cleanup();
+        };
+
         const cleanup = () => {
             if (port === null) { return; }
             if (!hasStarted) {
                 port.onMessage.removeListener(onMessage);
             }
-            port.onDisconnect.removeListener(cleanup);
+            port.onDisconnect.removeListener(onDisconnect);
             port = null;
             handlers = null;
         };
 
         port.onMessage.addListener(onMessage);
-        port.onDisconnect.addListener(cleanup);
+        port.onDisconnect.addListener(onDisconnect);
     }
 
     _getErrorLevelValue(errorLevel) {
