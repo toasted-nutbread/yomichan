@@ -872,10 +872,11 @@ class Backend {
             }
         };
 
-        const onMessage = ({action, data}) => {
+        const onMessage = (message) => {
             if (hasStarted) { return; }
 
             try {
+                const {action, data} = message;
                 switch (action) {
                     case 'fragment':
                         messageString += data;
@@ -896,8 +897,9 @@ class Backend {
             }
         };
 
-        const onMessageComplete = async ({action, params}) => {
+        const onMessageComplete = async (message) => {
             try {
+                const {action, params} = message;
                 port.postMessage({type: 'ack'});
 
                 const messageHandler = handlers.get(action);
