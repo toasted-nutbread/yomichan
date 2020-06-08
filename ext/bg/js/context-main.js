@@ -66,7 +66,7 @@ async function mainInner() {
 
     setupButtonEvents('.action-open-search', 'search', chrome.runtime.getURL('/bg/search.html'));
     setupButtonEvents('.action-open-options', 'options', chrome.runtime.getURL(manifest.options_ui.page));
-    setupButtonEvents('.action-open-help', 'help');
+    setupButtonEvents('.action-open-help', 'help', 'https://foosoft.net/projects/yomichan/');
 
     const optionsContext = {
         depth: 0,
