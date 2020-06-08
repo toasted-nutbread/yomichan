@@ -82,9 +82,7 @@ async function mainInner() {
         toggle2.addEventListener('change', () => api.commandExec('toggle'), false);
 
         setTimeout(() => {
-            for (const n of document.querySelectorAll('.toggle-group')) {
-                n.classList.add('toggle-group-animated');
-            }
+            document.body.dataset.loaded = 'true';
         }, 10);
     });
 }
