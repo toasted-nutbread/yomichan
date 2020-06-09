@@ -19,7 +19,31 @@
  * Backend
  */
 
+(() => {
+    const logs = [];
+    chrome.runtime.onMessage.addListener((message, sender, callback) => {
+        try {
+            const {action, params} = message;
+            switch (action) {
+                case 'log':
+                    logs.push(params);
+                    break;
+                case 'getLogs':
+                    callback(logs);
+                    break;
+            }
+        } catch (e) {
+            // NOP
+        }
+    });
+    yomichan.on('log', ({error, level, context}) => logs.push({error: errorToJson(error), level, context}));
+})();
+
 (async () => {
-    window.yomichanBackend = new Backend();
-    await window.yomichanBackend.prepare();
+    try {
+        window.yomichanBackend = new Backend();
+        await window.yomichanBackend.prepare();
+    } catch (e) {
+        yomichan.logError(e);
+    }
 })();
