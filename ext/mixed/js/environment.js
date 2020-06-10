@@ -32,13 +32,21 @@ class Environment {
 
     async _loadEnvironmentInfo() {
         const browser = await this._getBrowser();
-        const platform = await new Promise((resolve) => chrome.runtime.getPlatformInfo(resolve));
-        const modifierInfo = this._getModifierInfo(browser, platform.os);
+        const platform = await new Promise((resolve) => chrome.runtime.getPlatformInfo((result) => {
+            const e = chrome.runtime.lastError;
+            if (e) { yomichan.logError(e); }
+            resolve(result);
+        }));
+        const os = isObject(platform) ? platform.os : 'unknown';
+        const modifierInfo = this._getModifierInfo(browser, os);
+        yomichan.log({
+            browser,
+            platform: {os},
+            modifiers: modifierInfo
+        });
         return {
             browser,
-            platform: {
-                os: platform.os
-            },
+            platform: {os},
             modifiers: modifierInfo
         };
     }
