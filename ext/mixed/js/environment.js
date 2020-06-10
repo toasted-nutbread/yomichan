@@ -43,10 +43,14 @@ class Environment {
 
     async _getOperatingSystem() {
         try {
-            return await this._getPlatformInfo();
+            const {os} = await this._getPlatformInfo();
+            if (typeof os === 'string') {
+                return os;
+            }
         } catch (e) {
-            return 'unknown';
+            // NOP
         }
+        return 'unknown';
     }
 
     _getPlatformInfo() {
