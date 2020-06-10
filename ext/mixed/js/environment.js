@@ -104,8 +104,15 @@ class Environment {
                     ['meta', 'Super']
                 ];
                 break;
-            default:
-                throw new Error(`Invalid OS: ${os}`);
+            default: // 'unknown', etc
+                separator = ' + ';
+                osKeys = [
+                    ['alt', 'Alt'],
+                    ['ctrl', 'Ctrl'],
+                    ['shift', 'Shift'],
+                    ['meta', 'Meta']
+                ];
+                break;
         }
 
         const isFirefox = (browser === 'firefox' || browser === 'firefox-mobile');
