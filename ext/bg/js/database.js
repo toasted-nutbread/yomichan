@@ -21,19 +21,19 @@
 
 class Database {
     constructor() {
-        this.db = null;
+        this._db = null;
         this._schemas = new Map();
     }
 
     // Public
 
     async prepare() {
-        if (this.db !== null) {
+        if (this._db !== null) {
             throw new Error('Database already initialized');
         }
 
         try {
-            this.db = await Database._open('dict', 6, (db, transaction, oldVersion) => {
+            this._db = await Database._open('dict', 6, (db, transaction, oldVersion) => {
                 Database._upgrade(db, transaction, oldVersion, [
                     {
                         version: 2,
@@ -111,20 +111,20 @@ class Database {
 
     async close() {
         this._validate();
-        this.db.close();
-        this.db = null;
+        this._db.close();
+        this._db = null;
     }
 
     isPrepared() {
-        return this.db !== null;
+        return this._db !== null;
     }
 
     async purge() {
         this._validate();
 
-        this.db.close();
-        await Database._deleteDatabase(this.db.name);
-        this.db = null;
+        this._db.close();
+        await Database._deleteDatabase(this._db.name);
+        this._db = null;
 
         await this.prepare();
     }
@@ -153,7 +153,7 @@ class Database {
         }
 
         for (const [objectStoreName, index] of targets) {
-            const dbTransaction = this.db.transaction([objectStoreName], 'readwrite');
+            const dbTransaction = this._db.transaction([objectStoreName], 'readwrite');
             const dbObjectStore = dbTransaction.objectStore(objectStoreName);
             const dbIndex = dbObjectStore.index(index);
             const only = IDBKeyRange.only(dictionaryName);
@@ -179,7 +179,7 @@ class Database {
         const useWildcard = !!wildcard;
         const prefixWildcard = wildcard === 'prefix';
 
-        const dbTransaction = this.db.transaction(['terms'], 'readonly');
+        const dbTransaction = this._db.transaction(['terms'], 'readonly');
         const dbTerms = dbTransaction.objectStore('terms');
         const dbIndex1 = dbTerms.index(prefixWildcard ? 'expressionReverse' : 'expression');
         const dbIndex2 = dbTerms.index(prefixWildcard ? 'readingReverse' : 'reading');
@@ -209,7 +209,7 @@ class Database {
             }
         };
 
-        const dbTransaction = this.db.transaction(['terms'], 'readonly');
+        const dbTransaction = this._db.transaction(['terms'], 'readonly');
         const dbTerms = dbTransaction.objectStore('terms');
         const dbIndex = dbTerms.index('expression');
 
@@ -234,7 +234,7 @@ class Database {
             }
         };
 
-        const dbTransaction = this.db.transaction(['terms'], 'readonly');
+        const dbTransaction = this._db.transaction(['terms'], 'readonly');
         const dbTerms = dbTransaction.objectStore('terms');
         const dbIndex = dbTerms.index('sequence');
 
@@ -264,7 +264,7 @@ class Database {
         this._validate();
 
         let result = null;
-        const dbTransaction = this.db.transaction(['tagMeta'], 'readonly');
+        const dbTransaction = this._db.transaction(['tagMeta'], 'readonly');
         const dbTerms = dbTransaction.objectStore('tagMeta');
         const dbIndex = dbTerms.index('name');
         const only = IDBKeyRange.only(name);
@@ -290,7 +290,7 @@ class Database {
             }
         };
 
-        const transaction = this.db.transaction(['media'], 'readonly');
+        const transaction = this._db.transaction(['media'], 'readonly');
         const objectStore = transaction.objectStore('media');
         const index = objectStore.index('path');
 
@@ -309,7 +309,7 @@ class Database {
         this._validate();
 
         const results = [];
-        const dbTransaction = this.db.transaction(['dictionaries'], 'readonly');
+        const dbTransaction = this._db.transaction(['dictionaries'], 'readonly');
         const dbDictionaries = dbTransaction.objectStore('dictionaries');
 
         await Database._getAll(dbDictionaries, null, null, (info) => results.push(info));
@@ -327,7 +327,7 @@ class Database {
             'termMeta',
             'tagMeta'
         ];
-        const dbCountTransaction = this.db.transaction(objectStoreNames, 'readonly');
+        const dbCountTransaction = this._db.transaction(objectStoreNames, 'readonly');
 
         const targets = [];
         for (const objectStoreName of objectStoreNames) {
@@ -361,7 +361,7 @@ class Database {
 
     async dictionaryExists(title) {
         this._validate();
-        const transaction = this.db.transaction(['dictionaries'], 'readonly');
+        const transaction = this._db.transaction(['dictionaries'], 'readonly');
         const index = transaction.objectStore('dictionaries').index('title');
         const query = IDBKeyRange.only(title);
         const count = await Database._getCount(index, query);
@@ -370,7 +370,7 @@ class Database {
 
     bulkAdd(objectStoreName, items, start, count) {
         return new Promise((resolve, reject) => {
-            const transaction = this.db.transaction([objectStoreName], 'readwrite');
+            const transaction = this._db.transaction([objectStoreName], 'readwrite');
             const objectStore = transaction.objectStore(objectStoreName);
 
             if (start + count > items.length) {
@@ -402,7 +402,7 @@ class Database {
     // Private
 
     _validate() {
-        if (this.db === null) {
+        if (this._db === null) {
             throw new Error('Database not initialized');
         }
     }
@@ -418,7 +418,7 @@ class Database {
             }
         };
 
-        const dbTransaction = this.db.transaction([tableName], 'readonly');
+        const dbTransaction = this._db.transaction([tableName], 'readonly');
         const dbTerms = dbTransaction.objectStore(tableName);
         const dbIndex = dbTerms.index(indexName);
 
