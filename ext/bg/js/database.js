@@ -129,7 +129,8 @@ class Database {
             ['kanjiMeta', 'dictionary'],
             ['terms', 'dictionary'],
             ['termMeta', 'dictionary'],
-            ['tagMeta', 'dictionary']
+            ['tagMeta', 'dictionary'],
+            ['media', 'dictionary']
         ];
 
         const {rate} = progressSettings;
@@ -341,7 +342,8 @@ class Database {
                 ['kanjiMeta', 'dictionary'],
                 ['terms', 'dictionary'],
                 ['termMeta', 'dictionary'],
-                ['tagMeta', 'dictionary']
+                ['tagMeta', 'dictionary'],
+                ['media', 'dictionary']
             ];
             const objectStoreNames = targets.map(([objectStoreName]) => objectStoreName);
             const transaction = this._db.transaction(objectStoreNames, 'readonly');
