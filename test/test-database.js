@@ -287,8 +287,8 @@ async function testDatabase1() {
             true
         );
         vm.assert.deepStrictEqual(counts, {
-            counts: [{kanji: 2, kanjiMeta: 2, terms: 33, termMeta: 12, tagMeta: 14}],
-            total: {kanji: 2, kanjiMeta: 2, terms: 33, termMeta: 12, tagMeta: 14}
+            counts: [{kanji: 2, kanjiMeta: 2, terms: 33, termMeta: 12, tagMeta: 14, media: 1}],
+            total: {kanji: 2, kanjiMeta: 2, terms: 33, termMeta: 12, tagMeta: 14, media: 1}
         });
 
         // Test find* functions
@@ -314,7 +314,7 @@ async function testDatabaseEmpty1(database) {
     const counts = await database.getDictionaryCounts([], true);
     vm.assert.deepStrictEqual(counts, {
         counts: [],
-        total: {kanji: 0, kanjiMeta: 0, terms: 0, termMeta: 0, tagMeta: 0}
+        total: {kanji: 0, kanjiMeta: 0, terms: 0, termMeta: 0, tagMeta: 0, media: 0}
     });
 }
 
@@ -908,7 +908,6 @@ async function testDatabase2() {
     const database = new Database();
 
     // Error: not prepared
-    await assert.rejects(async () => await database.purge());
     await assert.rejects(async () => await database.deleteDictionary(title, {rate: 1000}, () => {}));
     await assert.rejects(async () => await database.findTermsBulk(['?'], titles, null));
     await assert.rejects(async () => await database.findTermsExactBulk(['?'], ['?'], titles));
