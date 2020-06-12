@@ -192,7 +192,7 @@ class Database {
                     for (const row of rows) {
                         if (dictionaries.has(row.dictionary) && !visited.has(row.id)) {
                             visited.add(row.id);
-                            results.push(Database._createTerm(row, inputIndex));
+                            results.push(this._createTerm(row, inputIndex));
                         }
                     }
                     if (++completeCount >= count2) {
@@ -228,7 +228,7 @@ class Database {
                 const onGetAll = (rows) => {
                     for (const row of rows) {
                         if (row.reading === reading && dictionaries.has(row.dictionary)) {
-                            results.push(Database._createTerm(row, inputIndex));
+                            results.push(this._createTerm(row, inputIndex));
                         }
                     }
                     if (++completeCount >= count) {
@@ -262,7 +262,7 @@ class Database {
                 const onGetAll = (rows) => {
                     for (const row of rows) {
                         if (row.dictionary === mainDictionary) {
-                            results.push(Database._createTerm(row, inputIndex));
+                            results.push(this._createTerm(row, inputIndex));
                         }
                     }
                     if (++completeCount >= count) {
@@ -276,15 +276,15 @@ class Database {
     }
 
     findTermMetaBulk(termList, dictionaries) {
-        return this._findGenericBulk('termMeta', 'expression', termList, dictionaries, Database._createTermMeta);
+        return this._findGenericBulk('termMeta', 'expression', termList, dictionaries, this._createTermMeta.bind(this));
     }
 
     findKanjiBulk(kanjiList, dictionaries) {
-        return this._findGenericBulk('kanji', 'character', kanjiList, dictionaries, Database._createKanji);
+        return this._findGenericBulk('kanji', 'character', kanjiList, dictionaries, this._createKanji.bind(this));
     }
 
     findKanjiMetaBulk(kanjiList, dictionaries) {
-        return this._findGenericBulk('kanjiMeta', 'character', kanjiList, dictionaries, Database._createKanjiMeta);
+        return this._findGenericBulk('kanjiMeta', 'character', kanjiList, dictionaries, this._createKanjiMeta.bind(this));
     }
 
     findTagForTitle(name, title) {
@@ -314,7 +314,7 @@ class Database {
                 const onGetAll = (rows) => {
                     for (const row of rows) {
                         if (row.dictionary !== dictionaryName) { continue; }
-                        results[inputIndex] = Database._createMedia(row, inputIndex);
+                        results[inputIndex] = this._createMedia(row, inputIndex);
                     }
                     if (++completeCount >= count) {
                         resolve(results);
@@ -429,7 +429,7 @@ class Database {
         });
     }
 
-    static _createTerm(row, index) {
+    _createTerm(row, index) {
         return {
             index,
             expression: row.expression,
@@ -445,7 +445,7 @@ class Database {
         };
     }
 
-    static _createKanji(row, index) {
+    _createKanji(row, index) {
         return {
             index,
             character: row.character,
@@ -458,15 +458,15 @@ class Database {
         };
     }
 
-    static _createTermMeta({expression, mode, data, dictionary}, index) {
+    _createTermMeta({expression, mode, data, dictionary}, index) {
         return {expression, mode, data, dictionary, index};
     }
 
-    static _createKanjiMeta({character, mode, data, dictionary}, index) {
+    _createKanjiMeta({character, mode, data, dictionary}, index) {
         return {character, mode, data, dictionary, index};
     }
 
-    static _createMedia(row, index) {
+    _createMedia(row, index) {
         return Object.assign({}, row, {index});
     }
 }
