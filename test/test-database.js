@@ -908,7 +908,7 @@ async function testDatabase2() {
 
     // Error: not prepared
     await assert.rejects(async () => await database.purge());
-    await assert.rejects(async () => await database.deleteDictionary(title, {}, () => {}));
+    await assert.rejects(async () => await database.deleteDictionary(title, {rate: 1000}, () => {}));
     await assert.rejects(async () => await database.findTermsBulk(['?'], titles, null));
     await assert.rejects(async () => await database.findTermsExactBulk(['?'], ['?'], titles));
     await assert.rejects(async () => await database.findTermsBySequenceBulk([1], title));
