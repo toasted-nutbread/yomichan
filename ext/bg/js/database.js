@@ -112,7 +112,12 @@ class Database {
     }
 
     async purge() {
-        this._db.close();
+        if (this._db.isOpening()) {
+            throw new Error('Cannot purge database while opening');
+        }
+        if (this._db.isOpen()) {
+            this._db.close();
+        }
         await GenericDatabase.deleteDatabase(this._dbName);
         await this.prepare();
     }
