@@ -21,6 +21,7 @@
  * Display
  * QueryParser
  * api
+ * dynamicLoader
  * wanakana
  */
 
@@ -113,6 +114,8 @@ class DisplaySearch extends Display {
             this.clipboardMonitor.on('change', this.onExternalSearchUpdate.bind(this));
 
             this.updateSearchButton();
+
+            await this._prepareNestedPopups();
 
             this._isPrepared = true;
         } catch (e) {
@@ -393,5 +396,36 @@ class DisplaySearch extends Display {
         } else {
             document.title = `${text} - Yomichan Search`;
         }
+    }
+
+    async _prepareNestedPopups() {
+        let complete = false;
+
+        const onOptionsUpdated = async () => {
+            const optionsContext = this.getOptionsContext();
+            const options = await api.optionsGet(optionsContext);
+            if (!options.scanning.enableOnSearchPage || complete) { return; }
+
+            complete = true;
+            yomichan.off('optionsUpdated', onOptionsUpdated);
+
+            await this._setupNestedPopups();
+        };
+
+        yomichan.on('optionsUpdated', onOptionsUpdated);
+
+        await onOptionsUpdated();
+    }
+
+    async _setupNestedPopups() {
+        window.frontendInitializationData = {depth: 1, proxy: false, isSearchPage: true};
+        await dynamicLoader.loadScripts([
+            '/mixed/js/text-scanner.js',
+            '/fg/js/frame-offset-forwarder.js',
+            '/fg/js/popup.js',
+            '/fg/js/popup-factory.js',
+            '/fg/js/frontend.js',
+            '/fg/js/content-script-main.js'
+        ]);
     }
 }
