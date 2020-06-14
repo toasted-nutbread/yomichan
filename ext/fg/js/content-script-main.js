@@ -17,6 +17,7 @@
 
 /* global
  * Frontend
+ * PopupFactory
  * api
  */
 
@@ -25,7 +26,15 @@
         api.forwardLogsToBackend();
         await yomichan.prepare();
 
-        const frontend = new Frontend(window.frontendInitializationData || {});
+        const {frameId} = await api.frameInformationGet();
+        if (typeof frameId !== 'number') {
+            throw new Error('Failed to get frameId');
+        }
+
+        const popupFactory = new PopupFactory(frameId);
+        await popupFactory.prepare();
+
+        const frontend = new Frontend(frameId, popupFactory, window.frontendInitializationData || {});
         await frontend.prepare();
     } catch (e) {
         yomichan.logError(e);

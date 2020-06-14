@@ -18,7 +18,6 @@
 /* global
  * DOM
  * FrameOffsetForwarder
- * PopupFactory
  * PopupProxy
  * TextScanner
  * api
@@ -26,7 +25,7 @@
  */
 
 class Frontend {
-    constructor(frontendInitializationData) {
+    constructor(frameId, popupFactory, frontendInitializationData) {
         this._id = yomichan.generateId(16);
         this._popup = null;
         this._disabledOverride = false;
@@ -51,9 +50,9 @@ class Frontend {
         this._useProxyPopup = useProxyPopup;
         this._isSearchPage = isSearchPage;
         this._depth = depth;
-        this._frameId = null;
+        this._frameId = frameId;
         this._frameOffsetForwarder = new FrameOffsetForwarder();
-        this._popupFactory = null;
+        this._popupFactory = popupFactory;
         this._iframePopupsInRootFrameAvailable = true;
         this._popupCache = new Map();
         this._updatePopupToken = null;
@@ -79,16 +78,6 @@ class Frontend {
     }
 
     async prepare() {
-        const {frameId} = await api.frameInformationGet();
-        if (typeof frameId !== 'number') {
-            throw new Error('Failed to get frameId');
-        }
-        this._frameId = frameId;
-
-        this._frameOffsetForwarder.prepare();
-        this._popupFactory = new PopupFactory(frameId);
-        await this._popupFactory.prepare();
-
         await this.updateOptions();
         try {
             const {zoomFactor} = await api.getZoom();

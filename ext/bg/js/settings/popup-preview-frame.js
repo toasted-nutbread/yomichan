@@ -18,13 +18,14 @@
 /* global
  * Frontend
  * Popup
- * PopupFactory
  * TextSourceRange
  * api
  */
 
 class PopupPreviewFrame {
-    constructor() {
+    constructor(frameId, popupFactory) {
+        this._frameId = frameId;
+        this._popupFactory = popupFactory;
         this._frontend = null;
         this._frontendGetOptionsContextOld = null;
         this._apiOptionsGetOld = null;
@@ -55,18 +56,13 @@ class PopupPreviewFrame {
         api.optionsGet = this._apiOptionsGet.bind(this);
 
         // Overwrite frontend
-        const {frameId} = await api.frameInformationGet();
-
-        const popupFactory = new PopupFactory(frameId);
-        await popupFactory.prepare();
-
-        this._popup = popupFactory.getOrCreatePopup();
+        this._popup = this._popupFactory.getOrCreatePopup();
         this._popup.setChildrenSupported(false);
 
         this._popupSetCustomOuterCssOld = this._popup.setCustomOuterCss.bind(this._popup);
         this._popup.setCustomOuterCss = this._popupSetCustomOuterCss.bind(this);
 
-        this._frontend = new Frontend(this._popup);
+        this._frontend = new Frontend(this._frameId, this._popupFactory);
         this._frontendGetOptionsContextOld = this._frontend.getOptionsContext.bind(this._frontend);
         this._frontend.getOptionsContext = this._getOptionsContext.bind(this);
         await this._frontend.prepare();

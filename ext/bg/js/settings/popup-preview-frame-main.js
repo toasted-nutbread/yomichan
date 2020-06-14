@@ -16,6 +16,7 @@
  */
 
 /* global
+ * PopupFactory
  * PopupPreviewFrame
  * api
  */
@@ -23,7 +24,13 @@
 (async () => {
     try {
         api.forwardLogsToBackend();
-        const preview = new PopupPreviewFrame();
+
+        const {frameId} = await api.frameInformationGet();
+
+        const popupFactory = new PopupFactory(frameId);
+        await popupFactory.prepare();
+
+        const preview = new PopupPreviewFrame(frameId, popupFactory);
         await preview.prepare();
     } catch (e) {
         yomichan.logError(e);
