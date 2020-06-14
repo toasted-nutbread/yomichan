@@ -114,7 +114,7 @@ async function createPopupProxy(depth, id, parentFrameId) {
 
         if (!proxy && frameOffsetForwarder === null) {
             frameOffsetForwarder = new FrameOffsetForwarder();
-            frameOffsetForwarder.start();
+            frameOffsetForwarder.prepare();
         }
 
         let popup;

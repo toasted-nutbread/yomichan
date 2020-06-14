@@ -21,8 +21,7 @@
 
 class FrameOffsetForwarder {
     constructor() {
-        this._started = false;
-
+        this._isPrepared = false;
         this._cacheMaxSize = 1000;
         this._frameCache = new Set();
         this._unreachableContentWindowCache = new Set();
@@ -38,10 +37,10 @@ class FrameOffsetForwarder {
         ]);
     }
 
-    start() {
-        if (this._started) { return; }
+    prepare() {
+        if (this._isPrepared) { return; }
         window.addEventListener('message', this.onMessage.bind(this), false);
-        this._started = true;
+        this._isPrepared = true;
     }
 
     async getOffset() {
