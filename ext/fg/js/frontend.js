@@ -115,6 +115,10 @@ class Frontend {
             this._textScanner.on('clearSelection', this._onClearSelection.bind(this));
             this._textScanner.on('activeModifiersChanged', this._onActiveModifiersChanged.bind(this));
 
+            api.crossFrame.registerHandlers([
+                ['getUrl', {async: false, handler: this._onApiGetUrl.bind(this)}]
+            ]);
+
             this._updateContentScale();
             this._broadcastRootPopupInformation();
         } catch (e) {
@@ -133,8 +137,15 @@ class Frontend {
     }
 
     async getOptionsContext() {
-        // const url = this._getUrl !== null ? await this._getUrl() : window.location.href; // TODO
-        const url = window.location.href;
+        let url = window.location.href;
+        if (this._useProxyPopup) {
+            try {
+                url = await api.crossFrame.invoke(this._parentFrameId, 'getUrl', {});
+            } catch (e) {
+                // NOP
+            }
+        }
+
         const depth = this._depth;
         const modifierKeys = [...this._activeModifiers];
         return {depth, url, modifierKeys};
@@ -188,6 +199,12 @@ class Frontend {
 
     _onMessageRequestDocumentInformationBroadcast({uniqueId}) {
         this._broadcastDocumentInformation(uniqueId);
+    }
+
+    // API message handlers
+
+    _onApiGetUrl() {
+        return window.location.href;
     }
 
     // Private
