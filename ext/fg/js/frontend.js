@@ -97,6 +97,8 @@ class Frontend {
             // Ignore exceptions which may occur due to being on an unsupported page (e.g. about:blank)
         }
 
+        this._textScanner.prepare();
+
         window.addEventListener('resize', this._onResize.bind(this), false);
         DOM.addFullscreenChangeEventListener(this._updatePopup.bind(this));
 
