@@ -21,7 +21,11 @@
  */
 
 (async () => {
-    api.forwardLogsToBackend();
-    const preview = new PopupPreviewFrame();
-    await preview.prepare();
+    try {
+        api.forwardLogsToBackend();
+        const preview = new PopupPreviewFrame();
+        await preview.prepare();
+    } catch (e) {
+        yomichan.logError(e);
+    }
 })();
