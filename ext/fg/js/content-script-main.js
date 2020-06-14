@@ -71,6 +71,15 @@ async function createPopupProxy(depth, id, parentFrameId) {
     api.forwardLogsToBackend();
     await yomichan.prepare();
 
+    try {
+        const frontend = new Frontend(window.frontendInitializationData || {});
+        await frontend.prepare();
+    } catch (e) {
+        yomichan.logError(e);
+        return;
+    }
+    if (true) { return; } // TODO
+
     const data = window.frontendInitializationData || {};
     const {id, depth=0, parentFrameId, url=window.location.href, proxy=false, isSearchPage=false} = data;
 

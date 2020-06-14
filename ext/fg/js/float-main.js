@@ -26,6 +26,8 @@ async function injectPopupNested() {
         '/mixed/js/text-scanner.js',
         '/fg/js/popup.js',
         '/fg/js/popup-proxy.js',
+        '/fg/js/popup-factory.js',
+        '/fg/js/frame-offset-forwarder.js',
         '/fg/js/frontend.js',
         '/fg/js/content-script-main.js'
     ]);

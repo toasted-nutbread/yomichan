@@ -16,16 +16,19 @@
  */
 
 /* global
+ * DOM
+ * FrameOffsetForwarder
+ * PopupFactory
+ * PopupProxy
  * TextScanner
  * api
  * docSentenceExtract
  */
 
 class Frontend {
-    constructor(popup, getUrl=null) {
+    constructor(frontendInitializationData) {
         this._id = yomichan.generateId(16);
-        this._popup = popup;
-        this._getUrl = getUrl;
+        this._popup = null;
         this._disabledOverride = false;
         this._options = null;
         this._pageZoomFactor = 1.0;
@@ -41,6 +44,19 @@ class Frontend {
             ignorePoint: this._ignorePoint.bind(this),
             search: this._search.bind(this)
         });
+
+        const {depth=0, id: proxyPopupId, parentFrameId, proxy: useProxyPopup=false, isSearchPage=false} = frontendInitializationData;
+        this._proxyPopupId = proxyPopupId;
+        this._parentFrameId = parentFrameId;
+        this._useProxyPopup = useProxyPopup;
+        this._isSearchPage = isSearchPage;
+        this._depth = depth;
+        this._frameId = null;
+        this._frameOffsetForwarder = new FrameOffsetForwarder();
+        this._popupFactory = null;
+        this._iframePopupsInRootFrameAvailable = true;
+        this._popupCache = new Map();
+        this._updatePopupToken = null;
 
         this._windowMessageHandlers = new Map([
             ['popupClose', this._onMessagePopupClose.bind(this)],
@@ -64,6 +80,16 @@ class Frontend {
 
     async prepare() {
         try {
+            const {frameId} = await api.frameInformationGet();
+            if (typeof frameId !== 'number') {
+                throw new Error('Failed to get frameId');
+            }
+            this._frameId = frameId;
+
+            this._frameOffsetForwarder.prepare();
+            this._popupFactory = new PopupFactory(frameId);
+            await this._popupFactory.prepare();
+
             await this.updateOptions();
             try {
                 const {zoomFactor} = await api.getZoom();
@@ -73,6 +99,7 @@ class Frontend {
             }
 
             window.addEventListener('resize', this._onResize.bind(this), false);
+            DOM.addFullscreenChangeEventListener(this._updatePopup.bind(this));
 
             const visualViewport = window.visualViewport;
             if (visualViewport !== null && typeof visualViewport === 'object') {
@@ -95,12 +122,6 @@ class Frontend {
         }
     }
 
-    async setPopup(popup) {
-        this._textScanner.clearSelection(true);
-        this._popup = popup;
-        await popup.setOptionsContext(await this.getOptionsContext(), this._id);
-    }
-
     setDisabledOverride(disabled) {
         this._disabledOverride = disabled;
         this._updateTextScannerEnabled();
@@ -112,8 +133,9 @@ class Frontend {
     }
 
     async getOptionsContext() {
-        const url = this._getUrl !== null ? await this._getUrl() : window.location.href;
-        const depth = this._popup.depth;
+        // const url = this._getUrl !== null ? await this._getUrl() : window.location.href; // TODO
+        const url = window.location.href;
+        const depth = this._depth;
         const modifierKeys = [...this._activeModifiers];
         return {depth, url, modifierKeys};
     }
@@ -121,6 +143,9 @@ class Frontend {
     async updateOptions() {
         const optionsContext = await this.getOptionsContext();
         this._options = await api.optionsGet(optionsContext);
+
+        await this._updatePopup();
+
         this._textScanner.setOptions(this._options);
         this._updateTextScannerEnabled();
 
@@ -129,8 +154,6 @@ class Frontend {
             ignoreNodes.push('.source-text', '.source-text *');
         }
         this._textScanner.ignoreNodes = ignoreNodes.join(',');
-
-        await this._popup.setOptionsContext(optionsContext, this._id);
 
         this._updateContentScale();
 
@@ -223,12 +246,92 @@ class Frontend {
         await this.updateOptions();
     }
 
+    async _updatePopup() {
+        const showIframePopupsInRootFrame = this._options.general.showIframePopupsInRootFrame;
+        const isIframe = !this._useProxyPopup && (window !== window.parent);
+
+        let popupPromise;
+        if (
+            isIframe &&
+            showIframePopupsInRootFrame &&
+            DOM.getFullscreenElement() === null &&
+            this._iframePopupsInRootFrameAvailable
+        ) {
+            popupPromise = this._popupCache.get('iframe');
+            if (typeof popupPromise === 'undefined') {
+                popupPromise = this._getIframeProxyPopup();
+                this._popupCache.set('iframe', popupPromise);
+            }
+        } else if (this._useProxyPopup) {
+            popupPromise = this._popupCache.get('proxy');
+            if (typeof popupPromise === 'undefined') {
+                popupPromise = this._getProxyPopup();
+                this._popupCache.set('proxy', popupPromise);
+            }
+        } else {
+            popupPromise = this._popupCache.get('default');
+            if (typeof popupPromise === 'undefined') {
+                popupPromise = this._getDefaultPopup();
+                this._popupCache.set('default', popupPromise);
+            }
+        }
+
+        // The token below is used as a unique identifier to ensure that a new _updatePopup call
+        // hasn't been started during the await.
+        const token = {};
+        this._updatePopupToken = token;
+        const popup = await popupPromise;
+        const optionsContext = await this.getOptionsContext();
+        if (this._updatePopupToken !== token) { return; }
+        await popup.setOptionsContext(optionsContext, this._id);
+        if (this._updatePopupToken !== token) { return; }
+
+        if (this._isSearchPage) {
+            this.setDisabledOverride(!this._options.scanning.enableOnSearchPage);
+        }
+
+        this._textScanner.clearSelection(true);
+        this._popup = popup;
+    }
+
+    async _getDefaultPopup() {
+        return this._popupFactory.getOrCreatePopup(null, null, this._depth);
+    }
+
+    async _getProxyPopup() {
+        const popup = new PopupProxy(null, this._depth + 1, this._proxyPopupId, this._parentFrameId);
+        await popup.prepare();
+        return popup;
+    }
+
+    async _getIframeProxyPopup() {
+        const rootPopupInformationPromise = yomichan.getTemporaryListenerResult(
+            chrome.runtime.onMessage,
+            ({action, params}, {resolve}) => {
+                if (action === 'rootPopupInformation') {
+                    resolve(params);
+                }
+            }
+        );
+        api.broadcastTab('rootPopupRequestInformationBroadcast');
+        const {popupId, frameId: parentFrameId} = await rootPopupInformationPromise;
+
+        const popup = new PopupProxy(popupId, 0, null, parentFrameId, this._frameOffsetForwarder);
+        popup.on('offsetNotFound', () => {
+            this._iframePopupsInRootFrameAvailable = false;
+            this._updatePopup();
+        });
+        await popup.prepare();
+
+        return popup;
+    }
+
     _ignoreElements() {
-        return this._popup.isProxy() ? [] : [this._popup.getFrame()];
+        return this._popup === null || this._popup.isProxy() ? [] : [this._popup.getFrame()];
     }
 
     _ignorePoint(x, y) {
-        return this._popup.containsPoint(x, y);
+        return this._popup !== null && this._popup.containsPoint(x, y);
     }
 
     async _search(textSource, cause) {
@@ -322,7 +425,7 @@ class Frontend {
     _updateTextScannerEnabled() {
         const enabled = (
             this._options.general.enable &&
-            this._popup.depth <= this._options.scanning.popupNestingMaxDepth &&
+            this._depth <= this._options.scanning.popupNestingMaxDepth &&
             !this._disabledOverride
         );
         this._enabledEventListeners.removeAllEventListeners();
@@ -346,27 +449,41 @@ class Frontend {
         if (contentScale === this._contentScale) { return; }
 
         this._contentScale = contentScale;
-        this._popup.setContentScale(this._contentScale);
+        if (this._popup !== null) {
+            this._popup.setContentScale(this._contentScale);
+        }
         this._updatePopupPosition();
     }
 
     async _updatePopupPosition() {
         const textSource = this._textScanner.getCurrentTextSource();
-        if (textSource !== null && await this._popup.isVisible()) {
+        if (
+            textSource !== null &&
+            this._popup !== null &&
+            await this._popup.isVisible()
+        ) {
             this._showPopupContent(textSource, await this.getOptionsContext());
         }
     }
 
     _broadcastRootPopupInformation() {
-        if (!this._popup.isProxy() && this._popup.depth === 0 && this._popup.frameId === 0) {
-            api.broadcastTab('rootPopupInformation', {popupId: this._popup.id, frameId: this._popup.frameId});
+        if (
+            this._popup !== null &&
+            !this._popup.isProxy() &&
+            this._depth === 0 &&
+            this._frameId === 0
+        ) {
+            api.broadcastTab('rootPopupInformation', {
+                popupId: this._popup.id,
+                frameId: this._frameId
+            });
         }
     }
 
     _broadcastDocumentInformation(uniqueId) {
         api.broadcastTab('documentInformationBroadcast', {
             uniqueId,
-            frameId: this._popup.frameId,
+            frameId: this._frameId,
             title: document.title
         });
     }
