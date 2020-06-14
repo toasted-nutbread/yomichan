@@ -39,7 +39,7 @@ class FrameOffsetForwarder {
 
     prepare() {
         if (this._isPrepared) { return; }
-        window.addEventListener('message', this.onMessage.bind(this), false);
+        window.addEventListener('message', this._onMessage.bind(this), false);
         this._isPrepared = true;
     }
 
@@ -68,7 +68,9 @@ class FrameOffsetForwarder {
         return offset;
     }
 
-    onMessage(e) {
+    // Private
+
+    _onMessage(e) {
         const {action, params} = e.data;
         const handler = this._windowMessageHandlers.get(action);
         if (typeof handler !== 'function') { return; }
