@@ -62,7 +62,13 @@ class PopupPreviewFrame {
         this._popupSetCustomOuterCssOld = this._popup.setCustomOuterCss.bind(this._popup);
         this._popup.setCustomOuterCss = this._popupSetCustomOuterCss.bind(this);
 
-        this._frontend = new Frontend(this._frameId, this._popupFactory);
+        this._frontend = new Frontend(
+            this._frameId,
+            this._popupFactory,
+            {
+                allowRootFramePopupProxy: false
+            }
+        );
         this._frontendGetOptionsContextOld = this._frontend.getOptionsContext.bind(this._frontend);
         this._frontend.getOptionsContext = this._getOptionsContext.bind(this);
         await this._frontend.prepare();

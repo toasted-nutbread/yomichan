@@ -44,7 +44,14 @@ class Frontend {
             search: this._search.bind(this)
         });
 
-        const {depth=0, id: proxyPopupId, parentFrameId, proxy: useProxyPopup=false, isSearchPage=false} = frontendInitializationData;
+        const {
+            depth=0,
+            id: proxyPopupId,
+            parentFrameId,
+            proxy: useProxyPopup=false,
+            isSearchPage=false,
+            allowRootFramePopupProxy=true
+        } = frontendInitializationData;
         this._proxyPopupId = proxyPopupId;
         this._parentFrameId = parentFrameId;
         this._useProxyPopup = useProxyPopup;
@@ -53,7 +60,7 @@ class Frontend {
         this._frameId = frameId;
         this._frameOffsetForwarder = new FrameOffsetForwarder();
         this._popupFactory = popupFactory;
-        this._iframePopupsInRootFrameAvailable = true;
+        this._allowRootFramePopupProxy = allowRootFramePopupProxy;
         this._popupCache = new Map();
         this._updatePopupToken = null;
 
@@ -259,7 +266,7 @@ class Frontend {
             isIframe &&
             showIframePopupsInRootFrame &&
             DOM.getFullscreenElement() === null &&
-            this._iframePopupsInRootFrameAvailable
+            this._allowRootFramePopupProxy
         ) {
             popupPromise = this._popupCache.get('iframe');
             if (typeof popupPromise === 'undefined') {
@@ -323,7 +330,7 @@ class Frontend {
 
         const popup = new PopupProxy(popupId, 0, null, parentFrameId, this._frameOffsetForwarder);
         popup.on('offsetNotFound', () => {
-            this._iframePopupsInRootFrameAvailable = false;
+            this._allowRootFramePopupProxy = false;
             this._updatePopup();
         });
         await popup.prepare();
