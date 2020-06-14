@@ -70,11 +70,18 @@ class FrameOffsetForwarder {
 
     // Private
 
-    _onMessage(e) {
-        const {action, params} = e.data;
-        const handler = this._windowMessageHandlers.get(action);
-        if (typeof handler !== 'function') { return; }
-        handler(params, e);
+    _onMessage(event) {
+        const data = event.data;
+        if (data === null || typeof data !== 'object') { return; }
+
+        try {
+            const {action, params} = event.data;
+            const handler = this._windowMessageHandlers.get(action);
+            if (typeof handler !== 'function') { return; }
+            handler(params, event);
+        } catch (e) {
+            // NOP
+        }
     }
 
     _onGetFrameOffset(offset, uniqueId, e) {
