@@ -79,51 +79,47 @@ class Frontend {
     }
 
     async prepare() {
-        try {
-            const {frameId} = await api.frameInformationGet();
-            if (typeof frameId !== 'number') {
-                throw new Error('Failed to get frameId');
-            }
-            this._frameId = frameId;
-
-            this._frameOffsetForwarder.prepare();
-            this._popupFactory = new PopupFactory(frameId);
-            await this._popupFactory.prepare();
-
-            await this.updateOptions();
-            try {
-                const {zoomFactor} = await api.getZoom();
-                this._pageZoomFactor = zoomFactor;
-            } catch (e) {
-                // Ignore exceptions which may occur due to being on an unsupported page (e.g. about:blank)
-            }
-
-            window.addEventListener('resize', this._onResize.bind(this), false);
-            DOM.addFullscreenChangeEventListener(this._updatePopup.bind(this));
-
-            const visualViewport = window.visualViewport;
-            if (visualViewport !== null && typeof visualViewport === 'object') {
-                window.visualViewport.addEventListener('scroll', this._onVisualViewportScroll.bind(this));
-                window.visualViewport.addEventListener('resize', this._onVisualViewportResize.bind(this));
-            }
-
-            yomichan.on('orphaned', this._onOrphaned.bind(this));
-            yomichan.on('optionsUpdated', this.updateOptions.bind(this));
-            yomichan.on('zoomChanged', this._onZoomChanged.bind(this));
-            chrome.runtime.onMessage.addListener(this._onRuntimeMessage.bind(this));
-
-            this._textScanner.on('clearSelection', this._onClearSelection.bind(this));
-            this._textScanner.on('activeModifiersChanged', this._onActiveModifiersChanged.bind(this));
-
-            api.crossFrame.registerHandlers([
-                ['getUrl', {async: false, handler: this._onApiGetUrl.bind(this)}]
-            ]);
-
-            this._updateContentScale();
-            this._broadcastRootPopupInformation();
-        } catch (e) {
-            yomichan.logError(e);
+        const {frameId} = await api.frameInformationGet();
+        if (typeof frameId !== 'number') {
+            throw new Error('Failed to get frameId');
         }
+        this._frameId = frameId;
+
+        this._frameOffsetForwarder.prepare();
+        this._popupFactory = new PopupFactory(frameId);
+        await this._popupFactory.prepare();
+
+        await this.updateOptions();
+        try {
+            const {zoomFactor} = await api.getZoom();
+            this._pageZoomFactor = zoomFactor;
+        } catch (e) {
+            // Ignore exceptions which may occur due to being on an unsupported page (e.g. about:blank)
+        }
+
+        window.addEventListener('resize', this._onResize.bind(this), false);
+        DOM.addFullscreenChangeEventListener(this._updatePopup.bind(this));
+
+        const visualViewport = window.visualViewport;
+        if (visualViewport !== null && typeof visualViewport === 'object') {
+            window.visualViewport.addEventListener('scroll', this._onVisualViewportScroll.bind(this));
+            window.visualViewport.addEventListener('resize', this._onVisualViewportResize.bind(this));
+        }
+
+        yomichan.on('orphaned', this._onOrphaned.bind(this));
+        yomichan.on('optionsUpdated', this.updateOptions.bind(this));
+        yomichan.on('zoomChanged', this._onZoomChanged.bind(this));
+        chrome.runtime.onMessage.addListener(this._onRuntimeMessage.bind(this));
+
+        this._textScanner.on('clearSelection', this._onClearSelection.bind(this));
+        this._textScanner.on('activeModifiersChanged', this._onActiveModifiersChanged.bind(this));
+
+        api.crossFrame.registerHandlers([
+            ['getUrl', {async: false, handler: this._onApiGetUrl.bind(this)}]
+        ]);
+
+        this._updateContentScale();
+        this._broadcastRootPopupInformation();
     }
 
     setDisabledOverride(disabled) {
