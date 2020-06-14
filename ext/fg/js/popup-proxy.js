@@ -19,14 +19,14 @@
  * api
  */
 
-class PopupProxy {
-    constructor(id, depth, parentPopupId, parentFrameId, getFrameOffset=null, setDisabled=null) {
+class PopupProxy extends EventDispatcher {
+    constructor(id, depth, parentPopupId, parentFrameId, getFrameOffset=null) {
+        super();
         this._id = id;
         this._depth = depth;
         this._parentPopupId = parentPopupId;
         this._parentFrameId = parentFrameId;
         this._getFrameOffset = getFrameOffset;
-        this._setDisabled = setDisabled;
 
         this._frameOffset = null;
         this._frameOffsetPromise = null;
@@ -138,8 +138,8 @@ class PopupProxy {
         try {
             const offset = await this._frameOffsetPromise;
             this._frameOffset = offset !== null ? offset : [0, 0];
-            if (offset === null && this._setDisabled !== null) {
-                this._setDisabled();
+            if (offset === null) {
+                this.trigger('offsetNotFound');
                 return;
             }
             this._frameOffsetUpdatedAt = now;

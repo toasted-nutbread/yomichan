@@ -51,7 +51,8 @@ async function createIframePopupProxy(frameOffsetForwarder, setDisabled) {
 
     const getFrameOffset = frameOffsetForwarder.getOffset.bind(frameOffsetForwarder);
 
-    const popup = new PopupProxy(popupId, 0, null, parentFrameId, getFrameOffset, setDisabled);
+    const popup = new PopupProxy(popupId, 0, null, parentFrameId, getFrameOffset);
+    popup.on('offsetNotFound', setDisabled);
     await popup.prepare();
 
     return popup;
