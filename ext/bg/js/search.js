@@ -74,53 +74,49 @@ class DisplaySearch extends Display {
     }
 
     async prepare() {
-        try {
-            await super.prepare();
-            await this.updateOptions();
-            yomichan.on('optionsUpdated', () => this.updateOptions());
-            await this.queryParser.prepare();
+        await super.prepare();
+        await this.updateOptions();
+        yomichan.on('optionsUpdated', () => this.updateOptions());
+        await this.queryParser.prepare();
 
-            const {queryParams: {query='', mode=''}} = parseUrl(window.location.href);
+        const {queryParams: {query='', mode=''}} = parseUrl(window.location.href);
 
-            document.documentElement.dataset.searchMode = mode;
+        document.documentElement.dataset.searchMode = mode;
 
-            if (this.options.general.enableWanakana === true) {
-                this.wanakanaEnable.checked = true;
-                wanakana.bind(this.query);
-            } else {
-                this.wanakanaEnable.checked = false;
-            }
-
-            this.setQuery(query);
-            this.onSearchQueryUpdated(this.query.value, false);
-
-            if (mode !== 'popup') {
-                if (this.options.general.enableClipboardMonitor === true) {
-                    this.clipboardMonitorEnable.checked = true;
-                    this.clipboardMonitor.start();
-                } else {
-                    this.clipboardMonitorEnable.checked = false;
-                }
-                this.clipboardMonitorEnable.addEventListener('change', this.onClipboardMonitorEnableChange.bind(this));
-            }
-
-            chrome.runtime.onMessage.addListener(this.onRuntimeMessage.bind(this));
-
-            this.search.addEventListener('click', this.onSearch.bind(this), false);
-            this.query.addEventListener('input', this.onSearchInput.bind(this), false);
-            this.wanakanaEnable.addEventListener('change', this.onWanakanaEnableChange.bind(this));
-            window.addEventListener('popstate', this.onPopState.bind(this));
-            window.addEventListener('copy', this.onCopy.bind(this));
-            this.clipboardMonitor.on('change', this.onExternalSearchUpdate.bind(this));
-
-            this.updateSearchButton();
-
-            await this._prepareNestedPopups();
-
-            this._isPrepared = true;
-        } catch (e) {
-            this.onError(e);
+        if (this.options.general.enableWanakana === true) {
+            this.wanakanaEnable.checked = true;
+            wanakana.bind(this.query);
+        } else {
+            this.wanakanaEnable.checked = false;
         }
+
+        this.setQuery(query);
+        this.onSearchQueryUpdated(this.query.value, false);
+
+        if (mode !== 'popup') {
+            if (this.options.general.enableClipboardMonitor === true) {
+                this.clipboardMonitorEnable.checked = true;
+                this.clipboardMonitor.start();
+            } else {
+                this.clipboardMonitorEnable.checked = false;
+            }
+            this.clipboardMonitorEnable.addEventListener('change', this.onClipboardMonitorEnableChange.bind(this));
+        }
+
+        chrome.runtime.onMessage.addListener(this.onRuntimeMessage.bind(this));
+
+        this.search.addEventListener('click', this.onSearch.bind(this), false);
+        this.query.addEventListener('input', this.onSearchInput.bind(this), false);
+        this.wanakanaEnable.addEventListener('change', this.onWanakanaEnableChange.bind(this));
+        window.addEventListener('popstate', this.onPopState.bind(this));
+        window.addEventListener('copy', this.onCopy.bind(this));
+        this.clipboardMonitor.on('change', this.onExternalSearchUpdate.bind(this));
+
+        this.updateSearchButton();
+
+        await this._prepareNestedPopups();
+
+        this._isPrepared = true;
     }
 
     onError(error) {
