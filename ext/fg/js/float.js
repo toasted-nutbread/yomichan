@@ -202,7 +202,7 @@ class DisplayFloat extends Display {
         );
     }
 
-    _prepareNestedPopups(id, depth, parentFrameId, url) {
+    async _prepareNestedPopups(id, depth, parentFrameId, url) {
         let complete = false;
 
         const onOptionsUpdated = async () => {
@@ -219,7 +219,7 @@ class DisplayFloat extends Display {
 
         yomichan.on('optionsUpdated', onOptionsUpdated);
 
-        onOptionsUpdated();
+        await onOptionsUpdated();
     }
 
     async _setupNestedPopups(id, depth, parentFrameId, url) {

@@ -21,7 +21,12 @@
  */
 
 (async () => {
-    api.forwardLogsToBackend();
-    const display = new DisplayFloat();
-    await display.prepare();
+    try {
+        api.forwardLogsToBackend();
+
+        const display = new DisplayFloat();
+        await display.prepare();
+    } catch (e) {
+        yomichan.logError(e);
+    }
 })();
