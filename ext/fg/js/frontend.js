@@ -37,8 +37,8 @@ class Frontend {
         this._optionsUpdatePending = false;
         this._textScanner = new TextScanner({
             node: window,
-            ignoreElements: () => this._popup.isProxy() ? [] : [this._popup.getFrame()],
-            ignorePoint: (x, y) => this._popup.containsPoint(x, y),
+            ignoreElements: this._ignoreElements.bind(this),
+            ignorePoint: this._ignorePoint.bind(this),
             search: this._search.bind(this)
         });
 
@@ -221,6 +221,14 @@ class Frontend {
             return;
         }
         await this.updateOptions();
+    }
+
+    _ignoreElements() {
+        return this._popup.isProxy() ? [] : [this._popup.getFrame()];
+    }
+
+    _ignorePoint(x, y) {
+        return this._popup.containsPoint(x, y);
     }
 
     async _search(textSource, cause) {
