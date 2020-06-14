@@ -307,6 +307,7 @@ class Frontend {
 
         this._textScanner.clearSelection(true);
         this._popup = popup;
+        this._depth = popup.depth;
     }
 
     async _getDefaultPopup() {
