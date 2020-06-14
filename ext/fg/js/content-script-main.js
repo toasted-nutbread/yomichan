@@ -156,7 +156,7 @@ async function createPopupProxy(depth, id, parentFrameId) {
     };
 
     yomichan.on('optionsUpdated', applyOptions);
-    window.addEventListener('fullscreenchange', applyOptions, false);
+    DOM.addFullscreenChangeEventListener(applyOptions);
 
     await applyOptions();
 })();
