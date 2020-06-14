@@ -84,6 +84,10 @@ class Frontend {
         this._textScanner.canClearSelection = value;
     }
 
+    get popup() {
+        return this._popup;
+    }
+
     async prepare() {
         await this.updateOptions();
         try {
