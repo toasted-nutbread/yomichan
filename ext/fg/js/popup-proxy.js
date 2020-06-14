@@ -20,13 +20,13 @@
  */
 
 class PopupProxy extends EventDispatcher {
-    constructor(id, depth, parentPopupId, parentFrameId, getFrameOffset=null) {
+    constructor(id, depth, parentPopupId, parentFrameId, frameOffsetForwarder=null) {
         super();
         this._id = id;
         this._depth = depth;
         this._parentPopupId = parentPopupId;
         this._parentFrameId = parentFrameId;
-        this._getFrameOffset = getFrameOffset;
+        this._frameOffsetForwarder = frameOffsetForwarder;
 
         this._frameOffset = null;
         this._frameOffsetPromise = null;
@@ -75,7 +75,7 @@ class PopupProxy extends EventDispatcher {
     }
 
     async containsPoint(x, y) {
-        if (this._getFrameOffset !== null) {
+        if (this._frameOffsetForwarder !== null) {
             await this._updateFrameOffset();
             [x, y] = this._applyFrameOffset(x, y);
         }
@@ -84,7 +84,7 @@ class PopupProxy extends EventDispatcher {
 
     async showContent(elementRect, writingMode, type, details, context) {
         let {x, y, width, height} = elementRect;
-        if (this._getFrameOffset !== null) {
+        if (this._frameOffsetForwarder !== null) {
             await this._updateFrameOffset();
             [x, y] = this._applyFrameOffset(x, y);
         }
@@ -134,7 +134,7 @@ class PopupProxy extends EventDispatcher {
     }
 
     async _updateFrameOffsetInner(now) {
-        this._frameOffsetPromise = this._getFrameOffset();
+        this._frameOffsetPromise = this._frameOffsetForwarder.getOffset();
         try {
             const offset = await this._frameOffsetPromise;
             this._frameOffset = offset !== null ? offset : [0, 0];
