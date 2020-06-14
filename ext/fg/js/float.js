@@ -18,7 +18,7 @@
 /* global
  * Display
  * api
- * popupNestedInitialize
+ * dynamicLoader
  */
 
 class DisplayFloat extends Display {
@@ -30,7 +30,7 @@ class DisplayFloat extends Display {
         this._token = null;
 
         this._orphaned = false;
-        this._initializedNestedPopups = false;
+        this._nestedPopupsPrepared = false;
 
         this._onKeyDownHandlers = new Map([
             ['C', (e) => {
@@ -183,10 +183,10 @@ class DisplayFloat extends Display {
 
         await this.updateOptions();
 
-        if (childrenSupported && !this._initializedNestedPopups) {
+        if (childrenSupported && !this._nestedPopupsPrepared) {
             const {depth, url} = optionsContext;
-            popupNestedInitialize(popupId, depth, frameId, url);
-            this._initializedNestedPopups = true;
+            this._prepareNestedPopups(popupId, depth, frameId, url);
+            this._nestedPopupsPrepared = true;
         }
 
         this.setContentScale(scale);
@@ -200,5 +200,38 @@ class DisplayFloat extends Display {
             this._token === message.token &&
             this._secret === message.secret
         );
+    }
+
+    _prepareNestedPopups(id, depth, parentFrameId, url) {
+        let complete = false;
+
+        const onOptionsUpdated = async () => {
+            const optionsContext = this.optionsContext;
+            const options = await api.optionsGet(optionsContext);
+            const maxPopupDepthExceeded = !(typeof depth === 'number' && depth < options.scanning.popupNestingMaxDepth);
+            if (maxPopupDepthExceeded || complete) { return; }
+
+            complete = true;
+            yomichan.off('optionsUpdated', onOptionsUpdated);
+
+            await this._setupNestedPopups(id, depth, parentFrameId, url);
+        };
+
+        yomichan.on('optionsUpdated', onOptionsUpdated);
+
+        onOptionsUpdated();
+    }
+
+    async _setupNestedPopups(id, depth, parentFrameId, url) {
+        window.frontendInitializationData = {id, depth, parentFrameId, url, proxy: true};
+        await dynamicLoader.loadScripts([
+            '/mixed/js/text-scanner.js',
+            '/fg/js/popup.js',
+            '/fg/js/popup-proxy.js',
+            '/fg/js/popup-factory.js',
+            '/fg/js/frame-offset-forwarder.js',
+            '/fg/js/frontend.js',
+            '/fg/js/content-script-main.js'
+        ]);
     }
 }
