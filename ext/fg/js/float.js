@@ -17,6 +17,8 @@
 
 /* global
  * Display
+ * Frontend
+ * PopupFactory
  * api
  * dynamicLoader
  */
@@ -223,15 +225,31 @@ class DisplayFloat extends Display {
     }
 
     async _setupNestedPopups(id, depth, parentFrameId, url) {
-        window.frontendInitializationData = {id, depth, parentFrameId, url, proxy: true};
         await dynamicLoader.loadScripts([
             '/mixed/js/text-scanner.js',
             '/fg/js/popup.js',
             '/fg/js/popup-proxy.js',
             '/fg/js/popup-factory.js',
             '/fg/js/frame-offset-forwarder.js',
-            '/fg/js/frontend.js',
-            '/fg/js/content-script-main.js'
+            '/fg/js/frontend.js'
         ]);
+
+        const {frameId} = await api.frameInformationGet();
+
+        const popupFactory = new PopupFactory(frameId);
+        await popupFactory.prepare();
+
+        const frontend = new Frontend(
+            frameId,
+            popupFactory,
+            {
+                id,
+                depth,
+                parentFrameId,
+                url,
+                proxy: true
+            }
+        );
+        await frontend.prepare();
     }
 }

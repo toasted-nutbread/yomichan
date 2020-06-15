@@ -19,6 +19,8 @@
  * ClipboardMonitor
  * DOM
  * Display
+ * Frontend
+ * PopupFactory
  * QueryParser
  * api
  * dynamicLoader
@@ -414,14 +416,28 @@ class DisplaySearch extends Display {
     }
 
     async _setupNestedPopups() {
-        window.frontendInitializationData = {depth: 1, proxy: false, isSearchPage: true};
         await dynamicLoader.loadScripts([
             '/mixed/js/text-scanner.js',
             '/fg/js/frame-offset-forwarder.js',
             '/fg/js/popup.js',
             '/fg/js/popup-factory.js',
-            '/fg/js/frontend.js',
-            '/fg/js/content-script-main.js'
+            '/fg/js/frontend.js'
         ]);
+
+        const {frameId} = await api.frameInformationGet();
+
+        const popupFactory = new PopupFactory(frameId);
+        await popupFactory.prepare();
+
+        const frontend = new Frontend(
+            frameId,
+            popupFactory,
+            {
+                depth: 1,
+                proxy: false,
+                isSearchPage: true
+            }
+        );
+        await frontend.prepare();
     }
 }

@@ -34,7 +34,11 @@
         const popupFactory = new PopupFactory(frameId);
         await popupFactory.prepare();
 
-        const frontend = new Frontend(frameId, popupFactory, window.frontendInitializationData || {});
+        const frontend = new Frontend(
+            frameId,
+            popupFactory,
+            {}
+        );
         await frontend.prepare();
     } catch (e) {
         yomichan.logError(e);
