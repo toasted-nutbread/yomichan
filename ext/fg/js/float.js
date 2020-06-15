@@ -216,7 +216,11 @@ class DisplayFloat extends Display {
             complete = true;
             yomichan.off('optionsUpdated', onOptionsUpdated);
 
-            await this._setupNestedPopups(id, depth, parentFrameId, url);
+            try {
+                await this._setupNestedPopups(id, depth, parentFrameId, url);
+            } catch (e) {
+                yomichan.logError(e);
+            }
         };
 
         yomichan.on('optionsUpdated', onOptionsUpdated);

@@ -407,7 +407,11 @@ class DisplaySearch extends Display {
             complete = true;
             yomichan.off('optionsUpdated', onOptionsUpdated);
 
-            await this._setupNestedPopups();
+            try {
+                await this._setupNestedPopups();
+            } catch (e) {
+                yomichan.logError(e);
+            }
         };
 
         yomichan.on('optionsUpdated', onOptionsUpdated);
