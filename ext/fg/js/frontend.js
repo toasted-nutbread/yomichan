@@ -89,6 +89,8 @@ class Frontend {
     }
 
     async prepare() {
+        this._frameOffsetForwarder.prepare();
+
         await this.updateOptions();
         try {
             const {zoomFactor} = await api.getZoom();
