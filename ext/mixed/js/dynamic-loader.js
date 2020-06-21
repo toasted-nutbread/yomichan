@@ -22,7 +22,7 @@
 const dynamicLoader = (() => {
     const injectedStylesheets = new Map();
 
-    async function loadStyle(id, type, value, useWebExtensionApi=false) {
+    async function loadStyle(id, type, value, useWebExtensionApi=false, parentNode=null) {
         if (useWebExtensionApi && yomichan.isExtensionUrl(window.location.href)) {
             // Permissions error will occur if trying to use the WebExtension API to inject into an extension page
             useWebExtensionApi = false;
@@ -50,9 +50,11 @@ const dynamicLoader = (() => {
         }
 
         // Create node in document
-        const parentNode = document.head;
         if (parentNode === null) {
-            throw new Error('No parent node');
+            parentNode = document.head;
+            if (parentNode === null) {
+                throw new Error('No parent node');
+            }
         }
 
         // Create or reuse node
