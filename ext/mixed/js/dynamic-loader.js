@@ -38,6 +38,12 @@ const dynamicLoader = (() => {
             styleNode = null;
         }
 
+        if (type === 'file-content') {
+            value = await api.getStylesheetContent(value);
+            type = 'code';
+            useWebExtensionApi = false;
+        }
+
         if (useWebExtensionApi) {
             // Inject via WebExtension API
             if (styleNode !== null && styleNode.parentNode !== null) {
