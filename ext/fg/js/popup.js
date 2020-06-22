@@ -326,6 +326,10 @@ class Popup {
     }
 
     async _createInjectPromise() {
+        if (this._options === null) {
+            throw new Error('Options not initialized');
+        }
+
         this._injectStyles();
 
         const unsecurePopupFrameUrl = (this._options !== null && this._options.general.unsecurePopupFrameUrl);
