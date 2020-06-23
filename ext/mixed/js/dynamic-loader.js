@@ -21,6 +21,28 @@
 
 const dynamicLoader = (() => {
     const injectedStylesheets = new Map();
+    const injectedStylesheetsWithParent = new WeakMap();
+
+    function getInjectedStylesheet(id, parentNode) {
+        if (parentNode === null) {
+            return injectedStylesheets.get(id);
+        }
+        const map = injectedStylesheetsWithParent.get(parentNode);
+        return typeof map !== 'undefined' ? map.get(id) : void 0;
+    }
+
+    function setInjectedStylesheet(id, parentNode, value) {
+        if (parentNode === null) {
+            injectedStylesheets.set(id, value);
+            return;
+        }
+        let map = injectedStylesheetsWithParent.get(parentNode);
+        if (typeof map === 'undefined') {
+            map = new Map();
+            injectedStylesheetsWithParent.set(parentNode, map);
+        }
+        map.set(id, value);
+    }
 
     async function loadStyle(id, type, value, useWebExtensionApi=false, parentNode=null) {
         if (useWebExtensionApi && yomichan.isExtensionUrl(window.location.href)) {
@@ -28,7 +50,7 @@ const dynamicLoader = (() => {
             useWebExtensionApi = false;
         }
 
-        let styleNode = injectedStylesheets.get(id);
+        let styleNode = getInjectedStylesheet(id, parentNode);
         if (typeof styleNode !== 'undefined') {
             if (styleNode === null) {
                 // Previously injected via WebExtension API
@@ -50,15 +72,16 @@ const dynamicLoader = (() => {
                 styleNode.parentNode.removeChild(styleNode);
             }
 
-            injectedStylesheets.set(id, null);
+            setInjectedStylesheet(id, parentNode, null);
             await api.injectStylesheet(type, value);
             return null;
         }
 
         // Create node in document
-        if (parentNode === null) {
-            parentNode = document.head;
-            if (parentNode === null) {
+        let parentNode2 = parentNode;
+        if (parentNode2 === null) {
+            parentNode2 = document.head;
+            if (parentNode2 === null) {
                 throw new Error('No parent node');
             }
         }
@@ -82,12 +105,12 @@ const dynamicLoader = (() => {
         }
 
         // Update parent
-        if (styleNode.parentNode !== parentNode) {
-            parentNode.appendChild(styleNode);
+        if (styleNode.parentNode !== parentNode2) {
+            parentNode2.appendChild(styleNode);
         }
 
         // Add to map
-        injectedStylesheets.set(id, styleNode);
+        setInjectedStylesheet(id, parentNode, styleNode);
         return styleNode;
     }
 
