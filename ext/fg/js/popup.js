@@ -203,6 +203,10 @@ class Popup {
         return this._frame.getBoundingClientRect();
     }
 
+    getContainer() {
+        return this._container;
+    }
+
     // Private functions
 
     _inject() {
