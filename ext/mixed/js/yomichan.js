@@ -30,9 +30,9 @@ const yomichan = (() => {
             );
 
             this._messageHandlers = new Map([
-                ['getUrl', this._onMessageGetUrl.bind(this)],
-                ['optionsUpdated', this._onMessageOptionsUpdated.bind(this)],
-                ['zoomChanged', this._onMessageZoomChanged.bind(this)]
+                ['getUrl',          this._onMessageGetUrl.bind(this)],
+                ['optionsUpdated',  this._onMessageOptionsUpdated.bind(this)],
+                ['zoomChanged',     this._onMessageZoomChanged.bind(this)]
             ]);
 
             chrome.runtime.onMessage.addListener(this._onMessage.bind(this));
