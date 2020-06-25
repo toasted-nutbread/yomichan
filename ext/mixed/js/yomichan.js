@@ -40,7 +40,7 @@ const yomichan = (() => {
 
         // Public
 
-        prepare() {
+        ready() {
             chrome.runtime.sendMessage({action: 'yomichanCoreReady'});
             return this._isBackendPreparedPromise;
         }
