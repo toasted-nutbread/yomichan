@@ -20,25 +20,23 @@ const yomichan = (() => {
         constructor() {
             super();
 
-            this._isBackendPreparedPromise = this.getTemporaryListenerResult(
-                chrome.runtime.onMessage,
-                ({action}, {resolve}) => {
-                    if (action === 'backendPrepared') {
-                        resolve();
-                    }
-                }
-            );
+            const {promise, resolve} = deferPromise();
+            this._isBackendPreparedPromise = promise;
+            this._isBackendPreparedPromiseResolve = resolve;
 
             this._messageHandlers = new Map([
+                ['backendPrepared', this._onMessageBackendPrepared.bind(this)],
                 ['getUrl',          this._onMessageGetUrl.bind(this)],
                 ['optionsUpdated',  this._onMessageOptionsUpdated.bind(this)],
                 ['zoomChanged',     this._onMessageZoomChanged.bind(this)]
             ]);
-
-            chrome.runtime.onMessage.addListener(this._onMessage.bind(this));
         }
 
         // Public
+
+        prepare() {
+            chrome.runtime.onMessage.addListener(this._onMessage.bind(this));
+        }
 
         ready() {
             chrome.runtime.sendMessage({action: 'yomichanCoreReady'});
@@ -186,6 +184,12 @@ const yomichan = (() => {
             return false;
         }
 
+        _onMessageBackendPrepared() {
+            if (this._isBackendPreparedPromiseResolve === null) { return; }
+            this._isBackendPreparedPromiseResolve();
+            this._isBackendPreparedPromiseResolve = null;
+        }
+
         _onMessageGetUrl() {
             return {url: this._getUrl()};
         }
@@ -201,3 +205,5 @@ const yomichan = (() => {
 
     return new Yomichan();
 })();
+
+yomichan.prepare();
