@@ -59,8 +59,7 @@ const yomichan = (() => {
 
         isExtensionUrl(url) {
             try {
-                const urlBase = chrome.runtime.getURL('/');
-                return url.substring(0, urlBase.length) === urlBase;
+                return url.startsWith(chrome.runtime.getURL('/'));
             } catch (e) {
                 return false;
             }
