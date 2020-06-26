@@ -31,6 +31,7 @@
         <a href="#!anki"         class="outline-item"><span class="outline-item-inner"><span class="outline-item-left outline-item-icon outline-item-icon-anki"></span><span class="outline-item-label">Anki</span></span></a>
         <a href="#!shortcuts"    class="outline-item"><span class="outline-item-inner"><span class="outline-item-left outline-item-icon outline-item-icon-shortcuts"></span><span class="outline-item-label">Shortcuts</span></span></a>
         <a href="#!backup"       class="outline-item"><span class="outline-item-inner"><span class="outline-item-left outline-item-icon outline-item-icon-backup"></span><span class="outline-item-label">Backup</span></span></a>
+        <a href="#!security"     class="outline-item advanced-only"><span class="outline-item-inner"><span class="outline-item-left outline-item-icon outline-item-icon-security"></span><span class="outline-item-label">Security</span></span></a>
     </div>
     <div class="sidebar-bottom">
         <label class="outline-item"><span class="outline-item-inner"><span class="outline-item-left">
@@ -825,6 +826,59 @@
                 </div>
             </div>
         </div></div>
+    </div>
+
+    <h2 id="security" class="advanced-only">Security</h2>
+    <div class="settings-group advanced-only">
+        <div class="settings-item">
+            <div class="settings-item-inner settings-item-inner-wrappable">
+                <div class="settings-item-left">
+                    <div class="settings-item-label">
+                        Use a secure container around popups
+                        <a class="more-toggle more-only" data-parent-distance="4">(?)</a>
+                    </div>
+                </div>
+                <div class="settings-item-right">
+                    <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+                </div>
+            </div>
+            <div class="settings-item-children more" hidden>
+                <p>
+                    On <a href="https://caniuse.com/shadowdomv1" target="_blank" rel="noopener noreferrer">supported browsers</a>,
+                    a popup's <code>iframe</code> element will be embeded inside of a container with a closed <a href="https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_shadow_DOM" target="_blank" rel="noopener noreferrer">shadow DOM</a>.
+                    This container prevents scripts running on the underlying web page from being able to discover the <code>iframe</code>,
+                    which helps avoid situations where the web page might try to modify or use the Yomichan popup for an unintended purpose.
+                </p>
+                <p>
+                    <a class="more-toggle" data-parent-distance="3">Less&hellip;</a>
+                </p>
+            </div>
+        </div>
+        <div class="settings-item">
+            <div class="settings-item-inner settings-item-inner-wrappable">
+                <div class="settings-item-left">
+                    <div class="settings-item-label">
+                        Use secure popup frame URL
+                        <a class="more-toggle more-only" data-parent-distance="4">(?)</a>
+                    </div>
+                </div>
+                <div class="settings-item-right">
+                    <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+                </div>
+            </div>
+            <div class="settings-item-children more" hidden>
+                <p>
+                    When this option is enabled, the URL of the <code>iframe</code> element will be assigned by
+                    directly changing the location of the <code>iframe</code>'s internal document, rather than using
+                    the <code>iframe</code>'s <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe#attr-src" target="_blank" rel="noopener noreferrer"><code>src</code></a>
+                    attribute. This results in the extension URL not being exposed to the underling web page, and thus making it harder
+                    to detect the presence of Yomichan.
+                </p>
+                <p>
+                    <a class="more-toggle" data-parent-distance="3">Less&hellip;</a>
+                </p>
+            </div>
+        </div>
     </div>
 
     <div class="footer-padding"></div>

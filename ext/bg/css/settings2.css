@@ -347,6 +347,7 @@ h3 {
 .outline-item-icon.outline-item-icon-anki         { background-image: url(../../mixed/img/note-card.svg); }
 .outline-item-icon.outline-item-icon-shortcuts    { background-image: url(../../mixed/img/keyboard.svg); }
 .outline-item-icon.outline-item-icon-backup       { background-image: url(../../mixed/img/backup.svg); }
+.outline-item-icon.outline-item-icon-security     { background-image: url(../../mixed/img/lock.svg); }
 .outline-item-icon.outline-item-icon-about        { background-image: url(../../mixed/img/question-mark.svg); }
 
 
