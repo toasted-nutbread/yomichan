@@ -119,7 +119,7 @@
                 <div class="settings-item-label">Enable content scanning</div>
             </div>
             <div class="settings-item-right">
-                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+                <label class="toggle"><input type="checkbox" data-setting="general.enable"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
             </div>
         </div></div>
         <div class="settings-item"><div class="settings-item-inner">
@@ -128,7 +128,7 @@
                 <div class="settings-item-description"></div>
             </div>
             <div class="settings-item-right">
-                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+                <label class="toggle"><input type="checkbox" data-setting="general.showGuide"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
             </div>
         </div></div>
         <div class="settings-item"><div class="settings-item-inner">
@@ -137,7 +137,7 @@
                 <div class="settings-item-description">Display dictionary term glossaries using a more compact layout.</div>
             </div>
             <div class="settings-item-right">
-                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+                <label class="toggle"><input type="checkbox" data-setting="general.compactGlossaries"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
             </div>
         </div></div>
         <div class="settings-item"><div class="settings-item-inner">
@@ -146,7 +146,7 @@
                 <div class="settings-item-description">Show fewer repeated tags for term glossaries.</div>
             </div>
             <div class="settings-item-right">
-                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+                <label class="toggle"><input type="checkbox" data-setting="general.compactTags"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
             </div>
         </div></div>
         <div class="settings-item"><div class="settings-item-inner settings-item-inner-wrappable">
@@ -155,10 +155,10 @@
                 <div class="settings-item-description">Change how related results are grouped.</div>
             </div>
             <div class="settings-item-right">
-                <select>
-                    <option>No grouping</option>
-                    <option>Group by term-reading pairs</option>
-                    <option>Group by main dictionary entry</option>
+                <select data-setting="general.resultOutputMode" data-transform-pre="setDocumentAttribute" data-transform-post="setDocumentAttribute" data-document-attribute="data-options-general-result-output-mode">
+                    <option value="split">No grouping</option>
+                    <option value="group">Group by term-reading pairs</option>
+                    <option value="merge">Group by main dictionary entry</option>
                 </select>
             </div>
         </div></div>
@@ -168,7 +168,7 @@
                 <div class="settings-item-description">Adjust the maximum number of results shown for lookups.</div>
             </div>
             <div class="settings-item-right">
-                <input type="number" value="32">
+                <input type="number" min="1" data-setting="general.maxResults">
             </div>
         </div></div>
     </div>
@@ -181,9 +181,9 @@
                 <div class="settings-item-description">Adjust the style of the popup.</div>
             </div>
             <div class="settings-item-right">
-                <select>
-                    <option>Light</option>
-                    <option>Dark</option>
+                <select data-setting="general.popupTheme">
+                    <option value="default">Light</option>
+                    <option value="dark">Dark</option>
                 </select>
             </div>
         </div></div>
@@ -197,8 +197,9 @@
                     </div>
                 </div>
                 <div class="settings-item-right">
-                    <select>
-                        <option>Default</option>
+                    <select data-setting="general.popupDisplayMode">
+                        <option value="default">Default</option>
+                        <option value="full-width">Full width</option>
                     </select>
                 </div>
             </div>
@@ -219,8 +220,24 @@
                 <div class="settings-item-description">Control the scaling factor of the popup.</div>
             </div>
             <div class="settings-item-right">
-                <select>
-                    <option>100%</option>
+                <select data-setting="general.popupScalingFactor" data-transform-pre="toNumber" data-transform-post="toString" data-min="0.25">
+                    <option value="0.25">25%</option>
+                    <option value="0.33">33%</option>
+                    <option value="0.5">50%</option>
+                    <option value="0.67">67%</option>
+                    <option value="0.75">75%</option>
+                    <option value="0.8">80%</option>
+                    <option value="0.9">90%</option>
+                    <option value="1">100%</option>
+                    <option value="1.1">110%</option>
+                    <option value="1.25">125%</option>
+                    <option value="1.5">150%</option>
+                    <option value="1.75">175%</option>
+                    <option value="2">200%</option>
+                    <option value="2.5">250%</option>
+                    <option value="3">300%</option>
+                    <option value="4">400%</option>
+                    <option value="5">500%</option>
                 </select>
             </div>
         </div></div>
@@ -232,11 +249,11 @@
             <div class="settings-item-right settings-item-group">
                 <div class="settings-item-group-item">
                     <div class="settings-item-group-item-label">Width</div>
-                    <input type="number" value="32" class="settings-item-group-item-input">
+                    <input type="number" class="settings-item-group-item-input" min="1" data-setting="general.popupWidth">
                 </div>
                 <div class="settings-item-group-item">
                     <div class="settings-item-group-item-label">Height</div>
-                    <input type="number" value="32" class="settings-item-group-item-input">
+                    <input type="number" class="settings-item-group-item-input" min="1" data-setting="general.popupHeight">
                 </div>
             </div>
         </div></div>
@@ -246,8 +263,9 @@
                 <div class="settings-item-description">Change where the popup is positioned relative to horizontal text.</div>
             </div>
             <div class="settings-item-right">
-                <select>
-                    <option>Below text</option>
+                <select data-setting="general.popupHorizontalTextPosition">
+                    <option value="below">Below text</option>
+                    <option value="above">Above text</option>
                 </select>
             </div>
         </div></div>
@@ -259,11 +277,11 @@
             <div class="settings-item-right settings-item-group">
                 <div class="settings-item-group-item">
                     <div class="settings-item-group-item-label">x</div>
-                    <input type="number" value="32" class="settings-item-group-item-input">
+                    <input type="number" class="settings-item-group-item-input" data-setting="general.popupHorizontalOffset">
                 </div>
                 <div class="settings-item-group-item">
                     <div class="settings-item-group-item-label">y</div>
-                    <input type="number" value="32" class="settings-item-group-item-input">
+                    <input type="number" class="settings-item-group-item-input" data-setting="general.popupVerticalOffset">
                 </div>
             </div>
         </div></div>
@@ -273,8 +291,12 @@
                 <div class="settings-item-description">Change where the popup is positioned relative to vertical text.</div>
             </div>
             <div class="settings-item-right">
-                <select>
-                    <option>Before text reading direction</option>
+                <select data-setting="general.popupVerticalTextPosition">
+                    <option value="default">Same as for horizontal text</option>
+                    <option value="before">Before text reading direction</option>
+                    <option value="after">After text reading direction</option>
+                    <option value="left">Left of text</option>
+                    <option value="right">Right of text</option>
                 </select>
             </div>
         </div></div>
@@ -286,11 +308,11 @@
             <div class="settings-item-right settings-item-group">
                 <div class="settings-item-group-item">
                     <div class="settings-item-group-item-label">x</div>
-                    <input type="number" value="32" class="settings-item-group-item-input">
+                    <input type="number" class="settings-item-group-item-input" data-setting="general.popupHorizontalOffset2">
                 </div>
                 <div class="settings-item-group-item">
                     <div class="settings-item-group-item-label">y</div>
-                    <input type="number" value="32" class="settings-item-group-item-input">
+                    <input type="number" class="settings-item-group-item-input" data-setting="general.popupVerticalOffset2">
                 </div>
             </div>
         </div></div>
@@ -320,12 +342,12 @@
                 <div class="settings-item-label">Allow scanning popups on the search page</div>
             </div>
             <div class="settings-item-right">
-                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+                <label class="toggle"><input type="checkbox" data-setting="scanning.enableOnSearchPage"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
             </div>
         </div></div>
         <div class="settings-item advanced-only"><div class="settings-item-inner">
             <div class="settings-item-left">
-                <div class="settings-item-label">Allow scanning popup source terms</div>
+                <div class="settings-item-label" data-setting="scanning.enableOnPopupExpressions">Allow scanning popup source terms</div>
             </div>
             <div class="settings-item-right">
                 <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
@@ -336,16 +358,16 @@
                 <div class="settings-item-label">Search terms when clicking text from the results list</div>
             </div>
             <div class="settings-item-right">
-                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+                <label class="toggle"><input type="checkbox" data-setting="scanning.enablePopupSearch"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
             </div>
         </div></div>
         <div class="settings-item"><div class="settings-item-inner">
             <div class="settings-item-left">
                 <div class="settings-item-label">Show clickable tags for expressions and their readings</div>
-                <!-- Should be combined with the option above, only shown as a sub-option -->
+                <!-- TODO : Should be combined with the option above, only shown as a sub-option -->
             </div>
             <div class="settings-item-right">
-                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+                <label class="toggle"><input type="checkbox" data-setting="scanning.enableSearchTags"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
             </div>
         </div></div>
     </div>
@@ -358,7 +380,7 @@
                 <div class="settings-item-description">Show a clickable speaker icon next to result expressions.</div>
             </div>
             <div class="settings-item-right">
-                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+                <label class="toggle"><input type="checkbox" data-setting="audio.enabled"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
             </div>
         </div></div>
         <div class="settings-item"><div class="settings-item-inner">
@@ -367,7 +389,7 @@
                 <div class="settings-item-description">The audio for the first result will be played automatically.</div>
             </div>
             <div class="settings-item-right">
-                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+                <label class="toggle"><input type="checkbox" data-setting="audio.autoPlay"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
             </div>
         </div></div>
         <div class="settings-item"><div class="settings-item-inner settings-item-inner-wrappable">
@@ -376,7 +398,7 @@
                 <div class="settings-item-description">Adjust the volume audio is played at, in percent.</div>
             </div>
             <div class="settings-item-right">
-                <input type="number" value="32">
+                <input type="number" data-setting="audio.volume" min="0" max="100">
             </div>
         </div></div>
         <!--
@@ -412,8 +434,7 @@
                 <div class="settings-item-description">Change which key needs to be held to activate text scanning.</div>
             </div>
             <div class="settings-item-right">
-                <select>
-                    <option>TODO</option>
+                <select data-setting="scanning.modifier">
                 </select>
             </div>
         </div></div>
@@ -423,7 +444,7 @@
                 <div class="settings-item-description">Scan text under the cursor while the middle mouse button is held down.</div>
             </div>
             <div class="settings-item-right">
-                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+                <label class="toggle"><input type="checkbox" data-setting="scanning.middleMouse"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
             </div>
         </div></div>
         <div class="settings-item"><div class="settings-item-inner">
@@ -431,7 +452,7 @@
                 <div class="settings-item-label">Support touch inputs for devices with touch screens</div>
             </div>
             <div class="settings-item-right">
-                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+                <label class="toggle"><input type="checkbox" data-setting="scanning.touchInputEnabled"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
             </div>
         </div></div>
         <div class="settings-item"><div class="settings-item-inner">
@@ -440,7 +461,7 @@
                 <div class="settings-item-description"></div>
             </div>
             <div class="settings-item-right">
-                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+                <label class="toggle"><input type="checkbox" data-setting="scanning.selectText"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
             </div>
         </div></div>
         <div class="settings-item"><div class="settings-item-inner">
@@ -449,7 +470,7 @@
                 <div class="settings-item-description"></div>
             </div>
             <div class="settings-item-right">
-                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+                <label class="toggle"><input type="checkbox" data-setting="scanning.alphanumeric"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
             </div>
         </div></div>
         <div class="settings-item advanced-only"><div class="settings-item-inner">
@@ -458,7 +479,7 @@
                 <div class="settings-item-description">Use styling information to determine where line breaks are likely to be.</div>
             </div>
             <div class="settings-item-right">
-                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+                <label class="toggle"><input type="checkbox" data-setting="scanning.layoutAwareScan"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
             </div>
         </div></div>
         <div class="settings-item advanced-only"><div class="settings-item-inner">
@@ -467,7 +488,7 @@
                 <div class="settings-item-description">Enable scanning text that is covered by other layers.</div>
             </div>
             <div class="settings-item-right">
-                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+                <label class="toggle"><input type="checkbox" data-setting="scanning.deepDomScan"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
             </div>
         </div></div>
         <div class="settings-item advanced-only"><div class="settings-item-inner settings-item-inner-wrappable">
@@ -476,7 +497,7 @@
                 <div class="settings-item-description">Change how many characters are read when scanning for terms.</div>
             </div>
             <div class="settings-item-right">
-                <input type="number" value="32">
+                <input type="number" data-setting="scanning.length" min="1" step="1">
             </div>
         </div></div>
     </div>
@@ -503,7 +524,7 @@
                 <div class="settings-item-description">Scan words by automatically advancing in the sentence after a matching word.</div>
             </div>
             <div class="settings-item-right">
-                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+                <label class="toggle"><input type="checkbox" data-setting="parsing.enableScanningParser"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
             </div>
         </div></div>
         <div class="settings-item">
@@ -516,7 +537,7 @@
                     </div>
                 </div>
                 <div class="settings-item-right">
-                    <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+                    <label class="toggle"><input type="checkbox" data-setting="parsing.enableMecabParser"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
                 </div>
             </div>
             <div class="settings-item-children more" hidden>
@@ -536,7 +557,7 @@
                 <div class="settings-item-description"></div>
             </div>
             <div class="settings-item-right">
-                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+                <label class="toggle"><input type="checkbox" data-setting="parsing.termSpacing"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
             </div>
         </div></div>
         <div class="settings-item"><div class="settings-item-inner settings-item-inner-wrappable">
@@ -545,8 +566,11 @@
                 <div class="settings-item-description">Change what type of furigana is displayed for parsed text.</div>
             </div>
             <div class="settings-item-right">
-                <select>
-                    <option>TODO</option>
+                <select data-setting="parsing.readingMode">
+                    <option value="hiragana">ひらがな</option>
+                    <option value="katakana">カタカナ</option>
+                    <option value="romaji">Romaji</option>
+                    <option value="none">Disabled</option>
                 </select>
             </div>
         </div></div>
@@ -593,8 +617,10 @@
                 <div class="settings-item-description">ﾖﾐﾁｬﾝ&#x3000;&rarr;&#x3000;ヨミチャン</div>
             </div>
             <div class="settings-item-right">
-                <select>
-                    <option>TODO</option>
+                <select data-setting="translation.convertHalfWidthCharacters">
+                    <option value="false">Disabled</option>
+                    <option value="true">Enabled</option>
+                    <option value="variant">Use both variants</option>
                 </select>
             </div>
         </div></div>
@@ -604,8 +630,10 @@
                 <div class="settings-item-description">1234&#x3000;&rarr;&#x3000;１２３４</div>
             </div>
             <div class="settings-item-right">
-                <select>
-                    <option>TODO</option>
+                <select data-setting="translation.convertNumericCharacters">
+                    <option value="false">Disabled</option>
+                    <option value="true">Enabled</option>
+                    <option value="variant">Use both variants</option>
                 </select>
             </div>
         </div></div>
@@ -615,8 +643,10 @@
                 <div class="settings-item-description">yomichan&#x3000;&rarr;&#x3000;よみちゃん</div>
             </div>
             <div class="settings-item-right">
-                <select>
-                    <option>TODO</option>
+                <select data-setting="translation.convertAlphabeticCharacters">
+                    <option value="false">Disabled</option>
+                    <option value="true">Enabled</option>
+                    <option value="variant">Use both variants</option>
                 </select>
             </div>
         </div></div>
@@ -626,8 +656,10 @@
                 <div class="settings-item-description">よみちゃん&#x3000;&rarr;&#x3000;ヨミチャン</div>
             </div>
             <div class="settings-item-right">
-                <select>
-                    <option>TODO</option>
+                <select data-setting="translation.convertHiraganaToKatakana">
+                    <option value="false">Disabled</option>
+                    <option value="true">Enabled</option>
+                    <option value="variant">Use both variants</option>
                 </select>
             </div>
         </div></div>
@@ -637,8 +669,10 @@
                 <div class="settings-item-description">ヨミチャン&#x3000;&rarr;&#x3000;よみちゃん</div>
             </div>
             <div class="settings-item-right">
-                <select>
-                    <option>TODO</option>
+                <select data-setting="translation.convertKatakanaToHiragana">
+                    <option value="false">Disabled</option>
+                    <option value="true">Enabled</option>
+                    <option value="variant">Use both variants</option>
                 </select>
             </div>
         </div></div>
@@ -648,8 +682,10 @@
                 <div class="settings-item-description">すっっごーーい&#x3000;&rarr;&#x3000;すっごーい / すごい</div>
             </div>
             <div class="settings-item-right">
-                <select>
-                    <option>TODO</option>
+                <select data-setting="translation.collapseEmphaticSequences">
+                    <option value="false">Disabled</option>
+                    <option value="true">Collapse into single character</option>
+                    <option value="full">Remove all characters</option>
                 </select>
             </div>
         </div></div>
@@ -682,7 +718,7 @@
                     </div>
                 </div>
                 <div class="settings-item-right">
-                    <input type="text" value="http://127.0.0.1:8765" spellcheck="false" autocomplete="off">
+                    <input type="text" placeholder="http://127.0.0.1:8765" spellcheck="false" autocomplete="off" data-setting="anki.server">
                 </div>
             </div>
             <div class="settings-item-children more" hidden>
@@ -701,7 +737,7 @@
                 <div class="settings-item-description">List of space or comma separated tags to add to the card.</div>
             </div>
             <div class="settings-item-right">
-                <input type="text" value="yomichan" spellcheck="false" autocomplete="off">
+                <input type="text" spellcheck="false" autocomplete="off" data-setting="anki.tags" data-transform-pre="splitTags" data-transform-post="joinTags">
             </div>
         </div></div>
         <div class="settings-item">
@@ -713,8 +749,9 @@
                     </div>
                 </div>
                 <div class="settings-item-right">
-                    <select>
-                        <option>TODO</option>
+                    <select data-setting="anki.duplicateScope">
+                        <option value="collection">Collection</option>
+                        <option value="deck">Deck</option>
                     </select>
                 </div>
             </div>
@@ -738,7 +775,7 @@
                     </div>
                 </div>
                 <div class="settings-item-right">
-                    <input type="number" value="32">
+                    <input type="number" data-setting="anki.sentenceExt" min="1" step="1">
                 </div>
             </div>
             <div class="settings-item-children more" hidden>
@@ -760,14 +797,14 @@
             <div class="settings-item-right settings-item-group">
                 <div class="settings-item-group-item">
                     <div class="settings-item-group-item-label">Format</div>
-                    <select class="settings-item-group-item-input">
-                        <option>PNG</option>
-                        <option>JPEG</option>
+                    <select class="settings-item-group-item-input" data-setting="anki.screenshot.format">
+                        <option value="png">PNG</option>
+                        <option value="jpeg">JPEG</option>
                     </select>
                 </div>
                 <div class="settings-item-group-item">
                     <div class="settings-item-group-item-label">Quality (%)</div>
-                    <input type="number" value="92" class="settings-item-group-item-input">
+                    <input type="number" class="settings-item-group-item-input" data-setting="anki.screenshot.quality" min="0" max="100" step="1">
                 </div>
             </div>
         </div></div>
@@ -848,7 +885,7 @@
                     </div>
                 </div>
                 <div class="settings-item-right">
-                    <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+                    <label class="toggle"><input type="checkbox" data-setting="general.usePopupShadowDom"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
                 </div>
             </div>
             <div class="settings-item-children more" hidden>
@@ -872,7 +909,7 @@
                     </div>
                 </div>
                 <div class="settings-item-right">
-                    <label class="toggle"><input type="checkbox"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
+                    <label class="toggle"><input type="checkbox" data-setting="general.useSecurePopupFrameUrl"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
                 </div>
             </div>
             <div class="settings-item-children more" hidden>
