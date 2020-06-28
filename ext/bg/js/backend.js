@@ -264,10 +264,6 @@ class Backend {
         this._sendMessageAllTabs('optionsUpdated', {source});
     }
 
-    _getOptionsSchema() {
-        return this._optionsSchema;
-    }
-
     getFullOptions(useSchema=false) {
         const options = this._options;
         return useSchema ? JsonSchema.createProxy(options, this._optionsSchema) : options;
@@ -497,7 +493,7 @@ class Backend {
     }
 
     _onApiOptionsSchemaGet() {
-        return this._getOptionsSchema();
+        return this._optionsSchema;
     }
 
     _onApiOptionsGet({optionsContext}) {
