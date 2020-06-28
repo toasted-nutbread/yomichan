@@ -247,80 +247,8 @@ class Backend {
         this._sendMessageAllTabs('optionsUpdated', {source});
     }
 
-    _onMessage({action, params}, sender, callback) {
-        const messageHandler = this._messageHandlers.get(action);
-        if (typeof messageHandler === 'undefined') { return false; }
-
-        const {handler, async, contentScript} = messageHandler;
-
-        try {
-            if (!contentScript) {
-                this._validatePrivilegedMessageSender(sender);
-            }
-
-            const promiseOrResult = handler(params, sender);
-            if (async) {
-                promiseOrResult.then(
-                    (result) => callback({result}),
-                    (error) => callback({error: errorToJson(error)})
-                );
-                return true;
-            } else {
-                callback({result: promiseOrResult});
-                return false;
-            }
-        } catch (error) {
-            callback({error: errorToJson(error)});
-            return false;
-        }
-    }
-
-    _onConnect(port) {
-        try {
-            const match = /^background-cross-frame-communication-port-(\d+)$/.exec(`${port.name}`);
-            if (match === null) { return; }
-
-            const tabId = (port.sender && port.sender.tab ? port.sender.tab.id : null);
-            if (typeof tabId !== 'number') {
-                throw new Error('Port does not have an associated tab ID');
-            }
-            const senderFrameId = port.sender.frameId;
-            if (typeof tabId !== 'number') {
-                throw new Error('Port does not have an associated frame ID');
-            }
-            const targetFrameId = parseInt(match[1], 10);
-
-            let forwardPort = chrome.tabs.connect(tabId, {frameId: targetFrameId, name: `cross-frame-communication-port-${senderFrameId}`});
-
-            const cleanup = () => {
-                this._checkLastError(chrome.runtime.lastError);
-                if (forwardPort !== null) {
-                    forwardPort.disconnect();
-                    forwardPort = null;
-                }
-                if (port !== null) {
-                    port.disconnect();
-                    port = null;
-                }
-            };
-
-            port.onMessage.addListener((message) => { forwardPort.postMessage(message); });
-            forwardPort.onMessage.addListener((message) => { port.postMessage(message); });
-            port.onDisconnect.addListener(cleanup);
-            forwardPort.onDisconnect.addListener(cleanup);
-        } catch (e) {
-            port.disconnect();
-            yomichan.logError(e);
-        }
-    }
-
     _onClipboardText({text}) {
         this._onCommandSearch({mode: 'popup', query: text});
-    }
-
-    _onZoomChange({tabId, oldZoomFactor, newZoomFactor}) {
-        const callback = () => this._checkLastError(chrome.runtime.lastError);
-        chrome.tabs.sendMessage(tabId, {action: 'zoomChanged', params: {oldZoomFactor, newZoomFactor}}, callback);
     }
 
     _onLog({level}) {
@@ -476,10 +404,82 @@ class Backend {
         return results;
     }
 
-    // Event handlers
+    // WebExtension event handlers
 
     _onCommand(command) {
         this._runCommand(command);
+    }
+
+    _onMessage({action, params}, sender, callback) {
+        const messageHandler = this._messageHandlers.get(action);
+        if (typeof messageHandler === 'undefined') { return false; }
+
+        const {handler, async, contentScript} = messageHandler;
+
+        try {
+            if (!contentScript) {
+                this._validatePrivilegedMessageSender(sender);
+            }
+
+            const promiseOrResult = handler(params, sender);
+            if (async) {
+                promiseOrResult.then(
+                    (result) => callback({result}),
+                    (error) => callback({error: errorToJson(error)})
+                );
+                return true;
+            } else {
+                callback({result: promiseOrResult});
+                return false;
+            }
+        } catch (error) {
+            callback({error: errorToJson(error)});
+            return false;
+        }
+    }
+
+    _onConnect(port) {
+        try {
+            const match = /^background-cross-frame-communication-port-(\d+)$/.exec(`${port.name}`);
+            if (match === null) { return; }
+
+            const tabId = (port.sender && port.sender.tab ? port.sender.tab.id : null);
+            if (typeof tabId !== 'number') {
+                throw new Error('Port does not have an associated tab ID');
+            }
+            const senderFrameId = port.sender.frameId;
+            if (typeof tabId !== 'number') {
+                throw new Error('Port does not have an associated frame ID');
+            }
+            const targetFrameId = parseInt(match[1], 10);
+
+            let forwardPort = chrome.tabs.connect(tabId, {frameId: targetFrameId, name: `cross-frame-communication-port-${senderFrameId}`});
+
+            const cleanup = () => {
+                this._checkLastError(chrome.runtime.lastError);
+                if (forwardPort !== null) {
+                    forwardPort.disconnect();
+                    forwardPort = null;
+                }
+                if (port !== null) {
+                    port.disconnect();
+                    port = null;
+                }
+            };
+
+            port.onMessage.addListener((message) => { forwardPort.postMessage(message); });
+            forwardPort.onMessage.addListener((message) => { port.postMessage(message); });
+            port.onDisconnect.addListener(cleanup);
+            forwardPort.onDisconnect.addListener(cleanup);
+        } catch (e) {
+            port.disconnect();
+            yomichan.logError(e);
+        }
+    }
+
+    _onZoomChange({tabId, oldZoomFactor, newZoomFactor}) {
+        const callback = () => this._checkLastError(chrome.runtime.lastError);
+        chrome.tabs.sendMessage(tabId, {action: 'zoomChanged', params: {oldZoomFactor, newZoomFactor}}, callback);
     }
 
     // Message handlers
