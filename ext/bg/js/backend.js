@@ -909,6 +909,97 @@ class Backend {
 
     // Command handlers
 
+    async _onCommandSearch(params) {
+        const {mode='existingOrNewTab', query} = params || {};
+
+        const options = this.getOptions(this._optionsContext);
+        const {popupWidth, popupHeight} = options.general;
+
+        const baseUrl = chrome.runtime.getURL('/bg/search.html');
+        const queryParams = {mode};
+        if (query && query.length > 0) { queryParams.query = query; }
+        const queryString = new URLSearchParams(queryParams).toString();
+        const url = `${baseUrl}?${queryString}`;
+
+        const isTabMatch = (url2) => {
+            if (url2 === null || !url2.startsWith(baseUrl)) { return false; }
+            const {baseUrl: baseUrl2, queryParams: queryParams2} = parseUrl(url2);
+            return baseUrl2 === baseUrl && (queryParams2.mode === mode || (!queryParams2.mode && mode === 'existingOrNewTab'));
+        };
+
+        const openInTab = async () => {
+            const tab = await this._findTab(1000, isTabMatch);
+            if (tab !== null) {
+                await this._focusTab(tab);
+                if (queryParams.query) {
+                    await new Promise((resolve) => chrome.tabs.sendMessage(
+                        tab.id,
+                        {action: 'searchQueryUpdate', params: {text: queryParams.query}},
+                        resolve
+                    ));
+                }
+                return true;
+            }
+        };
+
+        switch (mode) {
+            case 'existingOrNewTab':
+                try {
+                    if (await openInTab()) { return; }
+                } catch (e) {
+                    // NOP
+                }
+                chrome.tabs.create({url});
+                return;
+            case 'newTab':
+                chrome.tabs.create({url});
+                return;
+            case 'popup':
+                try {
+                    // chrome.windows not supported (e.g. on Firefox mobile)
+                    if (!isObject(chrome.windows)) { return; }
+                    if (await openInTab()) { return; }
+                    // if the previous popup is open in an invalid state, close it
+                    if (this._popupWindow !== null) {
+                        const callback = () => this._checkLastError(chrome.runtime.lastError);
+                        chrome.windows.remove(this._popupWindow.id, callback);
+                    }
+                    // open new popup
+                    this._popupWindow = await new Promise((resolve) => chrome.windows.create(
+                        {url, width: popupWidth, height: popupHeight, type: 'popup'},
+                        resolve
+                    ));
+                } catch (e) {
+                    // NOP
+                }
+                return;
+        }
+    }
+
+    _onCommandHelp() {
+        chrome.tabs.create({url: 'https://foosoft.net/projects/yomichan/'});
+    }
+
+    _onCommandOptions(params) {
+        const {mode='existingOrNewTab'} = params || {};
+        if (mode === 'existingOrNewTab') {
+            chrome.runtime.openOptionsPage();
+        } else if (mode === 'newTab') {
+            const manifest = chrome.runtime.getManifest();
+            const url = chrome.runtime.getURL(manifest.options_ui.page);
+            chrome.tabs.create({url});
+        }
+    }
+
+    async _onCommandToggle() {
+        const source = 'popup';
+        const options = this.getOptions(this._optionsContext);
+        options.general.enable = !options.general.enable;
+        await this._onApiOptionsSave({source});
+    }
+
+    // Utilities
+
     _createActionListenerPort(port, sender, handlers) {
         let hasStarted = false;
         let messageString = '';
@@ -1000,97 +1091,6 @@ class Backend {
             default: return 0;
         }
     }
-
-    async _onCommandSearch(params) {
-        const {mode='existingOrNewTab', query} = params || {};
-
-        const options = this.getOptions(this._optionsContext);
-        const {popupWidth, popupHeight} = options.general;
-
-        const baseUrl = chrome.runtime.getURL('/bg/search.html');
-        const queryParams = {mode};
-        if (query && query.length > 0) { queryParams.query = query; }
-        const queryString = new URLSearchParams(queryParams).toString();
-        const url = `${baseUrl}?${queryString}`;
-
-        const isTabMatch = (url2) => {
-            if (url2 === null || !url2.startsWith(baseUrl)) { return false; }
-            const {baseUrl: baseUrl2, queryParams: queryParams2} = parseUrl(url2);
-            return baseUrl2 === baseUrl && (queryParams2.mode === mode || (!queryParams2.mode && mode === 'existingOrNewTab'));
-        };
-
-        const openInTab = async () => {
-            const tab = await this._findTab(1000, isTabMatch);
-            if (tab !== null) {
-                await this._focusTab(tab);
-                if (queryParams.query) {
-                    await new Promise((resolve) => chrome.tabs.sendMessage(
-                        tab.id,
-                        {action: 'searchQueryUpdate', params: {text: queryParams.query}},
-                        resolve
-                    ));
-                }
-                return true;
-            }
-        };
-
-        switch (mode) {
-            case 'existingOrNewTab':
-                try {
-                    if (await openInTab()) { return; }
-                } catch (e) {
-                    // NOP
-                }
-                chrome.tabs.create({url});
-                return;
-            case 'newTab':
-                chrome.tabs.create({url});
-                return;
-            case 'popup':
-                try {
-                    // chrome.windows not supported (e.g. on Firefox mobile)
-                    if (!isObject(chrome.windows)) { return; }
-                    if (await openInTab()) { return; }
-                    // if the previous popup is open in an invalid state, close it
-                    if (this._popupWindow !== null) {
-                        const callback = () => this._checkLastError(chrome.runtime.lastError);
-                        chrome.windows.remove(this._popupWindow.id, callback);
-                    }
-                    // open new popup
-                    this._popupWindow = await new Promise((resolve) => chrome.windows.create(
-                        {url, width: popupWidth, height: popupHeight, type: 'popup'},
-                        resolve
-                    ));
-                } catch (e) {
-                    // NOP
-                }
-                return;
-        }
-    }
-
-    _onCommandHelp() {
-        chrome.tabs.create({url: 'https://foosoft.net/projects/yomichan/'});
-    }
-
-    _onCommandOptions(params) {
-        const {mode='existingOrNewTab'} = params || {};
-        if (mode === 'existingOrNewTab') {
-            chrome.runtime.openOptionsPage();
-        } else if (mode === 'newTab') {
-            const manifest = chrome.runtime.getManifest();
-            const url = chrome.runtime.getURL(manifest.options_ui.page);
-            chrome.tabs.create({url});
-        }
-    }
-
-    async _onCommandToggle() {
-        const source = 'popup';
-        const options = this.getOptions(this._optionsContext);
-        options.general.enable = !options.general.enable;
-        await this._onApiOptionsSave({source});
-    }
-
-    // Utilities
 
     _getModifySettingObject(target) {
         const scope = target.scope;
