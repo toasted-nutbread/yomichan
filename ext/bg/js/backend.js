@@ -377,19 +377,19 @@ class Backend {
     getProfileFromContext(options, optionsContext) {
         for (const profile of options.profiles) {
             const conditionGroups = profile.conditionGroups;
-            if (conditionGroups.length > 0 && Backend.testConditionGroups(conditionGroups, optionsContext)) {
+            if (conditionGroups.length > 0 && this.testConditionGroups(conditionGroups, optionsContext)) {
                 return profile;
             }
         }
         return null;
     }
 
-    static testConditionGroups(conditionGroups, data) {
+    testConditionGroups(conditionGroups, data) {
         if (conditionGroups.length === 0) { return false; }
 
         for (const conditionGroup of conditionGroups) {
             const conditions = conditionGroup.conditions;
-            if (conditions.length > 0 && Backend.testConditions(conditions, data)) {
+            if (conditions.length > 0 && this.testConditions(conditions, data)) {
                 return true;
             }
         }
@@ -397,7 +397,7 @@ class Backend {
         return false;
     }
 
-    static testConditions(conditions, data) {
+    testConditions(conditions, data) {
         for (const condition of conditions) {
             if (!conditionsTestValue(profileConditionsDescriptor, condition.type, condition.operator, condition.value, data)) {
                 return false;
@@ -1014,9 +1014,9 @@ class Backend {
         };
 
         const openInTab = async () => {
-            const tab = await Backend._findTab(1000, isTabMatch);
+            const tab = await this._findTab(1000, isTabMatch);
             if (tab !== null) {
-                await Backend._focusTab(tab);
+                await this._focusTab(tab);
                 if (queryParams.query) {
                     await new Promise((resolve) => chrome.tabs.sendMessage(
                         tab.id,
@@ -1251,7 +1251,7 @@ class Backend {
         return typeof templates === 'string' ? templates : this._defaultAnkiFieldTemplates;
     }
 
-    static _getTabUrl(tab) {
+    _getTabUrl(tab) {
         return new Promise((resolve) => {
             chrome.tabs.sendMessage(tab.id, {action: 'getUrl'}, {frameId: 0}, (response) => {
                 let url = null;
@@ -1266,7 +1266,7 @@ class Backend {
         });
     }
 
-    static async _findTab(timeout, checkUrl) {
+    async _findTab(timeout, checkUrl) {
         // This function works around the need to have the "tabs" permission to access tab.url.
         const tabs = await new Promise((resolve) => chrome.tabs.query({}, resolve));
         const {promise: matchPromise, resolve: matchPromiseResolve} = deferPromise();
@@ -1279,7 +1279,7 @@ class Backend {
 
         const promises = [];
         for (const tab of tabs) {
-            const promise = Backend._getTabUrl(tab);
+            const promise = this._getTabUrl(tab);
             promise.then(checkTabUrl);
             promises.push(promise);
         }
@@ -1295,7 +1295,7 @@ class Backend {
         return await Promise.race(racePromises);
     }
 
-    static async _focusTab(tab) {
+    async _focusTab(tab) {
         await new Promise((resolve, reject) => {
             chrome.tabs.update(tab.id, {active: true}, () => {
                 const e = chrome.runtime.lastError;
