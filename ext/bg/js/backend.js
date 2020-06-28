@@ -42,38 +42,38 @@
 
 class Backend {
     constructor() {
-        this.environment = new Environment();
-        this.database = new Database();
-        this.dictionaryImporter = new DictionaryImporter();
-        this.translator = new Translator(this.database);
-        this.anki = new AnkiConnect();
-        this.mecab = new Mecab();
-        this.clipboardMonitor = new ClipboardMonitor({getClipboard: this._onApiClipboardGet.bind(this)});
-        this.options = null;
-        this.optionsSchema = null;
-        this.defaultAnkiFieldTemplates = null;
-        this.audioUriBuilder = new AudioUriBuilder();
-        this.audioSystem = new AudioSystem({
-            audioUriBuilder: this.audioUriBuilder,
+        this._environment = new Environment();
+        this._database = new Database();
+        this._dictionaryImporter = new DictionaryImporter();
+        this._translator = new Translator(this._database);
+        this._anki = new AnkiConnect();
+        this._mecab = new Mecab();
+        this._clipboardMonitor = new ClipboardMonitor({getClipboard: this._onApiClipboardGet.bind(this)});
+        this._options = null;
+        this._optionsSchema = null;
+        this._defaultAnkiFieldTemplates = null;
+        this._audioUriBuilder = new AudioUriBuilder();
+        this._audioSystem = new AudioSystem({
+            audioUriBuilder: this._audioUriBuilder,
             useCache: false
         });
-        this.ankiNoteBuilder = new AnkiNoteBuilder({
-            anki: this.anki,
-            audioSystem: this.audioSystem,
+        this._ankiNoteBuilder = new AnkiNoteBuilder({
+            anki: this._anki,
+            audioSystem: this._audioSystem,
             renderTemplate: this._renderTemplate.bind(this)
         });
         this._templateRenderer = new TemplateRenderer();
 
         const url = (typeof window === 'object' && window !== null ? window.location.href : '');
-        this.optionsContext = {depth: 0, url};
+        this._optionsContext = {depth: 0, url};
 
-        this.clipboardPasteTarget = (
+        this._clipboardPasteTarget = (
             typeof document === 'object' && document !== null ?
             document.querySelector('#clipboard-paste-target') :
             null
         );
 
-        this.popupWindow = null;
+        this._popupWindow = null;
 
         this._isPrepared = false;
         this._prepareError = false;
@@ -171,29 +171,29 @@ class Backend {
 
             yomichan.on('log', this._onLog.bind(this));
 
-            await this.environment.prepare();
+            await this._environment.prepare();
             try {
-                await this.database.prepare();
+                await this._database.prepare();
             } catch (e) {
                 yomichan.logError(e);
             }
-            await this.translator.prepare();
+            await this._translator.prepare();
 
             await profileConditionsDescriptorPromise;
 
-            this.optionsSchema = await requestJson(chrome.runtime.getURL('/bg/data/options-schema.json'), 'GET');
-            this.defaultAnkiFieldTemplates = (await requestText(chrome.runtime.getURL('/bg/data/default-anki-field-templates.handlebars'), 'GET')).trim();
-            this.options = await optionsLoad();
-            this.options = JsonSchema.getValidValueOrDefault(this.optionsSchema, this.options);
+            this._optionsSchema = await requestJson(chrome.runtime.getURL('/bg/data/options-schema.json'), 'GET');
+            this._defaultAnkiFieldTemplates = (await requestText(chrome.runtime.getURL('/bg/data/default-anki-field-templates.handlebars'), 'GET')).trim();
+            this._options = await optionsLoad();
+            this._options = JsonSchema.getValidValueOrDefault(this._optionsSchema, this._options);
 
             this.onOptionsUpdated('background');
 
-            const options = this.getOptions(this.optionsContext);
+            const options = this.getOptions(this._optionsContext);
             if (options.general.showGuide) {
                 chrome.tabs.create({url: chrome.runtime.getURL('/bg/guide.html')});
             }
 
-            this.clipboardMonitor.on('change', this._onClipboardText.bind(this));
+            this._clipboardMonitor.on('change', this._onClipboardText.bind(this));
 
             this._sendMessageAllTabs('backendPrepared');
             const callback = () => this.checkLastError(chrome.runtime.lastError);
@@ -332,32 +332,32 @@ class Backend {
     }
 
     applyOptions() {
-        const options = this.getOptions(this.optionsContext);
+        const options = this.getOptions(this._optionsContext);
         this._updateBadge();
 
-        this.anki.setServer(options.anki.server);
-        this.anki.setEnabled(options.anki.enable);
+        this._anki.setServer(options.anki.server);
+        this._anki.setEnabled(options.anki.enable);
 
         if (options.parsing.enableMecabParser) {
-            this.mecab.startListener();
+            this._mecab.startListener();
         } else {
-            this.mecab.stopListener();
+            this._mecab.stopListener();
         }
 
         if (options.general.enableClipboardPopups) {
-            this.clipboardMonitor.start();
+            this._clipboardMonitor.start();
         } else {
-            this.clipboardMonitor.stop();
+            this._clipboardMonitor.stop();
         }
     }
 
     getOptionsSchema() {
-        return this.optionsSchema;
+        return this._optionsSchema;
     }
 
     getFullOptions(useSchema=false) {
-        const options = this.options;
-        return useSchema ? JsonSchema.createProxy(options, this.optionsSchema) : options;
+        const options = this._options;
+        return useSchema ? JsonSchema.createProxy(options, this._optionsSchema) : options;
     }
 
     getOptions(optionsContext, useSchema=false) {
@@ -419,14 +419,14 @@ class Backend {
     }
 
     async importDictionary(archiveSource, onProgress, details) {
-        return await this.dictionaryImporter.import(this.database, archiveSource, onProgress, details);
+        return await this._dictionaryImporter.import(this._database, archiveSource, onProgress, details);
     }
 
     async _textParseScanning(text, options) {
         const results = [];
         while (text.length > 0) {
             const term = [];
-            const [definitions, sourceLength] = await this.translator.findTerms(
+            const [definitions, sourceLength] = await this._translator.findTerms(
                 'simple',
                 text.substring(0, options.scanning.length),
                 {},
@@ -453,7 +453,7 @@ class Backend {
 
     async _textParseMecab(text, options) {
         const results = [];
-        const rawResults = await this.mecab.parseText(text);
+        const rawResults = await this._mecab.parseText(text);
         for (const [mecabName, parsedLines] of Object.entries(rawResults)) {
             const result = [];
             for (const parsedLine of parsedLines) {
@@ -511,7 +511,7 @@ class Backend {
 
     async _onApiKanjiFind({text, optionsContext}) {
         const options = this.getOptions(optionsContext);
-        const definitions = await this.translator.findKanji(text, options);
+        const definitions = await this._translator.findKanji(text, options);
         definitions.splice(options.general.maxResults);
         return definitions;
     }
@@ -519,7 +519,7 @@ class Backend {
     async _onApiTermsFind({text, details, optionsContext}) {
         const options = this.getOptions(optionsContext);
         const mode = options.general.resultOutputMode;
-        const [definitions, length] = await this.translator.findTerms(mode, text, details, options);
+        const [definitions, length] = await this._translator.findTerms(mode, text, details, options);
         definitions.splice(options.general.maxResults);
         return {length, definitions};
     }
@@ -557,7 +557,7 @@ class Backend {
 
         if (mode !== 'kanji') {
             const {customSourceUrl} = options.audio;
-            await this.ankiNoteBuilder.injectAudio(
+            await this._ankiNoteBuilder.injectAudio(
                 definition,
                 options.anki.terms.fields,
                 options.audio.sources,
@@ -566,15 +566,15 @@ class Backend {
         }
 
         if (details && details.screenshot) {
-            await this.ankiNoteBuilder.injectScreenshot(
+            await this._ankiNoteBuilder.injectScreenshot(
                 definition,
                 options.anki.terms.fields,
                 details.screenshot
             );
         }
 
-        const note = await this.ankiNoteBuilder.createNote(definition, mode, context, options, templates);
-        return this.anki.addNote(note);
+        const note = await this._ankiNoteBuilder.createNote(definition, mode, context, options, templates);
+        return this._anki.addNote(note);
     }
 
     async _onApiDefinitionsAddable({definitions, modes, context, optionsContext}) {
@@ -586,14 +586,14 @@ class Backend {
             const notePromises = [];
             for (const definition of definitions) {
                 for (const mode of modes) {
-                    const notePromise = this.ankiNoteBuilder.createNote(definition, mode, context, options, templates);
+                    const notePromise = this._ankiNoteBuilder.createNote(definition, mode, context, options, templates);
                     notePromises.push(notePromise);
                 }
             }
             const notes = await Promise.all(notePromises);
 
             const cannotAdd = [];
-            const results = await this.anki.canAddNotes(notes);
+            const results = await this._anki.canAddNotes(notes);
             for (let resultBase = 0; resultBase < results.length; resultBase += modes.length) {
                 const state = {};
                 for (let modeOffset = 0; modeOffset < modes.length; ++modeOffset) {
@@ -610,7 +610,7 @@ class Backend {
             }
 
             if (cannotAdd.length > 0) {
-                const noteIdsArray = await this.anki.findNoteIds(cannotAdd.map((e) => e[0]), options.anki.duplicateScope);
+                const noteIdsArray = await this._anki.findNoteIds(cannotAdd.map((e) => e[0]), options.anki.duplicateScope);
                 for (let i = 0, ii = Math.min(cannotAdd.length, noteIdsArray.length); i < ii; ++i) {
                     const noteIds = noteIdsArray[i];
                     if (noteIds.length > 0) {
@@ -626,7 +626,7 @@ class Backend {
     }
 
     async _onApiNoteView({noteId}) {
-        return await this.anki.guiBrowse(`nid:${noteId}`);
+        return await this._anki.guiBrowse(`nid:${noteId}`);
     }
 
     async _onApiTemplateRender({template, data}) {
@@ -638,7 +638,7 @@ class Backend {
     }
 
     async _onApiAudioGetUri({definition, source, details}) {
-        return await this.audioUriBuilder.getUri(definition, source, details);
+        return await this._audioUriBuilder.getUri(definition, source, details);
     }
 
     _onApiScreenshotGet({options}, sender) {
@@ -727,7 +727,7 @@ class Backend {
     }
 
     _onApiGetEnvironmentInfo() {
-        return this.environment.getInfo();
+        return this._environment.getInfo();
     }
 
     async _onApiClipboardGet() {
@@ -743,11 +743,11 @@ class Backend {
               being an extension with clipboard permissions. It effectively asks for the
               non-extension permission for clipboard access.
         */
-        const {browser} = this.environment.getInfo();
+        const {browser} = this._environment.getInfo();
         if (browser === 'firefox' || browser === 'firefox-mobile') {
             return await navigator.clipboard.readText();
         } else {
-            const clipboardPasteTarget = this.clipboardPasteTarget;
+            const clipboardPasteTarget = this._clipboardPasteTarget;
             if (clipboardPasteTarget === null) {
                 throw new Error('Reading the clipboard is not supported in this context');
             }
@@ -798,36 +798,36 @@ class Backend {
     }
 
     _onApiGetDefaultAnkiFieldTemplates() {
-        return this.defaultAnkiFieldTemplates;
+        return this._defaultAnkiFieldTemplates;
     }
 
     async _onApiGetAnkiDeckNames() {
-        return await this.anki.getDeckNames();
+        return await this._anki.getDeckNames();
     }
 
     async _onApiGetAnkiModelNames() {
-        return await this.anki.getModelNames();
+        return await this._anki.getModelNames();
     }
 
     async _onApiGetAnkiModelFieldNames({modelName}) {
-        return await this.anki.getModelFieldNames(modelName);
+        return await this._anki.getModelFieldNames(modelName);
     }
 
     async _onApiGetDictionaryInfo() {
-        return await this.translator.database.getDictionaryInfo();
+        return await this._translator.database.getDictionaryInfo();
     }
 
     async _onApiGetDictionaryCounts({dictionaryNames, getTotal}) {
-        return await this.translator.database.getDictionaryCounts(dictionaryNames, getTotal);
+        return await this._translator.database.getDictionaryCounts(dictionaryNames, getTotal);
     }
 
     async _onApiPurgeDatabase() {
-        this.translator.clearDatabaseCaches();
-        await this.database.purge();
+        this._translator.clearDatabaseCaches();
+        await this._database.purge();
     }
 
     async _onApiGetMedia({targets}) {
-        return await this.database.getMedia(targets);
+        return await this._database.getMedia(targets);
     }
 
     _onApiLog({error, level, context}) {
@@ -861,12 +861,12 @@ class Backend {
     }
 
     async _onApiImportDictionaryArchive({archiveContent, details}, sender, onProgress) {
-        return await this.dictionaryImporter.import(this.database, archiveContent, details, onProgress);
+        return await this._dictionaryImporter.import(this._database, archiveContent, details, onProgress);
     }
 
     async _onApiDeleteDictionary({dictionaryName}, sender, onProgress) {
-        this.translator.clearDatabaseCaches();
-        await this.database.deleteDictionary(dictionaryName, {rate: 1000}, onProgress);
+        this._translator.clearDatabaseCaches();
+        await this._database.deleteDictionary(dictionaryName, {rate: 1000}, onProgress);
     }
 
     async _onApiModifySettings({targets, source}) {
@@ -897,7 +897,7 @@ class Backend {
     }
 
     async _onApiSetAllSettings({value, source}) {
-        this.options = JsonSchema.getValidValueOrDefault(this.optionsSchema, value);
+        this._options = JsonSchema.getValidValueOrDefault(this._optionsSchema, value);
         await this._onApiOptionsSave({source});
     }
 
@@ -998,7 +998,7 @@ class Backend {
     async _onCommandSearch(params) {
         const {mode='existingOrNewTab', query} = params || {};
 
-        const options = this.getOptions(this.optionsContext);
+        const options = this.getOptions(this._optionsContext);
         const {popupWidth, popupHeight} = options.general;
 
         const baseUrl = chrome.runtime.getURL('/bg/search.html');
@@ -1046,12 +1046,12 @@ class Backend {
                     if (!isObject(chrome.windows)) { return; }
                     if (await openInTab()) { return; }
                     // if the previous popup is open in an invalid state, close it
-                    if (this.popupWindow !== null) {
+                    if (this._popupWindow !== null) {
                         const callback = () => this.checkLastError(chrome.runtime.lastError);
-                        chrome.windows.remove(this.popupWindow.id, callback);
+                        chrome.windows.remove(this._popupWindow.id, callback);
                     }
                     // open new popup
-                    this.popupWindow = await new Promise((resolve) => chrome.windows.create(
+                    this._popupWindow = await new Promise((resolve) => chrome.windows.create(
                         {url, width: popupWidth, height: popupHeight, type: 'popup'},
                         resolve
                     ));
@@ -1079,7 +1079,7 @@ class Backend {
 
     async _onCommandToggle() {
         const source = 'popup';
-        const options = this.getOptions(this.optionsContext);
+        const options = this.getOptions(this._optionsContext);
         options.general.enable = !options.general.enable;
         await this._onApiOptionsSave({source});
     }
@@ -1235,7 +1235,7 @@ class Backend {
     }
 
     _anyOptionsMatches(predicate) {
-        for (const {options} of this.options.profiles) {
+        for (const {options} of this._options.profiles) {
             const value = predicate(options);
             if (value) { return value; }
         }
@@ -1248,7 +1248,7 @@ class Backend {
 
     _getTemplates(options) {
         const templates = options.anki.fieldTemplates;
-        return typeof templates === 'string' ? templates : this.defaultAnkiFieldTemplates;
+        return typeof templates === 'string' ? templates : this._defaultAnkiFieldTemplates;
     }
 
     static _getTabUrl(tab) {
