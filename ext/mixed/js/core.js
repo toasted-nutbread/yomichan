@@ -193,22 +193,32 @@ const clone = (() => {
 
     function cloneArray(value, visited) {
         if (visited.has(value)) { throw new Error('Circular'); }
-        const result = [];
-        for (const item of value) {
-            result.push(cloneInternal(item, visited));
+        try {
+            visited.add(value);
+            const result = [];
+            for (const item of value) {
+                result.push(cloneInternal(item, visited));
+            }
+            return result;
+        } finally {
+            visited.delete(value);
         }
-        return result;
     }
 
     function cloneObject(value, visited) {
         if (visited.has(value)) { throw new Error('Circular'); }
-        const result = {};
-        for (const key in value) {
-            if (Object.prototype.hasOwnProperty.call(value, key)) {
-                result[key] = cloneInternal(value[key], visited);
+        try {
+            visited.add(value);
+            const result = {};
+            for (const key in value) {
+                if (Object.prototype.hasOwnProperty.call(value, key)) {
+                    result[key] = cloneInternal(value[key], visited);
+                }
             }
+            return result;
+        } finally {
+            visited.delete(value);
         }
-        return result;
     }
 
     return clone;
