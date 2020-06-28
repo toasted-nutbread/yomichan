@@ -242,18 +242,6 @@ class Backend {
         });
     }
 
-    _onClipboardTextChange({text}) {
-        this._onCommandSearch({mode: 'popup', query: text});
-    }
-
-    _onLog({level}) {
-        const levelValue = this._getErrorLevelValue(level);
-        if (levelValue <= this._getErrorLevelValue(this._logErrorLevel)) { return; }
-
-        this._logErrorLevel = level;
-        this._updateBadge();
-    }
-
     _applyOptions(source) {
         const options = this.getOptions(this._optionsContext);
         this._updateBadge();
@@ -399,6 +387,20 @@ class Backend {
             results.push([mecabName, result]);
         }
         return results;
+    }
+
+    // Event handlers
+
+    _onClipboardTextChange({text}) {
+        this._onCommandSearch({mode: 'popup', query: text});
+    }
+
+    _onLog({level}) {
+        const levelValue = this._getErrorLevelValue(level);
+        if (levelValue <= this._getErrorLevelValue(this._logErrorLevel)) { return; }
+
+        this._logErrorLevel = level;
+        this._updateBadge();
     }
 
     // WebExtension event handlers
