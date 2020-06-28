@@ -229,28 +229,8 @@ class Backend {
         }
     }
 
-    prepareComplete() {
-        return this._prepareCompletePromise;
-    }
-
     isPrepared() {
         return this._isPrepared;
-    }
-
-    handleCommand(...args) {
-        return this._onCommand(...args);
-    }
-
-    handleZoomChange(...args) {
-        return this._onZoomChange(...args);
-    }
-
-    handleConnect(...args) {
-        return this._onConnect(...args);
-    }
-
-    handleMessage(...args) {
-        return this._onMessage(...args);
     }
 
     getFullOptions(useSchema=false) {
