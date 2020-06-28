@@ -233,37 +233,6 @@ class Backend {
         return this._onMessage(...args);
     }
 
-    _sendMessageAllTabs(action, params={}) {
-        const callback = () => this._checkLastError(chrome.runtime.lastError);
-        chrome.tabs.query({}, (tabs) => {
-            for (const tab of tabs) {
-                chrome.tabs.sendMessage(tab.id, {action, params}, callback);
-            }
-        });
-    }
-
-    _applyOptions(source) {
-        const options = this.getOptions(this._optionsContext);
-        this._updateBadge();
-
-        this._anki.setServer(options.anki.server);
-        this._anki.setEnabled(options.anki.enable);
-
-        if (options.parsing.enableMecabParser) {
-            this._mecab.startListener();
-        } else {
-            this._mecab.stopListener();
-        }
-
-        if (options.general.enableClipboardPopups) {
-            this._clipboardMonitor.start();
-        } else {
-            this._clipboardMonitor.stop();
-        }
-
-        this._sendMessageAllTabs('optionsUpdated', {source});
-    }
-
     getFullOptions(useSchema=false) {
         const options = this._options;
         return useSchema ? JsonSchema.createProxy(options, this._optionsSchema) : options;
@@ -271,118 +240,6 @@ class Backend {
 
     getOptions(optionsContext, useSchema=false) {
         return this._getProfile(optionsContext, useSchema).options;
-    }
-
-    _getProfile(optionsContext, useSchema=false) {
-        const options = this.getFullOptions(useSchema);
-        const profiles = options.profiles;
-        if (typeof optionsContext.index === 'number') {
-            return profiles[optionsContext.index];
-        }
-        const profile = this._getProfileFromContext(options, optionsContext);
-        return profile !== null ? profile : options.profiles[options.profileCurrent];
-    }
-
-    _getProfileFromContext(options, optionsContext) {
-        for (const profile of options.profiles) {
-            const conditionGroups = profile.conditionGroups;
-            if (conditionGroups.length > 0 && this._testConditionGroups(conditionGroups, optionsContext)) {
-                return profile;
-            }
-        }
-        return null;
-    }
-
-    _testConditionGroups(conditionGroups, data) {
-        if (conditionGroups.length === 0) { return false; }
-
-        for (const conditionGroup of conditionGroups) {
-            const conditions = conditionGroup.conditions;
-            if (conditions.length > 0 && this._testConditions(conditions, data)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    _testConditions(conditions, data) {
-        for (const condition of conditions) {
-            if (!conditionsTestValue(profileConditionsDescriptor, condition.type, condition.operator, condition.value, data)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    _checkLastError() {
-        // NOP
-    }
-
-    _runCommand(command, params) {
-        const handler = this._commandHandlers.get(command);
-        if (typeof handler !== 'function') { return false; }
-
-        handler(params);
-        return true;
-    }
-
-    async _importDictionary(archiveSource, onProgress, details) {
-        return await this._dictionaryImporter.import(this._database, archiveSource, onProgress, details);
-    }
-
-    async _textParseScanning(text, options) {
-        const results = [];
-        while (text.length > 0) {
-            const term = [];
-            const [definitions, sourceLength] = await this._translator.findTerms(
-                'simple',
-                text.substring(0, options.scanning.length),
-                {},
-                options
-            );
-            if (definitions.length > 0 && sourceLength > 0) {
-                dictTermsSort(definitions);
-                const {expression, reading} = definitions[0];
-                const source = text.substring(0, sourceLength);
-                for (const {text: text2, furigana} of jp.distributeFuriganaInflected(expression, reading, source)) {
-                    const reading2 = jp.convertReading(text2, furigana, options.parsing.readingMode);
-                    term.push({text: text2, reading: reading2});
-                }
-                text = text.substring(source.length);
-            } else {
-                const reading = jp.convertReading(text[0], '', options.parsing.readingMode);
-                term.push({text: text[0], reading});
-                text = text.substring(1);
-            }
-            results.push(term);
-        }
-        return results;
-    }
-
-    async _textParseMecab(text, options) {
-        const results = [];
-        const rawResults = await this._mecab.parseText(text);
-        for (const [mecabName, parsedLines] of Object.entries(rawResults)) {
-            const result = [];
-            for (const parsedLine of parsedLines) {
-                for (const {expression, reading, source} of parsedLine) {
-                    const term = [];
-                    for (const {text: text2, furigana} of jp.distributeFuriganaInflected(
-                        expression.length > 0 ? expression : source,
-                        jp.convertKatakanaToHiragana(reading),
-                        source
-                    )) {
-                        const reading2 = jp.convertReading(text2, furigana, options.parsing.readingMode);
-                        term.push({text: text2, reading: reading2});
-                    }
-                    result.push(term);
-                }
-                result.push([{text: '\n', reading: ''}]);
-            }
-            results.push([mecabName, result]);
-        }
-        return results;
     }
 
     // Event handlers
@@ -994,6 +851,149 @@ class Backend {
     }
 
     // Utilities
+
+    _sendMessageAllTabs(action, params={}) {
+        const callback = () => this._checkLastError(chrome.runtime.lastError);
+        chrome.tabs.query({}, (tabs) => {
+            for (const tab of tabs) {
+                chrome.tabs.sendMessage(tab.id, {action, params}, callback);
+            }
+        });
+    }
+
+    _applyOptions(source) {
+        const options = this.getOptions(this._optionsContext);
+        this._updateBadge();
+
+        this._anki.setServer(options.anki.server);
+        this._anki.setEnabled(options.anki.enable);
+
+        if (options.parsing.enableMecabParser) {
+            this._mecab.startListener();
+        } else {
+            this._mecab.stopListener();
+        }
+
+        if (options.general.enableClipboardPopups) {
+            this._clipboardMonitor.start();
+        } else {
+            this._clipboardMonitor.stop();
+        }
+
+        this._sendMessageAllTabs('optionsUpdated', {source});
+    }
+
+    _getProfile(optionsContext, useSchema=false) {
+        const options = this.getFullOptions(useSchema);
+        const profiles = options.profiles;
+        if (typeof optionsContext.index === 'number') {
+            return profiles[optionsContext.index];
+        }
+        const profile = this._getProfileFromContext(options, optionsContext);
+        return profile !== null ? profile : options.profiles[options.profileCurrent];
+    }
+
+    _getProfileFromContext(options, optionsContext) {
+        for (const profile of options.profiles) {
+            const conditionGroups = profile.conditionGroups;
+            if (conditionGroups.length > 0 && this._testConditionGroups(conditionGroups, optionsContext)) {
+                return profile;
+            }
+        }
+        return null;
+    }
+
+    _testConditionGroups(conditionGroups, data) {
+        if (conditionGroups.length === 0) { return false; }
+
+        for (const conditionGroup of conditionGroups) {
+            const conditions = conditionGroup.conditions;
+            if (conditions.length > 0 && this._testConditions(conditions, data)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    _testConditions(conditions, data) {
+        for (const condition of conditions) {
+            if (!conditionsTestValue(profileConditionsDescriptor, condition.type, condition.operator, condition.value, data)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    _checkLastError() {
+        // NOP
+    }
+
+    _runCommand(command, params) {
+        const handler = this._commandHandlers.get(command);
+        if (typeof handler !== 'function') { return false; }
+
+        handler(params);
+        return true;
+    }
+
+    async _importDictionary(archiveSource, onProgress, details) {
+        return await this._dictionaryImporter.import(this._database, archiveSource, onProgress, details);
+    }
+
+    async _textParseScanning(text, options) {
+        const results = [];
+        while (text.length > 0) {
+            const term = [];
+            const [definitions, sourceLength] = await this._translator.findTerms(
+                'simple',
+                text.substring(0, options.scanning.length),
+                {},
+                options
+            );
+            if (definitions.length > 0 && sourceLength > 0) {
+                dictTermsSort(definitions);
+                const {expression, reading} = definitions[0];
+                const source = text.substring(0, sourceLength);
+                for (const {text: text2, furigana} of jp.distributeFuriganaInflected(expression, reading, source)) {
+                    const reading2 = jp.convertReading(text2, furigana, options.parsing.readingMode);
+                    term.push({text: text2, reading: reading2});
+                }
+                text = text.substring(source.length);
+            } else {
+                const reading = jp.convertReading(text[0], '', options.parsing.readingMode);
+                term.push({text: text[0], reading});
+                text = text.substring(1);
+            }
+            results.push(term);
+        }
+        return results;
+    }
+
+    async _textParseMecab(text, options) {
+        const results = [];
+        const rawResults = await this._mecab.parseText(text);
+        for (const [mecabName, parsedLines] of Object.entries(rawResults)) {
+            const result = [];
+            for (const parsedLine of parsedLines) {
+                for (const {expression, reading, source} of parsedLine) {
+                    const term = [];
+                    for (const {text: text2, furigana} of jp.distributeFuriganaInflected(
+                        expression.length > 0 ? expression : source,
+                        jp.convertKatakanaToHiragana(reading),
+                        source
+                    )) {
+                        const reading2 = jp.convertReading(text2, furigana, options.parsing.readingMode);
+                        term.push({text: text2, reading: reading2});
+                    }
+                    result.push(term);
+                }
+                result.push([{text: '\n', reading: ''}]);
+            }
+            results.push([mecabName, result]);
+        }
+        return results;
+    }
 
     _createActionListenerPort(port, sender, handlers) {
         let hasStarted = false;
