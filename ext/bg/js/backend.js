@@ -218,7 +218,7 @@ class Backend {
     }
 
     handleCommand(...args) {
-        return this._runCommand(...args);
+        return this._onCommand(...args);
     }
 
     handleZoomChange(...args) {
@@ -474,6 +474,12 @@ class Backend {
             results.push([mecabName, result]);
         }
         return results;
+    }
+
+    // Event handlers
+
+    _onCommand(command) {
+        this._runCommand(command);
     }
 
     // Message handlers
