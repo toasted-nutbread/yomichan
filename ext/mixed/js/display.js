@@ -308,7 +308,7 @@ class Display {
         const index = this.entryIndexFind(entry);
         if (index < 0 || index >= this.definitions.length) { return; }
 
-        const expressionIndex = Display.indexOf(entry.querySelectorAll('.term-expression .action-play-audio'), link);
+        const expressionIndex = this.indexOf(entry.querySelectorAll('.term-expression .action-play-audio'), link);
         this.audioPlay(
             this.definitions[index],
             // expressionIndex is used in audioPlay to detect result output mode
@@ -508,7 +508,7 @@ class Display {
         }
 
         for (const definition of definitions) {
-            definition.cloze = Display.clozeBuild(context.sentence, definition.source);
+            definition.cloze = this.clozeBuild(context.sentence, definition.source);
             definition.url = context.url;
         }
 
@@ -566,7 +566,7 @@ class Display {
         }
 
         for (const definition of definitions) {
-            definition.cloze = Display.clozeBuild(context.sentence, definition.character);
+            definition.cloze = this.clozeBuild(context.sentence, definition.character);
             definition.url = context.url;
         }
 
@@ -683,7 +683,7 @@ class Display {
         if (scroll !== null) {
             target = scroll;
         } else {
-            target = this.index === 0 || entry === null ? 0 : Display.getElementTop(entry);
+            target = this.index === 0 || entry === null ? 0 : this.getElementTop(entry);
 
             const header = document.querySelector('#navigation-header');
             if (header !== null) {
@@ -881,7 +881,7 @@ class Display {
         return index >= 0 && index < entries.length ? entries[index] : null;
     }
 
-    static clozeBuild({text, offset}, source) {
+    clozeBuild({text, offset}, source) {
         return {
             sentence: text.trim(),
             prefix: text.substring(0, offset).trim(),
@@ -892,7 +892,7 @@ class Display {
 
     entryIndexFind(element) {
         const entry = element.closest('.entry');
-        return entry !== null ? Display.indexOf(this.container.querySelectorAll('.entry'), entry) : -1;
+        return entry !== null ? this.indexOf(this.container.querySelectorAll('.entry'), entry) : -1;
     }
 
     adderButtonFind(index, mode) {
@@ -939,7 +939,7 @@ class Display {
         return document.title;
     }
 
-    static indexOf(nodeList, node) {
+    indexOf(nodeList, node) {
         for (let i = 0, ii = nodeList.length; i < ii; ++i) {
             if (nodeList[i] === node) {
                 return i;
@@ -948,7 +948,7 @@ class Display {
         return -1;
     }
 
-    static getElementTop(element) {
+    getElementTop(element) {
         const elementRect = element.getBoundingClientRect();
         const documentRect = document.documentElement.getBoundingClientRect();
         return elementRect.top - documentRect.top;
