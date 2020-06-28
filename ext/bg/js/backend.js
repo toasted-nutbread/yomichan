@@ -21,7 +21,7 @@
  * AudioSystem
  * AudioUriBuilder
  * ClipboardMonitor
- * Database
+ * DictionaryDatabase
  * DictionaryImporter
  * Environment
  * JsonSchema
@@ -43,9 +43,9 @@
 class Backend {
     constructor() {
         this._environment = new Environment();
-        this._database = new Database();
+        this._dictionaryDatabase = new DictionaryDatabase();
         this._dictionaryImporter = new DictionaryImporter();
-        this._translator = new Translator(this._database);
+        this._translator = new Translator(this._dictionaryDatabase);
         this._anki = new AnkiConnect();
         this._mecab = new Mecab();
         this._clipboardMonitor = new ClipboardMonitor({getClipboard: this._onApiClipboardGet.bind(this)});
@@ -173,7 +173,7 @@ class Backend {
 
             await this._environment.prepare();
             try {
-                await this._database.prepare();
+                await this._dictionaryDatabase.prepare();
             } catch (e) {
                 yomichan.logError(e);
             }
@@ -681,11 +681,11 @@ class Backend {
 
     async _onApiPurgeDatabase() {
         this._translator.clearDatabaseCaches();
-        await this._database.purge();
+        await this._dictionaryDatabase.purge();
     }
 
     async _onApiGetMedia({targets}) {
-        return await this._database.getMedia(targets);
+        return await this._dictionaryDatabase.getMedia(targets);
     }
 
     _onApiLog({error, level, context}) {
@@ -719,12 +719,12 @@ class Backend {
     }
 
     async _onApiImportDictionaryArchive({archiveContent, details}, sender, onProgress) {
-        return await this._dictionaryImporter.import(this._database, archiveContent, details, onProgress);
+        return await this._dictionaryImporter.import(this._dictionaryDatabase, archiveContent, details, onProgress);
     }
 
     async _onApiDeleteDictionary({dictionaryName}, sender, onProgress) {
         this._translator.clearDatabaseCaches();
-        await this._database.deleteDictionary(dictionaryName, {rate: 1000}, onProgress);
+        await this._dictionaryDatabase.deleteDictionary(dictionaryName, {rate: 1000}, onProgress);
     }
 
     async _onApiModifySettings({targets, source}) {
@@ -938,7 +938,7 @@ class Backend {
     }
 
     async _importDictionary(archiveSource, onProgress, details) {
-        return await this._dictionaryImporter.import(this._database, archiveSource, onProgress, details);
+        return await this._dictionaryImporter.import(this._dictionaryDatabase, archiveSource, onProgress, details);
     }
 
     async _textParseScanning(text, options) {
