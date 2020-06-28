@@ -186,7 +186,7 @@ class Backend {
             this._options = await optionsLoad();
             this._options = JsonSchema.getValidValueOrDefault(this._optionsSchema, this._options);
 
-            this._onOptionsUpdated('background');
+            this._applyOptions('background');
 
             const options = this.getOptions(this._optionsContext);
             if (options.general.showGuide) {
@@ -242,11 +242,6 @@ class Backend {
         });
     }
 
-    _onOptionsUpdated(source) {
-        this._applyOptions();
-        this._sendMessageAllTabs('optionsUpdated', {source});
-    }
-
     _onClipboardText({text}) {
         this._onCommandSearch({mode: 'popup', query: text});
     }
@@ -259,7 +254,7 @@ class Backend {
         this._updateBadge();
     }
 
-    _applyOptions() {
+    _applyOptions(source) {
         const options = this.getOptions(this._optionsContext);
         this._updateBadge();
 
@@ -277,6 +272,8 @@ class Backend {
         } else {
             this._clipboardMonitor.stop();
         }
+
+        this._sendMessageAllTabs('optionsUpdated', {source});
     }
 
     _getOptionsSchema() {
@@ -512,7 +509,7 @@ class Backend {
     async _onApiOptionsSave({source}) {
         const options = this.getFullOptions();
         await optionsSave(options);
-        this._onOptionsUpdated(source);
+        this._applyOptions(source);
     }
 
     async _onApiKanjiFind({text, optionsContext}) {
