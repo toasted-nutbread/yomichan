@@ -197,6 +197,16 @@ const clone = (() => {
  * Async utilities
  */
 
+function deferPromise() {
+    let resolve;
+    let reject;
+    const promise = new Promise((resolve2, reject2) => {
+        resolve = resolve2;
+        reject = reject2;
+    });
+    return {promise, resolve, reject};
+}
+
 function promiseTimeout(delay, resolveValue) {
     if (delay <= 0) {
         const promise = Promise.resolve(resolveValue);
@@ -236,16 +246,6 @@ function promiseTimeout(delay, resolveValue) {
     promise.reject = reject;
 
     return promise;
-}
-
-function deferPromise() {
-    let resolve;
-    let reject;
-    const promise = new Promise((resolve2, reject2) => {
-        resolve = resolve2;
-        reject = reject2;
-    });
-    return {promise, resolve, reject};
 }
 
 
