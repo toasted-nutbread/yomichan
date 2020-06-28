@@ -186,7 +186,7 @@ class Backend {
             this._options = await optionsLoad();
             this._options = JsonSchema.getValidValueOrDefault(this._optionsSchema, this._options);
 
-            this.onOptionsUpdated('background');
+            this._onOptionsUpdated('background');
 
             const options = this.getOptions(this._optionsContext);
             if (options.general.showGuide) {
@@ -196,7 +196,7 @@ class Backend {
             this._clipboardMonitor.on('change', this._onClipboardText.bind(this));
 
             this._sendMessageAllTabs('backendPrepared');
-            const callback = () => this.checkLastError(chrome.runtime.lastError);
+            const callback = () => this._checkLastError(chrome.runtime.lastError);
             chrome.runtime.sendMessage({action: 'backendPrepared'}, callback);
         } catch (e) {
             yomichan.logError(e);
@@ -230,11 +230,11 @@ class Backend {
     }
 
     handleMessage(...args) {
-        return this.onMessage(...args);
+        return this._onMessage(...args);
     }
 
     _sendMessageAllTabs(action, params={}) {
-        const callback = () => this.checkLastError(chrome.runtime.lastError);
+        const callback = () => this._checkLastError(chrome.runtime.lastError);
         chrome.tabs.query({}, (tabs) => {
             for (const tab of tabs) {
                 chrome.tabs.sendMessage(tab.id, {action, params}, callback);
@@ -242,12 +242,12 @@ class Backend {
         });
     }
 
-    onOptionsUpdated(source) {
-        this.applyOptions();
+    _onOptionsUpdated(source) {
+        this._applyOptions();
         this._sendMessageAllTabs('optionsUpdated', {source});
     }
 
-    onMessage({action, params}, sender, callback) {
+    _onMessage({action, params}, sender, callback) {
         const messageHandler = this._messageHandlers.get(action);
         if (typeof messageHandler === 'undefined') { return false; }
 
@@ -293,7 +293,7 @@ class Backend {
             let forwardPort = chrome.tabs.connect(tabId, {frameId: targetFrameId, name: `cross-frame-communication-port-${senderFrameId}`});
 
             const cleanup = () => {
-                this.checkLastError(chrome.runtime.lastError);
+                this._checkLastError(chrome.runtime.lastError);
                 if (forwardPort !== null) {
                     forwardPort.disconnect();
                     forwardPort = null;
@@ -319,7 +319,7 @@ class Backend {
     }
 
     _onZoomChange({tabId, oldZoomFactor, newZoomFactor}) {
-        const callback = () => this.checkLastError(chrome.runtime.lastError);
+        const callback = () => this._checkLastError(chrome.runtime.lastError);
         chrome.tabs.sendMessage(tabId, {action: 'zoomChanged', params: {oldZoomFactor, newZoomFactor}}, callback);
     }
 
@@ -331,7 +331,7 @@ class Backend {
         this._updateBadge();
     }
 
-    applyOptions() {
+    _applyOptions() {
         const options = this.getOptions(this._optionsContext);
         this._updateBadge();
 
@@ -351,7 +351,7 @@ class Backend {
         }
     }
 
-    getOptionsSchema() {
+    _getOptionsSchema() {
         return this._optionsSchema;
     }
 
@@ -361,35 +361,35 @@ class Backend {
     }
 
     getOptions(optionsContext, useSchema=false) {
-        return this.getProfile(optionsContext, useSchema).options;
+        return this._getProfile(optionsContext, useSchema).options;
     }
 
-    getProfile(optionsContext, useSchema=false) {
+    _getProfile(optionsContext, useSchema=false) {
         const options = this.getFullOptions(useSchema);
         const profiles = options.profiles;
         if (typeof optionsContext.index === 'number') {
             return profiles[optionsContext.index];
         }
-        const profile = this.getProfileFromContext(options, optionsContext);
+        const profile = this._getProfileFromContext(options, optionsContext);
         return profile !== null ? profile : options.profiles[options.profileCurrent];
     }
 
-    getProfileFromContext(options, optionsContext) {
+    _getProfileFromContext(options, optionsContext) {
         for (const profile of options.profiles) {
             const conditionGroups = profile.conditionGroups;
-            if (conditionGroups.length > 0 && this.testConditionGroups(conditionGroups, optionsContext)) {
+            if (conditionGroups.length > 0 && this._testConditionGroups(conditionGroups, optionsContext)) {
                 return profile;
             }
         }
         return null;
     }
 
-    testConditionGroups(conditionGroups, data) {
+    _testConditionGroups(conditionGroups, data) {
         if (conditionGroups.length === 0) { return false; }
 
         for (const conditionGroup of conditionGroups) {
             const conditions = conditionGroup.conditions;
-            if (conditions.length > 0 && this.testConditions(conditions, data)) {
+            if (conditions.length > 0 && this._testConditions(conditions, data)) {
                 return true;
             }
         }
@@ -397,7 +397,7 @@ class Backend {
         return false;
     }
 
-    testConditions(conditions, data) {
+    _testConditions(conditions, data) {
         for (const condition of conditions) {
             if (!conditionsTestValue(profileConditionsDescriptor, condition.type, condition.operator, condition.value, data)) {
                 return false;
@@ -406,7 +406,7 @@ class Backend {
         return true;
     }
 
-    checkLastError() {
+    _checkLastError() {
         // NOP
     }
 
@@ -418,7 +418,7 @@ class Backend {
         return true;
     }
 
-    async importDictionary(archiveSource, onProgress, details) {
+    async _importDictionary(archiveSource, onProgress, details) {
         return await this._dictionaryImporter.import(this._database, archiveSource, onProgress, details);
     }
 
@@ -480,7 +480,7 @@ class Backend {
 
     _onApiYomichanCoreReady(_params, sender) {
         // tab ID isn't set in background (e.g. browser_action)
-        const callback = () => this.checkLastError(chrome.runtime.lastError);
+        const callback = () => this._checkLastError(chrome.runtime.lastError);
         const data = {action: 'backendPrepared'};
         if (typeof sender.tab === 'undefined') {
             chrome.runtime.sendMessage(data, callback);
@@ -492,7 +492,7 @@ class Backend {
     }
 
     _onApiOptionsSchemaGet() {
-        return this.getOptionsSchema();
+        return this._getOptionsSchema();
     }
 
     _onApiOptionsGet({optionsContext}) {
@@ -506,7 +506,7 @@ class Backend {
     async _onApiOptionsSave({source}) {
         const options = this.getFullOptions();
         await optionsSave(options);
-        this.onOptionsUpdated(source);
+        this._onOptionsUpdated(source);
     }
 
     async _onApiKanjiFind({text, optionsContext}) {
@@ -658,7 +658,7 @@ class Backend {
         }
 
         const tabId = sender.tab.id;
-        const callback = () => this.checkLastError(chrome.runtime.lastError);
+        const callback = () => this._checkLastError(chrome.runtime.lastError);
         chrome.tabs.sendMessage(tabId, {action, params}, {frameId}, callback);
         return true;
     }
@@ -669,7 +669,7 @@ class Backend {
         }
 
         const tabId = sender.tab.id;
-        const callback = () => this.checkLastError(chrome.runtime.lastError);
+        const callback = () => this._checkLastError(chrome.runtime.lastError);
         chrome.tabs.sendMessage(tabId, {action, params}, callback);
         return true;
     }
@@ -1047,7 +1047,7 @@ class Backend {
                     if (await openInTab()) { return; }
                     // if the previous popup is open in an invalid state, close it
                     if (this._popupWindow !== null) {
-                        const callback = () => this.checkLastError(chrome.runtime.lastError);
+                        const callback = () => this._checkLastError(chrome.runtime.lastError);
                         chrome.windows.remove(this._popupWindow.id, callback);
                     }
                     // open new popup
