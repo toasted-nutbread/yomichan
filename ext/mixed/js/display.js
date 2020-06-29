@@ -379,6 +379,10 @@ class Display {
         }
     }
 
+    getOptions() {
+        return this.options;
+    }
+
     getOptionsContext() {
         return this.optionsContext;
     }
