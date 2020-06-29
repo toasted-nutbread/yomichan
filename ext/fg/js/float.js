@@ -31,7 +31,6 @@ class DisplayFloat extends Display {
         this._secret = yomichan.generateId(16);
         this._token = null;
 
-        this._orphaned = false;
         this._nestedPopupsPrepared = false;
 
         this._onKeyDownHandlers = new Map([
@@ -59,22 +58,9 @@ class DisplayFloat extends Display {
     async prepare() {
         await super.prepare();
 
-        yomichan.on('orphaned', this.onOrphaned.bind(this));
         window.addEventListener('message', this.onMessage.bind(this), false);
 
         api.broadcastTab('popupPrepared', {secret: this._secret});
-    }
-
-    onError(error) {
-        if (this._orphaned) {
-            this.setContent('orphaned');
-        } else {
-            yomichan.logError(error);
-        }
-    }
-
-    onOrphaned() {
-        this._orphaned = true;
     }
 
     onEscape() {

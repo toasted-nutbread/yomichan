@@ -121,10 +121,6 @@ class DisplaySearch extends Display {
         this._isPrepared = true;
     }
 
-    onError(error) {
-        yomichan.logError(error);
-    }
-
     onEscape() {
         if (this.query === null) {
             return;

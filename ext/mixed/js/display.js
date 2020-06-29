@@ -47,6 +47,7 @@ class Display {
             useCache: true
         });
         this.styleNode = null;
+        this._orphaned = false;
 
         this.eventListeners = new EventListenerCollection();
         this.persistentEventListeners = new EventListenerCollection();
@@ -169,10 +170,19 @@ class Display {
     async prepare() {
         await yomichan.ready();
         await this.displayGenerator.prepare();
+        yomichan.on('orphaned', this.onOrphaned.bind(this));
     }
 
-    onError(_error) {
-        throw new Error('Override me');
+    onOrphaned() {
+        this._orphaned = true;
+    }
+
+    onError(error) {
+        if (this._orphaned) {
+            this.setContent('orphaned');
+        } else {
+            yomichan.logError(error);
+        }
     }
 
     onEscape() {
