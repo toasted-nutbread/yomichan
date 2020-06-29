@@ -149,7 +149,7 @@ class Display {
 
                     const entry = this._getEntry(index);
                     if (entry !== null && entry.dataset.type === 'term') {
-                        this._audioPlay(this._definitions[index], this._firstExpressionIndex, index);
+                        this._audioPlay(this._definitions[index], this._getFirstExpressionIndex(), index);
                     }
                     return true;
                 }
@@ -653,7 +653,7 @@ class Display {
     autoPlayAudio() {
         if (this._definitions.length === 0) { return; }
 
-        this._audioPlay(this._definitions[0], this._firstExpressionIndex, 0);
+        this._audioPlay(this._definitions[0], this._getFirstExpressionIndex(), 0);
     }
 
     _updateAdderButtons(states) {
@@ -883,7 +883,7 @@ class Display {
         }
     }
 
-    get _firstExpressionIndex() {
+    _getFirstExpressionIndex() {
         return this._options.general.resultOutputMode === 'merge' ? 0 : -1;
     }
 
