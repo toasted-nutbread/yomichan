@@ -163,11 +163,10 @@ class Display {
                 return false;
             }]
         ]);
-
-        this.setInteractive(true);
     }
 
     async prepare() {
+        this.setInteractive(true);
         await yomichan.ready();
         await this.displayGenerator.prepare();
         yomichan.on('orphaned', this.onOrphaned.bind(this));
