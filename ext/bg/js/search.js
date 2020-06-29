@@ -33,10 +33,10 @@ class DisplaySearch extends Display {
 
         this._isPrepared = false;
 
-        this.optionsContext = {
+        this.setOptionsContext({
             depth: 0,
             url: window.location.href
-        };
+        });
 
         this.queryParser = new QueryParser({
             getOptionsContext: this.getOptionsContext.bind(this),

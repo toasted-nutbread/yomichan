@@ -112,7 +112,7 @@ class DisplayFloat extends Display {
     }
 
     async setOptionsContext(optionsContext) {
-        this.optionsContext = optionsContext;
+        super.setOptionsContext(optionsContext);
         await this.updateOptions();
     }
 
@@ -167,7 +167,7 @@ class DisplayFloat extends Display {
     }
 
     async _configure({messageId, frameId, popupId, optionsContext, childrenSupported, scale}) {
-        this.optionsContext = optionsContext;
+        this.setOptionsContext(optionsContext);
 
         await this.updateOptions();
 
@@ -194,7 +194,7 @@ class DisplayFloat extends Display {
         let complete = false;
 
         const onOptionsUpdated = async () => {
-            const optionsContext = this.optionsContext;
+            const optionsContext = this.getOptionsContext();
             const options = await api.optionsGet(optionsContext);
             const maxPopupDepthExceeded = !(typeof depth === 'number' && depth < options.scanning.popupNestingMaxDepth);
             if (maxPopupDepthExceeded || complete) { return; }

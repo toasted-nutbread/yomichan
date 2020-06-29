@@ -383,6 +383,10 @@ class Display {
         return this.optionsContext;
     }
 
+    setOptionsContext(optionsContext) {
+        this.optionsContext = optionsContext;
+    }
+
     async updateOptions() {
         this.options = await api.optionsGet(this.getOptionsContext());
         this.updateDocumentOptions(this.options);
