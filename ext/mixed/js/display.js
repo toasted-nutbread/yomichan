@@ -630,6 +630,10 @@ class Display {
         }
     }
 
+    clearContent() {
+        this.container.textContent = '';
+    }
+
     updateNavigation(previous, next) {
         const navigation = document.querySelector('#navigation-header');
         if (navigation !== null) {

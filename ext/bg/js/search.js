@@ -237,7 +237,7 @@ class DisplaySearch extends Display {
                     url: window.location.href
                 }});
             } else {
-                this.container.textContent = '';
+                this.clearContent();
             }
             this.setTitleText(query);
             window.parent.postMessage('popupClose', '*');
