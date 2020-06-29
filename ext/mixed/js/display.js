@@ -29,16 +29,16 @@
 
 class Display {
     constructor(spinner, container) {
-        this.spinner = spinner;
-        this.container = container;
-        this.definitions = [];
-        this.optionsContext = null;
-        this.options = null;
-        this.context = null;
-        this.index = 0;
-        this.audioPlaying = null;
-        this.audioFallback = null;
-        this.audioSystem = new AudioSystem({
+        this._spinner = spinner;
+        this._container = container;
+        this._definitions = [];
+        this._optionsContext = null;
+        this._options = null;
+        this._context = null;
+        this._index = 0;
+        this._audioPlaying = null;
+        this._audioFallback = null;
+        this._audioSystem = new AudioSystem({
             audioUriBuilder: {
                 getUri: async (definition, source, details) => {
                     return await api.audioGetUri(definition, source, details);
@@ -46,19 +46,19 @@ class Display {
             },
             useCache: true
         });
-        this.styleNode = null;
+        this._styleNode = null;
         this._orphaned = false;
 
-        this.eventListeners = new EventListenerCollection();
-        this.persistentEventListeners = new EventListenerCollection();
-        this.interactive = false;
-        this.eventListenersActive = false;
-        this.clickScanPrevent = false;
-        this.setContentToken = null;
+        this._eventListeners = new EventListenerCollection();
+        this._persistentEventListeners = new EventListenerCollection();
+        this._interactive = false;
+        this._eventListenersActive = false;
+        this._clickScanPrevent = false;
+        this._setContentToken = null;
 
-        this.mediaLoader = new MediaLoader();
-        this.displayGenerator = new DisplayGenerator({mediaLoader: this.mediaLoader});
-        this.windowScroll = new WindowScroll();
+        this._mediaLoader = new MediaLoader();
+        this._displayGenerator = new DisplayGenerator({mediaLoader: this._mediaLoader});
+        this._windowScroll = new WindowScroll();
 
         this._onKeyDownHandlers = new Map([
             ['Escape', () => {
@@ -67,21 +67,21 @@ class Display {
             }],
             ['PageUp', (e) => {
                 if (e.altKey) {
-                    this.entryScrollIntoView(this.index - 3, null, true);
+                    this.entryScrollIntoView(this._index - 3, null, true);
                     return true;
                 }
                 return false;
             }],
             ['PageDown', (e) => {
                 if (e.altKey) {
-                    this.entryScrollIntoView(this.index + 3, null, true);
+                    this.entryScrollIntoView(this._index + 3, null, true);
                     return true;
                 }
                 return false;
             }],
             ['End', (e) => {
                 if (e.altKey) {
-                    this.entryScrollIntoView(this.definitions.length - 1, null, true);
+                    this.entryScrollIntoView(this._definitions.length - 1, null, true);
                     return true;
                 }
                 return false;
@@ -95,14 +95,14 @@ class Display {
             }],
             ['ArrowUp', (e) => {
                 if (e.altKey) {
-                    this.entryScrollIntoView(this.index - 1, null, true);
+                    this.entryScrollIntoView(this._index - 1, null, true);
                     return true;
                 }
                 return false;
             }],
             ['ArrowDown', (e) => {
                 if (e.altKey) {
-                    this.entryScrollIntoView(this.index + 1, null, true);
+                    this.entryScrollIntoView(this._index + 1, null, true);
                     return true;
                 }
                 return false;
@@ -144,12 +144,12 @@ class Display {
             }],
             ['P', (e) => {
                 if (e.altKey) {
-                    const index = this.index;
-                    if (index < 0 || index >= this.definitions.length) { return; }
+                    const index = this._index;
+                    if (index < 0 || index >= this._definitions.length) { return; }
 
                     const entry = this.getEntry(index);
                     if (entry !== null && entry.dataset.type === 'term') {
-                        this.audioPlay(this.definitions[index], this.firstExpressionIndex, index);
+                        this.audioPlay(this._definitions[index], this.firstExpressionIndex, index);
                     }
                     return true;
                 }
@@ -168,7 +168,7 @@ class Display {
     async prepare() {
         this.setInteractive(true);
         await yomichan.ready();
-        await this.displayGenerator.prepare();
+        await this._displayGenerator.prepare();
         yomichan.on('orphaned', this.onOrphaned.bind(this));
     }
 
@@ -201,16 +201,16 @@ class Display {
     async onKanjiLookup(e) {
         try {
             e.preventDefault();
-            if (!this.context) { return; }
+            if (!this._context) { return; }
 
             const link = e.target;
-            this.context.update({
+            this._context.update({
                 index: this.entryIndexFind(link),
-                scroll: this.windowScroll.y
+                scroll: this._windowScroll.y
             });
             const context = {
-                sentence: this.context.get('sentence'),
-                url: this.context.get('url')
+                sentence: this._context.get('sentence'),
+                url: this._context.get('url')
             };
 
             const definitions = await api.kanjiFind(link.textContent, this.getOptionsContext());
@@ -222,51 +222,51 @@ class Display {
 
     onGlossaryMouseDown(e) {
         if (DOM.isMouseButtonPressed(e, 'primary')) {
-            this.clickScanPrevent = false;
+            this._clickScanPrevent = false;
         }
     }
 
     onGlossaryMouseMove() {
-        this.clickScanPrevent = true;
+        this._clickScanPrevent = true;
     }
 
     onGlossaryMouseUp(e) {
-        if (!this.clickScanPrevent && DOM.isMouseButtonPressed(e, 'primary')) {
+        if (!this._clickScanPrevent && DOM.isMouseButtonPressed(e, 'primary')) {
             this.onTermLookup(e);
         }
     }
 
     async onTermLookup(e, {disableScroll, selectText, disableHistory}={}) {
         try {
-            if (!this.context) { return; }
+            if (!this._context) { return; }
 
             const termLookupResults = await this.termLookup(e);
             if (!termLookupResults) { return; }
             const {textSource, definitions} = termLookupResults;
 
             const scannedElement = e.target;
-            const sentenceExtent = this.options.anki.sentenceExt;
-            const layoutAwareScan = this.options.scanning.layoutAwareScan;
+            const sentenceExtent = this._options.anki.sentenceExt;
+            const layoutAwareScan = this._options.scanning.layoutAwareScan;
             const sentence = docSentenceExtract(textSource, sentenceExtent, layoutAwareScan);
 
-            this.context.update({
+            this._context.update({
                 index: this.entryIndexFind(scannedElement),
-                scroll: this.windowScroll.y
+                scroll: this._windowScroll.y
             });
             const context = {
                 disableScroll,
                 disableHistory,
                 sentence,
-                url: this.context.get('url')
+                url: this._context.get('url')
             };
             if (disableHistory) {
                 Object.assign(context, {
-                    previous: this.context.previous,
-                    next: this.context.next
+                    previous: this._context.previous,
+                    next: this._context.next
                 });
             } else {
                 Object.assign(context, {
-                    previous: this.context
+                    previous: this._context
                 });
             }
 
@@ -284,7 +284,7 @@ class Display {
         try {
             e.preventDefault();
 
-            const {length: scanLength, deepDomScan: deepScan, layoutAwareScan} = this.options.scanning;
+            const {length: scanLength, deepDomScan: deepScan, layoutAwareScan} = this._options.scanning;
             const textSource = docRangeFromPoint(e.clientX, e.clientY, deepScan);
             if (textSource === null) {
                 return false;
@@ -315,13 +315,13 @@ class Display {
         const link = e.currentTarget;
         const entry = link.closest('.entry');
         const index = this.entryIndexFind(entry);
-        if (index < 0 || index >= this.definitions.length) { return; }
+        if (index < 0 || index >= this._definitions.length) { return; }
 
         const expressionIndex = this.indexOf(entry.querySelectorAll('.term-expression .action-play-audio'), link);
         this.audioPlay(
-            this.definitions[index],
+            this._definitions[index],
             // expressionIndex is used in audioPlay to detect result output mode
-            Math.max(expressionIndex, this.options.general.resultOutputMode === 'merge' ? 0 : -1),
+            Math.max(expressionIndex, this._options.general.resultOutputMode === 'merge' ? 0 : -1),
             index
         );
     }
@@ -330,9 +330,9 @@ class Display {
         e.preventDefault();
         const link = e.currentTarget;
         const index = this.entryIndexFind(link);
-        if (index < 0 || index >= this.definitions.length) { return; }
+        if (index < 0 || index >= this._definitions.length) { return; }
 
-        this.noteAdd(this.definitions[index], link.dataset.mode);
+        this.noteAdd(this._definitions[index], link.dataset.mode);
     }
 
     onNoteView(e) {
@@ -356,7 +356,7 @@ class Display {
     onWheel(e) {
         if (e.altKey) {
             if (e.deltaY !== 0) {
-                this.entryScrollIntoView(this.index + (e.deltaY > 0 ? 1 : -1), null, true);
+                this.entryScrollIntoView(this._index + (e.deltaY > 0 ? 1 : -1), null, true);
                 e.preventDefault();
             }
         } else if (e.shiftKey) {
@@ -379,22 +379,22 @@ class Display {
     }
 
     getOptions() {
-        return this.options;
+        return this._options;
     }
 
     getOptionsContext() {
-        return this.optionsContext;
+        return this._optionsContext;
     }
 
     setOptionsContext(optionsContext) {
-        this.optionsContext = optionsContext;
+        this._optionsContext = optionsContext;
     }
 
     async updateOptions() {
-        this.options = await api.optionsGet(this.getOptionsContext());
-        this.updateDocumentOptions(this.options);
-        this.updateTheme(this.options.general.popupTheme);
-        this.setCustomCss(this.options.general.customPopupCss);
+        this._options = await api.optionsGet(this.getOptionsContext());
+        this.updateDocumentOptions(this._options);
+        this.updateTheme(this._options.general.popupTheme);
+        this.setCustomCss(this._options.general.customPopupCss);
     }
 
     updateDocumentOptions(options) {
@@ -414,78 +414,78 @@ class Display {
     }
 
     setCustomCss(css) {
-        if (this.styleNode === null) {
+        if (this._styleNode === null) {
             if (css.length === 0) { return; }
-            this.styleNode = document.createElement('style');
+            this._styleNode = document.createElement('style');
         }
 
-        this.styleNode.textContent = css;
+        this._styleNode.textContent = css;
 
         const parent = document.head;
-        if (this.styleNode.parentNode !== parent) {
-            parent.appendChild(this.styleNode);
+        if (this._styleNode.parentNode !== parent) {
+            parent.appendChild(this._styleNode);
         }
     }
 
     setInteractive(interactive) {
         interactive = !!interactive;
-        if (this.interactive === interactive) { return; }
-        this.interactive = interactive;
+        if (this._interactive === interactive) { return; }
+        this._interactive = interactive;
 
         if (interactive) {
             const actionPrevious = document.querySelector('.action-previous');
             const actionNext = document.querySelector('.action-next');
             // const navigationHeader = document.querySelector('.navigation-header');
 
-            this.persistentEventListeners.addEventListener(document, 'keydown', this.onKeyDown.bind(this), false);
-            this.persistentEventListeners.addEventListener(document, 'wheel', this.onWheel.bind(this), {passive: false});
+            this._persistentEventListeners.addEventListener(document, 'keydown', this.onKeyDown.bind(this), false);
+            this._persistentEventListeners.addEventListener(document, 'wheel', this.onWheel.bind(this), {passive: false});
             if (actionPrevious !== null) {
-                this.persistentEventListeners.addEventListener(actionPrevious, 'click', this.onSourceTermView.bind(this));
+                this._persistentEventListeners.addEventListener(actionPrevious, 'click', this.onSourceTermView.bind(this));
             }
             if (actionNext !== null) {
-                this.persistentEventListeners.addEventListener(actionNext, 'click', this.onNextTermView.bind(this));
+                this._persistentEventListeners.addEventListener(actionNext, 'click', this.onNextTermView.bind(this));
             }
             // temporarily disabled
             // if (navigationHeader !== null) {
             //     this.persistentEventListeners.addEventListener(navigationHeader, 'wheel', this.onHistoryWheel.bind(this), {passive: false});
             // }
         } else {
-            this.persistentEventListeners.removeAllEventListeners();
+            this._persistentEventListeners.removeAllEventListeners();
         }
-        this.setEventListenersActive(this.eventListenersActive);
+        this.setEventListenersActive(this._eventListenersActive);
     }
 
     setEventListenersActive(active) {
-        active = !!active && this.interactive;
-        if (this.eventListenersActive === active) { return; }
-        this.eventListenersActive = active;
+        active = !!active && this._interactive;
+        if (this._eventListenersActive === active) { return; }
+        this._eventListenersActive = active;
 
         if (active) {
             this.addMultipleEventListeners('.action-add-note', 'click', this.onNoteAdd.bind(this));
             this.addMultipleEventListeners('.action-view-note', 'click', this.onNoteView.bind(this));
             this.addMultipleEventListeners('.action-play-audio', 'click', this.onAudioPlay.bind(this));
             this.addMultipleEventListeners('.kanji-link', 'click', this.onKanjiLookup.bind(this));
-            if (this.options.scanning.enablePopupSearch) {
+            if (this._options.scanning.enablePopupSearch) {
                 this.addMultipleEventListeners('.term-glossary-item, .tag', 'mouseup', this.onGlossaryMouseUp.bind(this));
                 this.addMultipleEventListeners('.term-glossary-item, .tag', 'mousedown', this.onGlossaryMouseDown.bind(this));
                 this.addMultipleEventListeners('.term-glossary-item, .tag', 'mousemove', this.onGlossaryMouseMove.bind(this));
             }
         } else {
-            this.eventListeners.removeAllEventListeners();
+            this._eventListeners.removeAllEventListeners();
         }
     }
 
     addMultipleEventListeners(selector, type, listener, options) {
-        for (const node of this.container.querySelectorAll(selector)) {
-            this.eventListeners.addEventListener(node, type, listener, options);
+        for (const node of this._container.querySelectorAll(selector)) {
+            this._eventListeners.addEventListener(node, type, listener, options);
         }
     }
 
     async setContent(type, details) {
         const token = {}; // Unique identifier token
-        this.setContentToken = token;
+        this._setContentToken = token;
         try {
-            this.mediaLoader.unloadAll();
+            this._mediaLoader.unloadAll();
 
             switch (type) {
                 case 'terms':
@@ -501,8 +501,8 @@ class Display {
         } catch (e) {
             this.onError(e);
         } finally {
-            if (this.setContentToken === token) {
-                this.setContentToken = null;
+            if (this._setContentToken === token) {
+                this._setContentToken = null;
             }
         }
     }
@@ -516,12 +516,12 @@ class Display {
             window.focus();
         }
 
-        this.definitions = definitions;
+        this._definitions = definitions;
         if (context.disableHistory) {
             delete context.disableHistory;
-            this.context = new DisplayContext('terms', definitions, context);
+            this._context = new DisplayContext('terms', definitions, context);
         } else {
-            this.context = DisplayContext.push(this.context, 'terms', definitions, context);
+            this._context = DisplayContext.push(this._context, 'terms', definitions, context);
         }
 
         for (const definition of definitions) {
@@ -529,19 +529,19 @@ class Display {
             definition.url = context.url;
         }
 
-        this.updateNavigation(this.context.previous, this.context.next);
+        this.updateNavigation(this._context.previous, this._context.next);
         this.setNoContentVisible(definitions.length === 0);
 
-        const container = this.container;
+        const container = this._container;
         container.textContent = '';
 
         for (let i = 0, ii = definitions.length; i < ii; ++i) {
             if (i > 0) {
                 await promiseTimeout(1);
-                if (this.setContentToken !== token) { return; }
+                if (this._setContentToken !== token) { return; }
             }
 
-            const entry = this.displayGenerator.createTermEntry(definitions[i]);
+            const entry = this._displayGenerator.createTermEntry(definitions[i]);
             container.appendChild(entry);
         }
 
@@ -553,14 +553,14 @@ class Display {
             this.entrySetCurrent(index || 0);
         }
 
-        if (this.options.audio.enabled && this.options.audio.autoPlay) {
+        if (this._options.audio.enabled && this._options.audio.autoPlay) {
             this.autoPlayAudio();
         }
 
         this.setEventListenersActive(true);
 
         const states = await this.getDefinitionsAddable(definitions, ['term-kanji', 'term-kana']);
-        if (this.setContentToken !== token) { return; }
+        if (this._setContentToken !== token) { return; }
 
         this.updateAdderButtons(states);
     }
@@ -574,12 +574,12 @@ class Display {
             window.focus();
         }
 
-        this.definitions = definitions;
+        this._definitions = definitions;
         if (context.disableHistory) {
             delete context.disableHistory;
-            this.context = new DisplayContext('kanji', definitions, context);
+            this._context = new DisplayContext('kanji', definitions, context);
         } else {
-            this.context = DisplayContext.push(this.context, 'kanji', definitions, context);
+            this._context = DisplayContext.push(this._context, 'kanji', definitions, context);
         }
 
         for (const definition of definitions) {
@@ -587,19 +587,19 @@ class Display {
             definition.url = context.url;
         }
 
-        this.updateNavigation(this.context.previous, this.context.next);
+        this.updateNavigation(this._context.previous, this._context.next);
         this.setNoContentVisible(definitions.length === 0);
 
-        const container = this.container;
+        const container = this._container;
         container.textContent = '';
 
         for (let i = 0, ii = definitions.length; i < ii; ++i) {
             if (i > 0) {
                 await promiseTimeout(1);
-                if (this.setContentToken !== token) { return; }
+                if (this._setContentToken !== token) { return; }
             }
 
-            const entry = this.displayGenerator.createKanjiEntry(definitions[i]);
+            const entry = this._displayGenerator.createKanjiEntry(definitions[i]);
             container.appendChild(entry);
         }
 
@@ -609,7 +609,7 @@ class Display {
         this.setEventListenersActive(true);
 
         const states = await this.getDefinitionsAddable(definitions, ['kanji']);
-        if (this.setContentToken !== token) { return; }
+        if (this._setContentToken !== token) { return; }
 
         this.updateAdderButtons(states);
     }
@@ -617,8 +617,8 @@ class Display {
     setContentOrphaned() {
         const errorOrphaned = document.querySelector('#error-orphaned');
 
-        if (this.container !== null) {
-            this.container.hidden = true;
+        if (this._container !== null) {
+            this._container.hidden = true;
         }
 
         if (errorOrphaned !== null) {
@@ -638,7 +638,7 @@ class Display {
     }
 
     clearContent() {
-        this.container.textContent = '';
+        this._container.textContent = '';
     }
 
     updateNavigation(previous, next) {
@@ -651,9 +651,9 @@ class Display {
     }
 
     autoPlayAudio() {
-        if (this.definitions.length === 0) { return; }
+        if (this._definitions.length === 0) { return; }
 
-        this.audioPlay(this.definitions[0], this.firstExpressionIndex, 0);
+        this.audioPlay(this._definitions[0], this.firstExpressionIndex, 0);
     }
 
     updateAdderButtons(states) {
@@ -678,10 +678,10 @@ class Display {
     }
 
     entrySetCurrent(index) {
-        index = Math.min(index, this.definitions.length - 1);
+        index = Math.min(index, this._definitions.length - 1);
         index = Math.max(index, 0);
 
-        const entryPre = this.getEntry(this.index);
+        const entryPre = this.getEntry(this._index);
         if (entryPre !== null) {
             entryPre.classList.remove('entry-current');
         }
@@ -691,20 +691,20 @@ class Display {
             entry.classList.add('entry-current');
         }
 
-        this.index = index;
+        this._index = index;
 
         return entry;
     }
 
     entryScrollIntoView(index, scroll, smooth) {
-        this.windowScroll.stop();
+        this._windowScroll.stop();
 
         const entry = this.entrySetCurrent(index);
         let target;
         if (scroll !== null) {
             target = scroll;
         } else {
-            target = this.index === 0 || entry === null ? 0 : this.getElementTop(entry);
+            target = this._index === 0 || entry === null ? 0 : this.getElementTop(entry);
 
             const header = document.querySelector('#navigation-header');
             if (header !== null) {
@@ -713,19 +713,19 @@ class Display {
         }
 
         if (smooth) {
-            this.windowScroll.animate(this.windowScroll.x, target, 200);
+            this._windowScroll.animate(this._windowScroll.x, target, 200);
         } else {
-            this.windowScroll.toY(target);
+            this._windowScroll.toY(target);
         }
     }
 
     sourceTermView() {
-        if (!this.context || !this.context.previous) { return; }
-        this.context.update({
-            index: this.index,
-            scroll: this.windowScroll.y
+        if (!this._context || !this._context.previous) { return; }
+        this._context.update({
+            index: this._index,
+            scroll: this._windowScroll.y
         });
-        const previousContext = this.context.previous;
+        const previousContext = this._context.previous;
         previousContext.set('disableHistory', true);
         const details = {
             definitions: previousContext.definitions,
@@ -735,12 +735,12 @@ class Display {
     }
 
     nextTermView() {
-        if (!this.context || !this.context.next) { return; }
-        this.context.update({
-            index: this.index,
-            scroll: this.windowScroll.y
+        if (!this._context || !this._context.next) { return; }
+        this._context.update({
+            index: this._index,
+            scroll: this._windowScroll.y
         });
-        const nextContext = this.context.next;
+        const nextContext = this._context.next;
         nextContext.set('disableHistory', true);
         const details = {
             definitions: nextContext.definitions,
@@ -750,17 +750,17 @@ class Display {
     }
 
     noteTryAdd(mode) {
-        const index = this.index;
-        if (index < 0 || index >= this.definitions.length) { return; }
+        const index = this._index;
+        if (index < 0 || index >= this._definitions.length) { return; }
 
         const button = this.adderButtonFind(index, mode);
         if (button !== null && !button.classList.contains('disabled')) {
-            this.noteAdd(this.definitions[index], mode);
+            this.noteAdd(this._definitions[index], mode);
         }
     }
 
     noteTryView() {
-        const button = this.viewerButtonFind(this.index);
+        const button = this.viewerButtonFind(this._index);
         if (button !== null && !button.classList.contains('disabled')) {
             api.noteView(button.dataset.noteId);
         }
@@ -781,7 +781,7 @@ class Display {
             const context = await this._getNoteContext();
             const noteId = await api.definitionAdd(definition, mode, context, details, this.getOptionsContext());
             if (noteId) {
-                const index = this.definitions.indexOf(definition);
+                const index = this._definitions.indexOf(definition);
                 const adderButton = this.adderButtonFind(index, mode);
                 if (adderButton !== null) {
                     adderButton.classList.add('disabled');
@@ -807,15 +807,15 @@ class Display {
 
             let audio, info;
             try {
-                const {sources, textToSpeechVoice, customSourceUrl} = this.options.audio;
+                const {sources, textToSpeechVoice, customSourceUrl} = this._options.audio;
                 let index;
-                ({audio, index} = await this.audioSystem.getDefinitionAudio(expression, sources, {textToSpeechVoice, customSourceUrl}));
+                ({audio, index} = await this._audioSystem.getDefinitionAudio(expression, sources, {textToSpeechVoice, customSourceUrl}));
                 info = `From source ${1 + index}: ${sources[index]}`;
             } catch (e) {
-                if (this.audioFallback === null) {
-                    this.audioFallback = new Audio('/mixed/mp3/button.mp3');
+                if (this._audioFallback === null) {
+                    this._audioFallback = new Audio('/mixed/mp3/button.mp3');
                 }
-                audio = this.audioFallback;
+                audio = this._audioFallback;
                 info = 'Could not find audio';
             }
 
@@ -831,8 +831,8 @@ class Display {
 
             this._stopPlayingAudio();
 
-            const volume = Math.max(0.0, Math.min(1.0, this.options.audio.volume / 100.0));
-            this.audioPlaying = audio;
+            const volume = Math.max(0.0, Math.min(1.0, this._options.audio.volume / 100.0));
+            this._audioPlaying = audio;
             audio.currentTime = 0;
             audio.volume = Number.isFinite(volume) ? volume : 1.0;
             const playPromise = audio.play();
@@ -851,14 +851,14 @@ class Display {
     }
 
     _stopPlayingAudio() {
-        if (this.audioPlaying !== null) {
-            this.audioPlaying.pause();
-            this.audioPlaying = null;
+        if (this._audioPlaying !== null) {
+            this._audioPlaying.pause();
+            this._audioPlaying = null;
         }
     }
 
     noteUsesScreenshot(mode) {
-        const optionsAnki = this.options.anki;
+        const optionsAnki = this._options.anki;
         const fields = (mode === 'kanji' ? optionsAnki.kanji : optionsAnki.terms).fields;
         for (const fieldValue of Object.values(fields)) {
             if (fieldValue.includes('{screenshot}')) {
@@ -873,7 +873,7 @@ class Display {
             await this.setPopupVisibleOverride(false);
             await promiseTimeout(1); // Wait for popup to be hidden.
 
-            const {format, quality} = this.options.anki.screenshot;
+            const {format, quality} = this._options.anki.screenshot;
             const dataUrl = await api.screenshotGet({format, quality});
             if (!dataUrl || dataUrl.error) { return; }
 
@@ -884,7 +884,7 @@ class Display {
     }
 
     get firstExpressionIndex() {
-        return this.options.general.resultOutputMode === 'merge' ? 0 : -1;
+        return this._options.general.resultOutputMode === 'merge' ? 0 : -1;
     }
 
     setPopupVisibleOverride(visible) {
@@ -892,13 +892,13 @@ class Display {
     }
 
     setSpinnerVisible(visible) {
-        if (this.spinner !== null) {
-            this.spinner.hidden = !visible;
+        if (this._spinner !== null) {
+            this._spinner.hidden = !visible;
         }
     }
 
     getEntry(index) {
-        const entries = this.container.querySelectorAll('.entry');
+        const entries = this._container.querySelectorAll('.entry');
         return index >= 0 && index < entries.length ? entries[index] : null;
     }
 
@@ -913,7 +913,7 @@ class Display {
 
     entryIndexFind(element) {
         const entry = element.closest('.entry');
-        return entry !== null ? this.indexOf(this.container.querySelectorAll('.entry'), entry) : -1;
+        return entry !== null ? this.indexOf(this._container.querySelectorAll('.entry'), entry) : -1;
     }
 
     adderButtonFind(index, mode) {
