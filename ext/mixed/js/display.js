@@ -67,77 +67,77 @@ class Display {
             }],
             ['PageUp', (e) => {
                 if (e.altKey) {
-                    this.entryScrollIntoView(this._index - 3, null, true);
+                    this._entryScrollIntoView(this._index - 3, null, true);
                     return true;
                 }
                 return false;
             }],
             ['PageDown', (e) => {
                 if (e.altKey) {
-                    this.entryScrollIntoView(this._index + 3, null, true);
+                    this._entryScrollIntoView(this._index + 3, null, true);
                     return true;
                 }
                 return false;
             }],
             ['End', (e) => {
                 if (e.altKey) {
-                    this.entryScrollIntoView(this._definitions.length - 1, null, true);
+                    this._entryScrollIntoView(this._definitions.length - 1, null, true);
                     return true;
                 }
                 return false;
             }],
             ['Home', (e) => {
                 if (e.altKey) {
-                    this.entryScrollIntoView(0, null, true);
+                    this._entryScrollIntoView(0, null, true);
                     return true;
                 }
                 return false;
             }],
             ['ArrowUp', (e) => {
                 if (e.altKey) {
-                    this.entryScrollIntoView(this._index - 1, null, true);
+                    this._entryScrollIntoView(this._index - 1, null, true);
                     return true;
                 }
                 return false;
             }],
             ['ArrowDown', (e) => {
                 if (e.altKey) {
-                    this.entryScrollIntoView(this._index + 1, null, true);
+                    this._entryScrollIntoView(this._index + 1, null, true);
                     return true;
                 }
                 return false;
             }],
             ['B', (e) => {
                 if (e.altKey) {
-                    this.sourceTermView();
+                    this._sourceTermView();
                     return true;
                 }
                 return false;
             }],
             ['F', (e) => {
                 if (e.altKey) {
-                    this.nextTermView();
+                    this._nextTermView();
                     return true;
                 }
                 return false;
             }],
             ['E', (e) => {
                 if (e.altKey) {
-                    this.noteTryAdd('term-kanji');
+                    this._noteTryAdd('term-kanji');
                     return true;
                 }
                 return false;
             }],
             ['K', (e) => {
                 if (e.altKey) {
-                    this.noteTryAdd('kanji');
+                    this._noteTryAdd('kanji');
                     return true;
                 }
                 return false;
             }],
             ['R', (e) => {
                 if (e.altKey) {
-                    this.noteTryAdd('term-kana');
+                    this._noteTryAdd('term-kana');
                     return true;
                 }
                 return false;
@@ -147,9 +147,9 @@ class Display {
                     const index = this._index;
                     if (index < 0 || index >= this._definitions.length) { return; }
 
-                    const entry = this.getEntry(index);
+                    const entry = this._getEntry(index);
                     if (entry !== null && entry.dataset.type === 'term') {
-                        this.audioPlay(this._definitions[index], this.firstExpressionIndex, index);
+                        this._audioPlay(this._definitions[index], this._firstExpressionIndex, index);
                     }
                     return true;
                 }
@@ -157,7 +157,7 @@ class Display {
             }],
             ['V', (e) => {
                 if (e.altKey) {
-                    this.noteTryView();
+                    this._noteTryView();
                     return true;
                 }
                 return false;
@@ -166,13 +166,13 @@ class Display {
     }
 
     async prepare() {
-        this.setInteractive(true);
+        this._setInteractive(true);
         await yomichan.ready();
         await this._displayGenerator.prepare();
-        yomichan.on('orphaned', this.onOrphaned.bind(this));
+        yomichan.on('orphaned', this._onOrphaned.bind(this));
     }
 
-    onOrphaned() {
+    _onOrphaned() {
         this._orphaned = true;
     }
 
@@ -188,24 +188,24 @@ class Display {
         throw new Error('Override me');
     }
 
-    onSourceTermView(e) {
+    _onSourceTermView(e) {
         e.preventDefault();
-        this.sourceTermView();
+        this._sourceTermView();
     }
 
-    onNextTermView(e) {
+    _onNextTermView(e) {
         e.preventDefault();
-        this.nextTermView();
+        this._nextTermView();
     }
 
-    async onKanjiLookup(e) {
+    async _onKanjiLookup(e) {
         try {
             e.preventDefault();
             if (!this._context) { return; }
 
             const link = e.target;
             this._context.update({
-                index: this.entryIndexFind(link),
+                index: this._entryIndexFind(link),
                 scroll: this._windowScroll.y
             });
             const context = {
@@ -220,27 +220,27 @@ class Display {
         }
     }
 
-    onGlossaryMouseDown(e) {
+    _onGlossaryMouseDown(e) {
         if (DOM.isMouseButtonPressed(e, 'primary')) {
             this._clickScanPrevent = false;
         }
     }
 
-    onGlossaryMouseMove() {
+    _onGlossaryMouseMove() {
         this._clickScanPrevent = true;
     }
 
-    onGlossaryMouseUp(e) {
+    _onGlossaryMouseUp(e) {
         if (!this._clickScanPrevent && DOM.isMouseButtonPressed(e, 'primary')) {
-            this.onTermLookup(e);
+            this._onTermLookup(e);
         }
     }
 
-    async onTermLookup(e, {disableScroll, selectText, disableHistory}={}) {
+    async _onTermLookup(e, {disableScroll, selectText, disableHistory}={}) {
         try {
             if (!this._context) { return; }
 
-            const termLookupResults = await this.termLookup(e);
+            const termLookupResults = await this._termLookup(e);
             if (!termLookupResults) { return; }
             const {textSource, definitions} = termLookupResults;
 
@@ -250,7 +250,7 @@ class Display {
             const sentence = docSentenceExtract(textSource, sentenceExtent, layoutAwareScan);
 
             this._context.update({
-                index: this.entryIndexFind(scannedElement),
+                index: this._entryIndexFind(scannedElement),
                 scroll: this._windowScroll.y
             });
             const context = {
@@ -280,7 +280,7 @@ class Display {
         }
     }
 
-    async termLookup(e) {
+    async _termLookup(e) {
         try {
             e.preventDefault();
 
@@ -310,15 +310,15 @@ class Display {
         }
     }
 
-    onAudioPlay(e) {
+    _onAudioPlay(e) {
         e.preventDefault();
         const link = e.currentTarget;
         const entry = link.closest('.entry');
-        const index = this.entryIndexFind(entry);
+        const index = this._entryIndexFind(entry);
         if (index < 0 || index >= this._definitions.length) { return; }
 
-        const expressionIndex = this.indexOf(entry.querySelectorAll('.term-expression .action-play-audio'), link);
-        this.audioPlay(
+        const expressionIndex = this._indexOf(entry.querySelectorAll('.term-expression .action-play-audio'), link);
+        this._audioPlay(
             this._definitions[index],
             // expressionIndex is used in audioPlay to detect result output mode
             Math.max(expressionIndex, this._options.general.resultOutputMode === 'merge' ? 0 : -1),
@@ -326,16 +326,16 @@ class Display {
         );
     }
 
-    onNoteAdd(e) {
+    _onNoteAdd(e) {
         e.preventDefault();
         const link = e.currentTarget;
-        const index = this.entryIndexFind(link);
+        const index = this._entryIndexFind(link);
         if (index < 0 || index >= this._definitions.length) { return; }
 
-        this.noteAdd(this._definitions[index], link.dataset.mode);
+        this._noteAdd(this._definitions[index], link.dataset.mode);
     }
 
-    onNoteView(e) {
+    _onNoteView(e) {
         e.preventDefault();
         const link = e.currentTarget;
         api.noteView(link.dataset.noteId);
@@ -353,26 +353,26 @@ class Display {
         return false;
     }
 
-    onWheel(e) {
+    _onWheel(e) {
         if (e.altKey) {
             if (e.deltaY !== 0) {
-                this.entryScrollIntoView(this._index + (e.deltaY > 0 ? 1 : -1), null, true);
+                this._entryScrollIntoView(this._index + (e.deltaY > 0 ? 1 : -1), null, true);
                 e.preventDefault();
             }
         } else if (e.shiftKey) {
-            this.onHistoryWheel(e);
+            this._onHistoryWheel(e);
         }
     }
 
-    onHistoryWheel(e) {
+    _onHistoryWheel(e) {
         if (e.altKey) { return; }
         const delta = -e.deltaX || e.deltaY;
         if (delta > 0) {
-            this.sourceTermView();
+            this._sourceTermView();
             e.preventDefault();
             e.stopPropagation();
         } else if (delta < 0) {
-            this.nextTermView();
+            this._nextTermView();
             e.preventDefault();
             e.stopPropagation();
         }
@@ -392,12 +392,12 @@ class Display {
 
     async updateOptions() {
         this._options = await api.optionsGet(this.getOptionsContext());
-        this.updateDocumentOptions(this._options);
-        this.updateTheme(this._options.general.popupTheme);
+        this._updateDocumentOptions(this._options);
+        this._updateTheme(this._options.general.popupTheme);
         this.setCustomCss(this._options.general.customPopupCss);
     }
 
-    updateDocumentOptions(options) {
+    _updateDocumentOptions(options) {
         const data = document.documentElement.dataset;
         data.ankiEnabled = `${options.anki.enable}`;
         data.audioEnabled = `${options.audio.enabled}`;
@@ -409,7 +409,7 @@ class Display {
         data.debug = `${options.general.debugInfo}`;
     }
 
-    updateTheme(themeName) {
+    _updateTheme(themeName) {
         document.documentElement.dataset.yomichanTheme = themeName;
     }
 
@@ -427,7 +427,7 @@ class Display {
         }
     }
 
-    setInteractive(interactive) {
+    _setInteractive(interactive) {
         interactive = !!interactive;
         if (this._interactive === interactive) { return; }
         this._interactive = interactive;
@@ -438,12 +438,12 @@ class Display {
             // const navigationHeader = document.querySelector('.navigation-header');
 
             this._persistentEventListeners.addEventListener(document, 'keydown', this.onKeyDown.bind(this), false);
-            this._persistentEventListeners.addEventListener(document, 'wheel', this.onWheel.bind(this), {passive: false});
+            this._persistentEventListeners.addEventListener(document, 'wheel', this._onWheel.bind(this), {passive: false});
             if (actionPrevious !== null) {
-                this._persistentEventListeners.addEventListener(actionPrevious, 'click', this.onSourceTermView.bind(this));
+                this._persistentEventListeners.addEventListener(actionPrevious, 'click', this._onSourceTermView.bind(this));
             }
             if (actionNext !== null) {
-                this._persistentEventListeners.addEventListener(actionNext, 'click', this.onNextTermView.bind(this));
+                this._persistentEventListeners.addEventListener(actionNext, 'click', this._onNextTermView.bind(this));
             }
             // temporarily disabled
             // if (navigationHeader !== null) {
@@ -452,23 +452,23 @@ class Display {
         } else {
             this._persistentEventListeners.removeAllEventListeners();
         }
-        this.setEventListenersActive(this._eventListenersActive);
+        this._setEventListenersActive(this._eventListenersActive);
     }
 
-    setEventListenersActive(active) {
+    _setEventListenersActive(active) {
         active = !!active && this._interactive;
         if (this._eventListenersActive === active) { return; }
         this._eventListenersActive = active;
 
         if (active) {
-            this.addMultipleEventListeners('.action-add-note', 'click', this.onNoteAdd.bind(this));
-            this.addMultipleEventListeners('.action-view-note', 'click', this.onNoteView.bind(this));
-            this.addMultipleEventListeners('.action-play-audio', 'click', this.onAudioPlay.bind(this));
-            this.addMultipleEventListeners('.kanji-link', 'click', this.onKanjiLookup.bind(this));
+            this.addMultipleEventListeners('.action-add-note', 'click', this._onNoteAdd.bind(this));
+            this.addMultipleEventListeners('.action-view-note', 'click', this._onNoteView.bind(this));
+            this.addMultipleEventListeners('.action-play-audio', 'click', this._onAudioPlay.bind(this));
+            this.addMultipleEventListeners('.kanji-link', 'click', this._onKanjiLookup.bind(this));
             if (this._options.scanning.enablePopupSearch) {
-                this.addMultipleEventListeners('.term-glossary-item, .tag', 'mouseup', this.onGlossaryMouseUp.bind(this));
-                this.addMultipleEventListeners('.term-glossary-item, .tag', 'mousedown', this.onGlossaryMouseDown.bind(this));
-                this.addMultipleEventListeners('.term-glossary-item, .tag', 'mousemove', this.onGlossaryMouseMove.bind(this));
+                this.addMultipleEventListeners('.term-glossary-item, .tag', 'mouseup', this._onGlossaryMouseUp.bind(this));
+                this.addMultipleEventListeners('.term-glossary-item, .tag', 'mousedown', this._onGlossaryMouseDown.bind(this));
+                this.addMultipleEventListeners('.term-glossary-item, .tag', 'mousemove', this._onGlossaryMouseMove.bind(this));
             }
         } else {
             this._eventListeners.removeAllEventListeners();
@@ -489,13 +489,13 @@ class Display {
 
             switch (type) {
                 case 'terms':
-                    await this.setContentTerms(details.definitions, details.context, token);
+                    await this._setContentTerms(details.definitions, details.context, token);
                     break;
                 case 'kanji':
-                    await this.setContentKanji(details.definitions, details.context, token);
+                    await this._setContentKanji(details.definitions, details.context, token);
                     break;
                 case 'orphaned':
-                    this.setContentOrphaned();
+                    this._setContentOrphaned();
                     break;
             }
         } catch (e) {
@@ -507,10 +507,10 @@ class Display {
         }
     }
 
-    async setContentTerms(definitions, context, token) {
+    async _setContentTerms(definitions, context, token) {
         if (!context) { throw new Error('Context expected'); }
 
-        this.setEventListenersActive(false);
+        this._setEventListenersActive(false);
 
         if (context.focus !== false) {
             window.focus();
@@ -525,12 +525,12 @@ class Display {
         }
 
         for (const definition of definitions) {
-            definition.cloze = this.clozeBuild(context.sentence, definition.source);
+            definition.cloze = this._clozeBuild(context.sentence, definition.source);
             definition.url = context.url;
         }
 
-        this.updateNavigation(this._context.previous, this._context.next);
-        this.setNoContentVisible(definitions.length === 0);
+        this._updateNavigation(this._context.previous, this._context.next);
+        this._setNoContentVisible(definitions.length === 0);
 
         const container = this._container;
         container.textContent = '';
@@ -547,28 +547,28 @@ class Display {
 
         const {index, scroll, disableScroll} = context;
         if (!disableScroll) {
-            this.entryScrollIntoView(index || 0, scroll);
+            this._entryScrollIntoView(index || 0, scroll);
         } else {
             delete context.disableScroll;
-            this.entrySetCurrent(index || 0);
+            this._entrySetCurrent(index || 0);
         }
 
         if (this._options.audio.enabled && this._options.audio.autoPlay) {
             this.autoPlayAudio();
         }
 
-        this.setEventListenersActive(true);
+        this._setEventListenersActive(true);
 
-        const states = await this.getDefinitionsAddable(definitions, ['term-kanji', 'term-kana']);
+        const states = await this._getDefinitionsAddable(definitions, ['term-kanji', 'term-kana']);
         if (this._setContentToken !== token) { return; }
 
-        this.updateAdderButtons(states);
+        this._updateAdderButtons(states);
     }
 
-    async setContentKanji(definitions, context, token) {
+    async _setContentKanji(definitions, context, token) {
         if (!context) { throw new Error('Context expected'); }
 
-        this.setEventListenersActive(false);
+        this._setEventListenersActive(false);
 
         if (context.focus !== false) {
             window.focus();
@@ -583,12 +583,12 @@ class Display {
         }
 
         for (const definition of definitions) {
-            definition.cloze = this.clozeBuild(context.sentence, definition.character);
+            definition.cloze = this._clozeBuild(context.sentence, definition.character);
             definition.url = context.url;
         }
 
-        this.updateNavigation(this._context.previous, this._context.next);
-        this.setNoContentVisible(definitions.length === 0);
+        this._updateNavigation(this._context.previous, this._context.next);
+        this._setNoContentVisible(definitions.length === 0);
 
         const container = this._container;
         container.textContent = '';
@@ -604,17 +604,17 @@ class Display {
         }
 
         const {index, scroll} = context;
-        this.entryScrollIntoView(index || 0, scroll);
+        this._entryScrollIntoView(index || 0, scroll);
 
-        this.setEventListenersActive(true);
+        this._setEventListenersActive(true);
 
-        const states = await this.getDefinitionsAddable(definitions, ['kanji']);
+        const states = await this._getDefinitionsAddable(definitions, ['kanji']);
         if (this._setContentToken !== token) { return; }
 
-        this.updateAdderButtons(states);
+        this._updateAdderButtons(states);
     }
 
-    setContentOrphaned() {
+    _setContentOrphaned() {
         const errorOrphaned = document.querySelector('#error-orphaned');
 
         if (this._container !== null) {
@@ -625,11 +625,11 @@ class Display {
             errorOrphaned.hidden = false;
         }
 
-        this.updateNavigation(null, null);
-        this.setNoContentVisible(false);
+        this._updateNavigation(null, null);
+        this._setNoContentVisible(false);
     }
 
-    setNoContentVisible(visible) {
+    _setNoContentVisible(visible) {
         const noResults = document.querySelector('#no-results');
 
         if (noResults !== null) {
@@ -641,7 +641,7 @@ class Display {
         this._container.textContent = '';
     }
 
-    updateNavigation(previous, next) {
+    _updateNavigation(previous, next) {
         const navigation = document.querySelector('#navigation-header');
         if (navigation !== null) {
             navigation.hidden = !(previous || next);
@@ -653,14 +653,14 @@ class Display {
     autoPlayAudio() {
         if (this._definitions.length === 0) { return; }
 
-        this.audioPlay(this._definitions[0], this.firstExpressionIndex, 0);
+        this._audioPlay(this._definitions[0], this._firstExpressionIndex, 0);
     }
 
-    updateAdderButtons(states) {
+    _updateAdderButtons(states) {
         for (let i = 0; i < states.length; ++i) {
             let noteId = null;
             for (const [mode, info] of Object.entries(states[i])) {
-                const button = this.adderButtonFind(i, mode);
+                const button = this._adderButtonFind(i, mode);
                 if (button === null) {
                     continue;
                 }
@@ -672,21 +672,21 @@ class Display {
                 button.classList.remove('pending');
             }
             if (noteId !== null) {
-                this.viewerButtonShow(i, noteId);
+                this._viewerButtonShow(i, noteId);
             }
         }
     }
 
-    entrySetCurrent(index) {
+    _entrySetCurrent(index) {
         index = Math.min(index, this._definitions.length - 1);
         index = Math.max(index, 0);
 
-        const entryPre = this.getEntry(this._index);
+        const entryPre = this._getEntry(this._index);
         if (entryPre !== null) {
             entryPre.classList.remove('entry-current');
         }
 
-        const entry = this.getEntry(index);
+        const entry = this._getEntry(index);
         if (entry !== null) {
             entry.classList.add('entry-current');
         }
@@ -696,15 +696,15 @@ class Display {
         return entry;
     }
 
-    entryScrollIntoView(index, scroll, smooth) {
+    _entryScrollIntoView(index, scroll, smooth) {
         this._windowScroll.stop();
 
-        const entry = this.entrySetCurrent(index);
+        const entry = this._entrySetCurrent(index);
         let target;
         if (scroll !== null) {
             target = scroll;
         } else {
-            target = this._index === 0 || entry === null ? 0 : this.getElementTop(entry);
+            target = this._index === 0 || entry === null ? 0 : this._getElementTop(entry);
 
             const header = document.querySelector('#navigation-header');
             if (header !== null) {
@@ -719,7 +719,7 @@ class Display {
         }
     }
 
-    sourceTermView() {
+    _sourceTermView() {
         if (!this._context || !this._context.previous) { return; }
         this._context.update({
             index: this._index,
@@ -734,7 +734,7 @@ class Display {
         this.setContent(previousContext.type, details);
     }
 
-    nextTermView() {
+    _nextTermView() {
         if (!this._context || !this._context.next) { return; }
         this._context.update({
             index: this._index,
@@ -749,30 +749,30 @@ class Display {
         this.setContent(nextContext.type, details);
     }
 
-    noteTryAdd(mode) {
+    _noteTryAdd(mode) {
         const index = this._index;
         if (index < 0 || index >= this._definitions.length) { return; }
 
-        const button = this.adderButtonFind(index, mode);
+        const button = this._adderButtonFind(index, mode);
         if (button !== null && !button.classList.contains('disabled')) {
-            this.noteAdd(this._definitions[index], mode);
+            this._noteAdd(this._definitions[index], mode);
         }
     }
 
-    noteTryView() {
-        const button = this.viewerButtonFind(this._index);
+    _noteTryView() {
+        const button = this._viewerButtonFind(this._index);
         if (button !== null && !button.classList.contains('disabled')) {
             api.noteView(button.dataset.noteId);
         }
     }
 
-    async noteAdd(definition, mode) {
+    async _noteAdd(definition, mode) {
         try {
             this.setSpinnerVisible(true);
 
             const details = {};
-            if (this.noteUsesScreenshot(mode)) {
-                const screenshot = await this.getScreenshot();
+            if (this._noteUsesScreenshot(mode)) {
+                const screenshot = await this._getScreenshot();
                 if (screenshot) {
                     details.screenshot = screenshot;
                 }
@@ -782,11 +782,11 @@ class Display {
             const noteId = await api.definitionAdd(definition, mode, context, details, this.getOptionsContext());
             if (noteId) {
                 const index = this._definitions.indexOf(definition);
-                const adderButton = this.adderButtonFind(index, mode);
+                const adderButton = this._adderButtonFind(index, mode);
                 if (adderButton !== null) {
                     adderButton.classList.add('disabled');
                 }
-                this.viewerButtonShow(index, noteId);
+                this._viewerButtonShow(index, noteId);
             } else {
                 throw new Error('Note could not be added');
             }
@@ -797,7 +797,7 @@ class Display {
         }
     }
 
-    async audioPlay(definition, expressionIndex, entryIndex) {
+    async _audioPlay(definition, expressionIndex, entryIndex) {
         try {
             this.setSpinnerVisible(true);
 
@@ -819,7 +819,7 @@ class Display {
                 info = 'Could not find audio';
             }
 
-            const button = this.audioButtonFindImage(entryIndex, expressionIndex);
+            const button = this._audioButtonFindImage(entryIndex, expressionIndex);
             if (button !== null) {
                 let titleDefault = button.dataset.titleDefault;
                 if (!titleDefault) {
@@ -857,7 +857,7 @@ class Display {
         }
     }
 
-    noteUsesScreenshot(mode) {
+    _noteUsesScreenshot(mode) {
         const optionsAnki = this._options.anki;
         const fields = (mode === 'kanji' ? optionsAnki.kanji : optionsAnki.terms).fields;
         for (const fieldValue of Object.values(fields)) {
@@ -868,9 +868,9 @@ class Display {
         return false;
     }
 
-    async getScreenshot() {
+    async _getScreenshot() {
         try {
-            await this.setPopupVisibleOverride(false);
+            await this._setPopupVisibleOverride(false);
             await promiseTimeout(1); // Wait for popup to be hidden.
 
             const {format, quality} = this._options.anki.screenshot;
@@ -879,15 +879,15 @@ class Display {
 
             return {dataUrl, format};
         } finally {
-            await this.setPopupVisibleOverride(null);
+            await this._setPopupVisibleOverride(null);
         }
     }
 
-    get firstExpressionIndex() {
+    get _firstExpressionIndex() {
         return this._options.general.resultOutputMode === 'merge' ? 0 : -1;
     }
 
-    setPopupVisibleOverride(visible) {
+    _setPopupVisibleOverride(visible) {
         return api.broadcastTab('popupSetVisibleOverride', {visible});
     }
 
@@ -897,12 +897,12 @@ class Display {
         }
     }
 
-    getEntry(index) {
+    _getEntry(index) {
         const entries = this._container.querySelectorAll('.entry');
         return index >= 0 && index < entries.length ? entries[index] : null;
     }
 
-    clozeBuild({text, offset}, source) {
+    _clozeBuild({text, offset}, source) {
         return {
             sentence: text.trim(),
             prefix: text.substring(0, offset).trim(),
@@ -911,23 +911,23 @@ class Display {
         };
     }
 
-    entryIndexFind(element) {
+    _entryIndexFind(element) {
         const entry = element.closest('.entry');
-        return entry !== null ? this.indexOf(this._container.querySelectorAll('.entry'), entry) : -1;
+        return entry !== null ? this._indexOf(this._container.querySelectorAll('.entry'), entry) : -1;
     }
 
-    adderButtonFind(index, mode) {
-        const entry = this.getEntry(index);
+    _adderButtonFind(index, mode) {
+        const entry = this._getEntry(index);
         return entry !== null ? entry.querySelector(`.action-add-note[data-mode="${mode}"]`) : null;
     }
 
-    viewerButtonFind(index) {
-        const entry = this.getEntry(index);
+    _viewerButtonFind(index) {
+        const entry = this._getEntry(index);
         return entry !== null ? entry.querySelector('.action-view-note') : null;
     }
 
-    viewerButtonShow(index, noteId) {
-        const viewerButton = this.viewerButtonFind(index);
+    _viewerButtonShow(index, noteId) {
+        const viewerButton = this._viewerButtonFind(index);
         if (viewerButton === null) {
             return;
         }
@@ -935,8 +935,8 @@ class Display {
         viewerButton.dataset.noteId = noteId;
     }
 
-    audioButtonFindImage(index, expressionIndex) {
-        const entry = this.getEntry(index);
+    _audioButtonFindImage(index, expressionIndex) {
+        const entry = this._getEntry(index);
         if (entry === null) { return null; }
 
         const container = (
@@ -947,7 +947,7 @@ class Display {
         return container !== null ? container.querySelector('.action-play-audio>img') : null;
     }
 
-    async getDefinitionsAddable(definitions, modes) {
+    async _getDefinitionsAddable(definitions, modes) {
         try {
             const context = await this._getNoteContext();
             return await api.definitionsAddable(definitions, modes, context, this.getOptionsContext());
@@ -960,7 +960,7 @@ class Display {
         return document.title;
     }
 
-    indexOf(nodeList, node) {
+    _indexOf(nodeList, node) {
         for (let i = 0, ii = nodeList.length; i < ii; ++i) {
             if (nodeList[i] === node) {
                 return i;
@@ -969,7 +969,7 @@ class Display {
         return -1;
     }
 
-    getElementTop(element) {
+    _getElementTop(element) {
         const elementRect = element.getBoundingClientRect();
         const documentRect = document.documentElement.getBoundingClientRect();
         return elementRect.top - documentRect.top;
