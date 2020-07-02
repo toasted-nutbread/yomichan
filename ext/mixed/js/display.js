@@ -47,7 +47,6 @@ class Display {
             useCache: true
         });
         this._styleNode = null;
-        this._orphaned = false;
 
         this._eventListeners = new EventListenerCollection();
         this._persistentEventListeners = new EventListenerCollection();
@@ -169,15 +168,10 @@ class Display {
         this._setInteractive(true);
         await yomichan.ready();
         await this._displayGenerator.prepare();
-        yomichan.on('orphaned', this._onOrphaned.bind(this));
-    }
-
-    _onOrphaned() {
-        this._orphaned = true;
     }
 
     onError(error) {
-        if (this._orphaned) {
+        if (yomichan.isExtensionUnloaded) {
             this.setContent('orphaned');
         } else {
             yomichan.logError(error);
