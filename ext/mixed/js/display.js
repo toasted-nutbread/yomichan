@@ -172,7 +172,7 @@ class Display {
 
     onError(error) {
         if (yomichan.isExtensionUnloaded) {
-            this.setContent('orphaned');
+            this.setContent('extensionUnloaded');
         } else {
             yomichan.logError(error);
         }
@@ -488,8 +488,8 @@ class Display {
                 case 'kanji':
                     await this._setContentKanji(details.definitions, details.context, token);
                     break;
-                case 'orphaned':
-                    this._setContentOrphaned();
+                case 'extensionUnloaded':
+                    this._setContentExtensionUnloaded();
                     break;
             }
         } catch (e) {
@@ -608,15 +608,15 @@ class Display {
         this._updateAdderButtons(states);
     }
 
-    _setContentOrphaned() {
-        const errorOrphaned = document.querySelector('#error-orphaned');
+    _setContentExtensionUnloaded() {
+        const errorExtensionUnloaded = document.querySelector('#error-extension-unloaded');
 
         if (this._container !== null) {
             this._container.hidden = true;
         }
 
-        if (errorOrphaned !== null) {
-            errorOrphaned.hidden = false;
+        if (errorExtensionUnloaded !== null) {
+            errorExtensionUnloaded.hidden = false;
         }
 
         this._updateNavigation(null, null);

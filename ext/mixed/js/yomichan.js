@@ -214,7 +214,7 @@ const yomichan = (() => {
 
         _onExtensionUnloaded(error) {
             this._isExtensionUnloaded = true;
-            this.trigger('orphaned', {error});
+            this.trigger('extensionUnloaded', {error});
         }
 
         _getUrl() {

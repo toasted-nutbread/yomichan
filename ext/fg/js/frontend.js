@@ -366,7 +366,7 @@ class Frontend {
         } catch (e) {
             if (yomichan.isExtensionUnloaded) {
                 if (textSource !== null && this._options.scanning.modifier !== 'none') {
-                    this._showPopupContent(textSource, await this.getOptionsContext(), 'orphaned');
+                    this._showPopupContent(textSource, await this.getOptionsContext(), 'extensionUnloaded');
                 }
             } else {
                 yomichan.logError(e);
