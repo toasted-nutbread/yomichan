@@ -30,31 +30,22 @@
 class DisplaySearch extends Display {
     constructor() {
         super(document.querySelector('#spinner'), document.querySelector('#content'));
-
         this._isPrepared = false;
-
-        this.setOptionsContext({
-            depth: 0,
-            url: window.location.href
-        });
-
-        this._queryParser = new QueryParser({
-            getOptionsContext: this.getOptionsContext.bind(this),
-            setContent: this.setContent.bind(this),
-            setSpinnerVisible: this.setSpinnerVisible.bind(this)
-        });
-
         this._search = document.querySelector('#search');
         this._query = document.querySelector('#query');
         this._intro = document.querySelector('#intro');
         this._clipboardMonitorEnable = document.querySelector('#clipboard-monitor-enable');
         this._wanakanaEnable = document.querySelector('#wanakana-enable');
-
         this._introVisible = true;
         this._introAnimationTimer = null;
-
-        this._clipboardMonitor = new ClipboardMonitor({getClipboard: api.clipboardGet.bind(api)});
-
+        this._clipboardMonitor = new ClipboardMonitor({
+            getClipboard: api.clipboardGet.bind(api)
+        });
+        this._queryParser = new QueryParser({
+            getOptionsContext: this.getOptionsContext.bind(this),
+            setContent: this.setContent.bind(this),
+            setSpinnerVisible: this.setSpinnerVisible.bind(this)
+        });
         this._onKeyDownIgnoreKeys = new Map([
             ['ANY_MOD', new Set([
                 'Tab', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'PageDown', 'PageUp', 'Home', 'End',
@@ -69,10 +60,14 @@ class DisplaySearch extends Display {
             ['AltGraph', new Set()],
             ['Shift', new Set()]
         ]);
-
         this._runtimeMessageHandlers = new Map([
             ['searchQueryUpdate', this.onExternalSearchUpdate.bind(this)]
         ]);
+
+        this.setOptionsContext({
+            depth: 0,
+            url: window.location.href
+        });
     }
 
     async prepare() {
