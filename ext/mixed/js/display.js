@@ -279,6 +279,12 @@ class Display {
         }
     }
 
+    setOnKeyDownHandlers(handlers) {
+        for (const [key, handler] of handlers) {
+            this._onKeyDownHandlers.set(key, handler);
+        }
+    }
+
     // Private
 
     _onSourceTermView(e) {

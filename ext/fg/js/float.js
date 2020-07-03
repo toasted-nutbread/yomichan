@@ -33,17 +33,6 @@ class DisplayFloat extends Display {
 
         this._nestedPopupsPrepared = false;
 
-        this._onKeyDownHandlers = new Map([
-            ['C', (e) => {
-                if (e.ctrlKey && !window.getSelection().toString()) {
-                    this.onSelectionCopy();
-                    return true;
-                }
-                return false;
-            }],
-            ...this._onKeyDownHandlers
-        ]);
-
         this._windowMessageHandlers = new Map([
             ['initialize', {handler: this._initialize.bind(this), authenticate: false}],
             ['configure', {handler: this._configure.bind(this)}],
@@ -52,6 +41,16 @@ class DisplayFloat extends Display {
             ['clearAutoPlayTimer', {handler: () => this.clearAutoPlayTimer()}],
             ['setCustomCss', {handler: ({css}) => this.setCustomCss(css)}],
             ['setContentScale', {handler: ({scale}) => this.setContentScale(scale)}]
+        ]);
+
+        this.setOnKeyDownHandlers([
+            ['C', (e) => {
+                if (e.ctrlKey && !window.getSelection().toString()) {
+                    this.onSelectionCopy();
+                    return true;
+                }
+                return false;
+            }]
         ]);
     }
 
