@@ -63,9 +63,44 @@ class DisplayFloat extends Display {
         window.parent.postMessage('popupClose', '*');
     }
 
-    _copySelection() {
-        window.parent.postMessage('selectionCopy', '*');
+    async setOptionsContext(optionsContext) {
+        super.setOptionsContext(optionsContext);
+        await this.updateOptions();
     }
+
+    async getDocumentTitle() {
+        try {
+            const uniqueId = yomichan.generateId(16);
+
+            const promise = yomichan.getTemporaryListenerResult(
+                chrome.runtime.onMessage,
+                ({action, params}, {resolve}) => {
+                    if (
+                        action === 'documentInformationBroadcast' &&
+                        isObject(params) &&
+                        params.uniqueId === uniqueId &&
+                        params.frameId === 0
+                    ) {
+                        resolve(params);
+                    }
+                },
+                2000
+            );
+            api.broadcastTab('requestDocumentInformationBroadcast', {uniqueId});
+
+            const {title} = await promise;
+            return title;
+        } catch (e) {
+            return '';
+        }
+    }
+
+    autoPlayAudio() {
+        this._clearAutoPlayTimer();
+        this._autoPlayAudioTimer = window.setTimeout(() => super.autoPlayAudio(), 400);
+    }
+
+    // Private
 
     _onMessage(e) {
         const data = e.data;
@@ -95,9 +130,8 @@ class DisplayFloat extends Display {
         handler(data.params);
     }
 
-    autoPlayAudio() {
-        this._clearAutoPlayTimer();
-        this._autoPlayAudioTimer = window.setTimeout(() => super.autoPlayAudio(), 400);
+    _copySelection() {
+        window.parent.postMessage('selectionCopy', '*');
     }
 
     _clearAutoPlayTimer() {
@@ -107,42 +141,10 @@ class DisplayFloat extends Display {
         }
     }
 
-    async setOptionsContext(optionsContext) {
-        super.setOptionsContext(optionsContext);
-        await this.updateOptions();
-    }
-
     _setContentScale(scale) {
         const body = document.body;
         if (body === null) { return; }
         body.style.fontSize = `${scale}em`;
-    }
-
-    async getDocumentTitle() {
-        try {
-            const uniqueId = yomichan.generateId(16);
-
-            const promise = yomichan.getTemporaryListenerResult(
-                chrome.runtime.onMessage,
-                ({action, params}, {resolve}) => {
-                    if (
-                        action === 'documentInformationBroadcast' &&
-                        isObject(params) &&
-                        params.uniqueId === uniqueId &&
-                        params.frameId === 0
-                    ) {
-                        resolve(params);
-                    }
-                },
-                2000
-            );
-            api.broadcastTab('requestDocumentInformationBroadcast', {uniqueId});
-
-            const {title} = await promise;
-            return title;
-        } catch (e) {
-            return '';
-        }
     }
 
     _logMessageError(event, type) {
