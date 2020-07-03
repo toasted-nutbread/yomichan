@@ -61,7 +61,7 @@ class DisplaySearch extends Display {
             ['Shift', new Set()]
         ]);
         this._runtimeMessageHandlers = new Map([
-            ['searchQueryUpdate', this.onExternalSearchUpdate.bind(this)]
+            ['searchQueryUpdate', this._onExternalSearchUpdate.bind(this)]
         ]);
 
         this.setOptionsContext({
@@ -88,8 +88,8 @@ class DisplaySearch extends Display {
             this._wanakanaEnable.checked = false;
         }
 
-        this.setQuery(query);
-        this.onSearchQueryUpdated(this._query.value, false);
+        this._setQuery(query);
+        this._onSearchQueryUpdated(this._query.value, false);
 
         if (mode !== 'popup') {
             if (options.general.enableClipboardMonitor === true) {
@@ -98,19 +98,19 @@ class DisplaySearch extends Display {
             } else {
                 this._clipboardMonitorEnable.checked = false;
             }
-            this._clipboardMonitorEnable.addEventListener('change', this.onClipboardMonitorEnableChange.bind(this));
+            this._clipboardMonitorEnable.addEventListener('change', this._onClipboardMonitorEnableChange.bind(this));
         }
 
-        chrome.runtime.onMessage.addListener(this.onRuntimeMessage.bind(this));
+        chrome.runtime.onMessage.addListener(this._onRuntimeMessage.bind(this));
 
-        this._search.addEventListener('click', this.onSearch.bind(this), false);
-        this._query.addEventListener('input', this.onSearchInput.bind(this), false);
-        this._wanakanaEnable.addEventListener('change', this.onWanakanaEnableChange.bind(this));
-        window.addEventListener('popstate', this.onPopState.bind(this));
-        window.addEventListener('copy', this.onCopy.bind(this));
-        this._clipboardMonitor.on('change', this.onExternalSearchUpdate.bind(this));
+        this._search.addEventListener('click', this._onSearch.bind(this), false);
+        this._query.addEventListener('input', this._onSearchInput.bind(this), false);
+        this._wanakanaEnable.addEventListener('change', this._onWanakanaEnableChange.bind(this));
+        window.addEventListener('popstate', this._onPopState.bind(this));
+        window.addEventListener('copy', this._onCopy.bind(this));
+        this._clipboardMonitor.on('change', this._onExternalSearchUpdate.bind(this));
 
-        this.updateSearchButton();
+        this._updateSearchButton();
 
         await this._prepareNestedPopups();
 
@@ -126,8 +126,8 @@ class DisplaySearch extends Display {
         this._query.select();
     }
 
-    onSearchInput() {
-        this.updateSearchButton();
+    _onSearchInput() {
+        this._updateSearchButton();
 
         const queryElementRect = this._query.getBoundingClientRect();
         if (queryElementRect.top < 0 || queryElementRect.bottom > window.innerHeight) {
@@ -135,7 +135,7 @@ class DisplaySearch extends Display {
         }
     }
 
-    onSearch(e) {
+    _onSearch(e) {
         if (this._query === null) {
             return;
         }
@@ -150,17 +150,17 @@ class DisplaySearch extends Display {
         url.searchParams.set('query', query);
         window.history.pushState(null, '', url.toString());
 
-        this.onSearchQueryUpdated(query, true);
+        this._onSearchQueryUpdated(query, true);
     }
 
-    onPopState() {
+    _onPopState() {
         const {queryParams: {query='', mode=''}} = parseUrl(window.location.href);
         document.documentElement.dataset.searchMode = mode;
-        this.setQuery(query);
-        this.onSearchQueryUpdated(this._query.value, false);
+        this._setQuery(query);
+        this._onSearchQueryUpdated(this._query.value, false);
     }
 
-    onRuntimeMessage({action, params}, sender, callback) {
+    _onRuntimeMessage({action, params}, sender, callback) {
         const handler = this._runtimeMessageHandlers.get(action);
         if (typeof handler !== 'function') { return false; }
 
@@ -195,20 +195,20 @@ class DisplaySearch extends Display {
         }
     }
 
-    onCopy() {
+    _onCopy() {
         // ignore copy from search page
         this._clipboardMonitor.setPreviousText(window.getSelection().toString().trim());
     }
 
-    onExternalSearchUpdate({text}) {
-        this.setQuery(text);
+    _onExternalSearchUpdate({text}) {
+        this._setQuery(text);
         const url = new URL(window.location.href);
         url.searchParams.set('query', text);
         window.history.pushState(null, '', url.toString());
-        this.onSearchQueryUpdated(this._query.value, true);
+        this._onSearchQueryUpdated(this._query.value, true);
     }
 
-    async onSearchQueryUpdated(query, animate) {
+    async _onSearchQueryUpdated(query, animate) {
         try {
             const details = {};
             const match = /^([*\uff0a]*)([\w\W]*?)([*\uff0a]*)$/.exec(query);
@@ -222,8 +222,8 @@ class DisplaySearch extends Display {
             }
 
             const valid = (query.length > 0);
-            this.setIntroVisible(!valid, animate);
-            this.updateSearchButton();
+            this._setIntroVisible(!valid, animate);
+            this._updateSearchButton();
             if (valid) {
                 const {definitions} = await api.termsFind(query, details, this.getOptionsContext());
                 this.setContent('terms', {definitions, context: {
@@ -235,14 +235,14 @@ class DisplaySearch extends Display {
             } else {
                 this.clearContent();
             }
-            this.setTitleText(query);
+            this._setTitleText(query);
             window.parent.postMessage('popupClose', '*');
         } catch (e) {
             this.onError(e);
         }
     }
 
-    onWanakanaEnableChange(e) {
+    _onWanakanaEnableChange(e) {
         const value = e.target.checked;
         if (value) {
             wanakana.bind(this._query);
@@ -258,7 +258,7 @@ class DisplaySearch extends Display {
         }], 'search');
     }
 
-    onClipboardMonitorEnableChange(e) {
+    _onClipboardMonitorEnableChange(e) {
         if (e.target.checked) {
             chrome.permissions.request(
                 {permissions: ['clipboardRead']},
@@ -296,18 +296,18 @@ class DisplaySearch extends Display {
         if (!this._isPrepared) { return; }
         const query = this._query.value;
         if (query) {
-            this.setQuery(query);
-            this.onSearchQueryUpdated(query, false);
+            this._setQuery(query);
+            this._onSearchQueryUpdated(query, false);
         }
     }
 
-    isWanakanaEnabled() {
+    _isWanakanaEnabled() {
         return this._wanakanaEnable !== null && this._wanakanaEnable.checked;
     }
 
-    setQuery(query) {
+    _setQuery(query) {
         let interpretedQuery = query;
-        if (this.isWanakanaEnabled()) {
+        if (this._isWanakanaEnabled()) {
             try {
                 interpretedQuery = wanakana.toKana(query);
             } catch (e) {
@@ -323,7 +323,7 @@ class DisplaySearch extends Display {
         await super.setContent(type, details);
     }
 
-    setIntroVisible(visible, animate) {
+    _setIntroVisible(visible, animate) {
         if (this._introVisible === visible) {
             return;
         }
@@ -340,13 +340,13 @@ class DisplaySearch extends Display {
         }
 
         if (visible) {
-            this.showIntro(animate);
+            this._showIntro(animate);
         } else {
-            this.hideIntro(animate);
+            this._hideIntro(animate);
         }
     }
 
-    showIntro(animate) {
+    _showIntro(animate) {
         if (animate) {
             const duration = 0.4;
             this._intro.style.transition = '';
@@ -366,7 +366,7 @@ class DisplaySearch extends Display {
         }
     }
 
-    hideIntro(animate) {
+    _hideIntro(animate) {
         if (animate) {
             const duration = 0.4;
             const size = this._intro.getBoundingClientRect();
@@ -379,11 +379,11 @@ class DisplaySearch extends Display {
         this._intro.style.height = '0';
     }
 
-    updateSearchButton() {
+    _updateSearchButton() {
         this._search.disabled = this._introVisible && (this._query === null || this._query.value.length === 0);
     }
 
-    setTitleText(text) {
+    _setTitleText(text) {
         // Chrome limits title to 1024 characters
         if (text.length > 1000) {
             text = text.substring(0, 1000) + '...';
