@@ -18,7 +18,7 @@
 class TextSourceMap {
     constructor(source, mapping=null) {
         this._source = source;
-        this._mapping = (Array.isArray(mapping) ? TextSourceMap._normalizeMapping(mapping) : null);
+        this._mapping = (mapping !== null ? TextSourceMap._normalizeMapping(mapping) : null);
     }
 
     get source() {
