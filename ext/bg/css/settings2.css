@@ -223,17 +223,6 @@ h3 {
     position: sticky;
     top: 0;
 }
-.content-left-inner {
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 100%;
-    max-width: var(--sidebar-size);
-    overflow-x: hidden;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-}
 .content-center {
     flex: 1 1 auto;
     width: var(--main-content-size);
@@ -283,15 +272,28 @@ h3 {
 
 /* Left sidebar */
 .sidebar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: var(--sidebar-size);
+    max-width: 100%;
     background-color: var(--background-color);
+    transition: max-width 0.125s ease-in 0s;
+}
+.sidebar:hover {
+    max-width: var(--sidebar-size);
+    transition: max-width 0.125s ease-out 0.5s;
+}
+.sidebar-inner {
+    width: 100%;
+    height: 100%;
     display: flex;
     justify-content: space-between;
     flex-flow: column nowrap;
-    transition: width 0.5s ease-in 0s;
-}
-.sidebar:hover {
-    width: var(--main-content-size);
-    transition: width 0.5s ease-out 0.5s;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
 }
 .sidebar-top {
     position: sticky;
