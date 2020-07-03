@@ -16,7 +16,6 @@
  */
 
 /* Variables */
-
 :root {
     --size: 700px;
     --sidebar-size: 200px;
@@ -83,11 +82,9 @@
 
 
 /* Common styles */
-
 :root {
     height: 100%;
 }
-
 body {
     background-color: var(--background-color);
     margin: 0;
@@ -100,43 +97,35 @@ body {
     height: 100%;
     overflow: hidden;
 }
-
 p {
     margin: 0;
 }
-
 ol,
 ul {
     margin: 0;
     padding: 0 0 0 1.5em;
 }
-
 p+p,  p+ol,  p+ul,
 ol+p, ol+ol, ol+ul,
 ul+p, ul+ol, ul+ul {
     margin-top: 0.85em;
 }
-
 li {
     margin: 0.425em 0;
 }
-
 a {
     color: var(--link-color);
     text-decoration: none;
 }
-
 a:hover {
     color: var(--link-color-hover);
     text-decoration: underline;
 }
-
 .light {
     color: var(--text-color-light);
 }
 
 /* Headings */
-
 h1 {
     font-size: 2em;
     line-height: 1.5em;
@@ -185,7 +174,6 @@ h3 {
 
 
 /* Content layout */
-
 .content-outer {
     display: flex;
     flex-flow: column nowrap;
@@ -248,7 +236,6 @@ h3 {
 
 
 /* More details toggle */
-
 .more-toggle {
     cursor: pointer;
 }
@@ -260,57 +247,13 @@ h3 {
 }
 
 
-/* Description styles */
-
-.description-group {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-.description-item {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-}
-
-.description-item-inner {
-    flex: 0 1 50%;
-    align-self: stretch;
-    box-sizing: border-box;
-    position: relative;
-}
-
-.description-item-inner:nth-child(n+2) {
-    margin-left: 0.75em;
-}
-
-.description-item-inner:nth-last-child(n+2) {
-    margin-right: 0.75em;
-}
-
-.description-item-inner>*:nth-child(1) {
-    margin-top: 0;
-}
-
-.description-item-inner>*:nth-last-child(1) {
-    margin-bottom: 0;
-}
-
-.description-item-inner>div {
-    height: 100%;
-}
-
-
 /* Footer */
-
 .footer-padding {
     height: 4.5em;
 }
 
 
 /* Left sidebar */
-
 .sidebar {
     background-color: var(--background-color);
     display: flex;
@@ -337,7 +280,6 @@ h3 {
     background-color: var(--outline-item-background-color);
     transition: background-color var(--animation-duration) ease-in-out;
 }
-
 .outline-item,
 .outline-item:hover {
     text-decoration: none;
@@ -383,7 +325,6 @@ h3 {
 
 
 /* Preview sidebar */
-
 .preview-sidebar {
     display: flex;
     flex-flow: column nowrap;
@@ -442,7 +383,6 @@ h3 {
 
 
 /* Settings styles */
-
 .settings-group {
     margin: 0 var(--settings-group-horizontal-margin);
     padding: 0;
@@ -534,7 +474,6 @@ select.settings-item-group-item-input {
     width: 80px;
     line-height: 24px;
 }
-
 .settings-item-button-group-container {
     max-height: none;
     width: 100%;
@@ -555,43 +494,7 @@ select.settings-item-group-item-input {
 }
 
 
-/* Dictionaries */
-
-.dictionary-group {
-    display: flex;
-    flex-flow: row wrap;
-    margin: -5px;
-}
-
-.dictionary {
-    padding: 5px;
-    box-sizing: border-box;
-    flex: 0 1 50%;
-    align-items: stretch;
-}
-
-.dictionary-inner {
-    background-color: #ffffff;
-    padding: 10px;
-    box-sizing: border-box;
-    border-radius: 0.3em;
-    box-shadow: var(--shadow);
-    height: 100%;
-}
-
-.dictionary-heading {
-}
-.dictionary-title {
-}
-.dictionary-version {
-    display: inline-block;
-    color: #666666;
-    margin-left: 0.5em;
-}
-
-
 /* Material design toggle switch */
-
 .toggle {
     font-size: 16px;
     display: inline-block;
@@ -600,14 +503,12 @@ select.settings-item-group-item-input {
     position: relative;
     cursor: pointer;
 }
-
 .toggle>input[type=checkbox] {
     opacity: 0;
     width: 0;
     height: 0;
     display: block;
 }
-
 .toggle-track {
     display: block;
     position: absolute;
@@ -619,7 +520,6 @@ select.settings-item-group-item-input {
     border-radius: 0.4375em;
     transition: background-color var(--animation-duration) ease-in-out;
 }
-
 .toggle-knob {
     display: block;
     position: absolute;
@@ -633,7 +533,6 @@ select.settings-item-group-item-input {
     transition: transform var(--animation-duration) ease-in-out,
                 background-color var(--animation-duration) ease-in-out;
 }
-
 .toggle>.toggle-knob::after {
     position: absolute;
     display: block;
@@ -653,7 +552,6 @@ select.settings-item-group-item-input {
                 opacity var(--animation-duration2) ease-in-out,
                 visibility 0s ease-in-out var(--animation-duration2);
 }
-
 .toggle>input[type=checkbox]:focus~.toggle-knob::after,
 .toggle:active>.toggle-knob::after {
     transform: scale(1);
@@ -664,24 +562,19 @@ select.settings-item-group-item-input {
                 opacity var(--animation-duration2) ease-in-out,
                 visibility var(--animation-duration2) ease-in-out;
 }
-
 .toggle>input[type=checkbox]:focus~.toggle-knob::after {
     opacity: 0.5;
 }
-
 .toggle:active>input[type=checkbox]:focus~.toggle-knob::after {
     opacity: 1;
 }
-
 .toggle>input[type=checkbox]:checked~.toggle-track {
     background-color: var(--accent-color-light);
 }
-
 .toggle>input[type=checkbox]:checked~.toggle-knob {
     transform: translateX(16px);
     background-color: var(--accent-color);
 }
-
 .toggle>input[type=checkbox]:focus:checked~.toggle-knob::after,
 .toggle:active>input[type=checkbox]:checked~.toggle-knob::after {
     background-color: var(--accent-color-transparent25);
@@ -689,7 +582,6 @@ select.settings-item-group-item-input {
 
 
 /* Material design select */
-
 select {
     width: 200px;
     height: 32px;
@@ -712,7 +604,6 @@ select::-ms-expand {
 
 
 /* Material design inputs */
-
 input[type=text],
 input[type=number] {
     width: 100px;
@@ -736,7 +627,6 @@ input[type=text] {
 
 
 /* Material design icon button */
-
 .icon-button {
     border: none;
     margin: 0;
@@ -793,7 +683,6 @@ input[type=text] {
 
 
 /* Material design button */
-
 button.low-emphasis {
     border: 1px solid var(--button-border-color);
     border-radius: 4px;
@@ -843,7 +732,6 @@ button.low-emphasis.danger:focus {
 
 
 /* Modal */
-
 .modal-container {
     position: fixed;
     left: 0;
