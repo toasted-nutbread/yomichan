@@ -39,6 +39,14 @@
 
     document.documentElement.dataset.loaded = 'true';
 
+    const onScroll = (e) => {
+        const content = e.currentTarget;
+        const topLink = document.querySelector('.sidebar-top-link');
+        const scrollTop = content.scrollTop;
+        topLink.hidden = (scrollTop < 100);
+    };
+    document.querySelector('.content').addEventListener('scroll', onScroll, {passive: true});
+
     // TODO : This can be done as soon as advanced is set, which can be done immediately after optionsFull
     const updateScrollTarget = () => {
         const hash = window.location.hash;
@@ -50,6 +58,7 @@
             const rect1 = content.getBoundingClientRect();
             const rect2 = target.getBoundingClientRect();
             content.scrollTop += rect2.top - rect1.top;
+            onScroll({currentTarget: content});
         }
     };
     window.addEventListener('popstate', updateScrollTarget, false);
