@@ -47,18 +47,15 @@ class Display {
             useCache: true
         });
         this._styleNode = null;
-
         this._eventListeners = new EventListenerCollection();
         this._persistentEventListeners = new EventListenerCollection();
         this._interactive = false;
         this._eventListenersActive = false;
         this._clickScanPrevent = false;
         this._setContentToken = null;
-
         this._mediaLoader = new MediaLoader();
         this._displayGenerator = new DisplayGenerator({mediaLoader: this._mediaLoader});
         this._windowScroll = new WindowScroll();
-
         this._onKeyDownHandlers = new Map([
             ['Escape', () => {
                 this.onEscape();

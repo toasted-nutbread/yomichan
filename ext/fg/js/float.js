@@ -27,20 +27,17 @@ class DisplayFloat extends Display {
     constructor() {
         super(document.querySelector('#spinner'), document.querySelector('#definitions'));
         this._autoPlayAudioTimer = null;
-
         this._secret = yomichan.generateId(16);
         this._token = null;
-
         this._nestedPopupsPrepared = false;
-
         this._windowMessageHandlers = new Map([
-            ['initialize', {handler: this._initialize.bind(this), authenticate: false}],
-            ['configure', {handler: this._configure.bind(this)}],
-            ['setOptionsContext', {handler: ({optionsContext}) => this.setOptionsContext(optionsContext)}],
-            ['setContent', {handler: ({type, details}) => this.setContent(type, details)}],
+            ['initialize',         {handler: this._initialize.bind(this), authenticate: false}],
+            ['configure',          {handler: this._configure.bind(this)}],
+            ['setOptionsContext',  {handler: ({optionsContext}) => this.setOptionsContext(optionsContext)}],
+            ['setContent',         {handler: ({type, details}) => this.setContent(type, details)}],
             ['clearAutoPlayTimer', {handler: () => this.clearAutoPlayTimer()}],
-            ['setCustomCss', {handler: ({css}) => this.setCustomCss(css)}],
-            ['setContentScale', {handler: ({scale}) => this.setContentScale(scale)}]
+            ['setCustomCss',       {handler: ({css}) => this.setCustomCss(css)}],
+            ['setContentScale',    {handler: ({scale}) => this.setContentScale(scale)}]
         ]);
 
         this.setOnKeyDownHandlers([
