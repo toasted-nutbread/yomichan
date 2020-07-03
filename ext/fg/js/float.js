@@ -26,7 +26,7 @@
 class DisplayFloat extends Display {
     constructor() {
         super(document.querySelector('#spinner'), document.querySelector('#definitions'));
-        this.autoPlayAudioTimer = null;
+        this._autoPlayAudioTimer = null;
 
         this._secret = yomichan.generateId(16);
         this._token = null;
@@ -100,13 +100,13 @@ class DisplayFloat extends Display {
 
     autoPlayAudio() {
         this.clearAutoPlayTimer();
-        this.autoPlayAudioTimer = window.setTimeout(() => super.autoPlayAudio(), 400);
+        this._autoPlayAudioTimer = window.setTimeout(() => super.autoPlayAudio(), 400);
     }
 
     clearAutoPlayTimer() {
-        if (this.autoPlayAudioTimer) {
-            window.clearTimeout(this.autoPlayAudioTimer);
-            this.autoPlayAudioTimer = null;
+        if (this._autoPlayAudioTimer) {
+            window.clearTimeout(this._autoPlayAudioTimer);
+            this._autoPlayAudioTimer = null;
         }
     }
 
