@@ -416,6 +416,9 @@ h3 {
 .settings-group.settings-group-top-margin {
     margin-top: 1.0125em;
 }
+.settings-item-button {
+    cursor: pointer;
+}
 .settings-item-outer {
     display: block;
     width: 100%;
