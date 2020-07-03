@@ -35,15 +35,15 @@ class DisplayFloat extends Display {
             ['configure',          {handler: this._configure.bind(this)}],
             ['setOptionsContext',  {handler: ({optionsContext}) => this.setOptionsContext(optionsContext)}],
             ['setContent',         {handler: ({type, details}) => this.setContent(type, details)}],
-            ['clearAutoPlayTimer', {handler: () => this.clearAutoPlayTimer()}],
+            ['clearAutoPlayTimer', {handler: () => this._clearAutoPlayTimer()}],
             ['setCustomCss',       {handler: ({css}) => this.setCustomCss(css)}],
-            ['setContentScale',    {handler: ({scale}) => this.setContentScale(scale)}]
+            ['setContentScale',    {handler: ({scale}) => this._setContentScale(scale)}]
         ]);
 
         this.setOnKeyDownHandlers([
             ['C', (e) => {
                 if (e.ctrlKey && !window.getSelection().toString()) {
-                    this.onSelectionCopy();
+                    this._copySelection();
                     return true;
                 }
                 return false;
@@ -54,7 +54,7 @@ class DisplayFloat extends Display {
     async prepare() {
         await super.prepare();
 
-        window.addEventListener('message', this.onMessage.bind(this), false);
+        window.addEventListener('message', this._onMessage.bind(this), false);
 
         api.broadcastTab('popupPrepared', {secret: this._secret});
     }
@@ -63,11 +63,11 @@ class DisplayFloat extends Display {
         window.parent.postMessage('popupClose', '*');
     }
 
-    onSelectionCopy() {
+    _copySelection() {
         window.parent.postMessage('selectionCopy', '*');
     }
 
-    onMessage(e) {
+    _onMessage(e) {
         const data = e.data;
         if (typeof data !== 'object' || data === null) {
             this._logMessageError(e, 'Invalid data');
@@ -96,11 +96,11 @@ class DisplayFloat extends Display {
     }
 
     autoPlayAudio() {
-        this.clearAutoPlayTimer();
+        this._clearAutoPlayTimer();
         this._autoPlayAudioTimer = window.setTimeout(() => super.autoPlayAudio(), 400);
     }
 
-    clearAutoPlayTimer() {
+    _clearAutoPlayTimer() {
         if (this._autoPlayAudioTimer) {
             window.clearTimeout(this._autoPlayAudioTimer);
             this._autoPlayAudioTimer = null;
@@ -112,7 +112,7 @@ class DisplayFloat extends Display {
         await this.updateOptions();
     }
 
-    setContentScale(scale) {
+    _setContentScale(scale) {
         const body = document.body;
         if (body === null) { return; }
         body.style.fontSize = `${scale}em`;
@@ -173,7 +173,7 @@ class DisplayFloat extends Display {
             this._nestedPopupsPrepared = true;
         }
 
-        this.setContentScale(scale);
+        this._setContentScale(scale);
 
         api.sendMessageToFrame(frameId, 'popupConfigured', {messageId});
     }
