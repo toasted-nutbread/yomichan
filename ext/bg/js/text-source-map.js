@@ -36,7 +36,7 @@ class TextSourceMap {
         }
 
         let mapping = this._mapping;
-        let otherMapping = other._mapping;
+        let otherMapping = other.getMappingCopy();
         if (mapping === null) {
             if (otherMapping === null) {
                 return true;
@@ -94,6 +94,10 @@ class TextSourceMap {
         }
 
         this._mapping.splice(index, 0, ...items);
+    }
+
+    getMappingCopy() {
+        return this._mapping !== null ? [...this._mapping] : null;
     }
 
     static createMapping(text) {
