@@ -126,6 +126,51 @@ class DisplaySearch extends Display {
         this._query.select();
     }
 
+    onKeyDown(e) {
+        const key = DOM.getKeyFromEvent(e);
+        const ignoreKeys = this._onKeyDownIgnoreKeys;
+
+        const activeModifierMap = new Map([
+            ['Control', e.ctrlKey],
+            ['Meta', e.metaKey],
+            ['Shift', e.shiftKey],
+            ['Alt', e.altKey],
+            ['ANY_MOD', true]
+        ]);
+
+        let preventFocus = false;
+        for (const [modifier, keys] of ignoreKeys.entries()) {
+            const modifierActive = activeModifierMap.get(modifier);
+            if (key === modifier || (modifierActive && keys.has(key))) {
+                preventFocus = true;
+                break;
+            }
+        }
+
+        if (!super.onKeyDown(e) && !preventFocus && document.activeElement !== this._query) {
+            this._query.focus({preventScroll: true});
+        }
+    }
+
+    async updateOptions() {
+        await super.updateOptions();
+        const options = this.getOptions();
+        this._queryParser.setOptions(options);
+        if (!this._isPrepared) { return; }
+        const query = this._query.value;
+        if (query) {
+            this._setQuery(query);
+            this._onSearchQueryUpdated(query, false);
+        }
+    }
+
+    async setContent(type, details) {
+        this._query.blur();
+        await super.setContent(type, details);
+    }
+
+    // Private
+
     _onSearchInput() {
         this._updateSearchButton();
 
@@ -167,32 +212,6 @@ class DisplaySearch extends Display {
         const result = handler(params, sender);
         callback(result);
         return false;
-    }
-
-    onKeyDown(e) {
-        const key = DOM.getKeyFromEvent(e);
-        const ignoreKeys = this._onKeyDownIgnoreKeys;
-
-        const activeModifierMap = new Map([
-            ['Control', e.ctrlKey],
-            ['Meta', e.metaKey],
-            ['Shift', e.shiftKey],
-            ['Alt', e.altKey],
-            ['ANY_MOD', true]
-        ]);
-
-        let preventFocus = false;
-        for (const [modifier, keys] of ignoreKeys.entries()) {
-            const modifierActive = activeModifierMap.get(modifier);
-            if (key === modifier || (modifierActive && keys.has(key))) {
-                preventFocus = true;
-                break;
-            }
-        }
-
-        if (!super.onKeyDown(e) && !preventFocus && document.activeElement !== this._query) {
-            this._query.focus({preventScroll: true});
-        }
     }
 
     _onCopy() {
@@ -289,18 +308,6 @@ class DisplaySearch extends Display {
         }
     }
 
-    async updateOptions() {
-        await super.updateOptions();
-        const options = this.getOptions();
-        this._queryParser.setOptions(options);
-        if (!this._isPrepared) { return; }
-        const query = this._query.value;
-        if (query) {
-            this._setQuery(query);
-            this._onSearchQueryUpdated(query, false);
-        }
-    }
-
     _isWanakanaEnabled() {
         return this._wanakanaEnable !== null && this._wanakanaEnable.checked;
     }
@@ -316,11 +323,6 @@ class DisplaySearch extends Display {
         }
         this._query.value = interpretedQuery;
         this._queryParser.setText(interpretedQuery);
-    }
-
-    async setContent(type, details) {
-        this._query.blur();
-        await super.setContent(type, details);
     }
 
     _setIntroVisible(visible, animate) {
