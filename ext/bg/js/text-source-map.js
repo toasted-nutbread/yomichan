@@ -31,7 +31,7 @@ class TextSourceMap {
         }
 
         const source = this._source;
-        if (!(other instanceof TextSourceMap && source === other._source)) {
+        if (!(other instanceof TextSourceMap && source === other.source)) {
             return false;
         }
 
