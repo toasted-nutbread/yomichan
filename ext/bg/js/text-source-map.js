@@ -18,7 +18,7 @@
 class TextSourceMap {
     constructor(source, mapping=null) {
         this._source = source;
-        this._mapping = (mapping !== null ? TextSourceMap._normalizeMapping(mapping) : null);
+        this._mapping = (mapping !== null ? TextSourceMap.normalizeMapping(mapping) : null);
     }
 
     get source() {
@@ -41,9 +41,9 @@ class TextSourceMap {
             if (otherMapping === null) {
                 return true;
             }
-            mapping = TextSourceMap._createMapping(source);
+            mapping = TextSourceMap.createMapping(source);
         } else if (otherMapping === null) {
-            otherMapping = TextSourceMap._createMapping(source);
+            otherMapping = TextSourceMap.createMapping(source);
         }
 
         const mappingLength = mapping.length;
@@ -77,7 +77,7 @@ class TextSourceMap {
         if (count <= 0) { return; }
 
         if (this._mapping === null) {
-            this._mapping = TextSourceMap._createMapping(this._source);
+            this._mapping = TextSourceMap.createMapping(this._source);
         }
 
         let sum = this._mapping[index];
@@ -90,17 +90,17 @@ class TextSourceMap {
 
     insert(index, ...items) {
         if (this._mapping === null) {
-            this._mapping = TextSourceMap._createMapping(this._source);
+            this._mapping = TextSourceMap.createMapping(this._source);
         }
 
         this._mapping.splice(index, 0, ...items);
     }
 
-    static _createMapping(text) {
+    static createMapping(text) {
         return new Array(text.length).fill(1);
     }
 
-    static _normalizeMapping(mapping) {
+    static normalizeMapping(mapping) {
         const result = [];
         for (const value of mapping) {
             result.push(
