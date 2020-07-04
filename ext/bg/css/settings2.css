@@ -33,6 +33,7 @@
     --settings-group-inner-vertical-padding: 0.85em;
     --settings-group-inner-horizontal-padding: 1.5em;
     --settings-group-inner-horizontal-padding-half: calc(var(--settings-group-inner-horizontal-padding) * 0.5);
+    --settings-group-inner-horizontal-padding-half-wrappable: var(--settings-group-inner-horizontal-padding-half);
     --settings-group-border-radius: 0.3em;
     --settings-group-right-max-height: 40px;
     --settings-group-wrap: nowrap;
@@ -104,6 +105,7 @@
     :root {
         --settings-group-horizontal-margin: calc(var(--main-content-padding) * -1);
         --settings-group-inner-horizontal-padding: var(--main-content-padding);
+        --settings-group-inner-horizontal-padding-half-wrappable: var(--settings-group-inner-horizontal-padding);
         --settings-group-wrap: wrap;
     }
 }
@@ -485,6 +487,12 @@ h3 {
     align-items: center;
     align-content: center;
     justify-content: flex-end;
+}
+.settings-item-inner.settings-item-inner-wrappable>.settings-item-left {
+    padding-right: var(--settings-group-inner-horizontal-padding-half-wrappable);
+}
+.settings-item-inner.settings-item-inner-wrappable>.settings-item-right {
+    padding-left: var(--settings-group-inner-horizontal-padding-half-wrappable);
 }
 .settings-item-center {
     padding: var(--settings-group-inner-vertical-padding) var(--settings-group-inner-horizontal-padding) var(--settings-group-inner-vertical-padding) var(--settings-group-inner-horizontal-padding);
