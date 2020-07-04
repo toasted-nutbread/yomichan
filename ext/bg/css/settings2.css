@@ -89,6 +89,7 @@
     --toggle-track-color: #cccccc;
     --toggle-knob-color: var(--background-color-light);
     --selectable-indicator-color: rgba(160, 160, 160, 0.25);
+    --content-dimmer-color: rgba(0, 0, 0, 0.1);
 }
 :root[data-loaded=true] {
     --animation-duration: 0.125s;
@@ -225,6 +226,7 @@ h3 {
     flex: 1 1 0;
     position: sticky;
     top: 0;
+    z-index: 2;
 }
 .content-center {
     flex: 1 1 auto;
@@ -252,6 +254,20 @@ h3 {
     padding: 0;
     background-color: transparent;
     display: inline;
+}
+.content-dimmer {
+    display: block;
+    visibility: hidden;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 1;
+    opacity: 0;
+    background-color: var(--content-dimmer-color);
+    pointer-events: none;
+    transition: opacity var(--animation-duration) ease-in-out, visibility var(--animation-duration) ease-in-out;
 }
 
 
@@ -766,6 +782,12 @@ input[type=text] {
     mask-size: var(--material-arrow-dimension1) var(--material-arrow-dimension2);
     -webkit-mask-size: var(--material-arrow-dimension1) var(--material-arrow-dimension2);
 }
+.icon-button-icon[data-icon=hamburger-menu] {
+    mask-image: url(../../mixed/img/hamburger-menu.svg);
+    -webkit-mask-image: url(../../mixed/img/hamburger-menu.svg);
+    mask-size: 16px 16px;
+    -webkit-mask-size: 16px 16px;
+}
 
 
 /* Material design button */
@@ -855,4 +877,79 @@ button.low-emphasis.danger:focus {
 .modal-container.modal-container-open>.modal-content {
     transform: translate(0, 0);
     transition: transform 0.25s ease-out;
+}
+
+
+/* Floating action button container */
+.fab-container {
+    display: flex;
+    visibility: hidden;
+    justify-content: center;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    pointer-events: none;
+    z-index: 10;
+}
+.fab-container-inner {
+    flex: 1 1 auto;
+    width: var(--main-content-size);
+    padding: 0 var(--main-content-padding) var(--main-content-padding);
+    max-width: var(--main-content-size);
+    box-sizing: border-box;
+    display: flex;
+    justify-content: flex-end;
+}
+.fab-button {
+    display: block;
+    padding: 0;
+    margin: 0;
+    pointer-events: all;
+}
+.fab-button-background {
+    position: absolute;
+    display: block;
+    content: "";
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 50%;
+    background-color: var(--accent-color);
+    box-shadow: var(--shadow-vertical);
+}
+.fab-button>.icon-button-inner>.icon-button-icon {
+    background-color: #ffffff;
+}
+
+
+/* Conditional styles */
+body.content-sidebar-visible .content-dimmer {
+    visibility: visible;
+    opacity: 1;
+}
+body.content-sidebar-visible .sidebar,
+body.content-sidebar-visible .sidebar:hover {
+    max-width: var(--sidebar-size);
+    transition: max-width 0.125s ease-out 0s;
+}
+body.content-sidebar-visible .sidebar-inner {
+    box-shadow: var(--shadow-right);
+}
+body.content-sidebar-visible .fab-container {
+    visibility: visible;
+}
+
+
+/* Media-specific styles */
+@media (max-width: 800px), (hover: none) and (max-width: 1100px) {
+    .fab-container {
+        visibility: visible;
+    }
+}
+@media (max-width: 700px) {
+    .sidebar-inner {
+        box-shadow: var(--shadow-right);
+    }
 }

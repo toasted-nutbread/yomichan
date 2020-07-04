@@ -63,6 +63,10 @@
     };
     window.addEventListener('popstate', updateScrollTarget, false);
     updateScrollTarget();
+
+    document.querySelector('.fab-button').addEventListener('click', () => {
+        document.body.classList.toggle('content-sidebar-visible');
+    }, false);
 })();
 
 for (const node of document.querySelectorAll('.test')) {
