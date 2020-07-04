@@ -25,7 +25,8 @@
     --shadow-color: rgba(0, 0, 0, 0.185);
     --shadow-color-off: rgba(0, 0, 0, 0);
     --shadow-color-light: rgba(0, 0, 0, 0.085);
-    --shadow: 0 1px 4px 0 var(--shadow-color), 0 2px 2px 0 var(--shadow-color);
+    --shadow-vertical: 0 1px 4px 0 var(--shadow-color), 0 2px 2px 0 var(--shadow-color);
+    --shadow-right: 1px 0 4px 0 var(--shadow-color), 2px 0 2px 0 var(--shadow-color);
     --animation-duration: 0s;
     --animation-duration2: calc(var(--animation-duration) * 2);
     --settings-group-horizontal-margin: 0;
@@ -445,7 +446,7 @@ h3 {
     padding: 0;
     box-sizing: border-box;
     background-color: var(--background-color-light);
-    box-shadow: var(--shadow);
+    box-shadow: var(--shadow-vertical);
     border-radius: var(--settings-group-border-radius);
     overflow-x: hidden;
 }
@@ -598,7 +599,7 @@ select.settings-item-group-item-input {
     height: 1em;
     background-color: var(--toggle-knob-color);
     border-radius: 0.5em;
-    box-shadow: var(--shadow);
+    box-shadow: var(--shadow-vertical);
     transition: transform var(--animation-duration) ease-in-out,
                 background-color var(--animation-duration) ease-in-out;
 }
