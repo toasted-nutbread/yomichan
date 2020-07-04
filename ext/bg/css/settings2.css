@@ -282,11 +282,11 @@ h3 {
     width: var(--sidebar-size);
     max-width: 100%;
     background-color: var(--background-color);
-    transition: max-width 0.125s ease-in 0s;
+    transition: max-width var(--animation-duration) ease-in 0s;
 }
 .sidebar:hover {
     max-width: var(--sidebar-size);
-    transition: max-width 0.125s ease-out 0.5s;
+    transition: max-width var(--animation-duration) ease-out 0.5s;
 }
 .sidebar-inner {
     width: 100%;
