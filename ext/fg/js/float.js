@@ -61,7 +61,7 @@ class DisplayFloat extends Display {
     }
 
     onEscape() {
-        this._invoke('popupClose');
+        this._invoke('closePopup');
     }
 
     async setOptionsContext(optionsContext) {
@@ -175,7 +175,7 @@ class DisplayFloat extends Display {
     // Private
 
     _copySelection() {
-        this._invoke('selectionCopy');
+        this._invoke('copySelection');
     }
 
     _clearAutoPlayTimer() {
@@ -270,6 +270,6 @@ class DisplayFloat extends Display {
     }
 
     _invoke(action, params={}) {
-        window.parent.postMessage({action, params}, '*');
+        return api.crossFrame.invoke(this._ownerFrameId, action, params);
     }
 }

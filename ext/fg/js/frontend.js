@@ -33,7 +33,6 @@ class Frontend {
         this._pageZoomFactor = 1.0;
         this._contentScale = 1.0;
         this._lastShowPromise = Promise.resolve();
-        this._enabledEventListeners = new EventListenerCollection();
         this._activeModifiers = new Set();
         this._optionsUpdatePending = false;
         this._textScanner = new TextScanner({
@@ -62,11 +61,6 @@ class Frontend {
         this._allowRootFramePopupProxy = allowRootFramePopupProxy;
         this._popupCache = new Map();
         this._updatePopupToken = null;
-
-        this._windowMessageHandlers = new Map([
-            ['popupClose', this._onMessagePopupClose.bind(this)],
-            ['selectionCopy', this._onMessageSelectionCopy.bind()]
-        ]);
 
         this._runtimeMessageHandlers = new Map([
             ['popupSetVisibleOverride', this._onMessagePopupSetVisibleOverride.bind(this)],
@@ -117,7 +111,9 @@ class Frontend {
         this._textScanner.on('activeModifiersChanged', this._onActiveModifiersChanged.bind(this));
 
         api.crossFrame.registerHandlers([
-            ['getUrl', {async: false, handler: this._onApiGetUrl.bind(this)}]
+            ['getUrl',        {async: false, handler: this._onApiGetUrl.bind(this)}],
+            ['closePopup',    {async: false, handler: this._onApiClosePopup.bind(this)}],
+            ['copySelection', {async: false, handler: this._onApiCopySelection.bind(this)}]
         ]);
 
         this._updateContentScale();
@@ -179,14 +175,6 @@ class Frontend {
 
     // Message handlers
 
-    _onMessagePopupClose() {
-        this._textScanner.clearSelection(false);
-    }
-
-    _onMessageSelectionCopy() {
-        document.execCommand('copy');
-    }
-
     _onMessagePopupSetVisibleOverride({visible}) {
         this._popup.setVisibleOverride(visible);
     }
@@ -205,21 +193,18 @@ class Frontend {
         return window.location.href;
     }
 
+    _onApiClosePopup() {
+        this._textScanner.clearSelection(false);
+    }
+
+    _onApiCopySelection() {
+        document.execCommand('copy');
+    }
+
     // Private
 
     _onResize() {
         this._updatePopupPosition();
-    }
-
-    _onWindowMessage(e) {
-        const data = e.data;
-        if (!isObject(data)) { return; }
-
-        const {action, params} = data;
-        const handler = this._windowMessageHandlers.get(action);
-        if (typeof handler !== 'function') { return false; }
-
-        handler(params);
     }
 
     _onRuntimeMessage({action, params}, sender, callback) {
@@ -447,11 +432,7 @@ class Frontend {
             this._depth <= this._options.scanning.popupNestingMaxDepth &&
             !this._disabledOverride
         );
-        this._enabledEventListeners.removeAllEventListeners();
         this._textScanner.setEnabled(enabled);
-        if (enabled) {
-            this._enabledEventListeners.addEventListener(window, 'message', this._onWindowMessage.bind(this));
-        }
     }
 
     _updateContentScale() {
