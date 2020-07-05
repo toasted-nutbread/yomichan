@@ -64,9 +64,19 @@
     window.addEventListener('popstate', updateScrollTarget, false);
     updateScrollTarget();
 
-    document.querySelector('.fab-button').addEventListener('click', () => {
-        document.body.classList.toggle('sidebar-visible');
-    }, false);
+    for (const fabButton of document.querySelectorAll('.fab-button')) {
+        fabButton.addEventListener('click', (e) => {
+            const action = e.currentTarget.dataset.action;
+            switch (action) {
+                case 'toggle-sidebar':
+                    document.body.classList.toggle('sidebar-visible');
+                    break;
+                case 'toggle-preview-sidebar':
+                    document.body.classList.toggle('preview-sidebar-visible');
+                    break;
+            }
+        }, false);
+    }
 })();
 
 for (const node of document.querySelectorAll('.test')) {
