@@ -26,6 +26,7 @@
     --shadow-color-off: rgba(0, 0, 0, 0);
     --shadow-color-light: rgba(0, 0, 0, 0.085);
     --shadow-vertical: 0 1px 4px 0 var(--shadow-color), 0 2px 2px 0 var(--shadow-color);
+    --shadow-left: -1px 0 4px 0 var(--shadow-color), -2px 0 2px 0 var(--shadow-color);
     --shadow-right: 1px 0 4px 0 var(--shadow-color), 2px 0 2px 0 var(--shadow-color);
     --animation-duration: 0s;
     --animation-duration2: calc(var(--animation-duration) * 2);
@@ -239,14 +240,7 @@ h3 {
     flex: 1 1 0;
     position: sticky;
     top: 0;
-}
-.content-right-inner {
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    overflow: hidden;
+    z-index: 1;
 }
 #content-scroll-focus {
     opacity: 0;
@@ -263,7 +257,7 @@ h3 {
     top: 0;
     bottom: 0;
     right: 0;
-    z-index: 1;
+    z-index: 3;
     opacity: 0;
     background-color: var(--content-dimmer-color);
     pointer-events: none;
@@ -298,11 +292,12 @@ h3 {
     width: var(--sidebar-size);
     max-width: 100%;
     background-color: var(--background-color);
-    transition: max-width var(--animation-duration) ease-in 0s;
+    transition: max-width var(--animation-duration) ease-in;
 }
 .sidebar:hover {
     max-width: var(--sidebar-size);
-    transition: max-width var(--animation-duration) ease-out 0.5s;
+    transition: max-width var(--animation-duration) ease-out 0.5s,
+                box-shadow var(--animation-duration) ease-out;
 }
 .sidebar-inner {
     width: 100%;
@@ -313,6 +308,7 @@ h3 {
     overflow-x: hidden;
     overflow-y: auto;
     overscroll-behavior: contain;
+    transition: box-shadow var(--animation-duration) ease-out;
 }
 .sidebar-top {
     position: sticky;
@@ -411,6 +407,26 @@ h3 {
     flex-flow: column nowrap;
     align-content: center;
     justify-content: center;
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    transition: width var(--animation-duration) ease-in-out,
+                max-width var(--animation-duration) ease-in-out,
+                box-shadow var(--animation-duration) ease-in-out;
+}
+.preview-sidebar-inner {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-flow: column nowrap;
+    align-content: center;
+    justify-content: center;
+    overflow: hidden;
+    background-color: var(--background-color);
 }
 .preview-sidebar-setting {
     text-align: center;
@@ -925,20 +941,36 @@ button.low-emphasis.danger:focus {
 
 
 /* Conditional styles */
-body.content-sidebar-visible .content-dimmer {
+body.sidebar-visible .content-dimmer {
     visibility: visible;
     opacity: 1;
 }
-body.content-sidebar-visible .sidebar,
-body.content-sidebar-visible .sidebar:hover {
+body.sidebar-visible .sidebar,
+body.sidebar-visible .sidebar:hover {
     max-width: var(--sidebar-size);
-    transition: max-width 0.125s ease-out 0s;
+    transition: max-width var(--animation-duration) ease-out;
 }
-body.content-sidebar-visible .sidebar-inner {
+body.sidebar-visible .sidebar-inner {
     box-shadow: var(--shadow-right);
 }
-body.content-sidebar-visible .fab-container {
+body.sidebar-visible .fab-container {
     visibility: visible;
+}
+body.sidebar-visible .content-left {
+    z-index: 5;
+}
+
+body.preview-sidebar-visible .content-dimmer {
+    visibility: visible;
+    opacity: 1;
+}
+body.preview-sidebar-visible .preview-sidebar {
+    width: 70vw;
+    max-width: 400px;
+    box-shadow: var(--shadow-left);
+}
+body.preview-sidebar-visible .content-right {
+    z-index: 4;
 }
 
 

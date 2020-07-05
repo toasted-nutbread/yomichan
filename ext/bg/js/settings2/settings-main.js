@@ -65,7 +65,7 @@
     updateScrollTarget();
 
     document.querySelector('.fab-button').addEventListener('click', () => {
-        document.body.classList.toggle('content-sidebar-visible');
+        document.body.classList.toggle('sidebar-visible');
     }, false);
 })();
 
