@@ -43,7 +43,7 @@ class PopupFactory {
         ]);
     }
 
-    getOrCreatePopup(id=null, parentId=null, depth=null) {
+    getOrCreatePopup({id=null, parentId=null, depth=null}) {
         // Find by existing id
         if (id !== null) {
             const popup = this._popups.get(id);
@@ -92,7 +92,7 @@ class PopupFactory {
     // API message handlers
 
     _onApiGetOrCreatePopup({id, parentId}) {
-        const popup = this.getOrCreatePopup(id, parentId);
+        const popup = this.getOrCreatePopup({id, parentId});
         return {
             id: popup.id
         };

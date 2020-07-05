@@ -307,7 +307,7 @@ class Frontend {
     }
 
     async _getDefaultPopup() {
-        return this._popupFactory.getOrCreatePopup(null, null, this._depth);
+        return this._popupFactory.getOrCreatePopup({depth: this._depth});
     }
 
     async _getProxyPopup() {
