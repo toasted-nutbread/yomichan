@@ -212,11 +212,14 @@ class Frontend {
     }
 
     _onWindowMessage(e) {
-        const action = e.data;
+        const data = e.data;
+        if (!isObject(data)) { return; }
+
+        const {action, params} = data;
         const handler = this._windowMessageHandlers.get(action);
         if (typeof handler !== 'function') { return false; }
 
-        handler();
+        handler(params);
     }
 
     _onRuntimeMessage({action, params}, sender, callback) {

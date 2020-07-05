@@ -61,7 +61,7 @@ class DisplayFloat extends Display {
     }
 
     onEscape() {
-        window.parent.postMessage('popupClose', '*');
+        this._invoke('popupClose');
     }
 
     async setOptionsContext(optionsContext) {
@@ -175,7 +175,7 @@ class DisplayFloat extends Display {
     // Private
 
     _copySelection() {
-        window.parent.postMessage('selectionCopy', '*');
+        this._invoke('selectionCopy');
     }
 
     _clearAutoPlayTimer() {
@@ -267,5 +267,9 @@ class DisplayFloat extends Display {
             }
         );
         await frontend.prepare();
+    }
+
+    _invoke(action, params={}) {
+        window.parent.postMessage({action, params}, '*');
     }
 }
