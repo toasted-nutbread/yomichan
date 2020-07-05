@@ -30,6 +30,7 @@ class DisplayFloat extends Display {
         this._secret = yomichan.generateId(16);
         this._token = null;
         this._nestedPopupsPrepared = false;
+        this._ownerFrameId = null;
         this._windowMessageHandlers = new Map([
             ['initialize',         {handler: this._onMessageInitialize.bind(this), authenticate: false}],
             ['configure',          {handler: this._onMessageConfigure.bind(this)}],
@@ -134,7 +135,8 @@ class DisplayFloat extends Display {
         this._initialize(params);
     }
 
-    async _onMessageConfigure({messageId, frameId, popupId, optionsContext, childrenSupported, scale}) {
+    async _onMessageConfigure({messageId, frameId, ownerFrameId, popupId, optionsContext, childrenSupported, scale}) {
+        this._ownerFrameId = ownerFrameId;
         this.setOptionsContext(optionsContext);
 
         await this.updateOptions();

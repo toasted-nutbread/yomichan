@@ -307,11 +307,11 @@ class Frontend {
     }
 
     async _getDefaultPopup() {
-        return this._popupFactory.getOrCreatePopup({depth: this._depth});
+        return this._popupFactory.getOrCreatePopup({depth: this._depth, ownerFrameId: this._frameId});
     }
 
     async _getProxyPopup() {
-        const popup = new PopupProxy(null, this._depth + 1, this._proxyPopupId, this._parentFrameId);
+        const popup = new PopupProxy(null, this._depth + 1, this._proxyPopupId, this._parentFrameId, this._frameId);
         await popup.prepare();
         return popup;
     }
@@ -328,7 +328,7 @@ class Frontend {
         api.broadcastTab('rootPopupRequestInformationBroadcast');
         const {popupId, frameId: parentFrameId} = await rootPopupInformationPromise;
 
-        const popup = new PopupProxy(popupId, 0, null, parentFrameId, this._frameOffsetForwarder);
+        const popup = new PopupProxy(popupId, 0, null, parentFrameId, this._frameId, this._frameOffsetForwarder);
         popup.on('offsetNotFound', () => {
             this._allowRootFramePopupProxy = false;
             this._updatePopup();
