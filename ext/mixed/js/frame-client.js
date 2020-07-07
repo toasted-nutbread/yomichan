@@ -19,12 +19,18 @@ class FrameClient {
     constructor() {
         this._secret = null;
         this._token = null;
+        this._frameId = null;
+    }
+
+    get frameId() {
+        return this._frameId;
     }
 
     async connect(frame, targetOrigin, hostFrameId, setupFrame, timeout=10000) {
-        const {secret, token} = await this._connectIternal(frame, targetOrigin, hostFrameId, setupFrame, timeout);
+        const {secret, token, frameId} = await this._connectIternal(frame, targetOrigin, hostFrameId, setupFrame, timeout);
         this._secret = secret;
         this._token = token;
+        this._frameId = frameId;
     }
 
     isConnected() {
@@ -92,10 +98,11 @@ class FrameClient {
                         case 'frameEndpointConnected':
                             {
                                 const {secret, token} = params;
+                                const frameId = message.frameId;
                                 const token2 = tokenMap.get(secret);
                                 if (typeof token2 !== 'undefined' && token === token2) {
                                     cleanup();
-                                    resolve({secret, token});
+                                    resolve({secret, token, frameId});
                                 }
                             }
                             break;
