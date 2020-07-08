@@ -105,6 +105,7 @@ class Frontend {
 
         yomichan.on('optionsUpdated', this.updateOptions.bind(this));
         yomichan.on('zoomChanged', this._onZoomChanged.bind(this));
+        yomichan.on('closePopups', this._onApiClosePopup.bind(this));
         chrome.runtime.onMessage.addListener(this._onRuntimeMessage.bind(this));
 
         this._textScanner.on('clearSelection', this._onClearSelection.bind(this));
