@@ -20,7 +20,8 @@
  */
 
 class FrameOffsetForwarder {
-    constructor() {
+    constructor(frameId) {
+        this._frameId = frameId;
         this._isPrepared = false;
         this._cacheMaxSize = 1000;
         this._frameCache = new Set();
@@ -53,7 +54,7 @@ class FrameOffsetForwarder {
             5000
         );
 
-        this._getFrameOffsetParent([0, 0], uniqueId);
+        this._getFrameOffsetParent([0, 0], uniqueId, this._frameId);
 
         const {offset} = await frameOffsetPromise;
         return offset;
@@ -75,7 +76,7 @@ class FrameOffsetForwarder {
         }
     }
 
-    _onMessageGetFrameOffset({offset, uniqueId}, e) {
+    _onMessageGetFrameOffset({offset, uniqueId, frameId}, e) {
         let sourceFrame = null;
         if (!this._unreachableContentWindowCache.has(e.source)) {
             sourceFrame = this._findFrameWithContentWindow(e.source);
@@ -83,7 +84,7 @@ class FrameOffsetForwarder {
         if (sourceFrame === null) {
             // closed shadow root etc.
             this._addToCache(this._unreachableContentWindowCache, e.source);
-            this._replyFrameOffset(null, uniqueId);
+            this._replyFrameOffset(null, uniqueId, frameId);
             return;
         }
 
@@ -92,9 +93,9 @@ class FrameOffsetForwarder {
         offset = [forwardedX + x, forwardedY + y];
 
         if (window === window.parent) {
-            this._replyFrameOffset(offset, uniqueId);
+            this._replyFrameOffset(offset, uniqueId, frameId);
         } else {
-            this._getFrameOffsetParent(offset, uniqueId);
+            this._getFrameOffsetParent(offset, uniqueId, frameId);
         }
     }
 
@@ -159,17 +160,18 @@ class FrameOffsetForwarder {
         cache.add(value);
     }
 
-    _getFrameOffsetParent(offset, uniqueId) {
+    _getFrameOffsetParent(offset, uniqueId, frameId) {
         window.parent.postMessage({
             action: 'getFrameOffset',
             params: {
                 offset,
-                uniqueId
+                uniqueId,
+                frameId
             }
         }, '*');
     }
 
-    _replyFrameOffset(offset, uniqueId) {
-        api.broadcastTab('frameOffset', {offset, uniqueId});
+    _replyFrameOffset(offset, uniqueId, frameId) {
+        api.sendMessageToFrame(frameId, 'frameOffset', {offset, uniqueId});
     }
 }
