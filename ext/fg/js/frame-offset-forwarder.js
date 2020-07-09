@@ -25,13 +25,6 @@ class FrameOffsetForwarder {
         this._cacheMaxSize = 1000;
         this._frameCache = new Set();
         this._unreachableContentWindowCache = new Set();
-
-        this._forwardFrameOffset = (
-            window !== window.parent ?
-            this._forwardFrameOffsetParent.bind(this) :
-            this._forwardFrameOffsetOrigin.bind(this)
-        );
-
         this._windowMessageHandlers = new Map([
             ['getFrameOffset', ({offset, uniqueId}, e) => this._onGetFrameOffset(offset, uniqueId, e)]
         ]);
@@ -100,7 +93,11 @@ class FrameOffsetForwarder {
         const {x, y} = sourceFrame.getBoundingClientRect();
         offset = [forwardedX + x, forwardedY + y];
 
-        this._forwardFrameOffset(offset, uniqueId);
+        if (window === window.parent) {
+            this._forwardFrameOffsetOrigin(offset, uniqueId);
+        } else {
+            this._forwardFrameOffsetParent(offset, uniqueId);
+        }
     }
 
     _findFrameWithContentWindow(contentWindow) {
