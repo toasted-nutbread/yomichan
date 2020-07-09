@@ -53,13 +53,7 @@ class FrameOffsetForwarder {
             5000
         );
 
-        window.parent.postMessage({
-            action: 'getFrameOffset',
-            params: {
-                uniqueId,
-                offset: [0, 0]
-            }
-        }, '*');
+        this._getFrameOffsetParent([0, 0], uniqueId);
 
         const {offset} = await frameOffsetPromise;
         return offset;
@@ -89,7 +83,7 @@ class FrameOffsetForwarder {
         if (sourceFrame === null) {
             // closed shadow root etc.
             this._addToCache(this._unreachableContentWindowCache, e.source);
-            this._forwardFrameOffsetOrigin(null, uniqueId);
+            this._replyFrameOffset(null, uniqueId);
             return;
         }
 
@@ -98,9 +92,9 @@ class FrameOffsetForwarder {
         offset = [forwardedX + x, forwardedY + y];
 
         if (window === window.parent) {
-            this._forwardFrameOffsetOrigin(offset, uniqueId);
+            this._replyFrameOffset(offset, uniqueId);
         } else {
-            this._forwardFrameOffsetParent(offset, uniqueId);
+            this._getFrameOffsetParent(offset, uniqueId);
         }
     }
 
@@ -165,11 +159,17 @@ class FrameOffsetForwarder {
         cache.add(value);
     }
 
-    _forwardFrameOffsetParent(offset, uniqueId) {
-        window.parent.postMessage({action: 'getFrameOffset', params: {offset, uniqueId}}, '*');
+    _getFrameOffsetParent(offset, uniqueId) {
+        window.parent.postMessage({
+            action: 'getFrameOffset',
+            params: {
+                offset,
+                uniqueId
+            }
+        }, '*');
     }
 
-    _forwardFrameOffsetOrigin(offset, uniqueId) {
+    _replyFrameOffset(offset, uniqueId) {
         api.broadcastTab('frameOffset', {offset, uniqueId});
     }
 }
