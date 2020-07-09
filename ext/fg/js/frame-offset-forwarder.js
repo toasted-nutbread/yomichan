@@ -149,7 +149,7 @@ class FrameOffsetForwarder {
         }
         yield frameCache;
         // will contain duplicates, but frame elements are cheap to handle
-        yield [...document.querySelectorAll('frame, iframe:not(.yomichan-float)')];
+        yield [...document.querySelectorAll('frame,iframe')];
         yield [document.documentElement];
     }
 
