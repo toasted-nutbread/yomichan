@@ -37,6 +37,10 @@ class FrameOffsetForwarder {
     }
 
     async getOffset() {
+        if (window === window.parent) {
+            return [0, 0];
+        }
+
         const uniqueId = yomichan.generateId(16);
 
         const frameOffsetPromise = yomichan.getTemporaryListenerResult(
