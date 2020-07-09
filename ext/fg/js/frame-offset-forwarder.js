@@ -26,7 +26,7 @@ class FrameOffsetForwarder {
         this._frameCache = new Set();
         this._unreachableContentWindowCache = new Set();
         this._windowMessageHandlers = new Map([
-            ['getFrameOffset', ({offset, uniqueId}, e) => this._onGetFrameOffset(offset, uniqueId, e)]
+            ['getFrameOffset', this._onMessageGetFrameOffset.bind(this)]
         ]);
     }
 
@@ -75,7 +75,7 @@ class FrameOffsetForwarder {
         }
     }
 
-    _onGetFrameOffset(offset, uniqueId, e) {
+    _onMessageGetFrameOffset({offset, uniqueId}, e) {
         let sourceFrame = null;
         if (!this._unreachableContentWindowCache.has(e.source)) {
             sourceFrame = this._findFrameWithContentWindow(e.source);
