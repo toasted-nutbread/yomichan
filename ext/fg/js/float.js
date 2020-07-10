@@ -117,7 +117,7 @@ class DisplayFloat extends Display {
         return {async, result};
     }
 
-    async _onMessageConfigure({messageId, frameId, ownerFrameId, popupId, optionsContext, childrenSupported, scale}) {
+    async _onMessageConfigure({frameId, ownerFrameId, popupId, optionsContext, childrenSupported, scale}) {
         this._ownerFrameId = ownerFrameId;
         this.setOptionsContext(optionsContext);
 
@@ -130,8 +130,6 @@ class DisplayFloat extends Display {
         }
 
         this._setContentScale(scale);
-
-        api.sendMessageToFrame(frameId, 'popupConfigured', {messageId});
     }
 
     _onMessageSetOptionsContext({optionsContext}) {
