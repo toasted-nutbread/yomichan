@@ -32,12 +32,12 @@ class DisplayFloat extends Display {
         this._ownerFrameId = null;
         this._frameEndpoint = new FrameEndpoint();
         this._windowMessageHandlers = new Map([
-            ['configure',          {handler: this._onMessageConfigure.bind(this)}],
-            ['setOptionsContext',  {handler: this._onMessageSetOptionsContext.bind(this)}],
-            ['setContent',         {handler: this._onMessageSetContent.bind(this)}],
-            ['clearAutoPlayTimer', {handler: this._onMessageClearAutoPlayTimer.bind(this)}],
-            ['setCustomCss',       {handler: this._onMessageSetCustomCss.bind(this)}],
-            ['setContentScale',    {handler: this._onMessageSetContentScale.bind(this)}]
+            ['configure',          {async: true,  handler: this._onMessageConfigure.bind(this)}],
+            ['setOptionsContext',  {async: false, handler: this._onMessageSetOptionsContext.bind(this)}],
+            ['setContent',         {async: false, handler: this._onMessageSetContent.bind(this)}],
+            ['clearAutoPlayTimer', {async: false, handler: this._onMessageClearAutoPlayTimer.bind(this)}],
+            ['setCustomCss',       {async: false, handler: this._onMessageSetCustomCss.bind(this)}],
+            ['setContentScale',    {async: false, handler: this._onMessageSetContentScale.bind(this)}]
         ]);
 
         this.registerActions([
@@ -112,9 +112,9 @@ class DisplayFloat extends Display {
             throw new Error(`Invalid action: ${action}`);
         }
 
-        const handler = handlerInfo.handler;
+        const {async, handler} = handlerInfo;
         const result = handler(params);
-        return {async: false, result};
+        return {async, result};
     }
 
     async _onMessageConfigure({messageId, frameId, ownerFrameId, popupId, optionsContext, childrenSupported, scale}) {

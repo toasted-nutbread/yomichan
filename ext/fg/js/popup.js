@@ -456,12 +456,12 @@ class Popup {
         return dark ? 'dark' : 'light';
     }
 
-    _invokeApi(action, params={}) {
+    async _invokeApi(action, params={}) {
         const contentWindow = this._frame.contentWindow;
         if (this._frameClient === null || !this._frameClient.isConnected() || contentWindow === null) { return; }
 
         const message = this._frameClient.createMessage({action, params});
-        api.crossFrame.invoke(this._frameClient.frameId, 'popupMessage', message);
+        return await api.crossFrame.invoke(this._frameClient.frameId, 'popupMessage', message);
     }
 
     _getFrameParentElement() {
