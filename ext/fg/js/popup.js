@@ -461,7 +461,7 @@ class Popup {
         if (this._frameClient === null || !this._frameClient.isConnected() || contentWindow === null) { return; }
 
         const message = this._frameClient.createMessage({action, params});
-        contentWindow.postMessage(message, this._targetOrigin);
+        api.crossFrame.invoke(this._frameClient.frameId, 'popupMessage', message);
     }
 
     _getFrameParentElement() {
