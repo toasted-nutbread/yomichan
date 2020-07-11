@@ -814,11 +814,7 @@ class Backend {
             if (tab !== null) {
                 await this._focusTab(tab);
                 if (queryParams.query) {
-                    await new Promise((resolve) => chrome.tabs.sendMessage(
-                        tab.id,
-                        {action: 'searchQueryUpdate', params: {text: queryParams.query}},
-                        resolve
-                    ));
+                    await this._updateSearchQuery(tab.id, queryParams.query);
                 }
                 return true;
             }
@@ -881,6 +877,31 @@ class Backend {
     }
 
     // Utilities
+
+    _updateSearchQuery(tabId, text) {
+        new Promise((resolve, reject) => {
+            const callback = (response) => {
+                let error = chrome.runtime.lastError;
+                if (error) {
+                    reject(new Error(error.message));
+                    return;
+                }
+                if (!isObject(response)) {
+                    reject(new Error('Tab did not respond'));
+                    return;
+                }
+                error = response.error;
+                if (error) {
+                    reject(jsonToError(error));
+                    return;
+                }
+                resolve(response.result);
+            };
+
+            const message = {action: 'updateSearchQuery', params: {text}};
+            chrome.tabs.sendMessage(tabId, message, callback);
+        });
+    }
 
     _sendMessageAllTabs(action, params={}) {
         const callback = () => this._checkLastError(chrome.runtime.lastError);

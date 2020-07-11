@@ -61,7 +61,7 @@ class DisplaySearch extends Display {
             ['Shift', new Set()]
         ]);
         this._runtimeMessageHandlers = new Map([
-            ['searchQueryUpdate', this._onExternalSearchUpdate.bind(this)]
+            ['updateSearchQuery', this._onExternalSearchUpdate.bind(this)]
         ]);
 
         this.setOptionsContext({
@@ -210,7 +210,7 @@ class DisplaySearch extends Display {
         if (typeof handler !== 'function') { return false; }
 
         const result = handler(params, sender);
-        callback(result);
+        callback({result});
         return false;
     }
 
