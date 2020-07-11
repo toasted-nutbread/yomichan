@@ -1297,11 +1297,10 @@ class Backend {
         return new Promise((resolve) => {
             chrome.tabs.sendMessage(tab.id, {action: 'getUrl'}, {frameId: 0}, (response) => {
                 let url = null;
-                if (!chrome.runtime.lastError) {
-                    url = (response !== null && typeof response === 'object' && !Array.isArray(response) ? response.url : null);
-                    if (url !== null && typeof url !== 'string') {
-                        url = null;
-                    }
+                try {
+                    url = yomichan.getMessageResponseResult(response);
+                } catch (error) {
+                    // NOP
                 }
                 resolve({tab, url});
             });
