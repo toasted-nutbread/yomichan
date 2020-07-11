@@ -176,17 +176,17 @@ class CrossFrameAPIPort extends EventDispatcher {
 
         this._sendAck(id);
         try {
-            let result = handler(params);
+            let promiseOrResult = handler(params);
             if (async === 'dynamic') {
-                ({async, result} = result);
+                ({async, result: promiseOrResult} = promiseOrResult);
             }
             if (async) {
-                result.then(
-                    (result2) => this._sendResult(id, result2),
-                    (error2) => this._sendError(id, error2)
+                promiseOrResult.then(
+                    (result) => this._sendResult(id, result),
+                    (error) => this._sendError(id, error)
                 );
             } else {
-                this._sendResult(id, result);
+                this._sendResult(id, promiseOrResult);
             }
         } catch (error) {
             this._sendError(id, error);
