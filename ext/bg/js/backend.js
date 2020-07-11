@@ -916,11 +916,14 @@ class Backend {
     _getProfile(optionsContext, useSchema=false) {
         const options = this.getFullOptions(useSchema);
         const profiles = options.profiles;
+        if (optionsContext.current) {
+            return profiles[options.profileCurrent];
+        }
         if (typeof optionsContext.index === 'number') {
             return profiles[optionsContext.index];
         }
         const profile = this._getProfileFromContext(options, optionsContext);
-        return profile !== null ? profile : options.profiles[options.profileCurrent];
+        return profile !== null ? profile : profiles[options.profileCurrent];
     }
 
     _getProfileFromContext(options, optionsContext) {
