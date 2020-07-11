@@ -61,7 +61,7 @@ class DisplaySearch extends Display {
             ['Shift', new Set()]
         ]);
         this._runtimeMessageHandlers = new Map([
-            ['updateSearchQuery', this._onExternalSearchUpdate.bind(this)]
+            ['updateSearchQuery', {async: false, handler: this._onExternalSearchUpdate.bind(this)}]
         ]);
 
         this.setOptionsContext({
@@ -206,12 +206,27 @@ class DisplaySearch extends Display {
     }
 
     _onRuntimeMessage({action, params}, sender, callback) {
-        const handler = this._runtimeMessageHandlers.get(action);
-        if (typeof handler !== 'function') { return false; }
+        const messageHandler = this._runtimeMessageHandlers.get(action);
+        if (typeof messageHandler === 'undefined') { return false; }
 
-        const result = handler(params, sender);
-        callback({result});
-        return false;
+        const {handler, async} = messageHandler;
+
+        try {
+            const promiseOrResult = handler(params, sender);
+            if (async) {
+                promiseOrResult.then(
+                    (result) => callback({result}),
+                    (error) => callback({error: errorToJson(error)})
+                );
+                return true;
+            } else {
+                callback({result: promiseOrResult});
+                return false;
+            }
+        } catch (error) {
+            callback({error: errorToJson(error)});
+            return false;
+        }
     }
 
     _onCopy() {

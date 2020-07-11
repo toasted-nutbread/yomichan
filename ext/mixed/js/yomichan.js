@@ -210,6 +210,21 @@ const yomichan = (() => {
             }
         }
 
+        getMessageResponseResult(response) {
+            let error = chrome.runtime.lastError;
+            if (error) {
+                throw new Error(error.message);
+            }
+            if (!isObject(response)) {
+                throw new Error('Tab did not respond');
+            }
+            error = response.error;
+            if (error) {
+                throw jsonToError(error);
+            }
+            return response.result;
+        }
+
         // Private
 
         _onExtensionUnloaded(error) {

@@ -881,21 +881,11 @@ class Backend {
     _updateSearchQuery(tabId, text) {
         new Promise((resolve, reject) => {
             const callback = (response) => {
-                let error = chrome.runtime.lastError;
-                if (error) {
-                    reject(new Error(error.message));
-                    return;
+                try {
+                    resolve(yomichan.getMessageResponseResult(response));
+                } catch (error) {
+                    reject(error);
                 }
-                if (!isObject(response)) {
-                    reject(new Error('Tab did not respond'));
-                    return;
-                }
-                error = response.error;
-                if (error) {
-                    reject(jsonToError(error));
-                    return;
-                }
-                resolve(response.result);
             };
 
             const message = {action: 'updateSearchQuery', params: {text}};
