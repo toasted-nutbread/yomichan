@@ -294,28 +294,16 @@ class Backend {
         const messageHandler = this._messageHandlers.get(action);
         if (typeof messageHandler === 'undefined') { return false; }
 
-        const {handler, async, contentScript} = messageHandler;
-
-        try {
-            if (!contentScript) {
+        if (!messageHandler.contentScript) {
+            try {
                 this._validatePrivilegedMessageSender(sender);
-            }
-
-            const promiseOrResult = handler(params, sender);
-            if (async) {
-                promiseOrResult.then(
-                    (result) => callback({result}),
-                    (error) => callback({error: errorToJson(error)})
-                );
-                return true;
-            } else {
-                callback({result: promiseOrResult});
+            } catch (error) {
+                callback({error: errorToJson(error)});
                 return false;
             }
-        } catch (error) {
-            callback({error: errorToJson(error)});
-            return false;
         }
+
+        return yomichan.invokeMessageHandler(messageHandler, params, callback, sender);
     }
 
     _onConnect(port) {

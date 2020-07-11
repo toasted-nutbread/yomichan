@@ -225,6 +225,28 @@ const yomichan = (() => {
             return response.result;
         }
 
+        invokeMessageHandler({handler, async}, params, callback, ...extraArgs) {
+            try {
+                let promiseOrResult = handler(params, ...extraArgs);
+                if (async === 'dynamic') {
+                    ({async, result: promiseOrResult} = promiseOrResult);
+                }
+                if (async) {
+                    promiseOrResult.then(
+                        (result) => { callback({result}); },
+                        (error) => { callback({error: errorToJson(error)}); }
+                    );
+                    return true;
+                } else {
+                    callback({result: promiseOrResult});
+                    return false;
+                }
+            } catch (error) {
+                callback({error: errorToJson(error)});
+                return false;
+            }
+        }
+
         // Private
 
         _onExtensionUnloaded(error) {
@@ -243,25 +265,7 @@ const yomichan = (() => {
         _onMessage({action, params}, sender, callback) {
             const messageHandler = this._messageHandlers.get(action);
             if (typeof messageHandler === 'undefined') { return false; }
-
-            const {handler, async} = messageHandler;
-
-            try {
-                const promiseOrResult = handler(params, sender);
-                if (async) {
-                    promiseOrResult.then(
-                        (result) => callback({result}),
-                        (error) => callback({error: errorToJson(error)})
-                    );
-                    return true;
-                } else {
-                    callback({result: promiseOrResult});
-                    return false;
-                }
-            } catch (error) {
-                callback({error: errorToJson(error)});
-                return false;
-            }
+            return this.invokeMessageHandler(messageHandler, params, callback, sender);
         }
 
         _onMessageBackendPrepared() {

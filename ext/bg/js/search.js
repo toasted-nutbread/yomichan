@@ -208,25 +208,7 @@ class DisplaySearch extends Display {
     _onRuntimeMessage({action, params}, sender, callback) {
         const messageHandler = this._runtimeMessageHandlers.get(action);
         if (typeof messageHandler === 'undefined') { return false; }
-
-        const {handler, async} = messageHandler;
-
-        try {
-            const promiseOrResult = handler(params, sender);
-            if (async) {
-                promiseOrResult.then(
-                    (result) => callback({result}),
-                    (error) => callback({error: errorToJson(error)})
-                );
-                return true;
-            } else {
-                callback({result: promiseOrResult});
-                return false;
-            }
-        } catch (error) {
-            callback({error: errorToJson(error)});
-            return false;
-        }
+        return yomichan.invokeMessageHandler(messageHandler, params, callback, sender);
     }
 
     _onCopy() {
