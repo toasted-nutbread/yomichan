@@ -31,7 +31,7 @@ class DisplayFloat extends Display {
         this._nestedPopupsPrepared = false;
         this._ownerFrameId = null;
         this._frameEndpoint = new FrameEndpoint();
-        this._windowMessageHandlers = new Map([
+        this._messageHandlers = new Map([
             ['configure',          {async: true,  handler: this._onMessageConfigure.bind(this)}],
             ['setOptionsContext',  {async: false, handler: this._onMessageSetOptionsContext.bind(this)}],
             ['setContent',         {async: false, handler: this._onMessageSetContent.bind(this)}],
@@ -107,7 +107,7 @@ class DisplayFloat extends Display {
         }
 
         const {action, params} = data.data;
-        const handlerInfo = this._windowMessageHandlers.get(action);
+        const handlerInfo = this._messageHandlers.get(action);
         if (typeof handlerInfo === 'undefined') {
             throw new Error(`Invalid action: ${action}`);
         }
