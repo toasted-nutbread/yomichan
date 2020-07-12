@@ -352,7 +352,7 @@ class Frontend {
         } catch (e) {
             if (yomichan.isExtensionUnloaded) {
                 if (textSource !== null && this._options.scanning.modifier !== 'none') {
-                    this._showPopupContent(textSource, await this.getOptionsContext(), 'extensionUnloaded');
+                    this._showExtensionUnloaded(textSource);
                 }
             } else {
                 yomichan.logError(e);
@@ -390,6 +390,14 @@ class Frontend {
         textSource.setEndOffset(1, layoutAwareScan);
 
         return {definitions, type: 'kanji'};
+    }
+
+    async _showExtensionUnloaded(textSource) {
+        if (textSource === null) {
+            textSource = this._textScanner.getCurrentTextSource();
+            if (textSource === null) { return; }
+        }
+        this._showPopupContent(textSource, await this.getOptionsContext());
     }
 
     _showContent(textSource, focus, definitions, type, optionsContext) {
