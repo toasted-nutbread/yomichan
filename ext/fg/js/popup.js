@@ -636,15 +636,4 @@ class Popup {
             bottom: window.innerHeight
         };
     }
-
-    static isFrameAboutBlank(frame) {
-        try {
-            const contentDocument = frame.contentDocument;
-            if (contentDocument === null) { return false; }
-            const url = contentDocument.location.href;
-            return /^about:blank(?:[#?]|$)/.test(url);
-        } catch (e) {
-            return false;
-        }
-    }
 }
