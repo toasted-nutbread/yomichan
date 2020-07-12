@@ -21,6 +21,11 @@
  * api
  */
 
+async function setupGenericSettingsController(genericSettingController) {
+    await genericSettingController.prepare();
+    await genericSettingController.refresh();
+}
+
 (async () => {
     api.forwardLogsToBackend();
     await yomichan.prepare();
@@ -33,7 +38,7 @@
     settingsController.prepare();
 
     const genericSettingController = new GenericSettingController(settingsController);
-    preparePromises.push(genericSettingController.prepare());
+    preparePromises.push(setupGenericSettingsController(genericSettingController));
 
     await Promise.all(preparePromises);
 
@@ -47,7 +52,6 @@
     };
     document.querySelector('.content').addEventListener('scroll', onScroll, {passive: true});
 
-    // TODO : This can be done as soon as advanced is set, which can be done immediately after optionsFull
     const updateScrollTarget = () => {
         const hash = window.location.hash;
         if (!hash.startsWith('#!')) { return; }
