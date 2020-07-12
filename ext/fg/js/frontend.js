@@ -339,8 +339,15 @@ class Frontend {
         return this._popup === null || this._popup.isProxy() ? [] : [this._popup.getContainer()];
     }
 
-    _ignorePoint(x, y) {
-        return this._popup !== null && this._popup.containsPoint(x, y);
+    async _ignorePoint(x, y) {
+        try {
+            return this._popup !== null && await this._popup.containsPoint(x, y);
+        } catch (e) {
+            if (!yomichan.isExtensionUnloaded) {
+                throw e;
+            }
+            return false;
+        }
     }
 
     async _search(textSource, cause) {
@@ -433,6 +440,10 @@ class Frontend {
             details,
             context
         );
+        this._lastShowPromise.catch((error) => {
+            if (yomichan.isExtensionUnloaded) { return; }
+            yomichan.logError(error);
+        });
         return this._lastShowPromise;
     }
 
