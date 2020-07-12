@@ -149,8 +149,12 @@ class Popup {
         this._invokeApi('setCustomCss', {css});
     }
 
-    clearAutoPlayTimer() {
-        this._invokeApi('clearAutoPlayTimer');
+    async clearAutoPlayTimer() {
+        try {
+            await this._invokeApi('clearAutoPlayTimer');
+        } catch (e) {
+            // NOP
+        }
     }
 
     setContentScale(scale) {
