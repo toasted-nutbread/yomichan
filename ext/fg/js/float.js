@@ -39,6 +39,9 @@ class DisplayFloat extends Display {
             ['setCustomCss',       {async: false, handler: this._onMessageSetCustomCss.bind(this)}],
             ['setContentScale',    {async: false, handler: this._onMessageSetContentScale.bind(this)}]
         ]);
+        this._windowMessageHandlers = new Map([
+            ['extensionUnloaded', {async: false, handler: this._onMessageExtensionUnloaded.bind(this)}]
+        ]);
 
         this.registerActions([
             ['copy-host-selection', () => this._copySelection()]
@@ -54,6 +57,7 @@ class DisplayFloat extends Display {
         api.crossFrame.registerHandlers([
             ['popupMessage', {async: 'dynamic', handler: this._onMessage.bind(this)}]
         ]);
+        window.addEventListener('message', this._onWindowMessage.bind(this), false);
 
         this._frameEndpoint.signal();
     }
@@ -117,6 +121,18 @@ class DisplayFloat extends Display {
         return {async, result};
     }
 
+    _onWindowMessage(e) {
+        const data = e.data;
+        if (!this._frameEndpoint.authenticate(data)) { return; }
+
+        const {action, params} = data.data;
+        const messageHandler = this._windowMessageHandlers.get(action);
+        if (typeof messageHandler === 'undefined') { return; }
+
+        const callback = () => {}; // NOP
+        yomichan.invokeMessageHandler(messageHandler, params, callback);
+    }
+
     async _onMessageConfigure({frameId, ownerFrameId, popupId, optionsContext, childrenSupported, scale}) {
         this._ownerFrameId = ownerFrameId;
         this.setOptionsContext(optionsContext);
@@ -150,6 +166,11 @@ class DisplayFloat extends Display {
 
     _onMessageSetContentScale({scale}) {
         this._setContentScale(scale);
+    }
+
+    _onMessageExtensionUnloaded() {
+        if (yomichan.isExtensionUnloaded) { return; }
+        yomichan.triggerExtensionUnloaded();
     }
 
     // Private

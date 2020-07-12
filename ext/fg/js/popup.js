@@ -83,6 +83,7 @@ class Popup {
         this._frame.addEventListener('mousedown', (e) => e.stopPropagation());
         this._frame.addEventListener('scroll', (e) => e.stopPropagation());
         this._frame.addEventListener('load', this._onFrameLoad.bind(this));
+        yomichan.on('extensionUnloaded', this._onExtensionUnloaded.bind(this));
     }
 
     isProxy() {
@@ -449,6 +450,18 @@ class Popup {
 
         const message = this._frameClient.createMessage({action, params});
         return await api.crossFrame.invoke(this._frameClient.frameId, 'popupMessage', message);
+    }
+
+    _invokeWindowApi(action, params={}) {
+        const contentWindow = this._frame.contentWindow;
+        if (this._frameClient === null || !this._frameClient.isConnected() || contentWindow === null) { return; }
+
+        const message = this._frameClient.createMessage({action, params});
+        contentWindow.postMessage(message, this._targetOrigin);
+    }
+
+    _onExtensionUnloaded() {
+        this._invokeWindowApi('extensionUnloaded');
     }
 
     _getFrameParentElement() {
