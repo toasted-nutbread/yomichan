@@ -226,11 +226,21 @@ class CrossFrameAPI {
     }
 
     _onConnect(port) {
-        const match = /^cross-frame-communication-port-(\d+)$/.exec(`${port.name}`);
-        if (match === null) { return; }
+        try {
+            let details;
+            try {
+                details = JSON.parse(port.name);
+            } catch (e) {
+                return;
+            }
+            if (details.name !== 'cross-frame-communication-port') { return; }
 
-        const otherFrameId = parseInt(match[1], 10);
-        this._setupCommPort(otherFrameId, port);
+            const otherFrameId = details.sourceFrameId;
+            this._setupCommPort(otherFrameId, port);
+        } catch (e) {
+            port.disconnect();
+            yomichan.logError(e);
+        }
     }
 
     _onDisconnect(commPort) {
@@ -244,7 +254,11 @@ class CrossFrameAPI {
     }
 
     _createCommPort(otherFrameId) {
-        const port = yomichan.connect(null, {name: `background-cross-frame-communication-port-${otherFrameId}`});
+        const details = {
+            name: 'background-cross-frame-communication-port',
+            targetFrameId: otherFrameId
+        };
+        const port = yomichan.connect(null, {name: JSON.stringify(details)});
         return this._setupCommPort(otherFrameId, port);
     }
 
