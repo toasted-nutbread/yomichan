@@ -318,7 +318,7 @@ class Backend {
                 throw new Error('Port does not have an associated tab ID');
             }
             const senderFrameId = port.sender.frameId;
-            if (typeof tabId !== 'number') {
+            if (typeof senderFrameId !== 'number') {
                 throw new Error('Port does not have an associated frame ID');
             }
             const targetFrameId = details.targetFrameId;
