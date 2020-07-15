@@ -216,8 +216,12 @@ class CrossFrameAPI {
         chrome.runtime.onConnect.addListener(this._onConnect.bind(this));
     }
 
-    async invoke(targetFrameId, action, params={}) {
-        const commPort = this._getOrCreateCommPort(null, targetFrameId);
+    invoke(targetFrameId, action, params={}) {
+        return this.invokeTab(null, targetFrameId, action, params);
+    }
+
+    async invokeTab(targetTabId, targetFrameId, action, params={}) {
+        const commPort = this._getOrCreateCommPort(targetTabId, targetFrameId);
         return await commPort.invoke(action, params, this._ackTimeout, this._responseTimeout);
     }
 
