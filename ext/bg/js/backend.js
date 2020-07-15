@@ -321,13 +321,16 @@ class Backend {
             if (typeof senderFrameId !== 'number') {
                 throw new Error('Port does not have an associated frame ID');
             }
-            const targetFrameId = details.targetFrameId;
+            let {targetTabId, targetFrameId} = details;
+            if (typeof targetTabId !== 'number') {
+                targetTabId = tabId;
+            }
 
             const details2 = {
                 name: 'cross-frame-communication-port',
                 sourceFrameId: senderFrameId
             };
-            let forwardPort = chrome.tabs.connect(tabId, {frameId: targetFrameId, name: JSON.stringify(details2)});
+            let forwardPort = chrome.tabs.connect(targetTabId, {frameId: targetFrameId, name: JSON.stringify(details2)});
 
             const cleanup = () => {
                 this._checkLastError(chrome.runtime.lastError);
