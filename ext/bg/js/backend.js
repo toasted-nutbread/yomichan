@@ -70,7 +70,8 @@ class Backend {
             null
         );
 
-        this._popupWindow = null;
+        this._searchPopupTabId = null;
+        this._searchPopupTabCreatePromise = null;
 
         this._isPrepared = false;
         this._prepareError = false;
@@ -241,8 +242,14 @@ class Backend {
 
     // Event handlers
 
-    _onClipboardTextChange({text}) {
-        this._onCommandSearch({mode: 'popup', query: text});
+    async _onClipboardTextChange({text}) {
+        try {
+            const {tab} = await this._getOrCreateSearchPopup();
+            await this._focusTab(tab);
+            await this._updateSearchQuery(tab.id, text);
+        } catch (e) {
+            // NOP
+        }
     }
 
     _onLog({level}) {
@@ -794,9 +801,6 @@ class Backend {
     async _onCommandSearch(params) {
         const {mode='existingOrNewTab', query} = params || {};
 
-        const options = this.getOptions({current: true});
-        const {popupWidth, popupHeight} = options.general;
-
         const baseUrl = chrome.runtime.getURL('/bg/search.html');
         const queryParams = {mode};
         if (query && query.length > 0) { queryParams.query = query; }
@@ -832,25 +836,6 @@ class Backend {
             case 'newTab':
                 chrome.tabs.create({url});
                 return;
-            case 'popup':
-                try {
-                    // chrome.windows not supported (e.g. on Firefox mobile)
-                    if (!isObject(chrome.windows)) { return; }
-                    if (await openInTab()) { return; }
-                    // if the previous popup is open in an invalid state, close it
-                    if (this._popupWindow !== null) {
-                        const callback = () => this._checkLastError(chrome.runtime.lastError);
-                        chrome.windows.remove(this._popupWindow.id, callback);
-                    }
-                    // open new popup
-                    this._popupWindow = await new Promise((resolve) => chrome.windows.create(
-                        {url, width: popupWidth, height: popupHeight, type: 'popup'},
-                        resolve
-                    ));
-                } catch (e) {
-                    // NOP
-                }
-                return;
         }
     }
 
@@ -877,6 +862,91 @@ class Backend {
     }
 
     // Utilities
+
+    _getOrCreateSearchPopup() {
+        if (this._searchPopupTabCreatePromise === null) {
+            const promise = this._getOrCreateSearchPopup2();
+            this._searchPopupTabCreatePromise = promise;
+            promise.then(() => { this._searchPopupTabCreatePromise = null; });
+        }
+        return this._searchPopupTabCreatePromise;
+    }
+
+    async _getOrCreateSearchPopup2() {
+        // Reuse same tab
+        const baseUrl = chrome.runtime.getURL('/bg/search.html');
+        if (this._searchPopupTabId !== null) {
+            const tabId = this._searchPopupTabId;
+            const tab = await new Promise((resolve) => {
+                chrome.tabs.get(
+                    tabId,
+                    (result) => { resolve(chrome.runtime.lastError ? null : result); }
+                );
+            });
+            if (tab !== null) {
+                const isValidTab = await new Promise((resolve) => {
+                    chrome.tabs.sendMessage(
+                        tabId,
+                        {action: 'getUrl', params: {}},
+                        {frameId: 0},
+                        (response) => {
+                            let result = false;
+                            try {
+                                const {url} = yomichan.getMessageResponseResult(response);
+                                result = url.startsWith(baseUrl);
+                            } catch (e) {
+                                // NOP
+                            }
+                            resolve(result);
+                        }
+                    );
+                });
+                // windowId
+                if (isValidTab) {
+                    return {tab, created: false};
+                }
+            }
+            this._searchPopupTabId = null;
+        }
+
+        // chrome.windows not supported (e.g. on Firefox mobile)
+        if (!isObject(chrome.windows)) {
+            throw new Error('Window creation not supported');
+        }
+
+        // Create a new window
+        const options = this.getOptions({current: true});
+        const {popupWidth, popupHeight} = options.general;
+        const popupWindow = await new Promise((resolve, reject) => {
+            chrome.windows.create(
+                {
+                    url: baseUrl,
+                    width: popupWidth,
+                    height: popupHeight,
+                    type: 'popup'
+                },
+                (result) => {
+                    const error = chrome.runtime.lastError;
+                    if (error) {
+                        reject(new Error(error.message));
+                    } else {
+                        resolve(result);
+                    }
+                }
+            );
+        });
+
+        const {tabs} = popupWindow;
+        if (tabs.length === 0) {
+            throw new Error('Created window did not contain a tab');
+        }
+
+        const tab = tabs[0];
+        await this._waitUntilTabFrameIsReady(tab.id, 0, 2000);
+
+        this._searchPopupTabId = tab.id;
+        return {tab, created: true};
+    }
 
     _updateSearchQuery(tabId, text) {
         return new Promise((resolve, reject) => {
