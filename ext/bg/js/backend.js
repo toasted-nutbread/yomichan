@@ -879,7 +879,7 @@ class Backend {
     // Utilities
 
     _updateSearchQuery(tabId, text) {
-        new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             const callback = (response) => {
                 try {
                     resolve(yomichan.getMessageResponseResult(response));
