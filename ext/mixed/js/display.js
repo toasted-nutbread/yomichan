@@ -95,7 +95,6 @@ class Display {
 
     async prepare() {
         this._setInteractive(true);
-        await yomichan.ready();
         await this._displayGenerator.prepare();
     }
 
