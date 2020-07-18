@@ -64,7 +64,7 @@ async function setupEnvironmentInfo() {
 
 (async () => {
     api.forwardLogsToBackend();
-    await yomichan.ready();
+    await yomichan.backendReady();
 
     setupEnvironmentInfo();
     showExtensionInformation();
@@ -104,4 +104,6 @@ async function setupEnvironmentInfo() {
 
     const settingsBackup = new SettingsBackup(settingsController);
     settingsBackup.prepare();
+
+    yomichan.ready();
 })();
