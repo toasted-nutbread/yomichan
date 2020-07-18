@@ -1393,7 +1393,7 @@ class Backend {
                     sender.tab.id !== tabId ||
                     sender.frameId !== frameId ||
                     !isObject(message) ||
-                    message.action !== 'yomichanCoreReady'
+                    message.action !== 'yomichanReady'
                 ) {
                     return;
                 }
