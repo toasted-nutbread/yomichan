@@ -245,9 +245,9 @@ class Backend {
 
     async _onClipboardTextChange({text}) {
         try {
-            const {tab} = await this._getOrCreateSearchPopup();
+            const {tab, created} = await this._getOrCreateSearchPopup();
             await this._focusTab(tab);
-            await this._updateSearchQuery(tab.id, text);
+            await this._updateSearchQuery(tab.id, text, !created);
         } catch (e) {
             // NOP
         }
@@ -803,7 +803,7 @@ class Backend {
             await this._focusTab(tab);
         }
         if (typeof text === 'string') {
-            await this._updateSearchQuery(tab.id, text);
+            await this._updateSearchQuery(tab.id, text, !created);
         }
         return {tabId: tab.id, windowId: tab.windowId};
     }
@@ -830,7 +830,7 @@ class Backend {
             if (tab !== null) {
                 await this._focusTab(tab);
                 if (queryParams.query) {
-                    await this._updateSearchQuery(tab.id, queryParams.query);
+                    await this._updateSearchQuery(tab.id, queryParams.query, true);
                 }
                 return true;
             }
@@ -960,7 +960,7 @@ class Backend {
         return {tab, created: true};
     }
 
-    _updateSearchQuery(tabId, text) {
+    _updateSearchQuery(tabId, text, animate) {
         return new Promise((resolve, reject) => {
             const callback = (response) => {
                 try {
@@ -970,7 +970,7 @@ class Backend {
                 }
             };
 
-            const message = {action: 'updateSearchQuery', params: {text}};
+            const message = {action: 'updateSearchQuery', params: {text, animate}};
             chrome.tabs.sendMessage(tabId, message, callback);
         });
     }
