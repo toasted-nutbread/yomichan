@@ -124,7 +124,8 @@ class Backend {
             ['createActionPort',             {async: false, contentScript: true,  handler: this._onApiCreateActionPort.bind(this)}],
             ['modifySettings',               {async: true,  contentScript: true,  handler: this._onApiModifySettings.bind(this)}],
             ['getSettings',                  {async: false, contentScript: true,  handler: this._onApiGetSettings.bind(this)}],
-            ['setAllSettings',               {async: true,  contentScript: false, handler: this._onApiSetAllSettings.bind(this)}]
+            ['setAllSettings',               {async: true,  contentScript: false, handler: this._onApiSetAllSettings.bind(this)}],
+            ['getOrCreateSearchPopup',       {async: true,  contentScript: true,  handler: this._onApiGetOrCreateSearchPopup.bind(this)}]
         ]);
         this._messageHandlersWithProgress = new Map([
             ['importDictionaryArchive', {async: true,  contentScript: false, handler: this._onApiImportDictionaryArchive.bind(this)}],
@@ -794,6 +795,17 @@ class Backend {
     async _onApiSetAllSettings({value, source}) {
         this._options = JsonSchema.getValidValueOrDefault(this._optionsSchema, value);
         await this._onApiOptionsSave({source});
+    }
+
+    async _onApiGetOrCreateSearchPopup({focus=false, text=null}) {
+        const {tab, created} = await this._getOrCreateSearchPopup();
+        if (focus === true || (focus === 'ifCreated' && created)) {
+            await this._focusTab(tab);
+        }
+        if (typeof text === 'string') {
+            await this._updateSearchQuery(tab.id, text);
+        }
+        return {tabId: tab.id, windowId: tab.windowId};
     }
 
     // Command handlers
