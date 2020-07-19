@@ -56,6 +56,8 @@ class Display {
         this._eventListenersActive = false;
         this._clickScanPrevent = false;
         this._setContentToken = null;
+        this._autoPlayAudioTimer = null;
+        this._autoPlayAudioDelay = 0;
         this._mediaLoader = new MediaLoader();
         this._displayGenerator = new DisplayGenerator({mediaLoader: this._mediaLoader});
         this._windowScroll = new WindowScroll();
@@ -94,6 +96,14 @@ class Display {
             {key: 'P',         modifiers: ['alt'], action: 'play-audio'},
             {key: 'V',         modifiers: ['alt'], action: 'view-note'}
         ]);
+    }
+
+    get autoPlayAudioDelay() {
+        return this._autoPlayAudioDelay;
+    }
+
+    set autoPlayAudioDelay(value) {
+        this._autoPlayAudioDelay = value;
     }
 
     async prepare() {
@@ -158,9 +168,28 @@ class Display {
     }
 
     autoPlayAudio() {
+        this.clearAutoPlayTimer();
+
         if (this._definitions.length === 0) { return; }
 
-        this._audioPlay(this._definitions[0], this._getFirstExpressionIndex(), 0);
+        const definition = this._definitions[0];
+        const expressionIndex = this._getFirstExpressionIndex();
+        const callback = () => {
+            this._audioPlay(definition, expressionIndex, 0);
+        };
+
+        if (this._autoPlayAudioDelay > 0) {
+            this._autoPlayAudioTimer = setTimeout(callback, this._autoPlayAudioDelay);
+        } else {
+            callback();
+        }
+    }
+
+    clearAutoPlayTimer() {
+        if (this._autoPlayAudioTimer !== null) {
+            clearTimeout(this._autoPlayAudioTimer);
+            this._autoPlayAudioTimer = null;
+        }
     }
 
     async setContent(type, details) {

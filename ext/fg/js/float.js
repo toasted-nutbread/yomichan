@@ -24,7 +24,6 @@
 class DisplayFloat extends Display {
     constructor() {
         super(document.querySelector('#spinner'), document.querySelector('#definitions'));
-        this._autoPlayAudioTimer = null;
         this._nestedPopupsPrepared = false;
         this._ownerFrameId = null;
         this._frameEndpoint = new FrameEndpoint();
@@ -46,6 +45,8 @@ class DisplayFloat extends Display {
         this.registerHotkeys([
             {key: 'C', modifiers: ['ctrl'], action: 'copy-host-selection'}
         ]);
+
+        this.autoPlayAudioDelay = 400;
     }
 
     async prepare() {
@@ -93,11 +94,6 @@ class DisplayFloat extends Display {
         } catch (e) {
             return '';
         }
-    }
-
-    autoPlayAudio() {
-        this._clearAutoPlayTimer();
-        this._autoPlayAudioTimer = window.setTimeout(() => super.autoPlayAudio(), 400);
     }
 
     // Message handling
@@ -154,7 +150,7 @@ class DisplayFloat extends Display {
     }
 
     _onMessageClearAutoPlayTimer() {
-        this._clearAutoPlayTimer.bind(this);
+        this.clearAutoPlayTimer();
     }
 
     _onMessageSetCustomCss({css}) {
@@ -176,13 +172,6 @@ class DisplayFloat extends Display {
         if (window.getSelection().toString()) { return false; }
         this._invoke('copySelection');
         return true;
-    }
-
-    _clearAutoPlayTimer() {
-        if (this._autoPlayAudioTimer) {
-            window.clearTimeout(this._autoPlayAudioTimer);
-            this._autoPlayAudioTimer = null;
-        }
     }
 
     _setContentScale(scale) {
