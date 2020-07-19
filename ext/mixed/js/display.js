@@ -35,7 +35,7 @@ class Display {
         this._spinner = spinner;
         this._container = container;
         this._definitions = [];
-        this._optionsContext = null;
+        this._optionsContext = {depth: 0, url: window.location.href};
         this._options = null;
         this._context = null;
         this._index = 0;

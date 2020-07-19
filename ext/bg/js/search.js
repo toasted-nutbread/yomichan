@@ -60,11 +60,6 @@ class DisplaySearch extends Display {
         this._runtimeMessageHandlers = new Map([
             ['updateSearchQuery', {async: false, handler: this._onExternalSearchUpdate.bind(this)}]
         ]);
-
-        this.setOptionsContext({
-            depth: 0,
-            url: window.location.href
-        });
     }
 
     async prepare() {
