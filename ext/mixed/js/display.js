@@ -63,6 +63,7 @@ class Display {
         this._windowScroll = new WindowScroll();
         this._hotkeys = new Map();
         this._actions = new Map();
+        this._messageHandlers = new Map();
 
         this.registerActions([
             ['close',               () => { this.onEscape(); }],
@@ -96,6 +97,12 @@ class Display {
             {key: 'P',         modifiers: ['alt'], action: 'play-audio'},
             {key: 'V',         modifiers: ['alt'], action: 'view-note'}
         ]);
+        this.registerMessageHandlers([
+            ['setOptionsContext',  {async: false, handler: this._onMessageSetOptionsContext.bind(this)}],
+            ['setContent',         {async: false, handler: this._onMessageSetContent.bind(this)}],
+            ['clearAutoPlayTimer', {async: false, handler: this._onMessageClearAutoPlayTimer.bind(this)}],
+            ['setCustomCss',       {async: false, handler: this._onMessageSetCustomCss.bind(this)}]
+        ]);
     }
 
     get autoPlayAudioDelay() {
@@ -110,6 +117,9 @@ class Display {
         this._setInteractive(true);
         await this._displayGenerator.prepare();
         yomichan.on('extensionUnloaded', this._onExtensionUnloaded.bind(this));
+        api.crossFrame.registerHandlers([
+            ['popupMessage', {async: 'dynamic', handler: this._onMessage.bind(this)}]
+        ]);
     }
 
     onError(error) {
@@ -260,6 +270,12 @@ class Display {
         }
     }
 
+    registerMessageHandlers(handlers) {
+        for (const [name, handlerInfo] of handlers) {
+            this._messageHandlers.set(name, handlerInfo);
+        }
+    }
+
     async setupNestedPopups(frontendInitializationData) {
         await dynamicLoader.loadScripts([
             '/mixed/js/text-scanner.js',
@@ -278,6 +294,41 @@ class Display {
 
         const frontend = new Frontend(frameId, popupFactory, frontendInitializationData);
         await frontend.prepare();
+    }
+
+    authenticateMessageData(data) {
+        return data;
+    }
+
+    // Message handlers
+
+    _onMessage(data) {
+        data = this.authenticateMessageData(data);
+        const {action, params} = data;
+        const handlerInfo = this._messageHandlers.get(action);
+        if (typeof handlerInfo === 'undefined') {
+            throw new Error(`Invalid action: ${action}`);
+        }
+
+        const {async, handler} = handlerInfo;
+        const result = handler(params);
+        return {async, result};
+    }
+
+    _onMessageSetOptionsContext({optionsContext}) {
+        this.setOptionsContext(optionsContext);
+    }
+
+    _onMessageSetContent({type, details}) {
+        this.setContent(type, details);
+    }
+
+    _onMessageClearAutoPlayTimer() {
+        this.clearAutoPlayTimer();
+    }
+
+    _onMessageSetCustomCss({css}) {
+        this.setCustomCss(css);
     }
 
     // Private
