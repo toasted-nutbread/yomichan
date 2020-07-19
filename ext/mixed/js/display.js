@@ -20,11 +20,14 @@
  * DOM
  * DisplayContext
  * DisplayGenerator
+ * Frontend
  * MediaLoader
+ * PopupFactory
  * WindowScroll
  * api
  * docRangeFromPoint
  * docSentenceExtract
+ * dynamicLoader
  */
 
 class Display {
@@ -226,6 +229,26 @@ class Display {
             }
             handlers.push({modifiers: new Set(modifiers), action});
         }
+    }
+
+    async setupNestedPopups(frontendInitializationData) {
+        await dynamicLoader.loadScripts([
+            '/mixed/js/text-scanner.js',
+            '/mixed/js/frame-client.js',
+            '/fg/js/popup.js',
+            '/fg/js/popup-proxy.js',
+            '/fg/js/popup-factory.js',
+            '/fg/js/frame-offset-forwarder.js',
+            '/fg/js/frontend.js'
+        ]);
+
+        const {frameId} = await api.frameInformationGet();
+
+        const popupFactory = new PopupFactory(frameId);
+        popupFactory.prepare();
+
+        const frontend = new Frontend(frameId, popupFactory, frontendInitializationData);
+        await frontend.prepare();
     }
 
     // Private

@@ -18,10 +18,7 @@
 /* global
  * Display
  * FrameEndpoint
- * Frontend
- * PopupFactory
  * api
- * dynamicLoader
  */
 
 class DisplayFloat extends Display {
@@ -207,7 +204,13 @@ class DisplayFloat extends Display {
             yomichan.off('optionsUpdated', onOptionsUpdated);
 
             try {
-                await this._setupNestedPopups(id, depth, parentFrameId, url);
+                await this.setupNestedPopups({
+                    id,
+                    depth,
+                    parentFrameId,
+                    url,
+                    proxy: true
+                });
             } catch (e) {
                 yomichan.logError(e);
             }
@@ -216,36 +219,6 @@ class DisplayFloat extends Display {
         yomichan.on('optionsUpdated', onOptionsUpdated);
 
         await onOptionsUpdated();
-    }
-
-    async _setupNestedPopups(id, depth, parentFrameId, url) {
-        await dynamicLoader.loadScripts([
-            '/mixed/js/text-scanner.js',
-            '/mixed/js/frame-client.js',
-            '/fg/js/popup.js',
-            '/fg/js/popup-proxy.js',
-            '/fg/js/popup-factory.js',
-            '/fg/js/frame-offset-forwarder.js',
-            '/fg/js/frontend.js'
-        ]);
-
-        const {frameId} = await api.frameInformationGet();
-
-        const popupFactory = new PopupFactory(frameId);
-        popupFactory.prepare();
-
-        const frontend = new Frontend(
-            frameId,
-            popupFactory,
-            {
-                id,
-                depth,
-                parentFrameId,
-                url,
-                proxy: true
-            }
-        );
-        await frontend.prepare();
     }
 
     _invoke(action, params={}) {
