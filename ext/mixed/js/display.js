@@ -387,7 +387,7 @@ class Display {
         }
     }
 
-    async _onTermLookup(e, {disableScroll, selectText, disableHistory}={}) {
+    async _onTermLookup(e) {
         try {
             if (!this._context) { return; }
 
@@ -405,27 +405,14 @@ class Display {
                 scroll: this._windowScroll.y
             });
             const context = {
-                disableScroll,
-                disableHistory,
+                disableScroll: false,
+                disableHistory: false,
                 sentence,
-                url: this._context.get('url')
+                url: this._context.get('url'),
+                previous: this._context
             };
-            if (disableHistory) {
-                Object.assign(context, {
-                    previous: this._context.previous,
-                    next: this._context.next
-                });
-            } else {
-                Object.assign(context, {
-                    previous: this._context
-                });
-            }
 
             this.setContent('terms', {definitions, context});
-
-            if (selectText) {
-                textSource.select();
-            }
         } catch (error) {
             this.onError(error);
         }
