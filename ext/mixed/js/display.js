@@ -226,7 +226,9 @@ class Display {
     }
 
     clearContent() {
+        this._setEventListenersActive(false);
         this._container.textContent = '';
+        this._setEventListenersActive(true);
     }
 
     setCustomCss(css) {
