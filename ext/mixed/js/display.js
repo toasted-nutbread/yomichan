@@ -763,7 +763,7 @@ class Display {
 
         const entry = this._entrySetCurrent(index);
         let target;
-        if (scroll !== null) {
+        if (typeof scroll === 'number') {
             target = scroll;
         } else {
             target = this._index === 0 || entry === null ? 0 : this._getElementTop(entry);
