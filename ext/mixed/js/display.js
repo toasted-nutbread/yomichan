@@ -208,7 +208,7 @@ class Display {
         try {
             this._mediaLoader.unloadAll();
 
-            const {definitions, context} = details;
+            const {definitions, context, focus} = details;
 
             if (context.disableHistory) {
                 delete context.disableHistory;
@@ -217,12 +217,16 @@ class Display {
                 this._context = DisplayContext.push(this._context, type, definitions, context);
             }
 
+            if (focus !== false) {
+                window.focus();
+            }
+
             switch (type) {
                 case 'terms':
                 case 'kanji':
                     {
-                        const {focus, sentence, url, index, scroll} = context;
-                        await this._setContentTermsOrKanji(type, definitions, focus, sentence, url, index, scroll, token);
+                        const {sentence, url, index, scroll} = context;
+                        await this._setContentTermsOrKanji(type, definitions, sentence, url, index, scroll, token);
                     }
                     break;
             }
@@ -577,13 +581,9 @@ class Display {
         }
     }
 
-    async _setContentTermsOrKanji(type, definitions, focus, sentence, url, index, scroll, token) {
+    async _setContentTermsOrKanji(type, definitions, sentence, url, index, scroll, token) {
         const isTerms = (type === 'terms');
         this._setEventListenersActive(false);
-
-        if (focus !== false) {
-            window.focus();
-        }
 
         this._definitions = definitions;
 
