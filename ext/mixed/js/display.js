@@ -226,7 +226,7 @@ class Display {
                 case 'kanji':
                     {
                         const {sentence, url, index=0, scroll=null} = context;
-                        await this._setContentTermsOrKanji(type, definitions, sentence, url, index, scroll, token);
+                        await this._setContentTermsOrKanji((type === 'terms'), definitions, sentence, url, index, scroll, token);
                     }
                     break;
             }
@@ -581,8 +581,7 @@ class Display {
         }
     }
 
-    async _setContentTermsOrKanji(type, definitions, sentence, url, index, scroll, token) {
-        const isTerms = (type === 'terms');
+    async _setContentTermsOrKanji(isTerms, definitions, sentence, url, index, scroll, token) {
         this._setEventListenersActive(false);
 
         this._definitions = definitions;
