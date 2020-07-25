@@ -202,13 +202,13 @@ class Display {
         }
     }
 
-    async setContent(type, details) {
+    async setContent(details) {
         const token = {}; // Unique identifier token
         this._setContentToken = token;
         try {
             this._mediaLoader.unloadAll();
 
-            const {definitions, context, focus} = details;
+            const {type, definitions, context, focus} = details;
 
             if (context.disableHistory) {
                 delete context.disableHistory;
@@ -335,8 +335,8 @@ class Display {
         this.setOptionsContext(optionsContext);
     }
 
-    _onMessageSetContent({type, details}) {
-        this.setContent(type, details);
+    _onMessageSetContent({details}) {
+        this.setContent(details);
     }
 
     _onMessageClearAutoPlayTimer() {
@@ -379,7 +379,7 @@ class Display {
             };
 
             const definitions = await api.kanjiFind(link.textContent, this.getOptionsContext());
-            this.setContent('kanji', {definitions, context});
+            this.setContent({type: 'kanji', definitions, context});
         } catch (error) {
             this.onError(error);
         }
@@ -425,7 +425,7 @@ class Display {
                 previous: this._context
             };
 
-            this.setContent('terms', {definitions, context});
+            this.setContent({type: 'terms', definitions, context});
         } catch (error) {
             this.onError(error);
         }
@@ -734,10 +734,11 @@ class Display {
         const previousContext = this._context.previous;
         previousContext.set('disableHistory', true);
         const details = {
+            type: previousContext.type,
             definitions: previousContext.definitions,
             context: previousContext.context
         };
-        this.setContent(previousContext.type, details);
+        this.setContent(details);
     }
 
     _nextTermView() {
@@ -749,10 +750,11 @@ class Display {
         const nextContext = this._context.next;
         nextContext.set('disableHistory', true);
         const details = {
+            type: nextContext.type,
             definitions: nextContext.definitions,
             context: nextContext.context
         };
-        this.setContent(nextContext.type, details);
+        this.setContent(details);
     }
 
     _noteTryAdd(mode) {

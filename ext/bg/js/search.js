@@ -172,7 +172,8 @@ class DisplaySearch extends Display {
     // Private
 
     _onQueryParserSearch({type, definitions, sentence, cause}) {
-        this.setContent(type, {
+        this.setContent({
+            type,
             definitions,
             context: {
                 focus: false,
@@ -254,12 +255,16 @@ class DisplaySearch extends Display {
             this._updateSearchButton();
             if (valid) {
                 const {definitions} = await api.termsFind(query, details, this.getOptionsContext());
-                this.setContent('terms', {definitions, context: {
-                    focus: false,
-                    disableHistory: true,
-                    sentence: {text: query, offset: 0},
-                    url: window.location.href
-                }});
+                this.setContent({
+                    definitions,
+                    type: 'terms',
+                    context: {
+                        focus: false,
+                        disableHistory: true,
+                        sentence: {text: query, offset: 0},
+                        url: window.location.href
+                    }
+                });
             } else {
                 this.clearContent();
             }
