@@ -574,19 +574,19 @@ class Display {
         }
     }
 
-    async _setContentTermsOrKanji(type, definitions, context, token) {
+    async _setContentTermsOrKanji(type, definitions, {focus, sentence, url, index, scroll}, token) {
         const isTerms = (type === 'terms');
         this._setEventListenersActive(false);
 
-        if (context.focus !== false) {
+        if (focus !== false) {
             window.focus();
         }
 
         this._definitions = definitions;
 
         for (const definition of definitions) {
-            definition.cloze = this._clozeBuild(context.sentence, isTerms ? definition.source : definition.character);
-            definition.url = context.url;
+            definition.cloze = this._clozeBuild(sentence, isTerms ? definition.source : definition.character);
+            definition.url = url;
         }
 
         this._updateNavigation(this._context.previous, this._context.next);
@@ -609,7 +609,6 @@ class Display {
             container.appendChild(entry);
         }
 
-        const {index, scroll} = context;
         this._entryScrollIntoView(index || 0, scroll);
 
         if (
