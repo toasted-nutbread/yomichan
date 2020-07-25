@@ -381,6 +381,8 @@ class Display {
             this.setContent({
                 type: 'kanji',
                 definitions,
+                focus: false,
+                disableHistory: false,
                 context
             });
         } catch (error) {
@@ -429,6 +431,7 @@ class Display {
 
             this.setContent({
                 type: 'terms',
+                focus: false,
                 disableHistory: false,
                 definitions,
                 context
@@ -739,10 +742,11 @@ class Display {
             scroll: this._windowScroll.y
         });
         const previousContext = this._context.previous;
-        previousContext.set('disableHistory', true);
         const details = {
             type: previousContext.type,
             definitions: previousContext.definitions,
+            focus: false,
+            disableHistory: true,
             context: previousContext.context
         };
         this.setContent(details);
@@ -755,10 +759,11 @@ class Display {
             scroll: this._windowScroll.y
         });
         const nextContext = this._context.next;
-        nextContext.set('disableHistory', true);
         const details = {
             type: nextContext.type,
             definitions: nextContext.definitions,
+            focus: false,
+            disableHistory: true,
             context: nextContext.context
         };
         this.setContent(details);
