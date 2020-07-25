@@ -208,12 +208,14 @@ class Display {
         try {
             this._mediaLoader.unloadAll();
 
+            const {definitions, context} = details;
+
             switch (type) {
                 case 'terms':
-                    await this._setContentTerms(details.definitions, details.context, token);
+                    await this._setContentTerms(definitions, context, token);
                     break;
                 case 'kanji':
-                    await this._setContentKanji(details.definitions, details.context, token);
+                    await this._setContentKanji(definitions, context, token);
                     break;
             }
         } catch (e) {
