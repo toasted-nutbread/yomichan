@@ -35,6 +35,7 @@ class DisplaySearch extends Display {
         this._wanakanaEnable = document.querySelector('#wanakana-enable');
         this._introVisible = true;
         this._introAnimationTimer = null;
+        this._introAnimate = false;
         this._clipboardMonitor = new ClipboardMonitor({
             getClipboard: api.clipboardGet.bind(api)
         });
@@ -68,6 +69,7 @@ class DisplaySearch extends Display {
         await this._queryParser.prepare();
 
         this._queryParser.on('searched', this._onQueryParserSearch.bind(this));
+        this.on('contentUpdating', this._onContentUpdating.bind(this));
 
         const options = this.getOptions();
 
@@ -83,7 +85,6 @@ class DisplaySearch extends Display {
         }
 
         this._setQuery(query);
-        this._onSearchQueryUpdated(this._query.value, false);
 
         if (mode !== 'popup') {
             if (options.general.enableClipboardMonitor === true) {
@@ -100,7 +101,6 @@ class DisplaySearch extends Display {
         this._search.addEventListener('click', this._onSearch.bind(this), false);
         this._query.addEventListener('input', this._onSearchInput.bind(this), false);
         this._wanakanaEnable.addEventListener('change', this._onWanakanaEnableChange.bind(this));
-        window.addEventListener('popstate', this._onPopState.bind(this));
         window.addEventListener('copy', this._onCopy.bind(this));
         this._clipboardMonitor.on('change', this._onExternalSearchUpdate.bind(this));
 
@@ -171,6 +171,21 @@ class DisplaySearch extends Display {
 
     // Private
 
+    _onContentUpdating({type, source, definitions}) {
+        if (type !== 'terms') { return; }
+
+        const valid = definitions.length > 0;
+        const animate = this._introAnimate;
+
+        this._setQuery(source);
+        this._setIntroVisible(!valid, animate);
+        this._setTitleText(source);
+        this._updateSearchButton();
+        if (!valid) {
+            this.clearContent();
+        }
+    }
+
     _onQueryParserSearch({type, definitions, sentence, cause, textSource}) {
         this.setContent({
             focus: false,
@@ -213,12 +228,6 @@ class DisplaySearch extends Display {
         this._onSearchQueryUpdated(query, true);
     }
 
-    _onPopState() {
-        const {queryParams: {query=''}} = parseUrl(window.location.href);
-        this._setQuery(query);
-        this._onSearchQueryUpdated(this._query.value, false);
-    }
-
     _onRuntimeMessage({action, params}, sender, callback) {
         const messageHandler = this._runtimeMessageHandlers.get(action);
         if (typeof messageHandler === 'undefined') { return false; }
@@ -238,42 +247,24 @@ class DisplaySearch extends Display {
         this._onSearchQueryUpdated(this._query.value, animate);
     }
 
-    async _onSearchQueryUpdated(query, animate) {
+    _onSearchQueryUpdated(query, animate) {
+        const introAnimatePre = this._introAnimate;
         try {
-            const details = {};
-            const match = /^([*\uff0a]*)([\w\W]*?)([*\uff0a]*)$/.exec(query);
-            if (match !== null) {
-                if (match[1]) {
-                    details.wildcard = 'prefix';
-                } else if (match[3]) {
-                    details.wildcard = 'suffix';
+            this._introAnimate = animate;
+            this.setContent({
+                focus: false,
+                history: false,
+                type: 'terms',
+                source: query,
+                wildcards: true,
+                definitions: null,
+                context: {
+                    sentence: {text: query, offset: 0},
+                    url: window.location.href
                 }
-                query = match[2];
-            }
-
-            const valid = (query.length > 0);
-            this._setIntroVisible(!valid, animate);
-            this._updateSearchButton();
-            if (valid) {
-                const {definitions} = await api.termsFind(query, details, this.getOptionsContext());
-                this.setContent({
-                    focus: false,
-                    history: false,
-                    type: 'terms',
-                    source: query,
-                    wildcards: false,
-                    definitions,
-                    context: {
-                        sentence: {text: query, offset: 0},
-                        url: window.location.href
-                    }
-                });
-            } else {
-                this.clearContent();
-            }
-            this._setTitleText(query);
-        } catch (e) {
-            this.onError(e);
+            });
+        } finally {
+            this._introAnimate = introAnimatePre;
         }
     }
 
