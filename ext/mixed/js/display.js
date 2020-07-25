@@ -352,7 +352,6 @@ class Display {
             let type = urlSearchParams.get('type');
             if (type === null) { type = 'terms'; }
 
-            const definitions = isObject(details) ? details.definitions : null;
             const isTerms = (type === 'terms');
 
             this._mediaLoader.unloadAll();
@@ -360,7 +359,15 @@ class Display {
             switch (type) {
                 case 'terms':
                 case 'kanji':
-                    await this._setContentTermsOrKanji(token, isTerms, source, definitions, urlSearchParams, state);
+                    {
+                        let definitions = isObject(details) ? details.definitions : null;
+                        if (!Array.isArray(definitions)) {
+                            definitions = await this._findDefinitions(isTerms, source, urlSearchParams);
+                            if (this._setContentToken !== token) { return; }
+                        }
+
+                        await this._setContentTermsOrKanji(token, isTerms, definitions, state);
+                    }
                     break;
             }
         } catch (e) {
@@ -647,14 +654,9 @@ class Display {
         }
     }
 
-    async _setContentTermsOrKanji(token, isTerms, source, definitions, urlSearchParams, {sentence=null, url=null, index=0, scroll=null}) {
+    async _setContentTermsOrKanji(token, isTerms, definitions, {sentence=null, url=null, index=0, scroll=null}) {
         if (typeof url !== 'string') { url = ''; }
         sentence = this._getValidSentenceData(sentence);
-
-        if (!Array.isArray(definitions)) {
-            definitions = await this._findDefinitions(isTerms, source, urlSearchParams);
-            if (this._setContentToken !== token) { return; }
-        }
 
         this._setEventListenersActive(false);
 
