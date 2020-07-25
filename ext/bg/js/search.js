@@ -177,6 +177,7 @@ class DisplaySearch extends Display {
             history: cause !== 'mouse',
             type,
             source: textSource.text(),
+            wildcards: false,
             definitions,
             context: {
                 sentence,
@@ -258,9 +259,10 @@ class DisplaySearch extends Display {
                 this.setContent({
                     focus: false,
                     history: false,
-                    definitions,
-                    source: query,
                     type: 'terms',
+                    source: query,
+                    wildcards: false,
+                    definitions,
                     context: {
                         sentence: {text: query, offset: 0},
                         url: window.location.href

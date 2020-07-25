@@ -431,6 +431,7 @@ class Frontend {
                 history: false,
                 type,
                 source: textSource.text(),
+                wildcards: false,
                 definitions,
                 context: {
                     sentence,

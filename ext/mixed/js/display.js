@@ -208,7 +208,7 @@ class Display {
     }
 
     setContent(details) {
-        const {focus, history, type, source, definitions, context} = details;
+        const {focus, history, type, source, wildcards, definitions, context} = details;
 
         if (focus !== false) {
             window.focus();
@@ -216,6 +216,7 @@ class Display {
 
         const params = new URLSearchParams();
         params.append('query', source);
+        if (!wildcards) { params.append('wildcards', 'off'); }
         if (type !== 'terms') { params.append('type', type); }
         const state = context;
         const details0 = {definitions};
@@ -346,9 +347,9 @@ class Display {
         this._setContentToken = token;
         try {
             const {state, details} = this._history;
-            const params = new URLSearchParams(location.search);
-            const source = params.get('query');
-            let type = params.get('type');
+            const urlSearchParams = new URLSearchParams(location.search);
+            const source = urlSearchParams.get('query');
+            let type = urlSearchParams.get('type');
             if (type === null) { type = 'terms'; }
 
             const definitions = isObject(details) ? details.definitions : null;
@@ -359,7 +360,7 @@ class Display {
             switch (type) {
                 case 'terms':
                 case 'kanji':
-                    await this._setContentTermsOrKanji(token, isTerms, source, definitions, state);
+                    await this._setContentTermsOrKanji(token, isTerms, source, definitions, urlSearchParams, state);
                     break;
             }
         } catch (e) {
@@ -409,6 +410,7 @@ class Display {
                 history: true,
                 type: 'kanji',
                 source,
+                wildcards: false,
                 definitions,
                 context
             });
@@ -462,6 +464,7 @@ class Display {
                 history: true,
                 type: 'terms',
                 source: textSource.text(),
+                wildcards: false,
                 definitions,
                 context
             });
@@ -620,10 +623,22 @@ class Display {
         }
     }
 
-    async _findDefinitions(isTerms, source) {
+    async _findDefinitions(isTerms, source, urlSearchParams) {
         const optionsContext = this.getOptionsContext();
         if (isTerms) {
             const findDetails = {};
+            if (urlSearchParams.get('wildcards') !== 'off') {
+                const match = /^([*\uff0a]*)([\w\W]*?)([*\uff0a]*)$/.exec(source);
+                if (match !== null) {
+                    if (match[1]) {
+                        findDetails.wildcard = 'prefix';
+                    } else if (match[3]) {
+                        findDetails.wildcard = 'suffix';
+                    }
+                    source = match[2];
+                }
+            }
+
             const {definitions} = await api.termsFind(source, findDetails, optionsContext);
             return definitions;
         } else {
@@ -632,12 +647,12 @@ class Display {
         }
     }
 
-    async _setContentTermsOrKanji(token, isTerms, source, definitions, {sentence=null, url=null, index=0, scroll=null}) {
+    async _setContentTermsOrKanji(token, isTerms, source, definitions, urlSearchParams, {sentence=null, url=null, index=0, scroll=null}) {
         if (typeof url !== 'string') { url = ''; }
         sentence = this._getValidSentenceData(sentence);
 
         if (!Array.isArray(definitions)) {
-            definitions = await this._findDefinitions(isTerms, source);
+            definitions = await this._findDefinitions(isTerms, source, urlSearchParams);
             if (this._setContentToken !== token) { return; }
         }
 
