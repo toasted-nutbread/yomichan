@@ -18,7 +18,6 @@
 /* global
  * AudioSystem
  * DOM
- * DisplayContext
  * DisplayGenerator
  * DisplayHistory
  * Frontend
