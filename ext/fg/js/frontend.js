@@ -427,11 +427,11 @@ class Frontend {
             textSource,
             optionsContext,
             {
-                type,
-                definitions,
                 focus,
                 history: false,
+                type,
                 source: textSource.text(),
+                definitions,
                 context: {
                     sentence,
                     url

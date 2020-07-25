@@ -173,11 +173,11 @@ class DisplaySearch extends Display {
 
     _onQueryParserSearch({type, definitions, sentence, cause, textSource}) {
         this.setContent({
-            type,
-            definitions,
             focus: false,
             history: cause !== 'mouse',
+            type,
             source: textSource.text(),
+            definitions,
             context: {
                 sentence,
                 url: window.location.href
@@ -257,11 +257,11 @@ class DisplaySearch extends Display {
             if (valid) {
                 const {definitions} = await api.termsFind(query, details, this.getOptionsContext());
                 this.setContent({
-                    definitions,
-                    type: 'terms',
                     focus: false,
                     history: false,
+                    definitions,
                     source: query,
+                    type: 'terms',
                     context: {
                         sentence: {text: query, offset: 0},
                         url: window.location.href

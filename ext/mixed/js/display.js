@@ -208,7 +208,7 @@ class Display {
         try {
             this._mediaLoader.unloadAll();
 
-            const {type, source, definitions, context, focus, history} = details;
+            const {focus, history, type, source, definitions, context} = details;
 
             if (!history) {
                 this._context = new DisplayContext(type, source, definitions, context);
@@ -380,11 +380,11 @@ class Display {
             const source = link.textContent;
             const definitions = await api.kanjiFind(source, this.getOptionsContext());
             this.setContent({
-                type: 'kanji',
-                definitions,
                 focus: false,
                 history: true,
+                type: 'kanji',
                 source,
+                definitions,
                 context
             });
         } catch (error) {
@@ -432,11 +432,11 @@ class Display {
             };
 
             this.setContent({
-                type: 'terms',
                 focus: false,
                 history: true,
-                definitions,
+                type: 'terms',
                 source: textSource.text(),
+                definitions,
                 context
             });
         } catch (error) {
@@ -745,15 +745,14 @@ class Display {
             scroll: this._windowScroll.y
         });
         const previousContext = this._context.previous;
-        const details = {
-            type: previousContext.type,
-            definitions: previousContext.definitions,
+        this.setContent({
             focus: false,
             history: false,
+            type: previousContext.type,
             source: previousContext.source,
+            definitions: previousContext.definitions,
             context: previousContext.context
-        };
-        this.setContent(details);
+        });
     }
 
     _nextTermView() {
@@ -763,15 +762,14 @@ class Display {
             scroll: this._windowScroll.y
         });
         const nextContext = this._context.next;
-        const details = {
-            type: nextContext.type,
-            definitions: nextContext.definitions,
+        this.setContent({
             focus: false,
             history: false,
+            type: nextContext.type,
             source: nextContext.source,
+            definitions: nextContext.definitions,
             context: nextContext.context
-        };
-        this.setContent(details);
+        });
     }
 
     _noteTryAdd(mode) {
