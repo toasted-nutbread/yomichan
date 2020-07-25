@@ -360,9 +360,6 @@ class Display extends EventDispatcher {
             const isTerms = (type === 'terms');
             const eventArgs = {type, source, urlSearchParams, token};
 
-            let {state, details} = this._history;
-            if (!isObject(state)) { state = {}; }
-
             this._historyHasChanged = true;
             this._mediaLoader.unloadAll();
 
@@ -370,11 +367,29 @@ class Display extends EventDispatcher {
                 case 'terms':
                 case 'kanji':
                     {
-                        let definitions = isObject(details) ? details.definitions : null;
+                        let {state, details} = this._history;
+                        let changeHistory = false;
+                        if (!isObject(details)) {
+                            details = {};
+                            changeHistory = true;
+                        }
+                        if (!isObject(state)) {
+                            state = {};
+                            changeHistory = true;
+                        }
+
+                        let definitions = details.definitions;
                         if (!Array.isArray(definitions)) {
                             definitions = await this._findDefinitions(isTerms, source, urlSearchParams);
                             if (this._setContentToken !== token) { return; }
+                            details.definitions = definitions;
+                            changeHistory = true;
                         }
+
+                        if (changeHistory) {
+                            this._historyStateUpdate(state, details);
+                        }
+
                         eventArgs.definitions = definitions;
                         this.trigger('contentUpdating', eventArgs);
                         await this._setContentTermsOrKanji(token, isTerms, definitions, state);
@@ -1077,11 +1092,13 @@ class Display extends EventDispatcher {
         return isObject(this._history.state);
     }
 
-    _historyStateUpdate(state) {
+    _historyStateUpdate(state, details) {
         const historyChangeIgnorePre = this._historyChangeIgnore;
         try {
             this._historyChangeIgnore = true;
-            this._history.replaceState(state, this._history.details);
+            if (typeof state === 'undefined') { state = this._history.state; }
+            if (typeof details === 'undefined') { details = this._history.details; }
+            this._history.replaceState(state, details);
         } finally {
             this._historyChangeIgnore = historyChangeIgnorePre;
         }
