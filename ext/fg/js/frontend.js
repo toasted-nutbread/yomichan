@@ -430,7 +430,7 @@ class Frontend {
                 type,
                 definitions,
                 focus,
-                disableHistory: true,
+                history: false,
                 context: {
                     sentence,
                     url

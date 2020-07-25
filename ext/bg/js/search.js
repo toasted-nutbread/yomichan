@@ -176,7 +176,7 @@ class DisplaySearch extends Display {
             type,
             definitions,
             focus: false,
-            disableHistory: cause === 'mouse',
+            history: cause !== 'mouse',
             context: {
                 sentence,
                 url: window.location.href
@@ -259,7 +259,7 @@ class DisplaySearch extends Display {
                     definitions,
                     type: 'terms',
                     focus: false,
-                    disableHistory: true,
+                    history: false,
                     context: {
                         sentence: {text: query, offset: 0},
                         url: window.location.href

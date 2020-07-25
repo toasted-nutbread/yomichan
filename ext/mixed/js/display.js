@@ -208,9 +208,9 @@ class Display {
         try {
             this._mediaLoader.unloadAll();
 
-            const {type, definitions, context, focus, disableHistory} = details;
+            const {type, definitions, context, focus, history} = details;
 
-            if (disableHistory) {
+            if (!history) {
                 this._context = new DisplayContext(type, definitions, context);
             } else {
                 this._context = DisplayContext.push(this._context, type, definitions, context);
@@ -382,7 +382,7 @@ class Display {
                 type: 'kanji',
                 definitions,
                 focus: false,
-                disableHistory: false,
+                history: true,
                 context
             });
         } catch (error) {
@@ -432,7 +432,7 @@ class Display {
             this.setContent({
                 type: 'terms',
                 focus: false,
-                disableHistory: false,
+                history: true,
                 definitions,
                 context
             });
@@ -746,7 +746,7 @@ class Display {
             type: previousContext.type,
             definitions: previousContext.definitions,
             focus: false,
-            disableHistory: true,
+            history: false,
             context: previousContext.context
         };
         this.setContent(details);
@@ -763,7 +763,7 @@ class Display {
             type: nextContext.type,
             definitions: nextContext.definitions,
             focus: false,
-            disableHistory: true,
+            history: false,
             context: nextContext.context
         };
         this.setContent(details);
