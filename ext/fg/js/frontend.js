@@ -431,6 +431,7 @@ class Frontend {
                 definitions,
                 focus,
                 history: false,
+                source: textSource.text(),
                 context: {
                     sentence,
                     url

@@ -208,12 +208,12 @@ class Display {
         try {
             this._mediaLoader.unloadAll();
 
-            const {type, definitions, context, focus, history} = details;
+            const {type, source, definitions, context, focus, history} = details;
 
             if (!history) {
-                this._context = new DisplayContext(type, definitions, context);
+                this._context = new DisplayContext(type, source, definitions, context);
             } else {
-                this._context = DisplayContext.push(this._context, type, definitions, context);
+                this._context = DisplayContext.push(this._context, type, source, definitions, context);
             }
 
             if (focus !== false) {
@@ -377,12 +377,14 @@ class Display {
                 url: this._context.get('url')
             };
 
-            const definitions = await api.kanjiFind(link.textContent, this.getOptionsContext());
+            const source = link.textContent;
+            const definitions = await api.kanjiFind(source, this.getOptionsContext());
             this.setContent({
                 type: 'kanji',
                 definitions,
                 focus: false,
                 history: true,
+                source,
                 context
             });
         } catch (error) {
@@ -434,6 +436,7 @@ class Display {
                 focus: false,
                 history: true,
                 definitions,
+                source: textSource.text(),
                 context
             });
         } catch (error) {
@@ -747,6 +750,7 @@ class Display {
             definitions: previousContext.definitions,
             focus: false,
             history: false,
+            source: previousContext.source,
             context: previousContext.context
         };
         this.setContent(details);
@@ -764,6 +768,7 @@ class Display {
             definitions: nextContext.definitions,
             focus: false,
             history: false,
+            source: nextContext.source,
             context: nextContext.context
         };
         this.setContent(details);

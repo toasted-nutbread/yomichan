@@ -171,12 +171,13 @@ class DisplaySearch extends Display {
 
     // Private
 
-    _onQueryParserSearch({type, definitions, sentence, cause}) {
+    _onQueryParserSearch({type, definitions, sentence, cause, textSource}) {
         this.setContent({
             type,
             definitions,
             focus: false,
             history: cause !== 'mouse',
+            source: textSource.text(),
             context: {
                 sentence,
                 url: window.location.href
@@ -260,6 +261,7 @@ class DisplaySearch extends Display {
                     type: 'terms',
                     focus: false,
                     history: false,
+                    source: query,
                     context: {
                         sentence: {text: query, offset: 0},
                         url: window.location.href
