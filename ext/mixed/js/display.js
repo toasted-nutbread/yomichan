@@ -620,17 +620,24 @@ class Display {
         }
     }
 
+    async _findDefinitions(isTerms, source) {
+        const optionsContext = this.getOptionsContext();
+        if (isTerms) {
+            const findDetails = {};
+            const {definitions} = await api.termsFind(source, findDetails, optionsContext);
+            return definitions;
+        } else {
+            const definitions = await api.kanjiFind(source, optionsContext);
+            return definitions;
+        }
+    }
+
     async _setContentTermsOrKanji(token, isTerms, source, definitions, {sentence=null, url=null, index=0, scroll=null}) {
         if (typeof url !== 'string') { url = ''; }
         sentence = this._getValidSentenceData(sentence);
 
         if (!Array.isArray(definitions)) {
-            const optionsContext = this.getOptionsContext();
-            if (isTerms) {
-                ({definitions} = await api.termsFind(source, {}, optionsContext));
-            } else {
-                definitions = await api.kanjiFind(source, optionsContext);
-            }
+            definitions = await this._findDefinitions(isTerms, source);
             if (this._setContentToken !== token) { return; }
         }
 
