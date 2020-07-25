@@ -67,6 +67,7 @@ class Display extends EventDispatcher {
         this._messageHandlers = new Map();
         this._history = new DisplayHistory(true);
         this._historyChangeIgnore = false;
+        this._historyHasChanged = false;
 
         this.registerActions([
             ['close',               () => { this.onEscape(); }],
@@ -223,7 +224,7 @@ class Display extends EventDispatcher {
         const details0 = {definitions};
         const url = `${location.pathname}?${params.toString()}`;
 
-        if (history && this._historyHasState()) {
+        if (history && this._historyHasChanged) {
             this._history.pushState(state, details0, url);
         } else {
             this._history.clear();
@@ -359,6 +360,7 @@ class Display extends EventDispatcher {
             let {state, details} = this._history;
             if (!isObject(state)) { state = {}; }
 
+            this._historyHasChanged = true;
             this._mediaLoader.unloadAll();
 
             switch (type) {
