@@ -223,10 +223,7 @@ class Display {
             switch (type) {
                 case 'terms':
                 case 'kanji':
-                    {
-                        const {sentence, url, index=0, scroll=null} = context;
-                        await this._setContentTermsOrKanji((type === 'terms'), definitions, sentence, url, index, scroll, token);
-                    }
+                    await this._setContentTermsOrKanji(token, (type === 'terms'), definitions, context);
                     break;
             }
         } catch (e) {
@@ -593,7 +590,10 @@ class Display {
         }
     }
 
-    async _setContentTermsOrKanji(isTerms, definitions, sentence, url, index, scroll, token) {
+    async _setContentTermsOrKanji(token, isTerms, definitions, {sentence=null, url=null, index=0, scroll=null}) {
+        if (typeof url !== 'string') { url = ''; }
+        sentence = this._getValidSentenceData(sentence);
+
         this._setEventListenersActive(false);
 
         this._definitions = definitions;
@@ -911,6 +911,13 @@ class Display {
     _getEntry(index) {
         const entries = this._container.querySelectorAll('.entry');
         return index >= 0 && index < entries.length ? entries[index] : null;
+    }
+
+    _getValidSentenceData(sentence) {
+        let {text, offset} = (isObject(sentence) ? sentence : {});
+        if (typeof text !== 'string') { text = ''; }
+        if (typeof offset !== 'number') { offset = 0; }
+        return {text, offset};
     }
 
     _clozeBuild({text, offset}, source) {
