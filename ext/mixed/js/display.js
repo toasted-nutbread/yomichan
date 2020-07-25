@@ -738,37 +738,32 @@ class Display {
     }
 
     _sourceTermView() {
-        if (!this._context || !this._context.previous) { return; }
-        this._context.update({
-            index: this._index,
-            scroll: this._windowScroll.y
-        });
-        const previousContext = this._context.previous;
-        this.setContent({
-            focus: false,
-            history: false,
-            type: previousContext.type,
-            source: previousContext.source,
-            definitions: previousContext.definitions,
-            context: previousContext.context
-        });
+        this._relativeTermView(false);
     }
 
     _nextTermView() {
-        if (!this._context || !this._context.next) { return; }
+        this._relativeTermView(true);
+    }
+
+    _relativeTermView(next) {
+        if (this._context === null) { return false; }
+
+        const relative = next ? this._context.next : this._context.previous;
+        if (!relative) { return false; }
+
         this._context.update({
             index: this._index,
             scroll: this._windowScroll.y
         });
-        const nextContext = this._context.next;
         this.setContent({
             focus: false,
             history: false,
-            type: nextContext.type,
-            source: nextContext.source,
-            definitions: nextContext.definitions,
-            context: nextContext.context
+            type: relative.type,
+            source: relative.source,
+            definitions: relative.definitions,
+            context: relative.context
         });
+        return true;
     }
 
     _noteTryAdd(mode) {
