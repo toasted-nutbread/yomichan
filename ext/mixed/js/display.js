@@ -220,7 +220,10 @@ class Display {
             switch (type) {
                 case 'terms':
                 case 'kanji':
-                    await this._setContentTermsOrKanji(type, definitions, context, token);
+                    {
+                        const {focus, sentence, url, index, scroll} = context;
+                        await this._setContentTermsOrKanji(type, definitions, focus, sentence, url, index, scroll, token);
+                    }
                     break;
             }
         } catch (e) {
@@ -574,7 +577,7 @@ class Display {
         }
     }
 
-    async _setContentTermsOrKanji(type, definitions, {focus, sentence, url, index, scroll}, token) {
+    async _setContentTermsOrKanji(type, definitions, focus, sentence, url, index, scroll, token) {
         const isTerms = (type === 'terms');
         this._setEventListenersActive(false);
 
