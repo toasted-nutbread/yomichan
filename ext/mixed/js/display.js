@@ -20,6 +20,7 @@
  * DOM
  * DisplayContext
  * DisplayGenerator
+ * DisplayHistory
  * Frontend
  * MediaLoader
  * PopupFactory
@@ -64,6 +65,8 @@ class Display {
         this._hotkeys = new Map();
         this._actions = new Map();
         this._messageHandlers = new Map();
+        this._history = new DisplayHistory(true);
+        this._historyChangeIgnore = false;
 
         this.registerActions([
             ['close',               () => { this.onEscape(); }],
@@ -116,10 +119,13 @@ class Display {
     async prepare() {
         this._setInteractive(true);
         await this._displayGenerator.prepare();
+        this._history.prepare();
+        this._history.on('stateChanged', this._onStateChanged.bind(this));
         yomichan.on('extensionUnloaded', this._onExtensionUnloaded.bind(this));
         api.crossFrame.registerHandlers([
             ['popupMessage', {async: 'dynamic', handler: this._onMessage.bind(this)}]
         ]);
+        this._onStateChanged();
     }
 
     onError(error) {
@@ -202,36 +208,30 @@ class Display {
         }
     }
 
-    async setContent(details) {
-        const token = {}; // Unique identifier token
-        this._setContentToken = token;
-        try {
-            this._mediaLoader.unloadAll();
+    setContent(details) {
+        const {focus, history, type, source, definitions, context} = details;
 
-            const {focus, history, type, source, definitions, context} = details;
+        if (!history) {
+            this._context = new DisplayContext(type, source, definitions, context);
+        } else {
+            this._context = DisplayContext.push(this._context, type, source, definitions, context);
+        }
 
-            if (!history) {
-                this._context = new DisplayContext(type, source, definitions, context);
-            } else {
-                this._context = DisplayContext.push(this._context, type, source, definitions, context);
-            }
+        if (focus !== false) {
+            window.focus();
+        }
 
-            if (focus !== false) {
-                window.focus();
-            }
+        const params = new URLSearchParams();
+        params.append('query', source);
+        if (type !== 'terms') { params.append('type', type); }
+        const state = context;
+        const details0 = {definitions};
+        const url = `${location.pathname}?${params.toString()}`;
 
-            switch (type) {
-                case 'terms':
-                case 'kanji':
-                    await this._setContentTermsOrKanji(token, (type === 'terms'), definitions, context);
-                    break;
-            }
-        } catch (e) {
-            this.onError(e);
-        } finally {
-            if (this._setContentToken === token) {
-                this._setContentToken = null;
-            }
+        if (history && this._historyHasState()) {
+            this._history.pushState(state, details0, url);
+        } else {
+            this._history.replaceState(state, details0, url);
         }
     }
 
@@ -344,6 +344,38 @@ class Display {
     }
 
     // Private
+
+    async _onStateChanged() {
+        if (this._historyChangeIgnore || !this._historyHasState()) { return; }
+
+        const token = {}; // Unique identifier token
+        this._setContentToken = token;
+        try {
+            const {state, details} = this._history;
+            const params = new URLSearchParams(location.search);
+            // const query = params.get('query');
+            let type = params.get('type');
+            if (type === null) { type = 'terms'; }
+
+            const {definitions} = isObject(details) ? details : {definitions: []}; // TODO : reload definitions if not available
+            const isTerms = (type === 'terms');
+
+            this._mediaLoader.unloadAll();
+
+            switch (type) {
+                case 'terms':
+                case 'kanji':
+                    await this._setContentTermsOrKanji(token, isTerms, definitions, state);
+                    break;
+            }
+        } catch (e) {
+            this.onError(e);
+        } finally {
+            if (this._setContentToken === token) {
+                this._setContentToken = null;
+            }
+        }
+    }
 
     _onExtensionUnloaded() {
         this._setContentExtensionUnloaded();
@@ -1006,5 +1038,9 @@ class Display {
         if (entry !== null && entry.dataset.type === 'term') {
             this._audioPlay(this._definitions[index], this._getFirstExpressionIndex(), index);
         }
+    }
+
+    _historyHasState() {
+        return isObject(this._history.state);
     }
 }

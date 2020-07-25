@@ -158,10 +158,10 @@ class DisplaySearch extends Display {
         }
     }
 
-    async setContent(...args) {
+    setContent(...args) {
         this._query.blur();
         this._closePopups();
-        return await super.setContent(...args);
+        return super.setContent(...args);
     }
 
     clearContent() {
