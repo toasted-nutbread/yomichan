@@ -212,10 +212,8 @@ class Display {
 
             switch (type) {
                 case 'terms':
-                    await this._setContentTerms(definitions, context, token);
-                    break;
                 case 'kanji':
-                    await this._setContentKanji(definitions, context, token);
+                    await this._setContentTermsOrKanji(type, definitions, context, token);
                     break;
             }
         } catch (e) {
@@ -569,9 +567,8 @@ class Display {
         }
     }
 
-    async _setContentTerms(definitions, context, token) {
-        if (!context) { throw new Error('Context expected'); }
-
+    async _setContentTermsOrKanji(type, definitions, context, token) {
+        const isTerms = (type === 'terms');
         this._setEventListenersActive(false);
 
         if (context.focus !== false) {
@@ -581,13 +578,13 @@ class Display {
         this._definitions = definitions;
         if (context.disableHistory) {
             delete context.disableHistory;
-            this._context = new DisplayContext('terms', definitions, context);
+            this._context = new DisplayContext(type, definitions, context);
         } else {
-            this._context = DisplayContext.push(this._context, 'terms', definitions, context);
+            this._context = DisplayContext.push(this._context, type, definitions, context);
         }
 
         for (const definition of definitions) {
-            definition.cloze = this._clozeBuild(context.sentence, definition.source);
+            definition.cloze = this._clozeBuild(context.sentence, isTerms ? definition.source : definition.character);
             definition.url = context.url;
         }
 
@@ -603,69 +600,29 @@ class Display {
                 if (this._setContentToken !== token) { return; }
             }
 
-            const entry = this._displayGenerator.createTermEntry(definitions[i]);
+            const entry = (
+                isTerms ?
+                this._displayGenerator.createTermEntry(definitions[i]) :
+                this._displayGenerator.createKanjiEntry(definitions[i])
+            );
             container.appendChild(entry);
         }
 
         const {index, scroll} = context;
         this._entryScrollIntoView(index || 0, scroll);
 
-        if (this._options.audio.enabled && this._options.audio.autoPlay) {
+        if (
+            isTerms &&
+            this._options.audio.enabled &&
+            this._options.audio.autoPlay
+        ) {
             this.autoPlayAudio();
         }
 
         this._setEventListenersActive(true);
 
-        const states = await this._getDefinitionsAddable(definitions, ['term-kanji', 'term-kana']);
-        if (this._setContentToken !== token) { return; }
-
-        this._updateAdderButtons(states);
-    }
-
-    async _setContentKanji(definitions, context, token) {
-        if (!context) { throw new Error('Context expected'); }
-
-        this._setEventListenersActive(false);
-
-        if (context.focus !== false) {
-            window.focus();
-        }
-
-        this._definitions = definitions;
-        if (context.disableHistory) {
-            delete context.disableHistory;
-            this._context = new DisplayContext('kanji', definitions, context);
-        } else {
-            this._context = DisplayContext.push(this._context, 'kanji', definitions, context);
-        }
-
-        for (const definition of definitions) {
-            definition.cloze = this._clozeBuild(context.sentence, definition.character);
-            definition.url = context.url;
-        }
-
-        this._updateNavigation(this._context.previous, this._context.next);
-        this._setNoContentVisible(definitions.length === 0);
-
-        const container = this._container;
-        container.textContent = '';
-
-        for (let i = 0, ii = definitions.length; i < ii; ++i) {
-            if (i > 0) {
-                await promiseTimeout(1);
-                if (this._setContentToken !== token) { return; }
-            }
-
-            const entry = this._displayGenerator.createKanjiEntry(definitions[i]);
-            container.appendChild(entry);
-        }
-
-        const {index, scroll} = context;
-        this._entryScrollIntoView(index || 0, scroll);
-
-        this._setEventListenersActive(true);
-
-        const states = await this._getDefinitionsAddable(definitions, ['kanji']);
+        const modes = isTerms ? ['term-kanji', 'term-kana'] : ['kanji'];
+        const states = await this._getDefinitionsAddable(definitions, modes);
         if (this._setContentToken !== token) { return; }
 
         this._updateAdderButtons(states);
