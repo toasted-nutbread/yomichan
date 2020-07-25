@@ -347,11 +347,11 @@ class Display {
         try {
             const {state, details} = this._history;
             const params = new URLSearchParams(location.search);
-            // const query = params.get('query');
+            const source = params.get('query');
             let type = params.get('type');
             if (type === null) { type = 'terms'; }
 
-            const {definitions} = isObject(details) ? details : {definitions: []}; // TODO : reload definitions if not available
+            const definitions = isObject(details) ? details.definitions : null;
             const isTerms = (type === 'terms');
 
             this._mediaLoader.unloadAll();
@@ -359,7 +359,7 @@ class Display {
             switch (type) {
                 case 'terms':
                 case 'kanji':
-                    await this._setContentTermsOrKanji(token, isTerms, definitions, state);
+                    await this._setContentTermsOrKanji(token, isTerms, source, definitions, state);
                     break;
             }
         } catch (e) {
@@ -620,9 +620,19 @@ class Display {
         }
     }
 
-    async _setContentTermsOrKanji(token, isTerms, definitions, {sentence=null, url=null, index=0, scroll=null}) {
+    async _setContentTermsOrKanji(token, isTerms, source, definitions, {sentence=null, url=null, index=0, scroll=null}) {
         if (typeof url !== 'string') { url = ''; }
         sentence = this._getValidSentenceData(sentence);
+
+        if (!Array.isArray(definitions)) {
+            const optionsContext = this.getOptionsContext();
+            if (isTerms) {
+                ({definitions} = await api.termsFind(source, {}, optionsContext));
+            } else {
+                definitions = await api.kanjiFind(source, optionsContext);
+            }
+            if (this._setContentToken !== token) { return; }
+        }
 
         this._setEventListenersActive(false);
 
