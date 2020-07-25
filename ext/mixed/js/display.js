@@ -38,7 +38,6 @@ class Display {
         this._definitions = [];
         this._optionsContext = {depth: 0, url: window.location.href};
         this._options = null;
-        this._context = null;
         this._index = 0;
         this._audioPlaying = null;
         this._audioFallback = null;
@@ -211,12 +210,6 @@ class Display {
     setContent(details) {
         const {focus, history, type, source, definitions, context} = details;
 
-        if (!history) {
-            this._context = new DisplayContext(type, source, definitions, context);
-        } else {
-            this._context = DisplayContext.push(this._context, type, source, definitions, context);
-        }
-
         if (focus !== false) {
             window.focus();
         }
@@ -231,6 +224,7 @@ class Display {
         if (history && this._historyHasState()) {
             this._history.pushState(state, details0, url);
         } else {
+            this._history.clear();
             this._history.replaceState(state, details0, url);
         }
     }
@@ -394,16 +388,18 @@ class Display {
     async _onKanjiLookup(e) {
         try {
             e.preventDefault();
-            if (!this._context) { return; }
+            if (!this._historyHasState()) { return; }
 
             const link = e.target;
-            this._context.update({
-                index: this._entryIndexFind(link),
-                scroll: this._windowScroll.y
-            });
+            const {state} = this._history;
+
+            state.index = this._entryIndexFind(link);
+            state.scroll = this._windowScroll.y;
+            this._historyStateUpdate(state);
+
             const context = {
-                sentence: this._context.get('sentence'),
-                url: this._context.get('url')
+                sentence: state.sentence,
+                url: state.url
             };
 
             const source = link.textContent;
@@ -439,10 +435,12 @@ class Display {
 
     async _onTermLookup(e) {
         try {
-            if (!this._context) { return; }
+            if (!this._historyHasState()) { return; }
 
             const termLookupResults = await this._termLookup(e);
-            if (!termLookupResults) { return; }
+            if (!termLookupResults || !this._historyHasState()) { return; }
+
+            const {state} = this._history;
             const {textSource, definitions} = termLookupResults;
 
             const scannedElement = e.target;
@@ -450,13 +448,13 @@ class Display {
             const layoutAwareScan = this._options.scanning.layoutAwareScan;
             const sentence = docSentenceExtract(textSource, sentenceExtent, layoutAwareScan);
 
-            this._context.update({
-                index: this._entryIndexFind(scannedElement),
-                scroll: this._windowScroll.y
-            });
+            state.index = this._entryIndexFind(scannedElement);
+            state.scroll = this._windowScroll.y;
+            this._historyStateUpdate(state);
+
             const context = {
                 sentence,
-                url: this._context.get('url')
+                url: state.url
             };
 
             this.setContent({
@@ -635,7 +633,7 @@ class Display {
             definition.url = url;
         }
 
-        this._updateNavigation(this._context.previous, this._context.next);
+        this._updateNavigation(this._history.hasPrevious(), this._history.hasNext());
         this._setNoContentVisible(definitions.length === 0);
 
         const container = this._container;
@@ -778,24 +776,11 @@ class Display {
     }
 
     _relativeTermView(next) {
-        if (this._context === null) { return false; }
-
-        const relative = next ? this._context.next : this._context.previous;
-        if (!relative) { return false; }
-
-        this._context.update({
-            index: this._index,
-            scroll: this._windowScroll.y
-        });
-        this.setContent({
-            focus: false,
-            history: false,
-            type: relative.type,
-            source: relative.source,
-            definitions: relative.definitions,
-            context: relative.context
-        });
-        return true;
+        if (next) {
+            return this._history.hasNext() && this._history.forward();
+        } else {
+            return this._history.hasPrevious() && this._history.back();
+        }
     }
 
     _noteTryAdd(mode) {
@@ -1042,5 +1027,15 @@ class Display {
 
     _historyHasState() {
         return isObject(this._history.state);
+    }
+
+    _historyStateUpdate(state) {
+        const historyChangeIgnorePre = this._historyChangeIgnore;
+        try {
+            this._historyChangeIgnore = true;
+            this._history.replaceState(state, this._history.details);
+        } finally {
+            this._historyChangeIgnore = historyChangeIgnorePre;
+        }
     }
 }
