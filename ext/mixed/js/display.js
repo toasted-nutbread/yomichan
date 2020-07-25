@@ -405,7 +405,6 @@ class Display {
                 scroll: this._windowScroll.y
             });
             const context = {
-                disableScroll: false,
                 disableHistory: false,
                 sentence,
                 url: this._context.get('url'),
@@ -606,13 +605,8 @@ class Display {
             container.appendChild(entry);
         }
 
-        const {index, scroll, disableScroll} = context;
-        if (!disableScroll) {
-            this._entryScrollIntoView(index || 0, scroll);
-        } else {
-            delete context.disableScroll;
-            this._entrySetCurrent(index || 0);
-        }
+        const {index, scroll} = context;
+        this._entryScrollIntoView(index || 0, scroll);
 
         if (this._options.audio.enabled && this._options.audio.autoPlay) {
             this.autoPlayAudio();
