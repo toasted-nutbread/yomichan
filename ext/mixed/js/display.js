@@ -210,6 +210,13 @@ class Display {
 
             const {definitions, context} = details;
 
+            if (context.disableHistory) {
+                delete context.disableHistory;
+                this._context = new DisplayContext(type, definitions, context);
+            } else {
+                this._context = DisplayContext.push(this._context, type, definitions, context);
+            }
+
             switch (type) {
                 case 'terms':
                 case 'kanji':
@@ -576,12 +583,6 @@ class Display {
         }
 
         this._definitions = definitions;
-        if (context.disableHistory) {
-            delete context.disableHistory;
-            this._context = new DisplayContext(type, definitions, context);
-        } else {
-            this._context = DisplayContext.push(this._context, type, definitions, context);
-        }
 
         for (const definition of definitions) {
             definition.cloze = this._clozeBuild(context.sentence, isTerms ? definition.source : definition.character);
