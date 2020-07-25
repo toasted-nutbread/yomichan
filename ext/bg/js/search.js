@@ -108,6 +108,8 @@ class DisplaySearch extends Display {
 
         await this._prepareNestedPopups();
 
+        this.initializeState();
+
         this._isPrepared = true;
     }
 

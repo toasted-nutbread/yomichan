@@ -126,6 +126,9 @@ class Display extends EventDispatcher {
         api.crossFrame.registerHandlers([
             ['popupMessage', {async: 'dynamic', handler: this._onMessage.bind(this)}]
         ]);
+    }
+
+    initializeState() {
         this._onStateChanged();
     }
 
