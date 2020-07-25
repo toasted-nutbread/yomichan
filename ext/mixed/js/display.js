@@ -342,19 +342,22 @@ class Display extends EventDispatcher {
     // Private
 
     async _onStateChanged() {
-        if (this._historyChangeIgnore || !this._historyHasState()) { return; }
+        if (this._historyChangeIgnore) { return; }
 
         const token = {}; // Unique identifier token
         this._setContentToken = token;
         try {
-            const {state, details} = this._history;
             const urlSearchParams = new URLSearchParams(location.search);
             const source = urlSearchParams.get('query');
+            if (source === null) { return; }
             let type = urlSearchParams.get('type');
             if (type === null) { type = 'terms'; }
 
             const isTerms = (type === 'terms');
             const eventArgs = {type, source, urlSearchParams, token};
+
+            let {state, details} = this._history;
+            if (!isObject(state)) { state = {}; }
 
             this._mediaLoader.unloadAll();
 
@@ -661,7 +664,7 @@ class Display extends EventDispatcher {
     }
 
     async _setContentTermsOrKanji(token, isTerms, definitions, {sentence=null, url=null, index=0, scroll=null}) {
-        if (typeof url !== 'string') { url = ''; }
+        if (typeof url !== 'string') { url = window.location.href; }
         sentence = this._getValidSentenceData(sentence);
 
         this._setEventListenersActive(false);
