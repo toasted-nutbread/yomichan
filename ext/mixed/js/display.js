@@ -427,8 +427,7 @@ class Display {
             });
             const context = {
                 sentence,
-                url: this._context.get('url'),
-                previous: this._context
+                url: this._context.get('url')
             };
 
             this.setContent({
