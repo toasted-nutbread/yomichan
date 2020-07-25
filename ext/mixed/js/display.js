@@ -782,8 +782,8 @@ class Display {
                 }
             }
 
-            const context = await this._getNoteContext();
-            const noteId = await api.definitionAdd(definition, mode, context, details, this.getOptionsContext());
+            const noteContext = await this._getNoteContext();
+            const noteId = await api.definitionAdd(definition, mode, noteContext, details, this.getOptionsContext());
             if (noteId) {
                 const index = this._definitions.indexOf(definition);
                 const adderButton = this._adderButtonFind(index, mode);
@@ -947,8 +947,8 @@ class Display {
 
     async _getDefinitionsAddable(definitions, modes) {
         try {
-            const context = await this._getNoteContext();
-            return await api.definitionsAddable(definitions, modes, context, this.getOptionsContext());
+            const noteContext = await this._getNoteContext();
+            return await api.definitionsAddable(definitions, modes, noteContext, this.getOptionsContext());
         } catch (e) {
             return [];
         }
