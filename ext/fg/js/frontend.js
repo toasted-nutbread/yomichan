@@ -429,11 +429,11 @@ class Frontend {
             {
                 type,
                 definitions,
+                focus,
+                disableHistory: true,
                 context: {
                     sentence,
-                    url,
-                    focus,
-                    disableHistory: true
+                    url
                 }
             }
         );

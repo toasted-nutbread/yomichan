@@ -208,10 +208,9 @@ class Display {
         try {
             this._mediaLoader.unloadAll();
 
-            const {type, definitions, context, focus} = details;
+            const {type, definitions, context, focus, disableHistory} = details;
 
-            if (context.disableHistory) {
-                delete context.disableHistory;
+            if (disableHistory) {
                 this._context = new DisplayContext(type, definitions, context);
             } else {
                 this._context = DisplayContext.push(this._context, type, definitions, context);
@@ -379,7 +378,11 @@ class Display {
             };
 
             const definitions = await api.kanjiFind(link.textContent, this.getOptionsContext());
-            this.setContent({type: 'kanji', definitions, context});
+            this.setContent({
+                type: 'kanji',
+                definitions,
+                context
+            });
         } catch (error) {
             this.onError(error);
         }
@@ -419,13 +422,17 @@ class Display {
                 scroll: this._windowScroll.y
             });
             const context = {
-                disableHistory: false,
                 sentence,
                 url: this._context.get('url'),
                 previous: this._context
             };
 
-            this.setContent({type: 'terms', definitions, context});
+            this.setContent({
+                type: 'terms',
+                disableHistory: false,
+                definitions,
+                context
+            });
         } catch (error) {
             this.onError(error);
         }

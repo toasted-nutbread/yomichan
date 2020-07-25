@@ -175,9 +175,9 @@ class DisplaySearch extends Display {
         this.setContent({
             type,
             definitions,
+            focus: false,
+            disableHistory: cause === 'mouse',
             context: {
-                focus: false,
-                disableHistory: cause === 'mouse',
                 sentence,
                 url: window.location.href
             }
@@ -258,9 +258,9 @@ class DisplaySearch extends Display {
                 this.setContent({
                     definitions,
                     type: 'terms',
+                    focus: false,
+                    disableHistory: true,
                     context: {
-                        focus: false,
-                        disableHistory: true,
                         sentence: {text: query, offset: 0},
                         url: window.location.href
                     }
