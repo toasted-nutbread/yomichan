@@ -31,8 +31,9 @@
  * dynamicLoader
  */
 
-class Display {
+class Display extends EventDispatcher {
     constructor(spinner, container) {
+        super();
         this._spinner = spinner;
         this._container = container;
         this._definitions = [];
@@ -353,6 +354,7 @@ class Display {
             if (type === null) { type = 'terms'; }
 
             const isTerms = (type === 'terms');
+            const eventArgs = {type, source, urlSearchParams, token};
 
             this._mediaLoader.unloadAll();
 
@@ -365,11 +367,15 @@ class Display {
                             definitions = await this._findDefinitions(isTerms, source, urlSearchParams);
                             if (this._setContentToken !== token) { return; }
                         }
-
+                        eventArgs.definitions = definitions;
+                        this.trigger('contentUpdating', eventArgs);
                         await this._setContentTermsOrKanji(token, isTerms, definitions, state);
                     }
                     break;
             }
+
+            eventArgs.stale = (this._setContentToken !== token);
+            this.trigger('contentUpdated', eventArgs);
         } catch (e) {
             this.onError(e);
         } finally {
