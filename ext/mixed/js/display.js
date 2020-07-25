@@ -225,7 +225,7 @@ class Display {
                 case 'terms':
                 case 'kanji':
                     {
-                        const {sentence, url, index, scroll} = context;
+                        const {sentence, url, index=0, scroll=null} = context;
                         await this._setContentTermsOrKanji(type, definitions, sentence, url, index, scroll, token);
                     }
                     break;
@@ -612,7 +612,7 @@ class Display {
             container.appendChild(entry);
         }
 
-        this._entryScrollIntoView(index || 0, scroll);
+        this._entryScrollIntoView(index, scroll);
 
         if (
             isTerms &&
