@@ -223,7 +223,7 @@ class Display extends EventDispatcher {
     setContent(details) {
         const {focus, history, type, source, wildcards, state, content} = details;
 
-        if (focus !== false) {
+        if (focus) {
             window.focus();
         }
 
