@@ -233,7 +233,7 @@ class Display extends EventDispatcher {
         if (type !== 'terms') { params.append('type', type); }
         const state = context;
         const details0 = {definitions};
-        const url = `${location.pathname}?${params.toString()}`;
+        const url = `${location.protocol}//${location.host}${location.pathname}?${params.toString()}`;
 
         if (history && this._historyHasChanged) {
             this._history.pushState(state, details0, url);
