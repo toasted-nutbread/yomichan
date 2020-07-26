@@ -33,7 +33,7 @@ class DisplaySearch extends Display {
         this._intro = document.querySelector('#intro');
         this._clipboardMonitorEnable = document.querySelector('#clipboard-monitor-enable');
         this._wanakanaEnable = document.querySelector('#wanakana-enable');
-        this._queryText = '';
+        this._fullQuery = '';
         this._introVisible = true;
         this._introAnimationTimer = null;
         this._clipboardMonitor = new ClipboardMonitor({
@@ -324,8 +324,8 @@ class DisplaySearch extends Display {
                 // NOP
             }
         }
-        if (this._queryText === interpretedQuery) { return; }
-        this._queryText = interpretedQuery;
+        if (this._fullQuery === interpretedQuery) { return; }
+        this._fullQuery = interpretedQuery;
         this._query.value = interpretedQuery;
         this._queryParser.setText(interpretedQuery);
     }
