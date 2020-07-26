@@ -455,7 +455,7 @@ class Display extends EventDispatcher {
             const link = e.target;
             const {state} = this._history;
 
-            state.index = this._entryIndexFind(link);
+            state.focusEntry = this._entryIndexFind(link);
             state.scrollX = this._windowScroll.x;
             state.scrollY = this._windowScroll.y;
             this._historyStateUpdate(state);
@@ -471,6 +471,7 @@ class Display extends EventDispatcher {
                     wildcards: 'off'
                 },
                 state: {
+                    focusEntry: 0,
                     sentence: state.sentence,
                     url: state.url
                 },
@@ -514,7 +515,7 @@ class Display extends EventDispatcher {
             const layoutAwareScan = this._options.scanning.layoutAwareScan;
             const sentence = docSentenceExtract(textSource, sentenceExtent, layoutAwareScan);
 
-            state.index = this._entryIndexFind(scannedElement);
+            state.focusEntry = this._entryIndexFind(scannedElement);
             state.scrollX = this._windowScroll.x;
             state.scrollY = this._windowScroll.y;
             this._historyStateUpdate(state);
@@ -528,6 +529,7 @@ class Display extends EventDispatcher {
                     wildcards: 'off'
                 },
                 state: {
+                    focusEntry: 0,
                     sentence,
                     url: state.url
                 },
@@ -709,7 +711,7 @@ class Display extends EventDispatcher {
         }
     }
 
-    async _setContentTermsOrKanji(token, isTerms, definitions, {sentence=null, url=null, index=0, scrollX=null, scrollY=null}) {
+    async _setContentTermsOrKanji(token, isTerms, definitions, {sentence=null, url=null, focusEntry=null, scrollX=null, scrollY=null}) {
         if (typeof url !== 'string') { url = window.location.href; }
         sentence = this._getValidSentenceData(sentence);
 
@@ -742,8 +744,8 @@ class Display extends EventDispatcher {
             container.appendChild(entry);
         }
 
-        if (typeof index === 'number') {
-            this._focusEntry(index, false);
+        if (typeof focusEntry === 'number') {
+            this._focusEntry(focusEntry, false);
         }
         if (typeof scrollX === 'number' || typeof scrollY === 'number') {
             let {x, y} = this._windowScroll;
