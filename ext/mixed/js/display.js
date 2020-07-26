@@ -373,10 +373,10 @@ class Display extends EventDispatcher {
                 case 'terms':
                 case 'kanji':
                     {
-                        let {state, details} = this._history;
+                        let {state, content} = this._history;
                         let changeHistory = false;
-                        if (!isObject(details)) {
-                            details = {};
+                        if (!isObject(content)) {
+                            content = {};
                             changeHistory = true;
                         }
                         if (!isObject(state)) {
@@ -384,16 +384,16 @@ class Display extends EventDispatcher {
                             changeHistory = true;
                         }
 
-                        let definitions = details.definitions;
+                        let definitions = content.definitions;
                         if (!Array.isArray(definitions)) {
                             definitions = await this._findDefinitions(isTerms, source, urlSearchParams);
                             if (this._setContentToken !== token) { return; }
-                            details.definitions = definitions;
+                            content.definitions = definitions;
                             changeHistory = true;
                         }
 
                         if (changeHistory) {
-                            this._historyStateUpdate(state, details);
+                            this._historyStateUpdate(state, content);
                         }
 
                         eventArgs.definitions = definitions;
@@ -1098,13 +1098,13 @@ class Display extends EventDispatcher {
         return isObject(this._history.state);
     }
 
-    _historyStateUpdate(state, details) {
+    _historyStateUpdate(state, content) {
         const historyChangeIgnorePre = this._historyChangeIgnore;
         try {
             this._historyChangeIgnore = true;
             if (typeof state === 'undefined') { state = this._history.state; }
-            if (typeof details === 'undefined') { details = this._history.details; }
-            this._history.replaceState(state, details);
+            if (typeof content === 'undefined') { content = this._history.content; }
+            this._history.replaceState(state, content);
         } finally {
             this._historyChangeIgnore = historyChangeIgnorePre;
         }

@@ -31,8 +31,8 @@ class DisplayHistory extends EventDispatcher {
         return this._current.state;
     }
 
-    get details() {
-        return this._current.details;
+    get content() {
+        return this._current.content;
     }
 
     get useBrowserHistory() {
@@ -68,21 +68,21 @@ class DisplayHistory extends EventDispatcher {
         return this._go(true);
     }
 
-    pushState(state, details, url) {
+    pushState(state, content, url) {
         if (typeof url === 'undefined') { url = location.href; }
 
-        const entry = this._createHistoryEntry(null, url, state, details, this._current);
+        const entry = this._createHistoryEntry(null, url, state, content, this._current);
         this._current.next = entry;
         this._current = entry;
         this._updateHistoryFromCurrent(!this._useBrowserHistory);
     }
 
-    replaceState(state, details, url) {
+    replaceState(state, content, url) {
         if (typeof url === 'undefined') { url = location.href; }
 
         this._current.url = url;
         this._current.state = state;
-        this._current.details = details;
+        this._current.content = content;
         this._updateHistoryFromCurrent(true);
     }
 
@@ -147,11 +147,11 @@ class DisplayHistory extends EventDispatcher {
         // Fallback
         this._current.id = (typeof id === 'string' ? id : this._generateId());
         this._current.state = state;
-        this._current.details = null;
+        this._current.content = null;
         this._clear();
     }
 
-    _createHistoryEntry(id, url, state, details, previous) {
+    _createHistoryEntry(id, url, state, content, previous) {
         if (typeof id !== 'string') { id = this._generateId(); }
         const entry = {
             id,
@@ -159,7 +159,7 @@ class DisplayHistory extends EventDispatcher {
             next: null,
             previous,
             state,
-            details
+            content
         };
         this._historyMap.set(id, entry);
         return entry;
