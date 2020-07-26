@@ -23,6 +23,7 @@
  * Frontend
  * MediaLoader
  * PopupFactory
+ * QueryParser
  * WindowScroll
  * api
  * docRangeFromPoint
@@ -68,6 +69,11 @@ class Display extends EventDispatcher {
         this._historyChangeIgnore = false;
         this._historyHasChanged = false;
         this._navigationHeader = document.querySelector('#navigation-header');
+        this._fullQuery = '';
+        this._queryParser = new QueryParser({
+            getOptionsContext: this.getOptionsContext.bind(this),
+            setSpinnerVisible: this.setSpinnerVisible.bind(this)
+        });
 
         this.registerActions([
             ['close',               () => { this.onEscape(); }],
@@ -120,8 +126,10 @@ class Display extends EventDispatcher {
     async prepare() {
         this._setInteractive(true);
         await this._displayGenerator.prepare();
+        await this._queryParser.prepare();
         this._history.prepare();
         this._history.on('stateChanged', this._onStateChanged.bind(this));
+        this._queryParser.on('searched', this._onQueryParserSearch.bind(this));
         yomichan.on('extensionUnloaded', this._onExtensionUnloaded.bind(this));
         api.crossFrame.registerHandlers([
             ['popupMessage', {async: 'dynamic', handler: this._onMessage.bind(this)}]
@@ -188,6 +196,7 @@ class Display extends EventDispatcher {
         this._updateDocumentOptions(this._options);
         this._updateTheme(this._options.general.popupTheme);
         this.setCustomCss(this._options.general.customPopupCss);
+        this._queryParser.setOptions(this._options);
     }
 
     addMultipleEventListeners(selector, type, listener, options) {
@@ -313,6 +322,12 @@ class Display extends EventDispatcher {
         return data;
     }
 
+    setQueryParserText(text) {
+        if (this._fullQuery === text) { return; }
+        this._fullQuery = text;
+        this._queryParser.setText(text);
+    }
+
     // Message handlers
 
     _onMessage(data) {
@@ -425,6 +440,27 @@ class Display extends EventDispatcher {
                 this._setContentToken = null;
             }
         }
+    }
+
+    _onQueryParserSearch({type, definitions, sentence, cause, textSource}) {
+        const query = textSource.text();
+        const details = {
+            focus: false,
+            history: cause !== 'mouse',
+            params: {
+                type,
+                query,
+                wildcards: 'off'
+            },
+            state: {
+                sentence,
+                url: window.location.href
+            },
+            content: {
+                definitions
+            }
+        };
+        this.setContent(details);
     }
 
     _onExtensionUnloaded() {

@@ -19,7 +19,6 @@
  * ClipboardMonitor
  * DOM
  * Display
- * QueryParser
  * api
  * wanakana
  */
@@ -33,15 +32,10 @@ class DisplaySearch extends Display {
         this._intro = document.querySelector('#intro');
         this._clipboardMonitorEnable = document.querySelector('#clipboard-monitor-enable');
         this._wanakanaEnable = document.querySelector('#wanakana-enable');
-        this._fullQuery = '';
         this._introVisible = true;
         this._introAnimationTimer = null;
         this._clipboardMonitor = new ClipboardMonitor({
             getClipboard: api.clipboardGet.bind(api)
-        });
-        this._queryParser = new QueryParser({
-            getOptionsContext: this.getOptionsContext.bind(this),
-            setSpinnerVisible: this.setSpinnerVisible.bind(this)
         });
         this._onKeyDownIgnoreKeys = new Map([
             ['ANY_MOD', new Set([
@@ -66,9 +60,7 @@ class DisplaySearch extends Display {
         await super.prepare();
         await this.updateOptions();
         yomichan.on('optionsUpdated', () => this.updateOptions());
-        await this._queryParser.prepare();
 
-        this._queryParser.on('searched', this._onQueryParserSearch.bind(this));
         this.on('contentUpdating', this._onContentUpdating.bind(this));
 
         this.setHistorySettings({useBrowserHistory: true});
@@ -152,8 +144,6 @@ class DisplaySearch extends Display {
 
     async updateOptions() {
         await super.updateOptions();
-        const options = this.getOptions();
-        this._queryParser.setOptions(options);
         if (!this._isPrepared) { return; }
         const query = this._query.value;
         if (query) {
@@ -186,27 +176,6 @@ class DisplaySearch extends Display {
         this._setIntroVisible(!valid, animate);
         this._setTitleText(source);
         this._updateSearchButton();
-    }
-
-    _onQueryParserSearch({type, definitions, sentence, cause, textSource}) {
-        const query = textSource.text();
-        const details = {
-            focus: false,
-            history: cause !== 'mouse',
-            params: {
-                type,
-                query,
-                wildcards: 'off'
-            },
-            state: {
-                sentence,
-                url: window.location.href
-            },
-            content: {
-                definitions
-            }
-        };
-        this.setContent(details);
     }
 
     _onSearchInput() {
@@ -324,10 +293,8 @@ class DisplaySearch extends Display {
                 // NOP
             }
         }
-        if (this._fullQuery === interpretedQuery) { return; }
-        this._fullQuery = interpretedQuery;
         this._query.value = interpretedQuery;
-        this._queryParser.setText(interpretedQuery);
+        this.setQueryParserText(interpretedQuery);
     }
 
     _setIntroVisible(visible, animate) {
