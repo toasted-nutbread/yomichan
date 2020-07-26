@@ -131,6 +131,15 @@ class Display extends EventDispatcher {
         this._onStateChanged();
     }
 
+    setHistorySettings({clearable, useBrowserHistory}) {
+        if (typeof clearable !== 'undefined') {
+            this._history.clearable = clearable;
+        }
+        if (typeof useBrowserHistory !== 'undefined') {
+            this._history.useBrowserHistory = useBrowserHistory;
+        }
+    }
+
     onError(error) {
         if (yomichan.isExtensionUnloaded) { return; }
         yomichan.logError(error);

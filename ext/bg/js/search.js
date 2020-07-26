@@ -72,6 +72,8 @@ class DisplaySearch extends Display {
         this._queryParser.on('searched', this._onQueryParserSearch.bind(this));
         this.on('contentUpdating', this._onContentUpdating.bind(this));
 
+        this.setHistorySettings({useBrowserHistory: true});
+
         const options = this.getOptions();
 
         const {queryParams: {query='', mode=''}} = parseUrl(window.location.href);
