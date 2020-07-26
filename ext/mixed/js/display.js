@@ -428,13 +428,14 @@ class Display extends EventDispatcher {
     }
 
     _onExtensionUnloaded() {
-        this.setContent({
+        const details = {
             focus: false,
             history: false,
             params: {type: 'unloaded'},
             state: {},
             content: {}
-        });
+        };
+        this.setContent(details);
     }
 
     _onSourceTermView(e) {
@@ -462,7 +463,7 @@ class Display extends EventDispatcher {
 
             const query = link.textContent;
             const definitions = await api.kanjiFind(query, this.getOptionsContext());
-            this.setContent({
+            const details = {
                 focus: false,
                 history: true,
                 params: {
@@ -478,7 +479,8 @@ class Display extends EventDispatcher {
                 content: {
                     definitions
                 }
-            });
+            };
+            this.setContent(details);
         } catch (error) {
             this.onError(error);
         }
@@ -520,12 +522,13 @@ class Display extends EventDispatcher {
             state.scrollY = this._windowScroll.y;
             this._historyStateUpdate(state);
 
-            this.setContent({
+            const query = textSource.text();
+            const details = {
                 focus: false,
                 history: true,
                 params: {
                     type: 'terms',
-                    query: textSource.text(),
+                    query,
                     wildcards: 'off'
                 },
                 state: {
@@ -536,7 +539,8 @@ class Display extends EventDispatcher {
                 content: {
                     definitions
                 }
-            });
+            };
+            this.setContent(details);
         } catch (error) {
             this.onError(error);
         }

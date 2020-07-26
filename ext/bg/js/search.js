@@ -189,12 +189,13 @@ class DisplaySearch extends Display {
     }
 
     _onQueryParserSearch({type, definitions, sentence, cause, textSource}) {
-        this.setContent({
+        const query = textSource.text();
+        const details = {
             focus: false,
             history: cause !== 'mouse',
             params: {
                 type,
-                query: textSource.text(),
+                query,
                 wildcards: 'off'
             },
             state: {
@@ -204,7 +205,8 @@ class DisplaySearch extends Display {
             content: {
                 definitions
             }
-        });
+        };
+        this.setContent(details);
     }
 
     _onSearchInput() {
@@ -243,7 +245,7 @@ class DisplaySearch extends Display {
     }
 
     _onSearchQueryUpdated(query, animate) {
-        this.setContent({
+        const details = {
             focus: false,
             history: false,
             params: {
@@ -258,7 +260,8 @@ class DisplaySearch extends Display {
                 definitions: null,
                 animate
             }
-        });
+        };
+        this.setContent(details);
     }
 
     _onWanakanaEnableChange(e) {
