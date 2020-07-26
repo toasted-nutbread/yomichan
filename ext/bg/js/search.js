@@ -154,7 +154,7 @@ class DisplaySearch extends Display {
 
     // Private
 
-    _onContentUpdating({type, source, content}) {
+    _onContentUpdating({type, source, content, urlSearchParams}) {
         let animate = false;
         let valid = false;
         switch (type) {
@@ -170,9 +170,14 @@ class DisplaySearch extends Display {
                 source = '';
                 break;
         }
+
         if (typeof source !== 'string') { source = ''; }
+
+        let full = urlSearchParams.get('full');
+        if (full === null) { full = source; }
+
         this._closePopups();
-        this._setQuery(source);
+        this._setQuery(full);
         this._setIntroVisible(!valid, animate);
         this._setTitleText(source);
         this._updateSearchButton();

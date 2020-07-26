@@ -1166,7 +1166,11 @@ class Display extends EventDispatcher {
     }
 
     _createSearchParams(type, query, wildcards) {
-        const params = {query};
+        const params = {};
+        if (query.length < this._fullQuery.length) {
+            params.full = this._fullQuery;
+        }
+        params.query = query;
         if (typeof type === 'string') {
             params.type = type;
         }
