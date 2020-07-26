@@ -67,6 +67,7 @@ class Display extends EventDispatcher {
         this._history = new DisplayHistory({clearable: true, useBrowserHistory: false});
         this._historyChangeIgnore = false;
         this._historyHasChanged = false;
+        this._navigationHeader = document.querySelector('#navigation-header');
 
         this.registerActions([
             ['close',               () => { this.onEscape(); }],
@@ -647,7 +648,6 @@ class Display extends EventDispatcher {
         if (interactive) {
             const actionPrevious = document.querySelector('.action-previous');
             const actionNext = document.querySelector('.action-next');
-            // const navigationHeader = document.querySelector('.navigation-header');
 
             this._persistentEventListeners.addEventListener(document, 'keydown', this.onKeyDown.bind(this), false);
             this._persistentEventListeners.addEventListener(document, 'wheel', this._onWheel.bind(this), {passive: false});
@@ -657,10 +657,6 @@ class Display extends EventDispatcher {
             if (actionNext !== null) {
                 this._persistentEventListeners.addEventListener(actionNext, 'click', this._onNextTermView.bind(this));
             }
-            // temporarily disabled
-            // if (navigationHeader !== null) {
-            //     this.persistentEventListeners.addEventListener(navigationHeader, 'wheel', this.onHistoryWheel.bind(this), {passive: false});
-            // }
         } else {
             this._persistentEventListeners.removeAllEventListeners();
         }
@@ -792,12 +788,10 @@ class Display extends EventDispatcher {
     }
 
     _updateNavigation(previous, next) {
-        const navigation = document.querySelector('#navigation-header');
-        if (navigation !== null) {
-            navigation.hidden = !(previous || next);
-            navigation.dataset.hasPrevious = `${!!previous}`;
-            navigation.dataset.hasNext = `${!!next}`;
-        }
+        if (this._navigationHeader === null) { return; }
+        this._navigationHeader.hidden = !(previous || next);
+        this._navigationHeader.dataset.hasPrevious = `${!!previous}`;
+        this._navigationHeader.dataset.hasNext = `${!!next}`;
     }
 
     _updateAdderButtons(states) {
@@ -850,9 +844,8 @@ class Display extends EventDispatcher {
         } else {
             target = this._index === 0 || entry === null ? 0 : this._getElementTop(entry);
 
-            const header = document.querySelector('#navigation-header');
-            if (header !== null) {
-                target -= header.getBoundingClientRect().height;
+            if (this._navigationHeader !== null) {
+                target -= this._navigationHeader.getBoundingClientRect().height;
             }
         }
 
