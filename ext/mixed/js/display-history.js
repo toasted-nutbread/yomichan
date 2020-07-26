@@ -20,7 +20,7 @@ class DisplayHistory extends EventDispatcher {
         super();
         this._clearable = clearable;
         this._historyMap = new Map();
-        this._current = this._createHistoryEntry(null, null, null);
+        this._current = this._createHistoryEntry(history.state, null, null);
     }
 
     get state() {
