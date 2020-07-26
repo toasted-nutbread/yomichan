@@ -384,7 +384,7 @@ class Display extends EventDispatcher {
                             changeHistory = true;
                         }
 
-                        let definitions = content.definitions;
+                        let {definitions} = content;
                         if (!Array.isArray(definitions)) {
                             definitions = await this._findDefinitions(isTerms, source, urlSearchParams);
                             if (this._setContentToken !== token) { return; }
@@ -396,7 +396,7 @@ class Display extends EventDispatcher {
                             this._historyStateUpdate(state, content);
                         }
 
-                        eventArgs.definitions = definitions;
+                        eventArgs.content = content;
                         this.trigger('contentUpdating', eventArgs);
                         await this._setContentTermsOrKanji(token, isTerms, definitions, state);
                     }

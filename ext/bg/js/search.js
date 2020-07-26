@@ -176,9 +176,10 @@ class DisplaySearch extends Display {
 
     // Private
 
-    _onContentUpdating({type, source, definitions}) {
+    _onContentUpdating({type, source, content}) {
         if (type !== 'terms') { return; }
 
+        const {definitions} = content;
         const valid = definitions.length > 0;
         const animate = this._introAnimate;
 
