@@ -71,12 +71,12 @@ class Display extends EventDispatcher {
 
         this.registerActions([
             ['close',               () => { this.onEscape(); }],
-            ['next-entry',          () => { this._entryScrollIntoView(this._index + 1, null, true); }],
-            ['next-entry-x3',       () => { this._entryScrollIntoView(this._index + 3, null, true); }],
-            ['previous-entry',      () => { this._entryScrollIntoView(this._index - 1, null, true); }],
-            ['previous-entry-x3',   () => { this._entryScrollIntoView(this._index - 3, null, true); }],
-            ['last-entry',          () => { this._entryScrollIntoView(this._definitions.length - 1, null, true); }],
-            ['first-entry',         () => { this._entryScrollIntoView(0, null, true); }],
+            ['next-entry',          () => { this._focusEntry(this._index + 1, true); }],
+            ['next-entry-x3',       () => { this._focusEntry(this._index + 3, true); }],
+            ['previous-entry',      () => { this._focusEntry(this._index - 1, true); }],
+            ['previous-entry-x3',   () => { this._focusEntry(this._index - 3, true); }],
+            ['last-entry',          () => { this._focusEntry(this._definitions.length - 1, true); }],
+            ['first-entry',         () => { this._focusEntry(0, true); }],
             ['history-backward',    () => { this._sourceTermView(); }],
             ['history-forward',     () => { this._nextTermView(); }],
             ['add-note-kanji',      () => { this._noteTryAdd('kanji'); }],
@@ -602,7 +602,7 @@ class Display extends EventDispatcher {
     _onWheel(e) {
         if (e.altKey) {
             if (e.deltaY !== 0) {
-                this._entryScrollIntoView(this._index + (e.deltaY > 0 ? 1 : -1), null, true);
+                this._focusEntry(this._index + (e.deltaY > 0 ? 1 : -1), true);
                 e.preventDefault();
             }
         } else if (e.shiftKey) {
@@ -832,6 +832,22 @@ class Display extends EventDispatcher {
         this._index = index;
 
         return entry;
+    }
+
+    _focusEntry(index, smooth) {
+        const entry = this._entrySetCurrent(index);
+        let target = index === 0 || entry === null ? 0 : this._getElementTop(entry);
+
+        if (this._navigationHeader !== null) {
+            target -= this._navigationHeader.getBoundingClientRect().height;
+        }
+
+        this._windowScroll.stop();
+        if (smooth) {
+            this._windowScroll.animate(this._windowScroll.x, target, 200);
+        } else {
+            this._windowScroll.toY(target);
+        }
     }
 
     _entryScrollIntoView(index, scroll, smooth) {
