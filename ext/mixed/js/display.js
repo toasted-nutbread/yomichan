@@ -427,7 +427,13 @@ class Display extends EventDispatcher {
     }
 
     _onExtensionUnloaded() {
-        this._setContentExtensionUnloaded();
+        this.setContent({
+            focus: false,
+            history: false,
+            params: {type: 'unloaded'},
+            state: {},
+            content: {}
+        });
     }
 
     _onSourceTermView(e) {
