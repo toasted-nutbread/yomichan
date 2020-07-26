@@ -432,10 +432,12 @@ class Frontend {
                 type,
                 source: textSource.text(),
                 wildcards: false,
-                definitions,
-                context: {
+                state: {
                     sentence,
                     url
+                },
+                content: {
+                    definitions
                 }
             }
         );

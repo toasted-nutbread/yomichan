@@ -198,10 +198,12 @@ class DisplaySearch extends Display {
             type,
             source: textSource.text(),
             wildcards: false,
-            definitions,
-            context: {
+            state: {
                 sentence,
                 url: window.location.href
+            },
+            content: {
+                definitions
             }
         });
     }
@@ -262,10 +264,12 @@ class DisplaySearch extends Display {
                 type: 'terms',
                 source: query,
                 wildcards: true,
-                definitions: null,
-                context: {
+                state: {
                     sentence: {text: query, offset: 0},
                     url: window.location.href
+                },
+                content: {
+                    definitions: null
                 }
             });
         } finally {

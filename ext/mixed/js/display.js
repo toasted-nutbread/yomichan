@@ -221,7 +221,7 @@ class Display extends EventDispatcher {
     }
 
     setContent(details) {
-        const {focus, history, type, source, wildcards, definitions, context} = details;
+        const {focus, history, type, source, wildcards, state, content} = details;
 
         if (focus !== false) {
             window.focus();
@@ -231,15 +231,13 @@ class Display extends EventDispatcher {
         params.append('query', source);
         if (!wildcards) { params.append('wildcards', 'off'); }
         if (type !== 'terms') { params.append('type', type); }
-        const state = context;
-        const details0 = {definitions};
         const url = `${location.protocol}//${location.host}${location.pathname}?${params.toString()}`;
 
         if (history && this._historyHasChanged) {
-            this._history.pushState(state, details0, url);
+            this._history.pushState(state, content, url);
         } else {
             this._history.clear();
-            this._history.replaceState(state, details0, url);
+            this._history.replaceState(state, content, url);
         }
     }
 
@@ -442,11 +440,6 @@ class Display extends EventDispatcher {
             state.scroll = this._windowScroll.y;
             this._historyStateUpdate(state);
 
-            const context = {
-                sentence: state.sentence,
-                url: state.url
-            };
-
             const source = link.textContent;
             const definitions = await api.kanjiFind(source, this.getOptionsContext());
             this.setContent({
@@ -455,8 +448,13 @@ class Display extends EventDispatcher {
                 type: 'kanji',
                 source,
                 wildcards: false,
-                definitions,
-                context
+                state: {
+                    sentence: state.sentence,
+                    url: state.url
+                },
+                content: {
+                    definitions
+                }
             });
         } catch (error) {
             this.onError(error);
@@ -498,19 +496,19 @@ class Display extends EventDispatcher {
             state.scroll = this._windowScroll.y;
             this._historyStateUpdate(state);
 
-            const context = {
-                sentence,
-                url: state.url
-            };
-
             this.setContent({
                 focus: false,
                 history: true,
                 type: 'terms',
                 source: textSource.text(),
                 wildcards: false,
-                definitions,
-                context
+                state: {
+                    sentence,
+                    url: state.url
+                },
+                content: {
+                    definitions
+                }
             });
         } catch (error) {
             this.onError(error);
