@@ -244,7 +244,6 @@ class Display extends EventDispatcher {
     clearContent() {
         this._setEventListenersActive(false);
         this._container.textContent = '';
-        this._setEventListenersActive(true);
     }
 
     setCustomCss(css) {
@@ -665,7 +664,7 @@ class Display extends EventDispatcher {
             this.addMultipleEventListeners('.action-view-note', 'click', this._onNoteView.bind(this));
             this.addMultipleEventListeners('.action-play-audio', 'click', this._onAudioPlay.bind(this));
             this.addMultipleEventListeners('.kanji-link', 'click', this._onKanjiLookup.bind(this));
-            if (this._options.scanning.enablePopupSearch) {
+            if (this._options !== null && this._options.scanning.enablePopupSearch) {
                 this.addMultipleEventListeners('.term-glossary-item, .tag', 'mouseup', this._onGlossaryMouseUp.bind(this));
                 this.addMultipleEventListeners('.term-glossary-item, .tag', 'mousedown', this._onGlossaryMouseDown.bind(this));
                 this.addMultipleEventListeners('.term-glossary-item, .tag', 'mousemove', this._onGlossaryMouseMove.bind(this));
