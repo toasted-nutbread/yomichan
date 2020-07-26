@@ -224,13 +224,6 @@ class DisplaySearch extends Display {
         e.preventDefault();
 
         const query = this._query.value;
-
-        this._queryParser.setText(query);
-
-        const url = new URL(window.location.href);
-        url.searchParams.set('query', query);
-        window.history.pushState(null, '', url.toString());
-
         this._onSearchQueryUpdated(query, true);
     }
 
@@ -246,11 +239,7 @@ class DisplaySearch extends Display {
     }
 
     _onExternalSearchUpdate({text, animate=true}) {
-        this._setQuery(text);
-        const url = new URL(window.location.href);
-        url.searchParams.set('query', text);
-        window.history.pushState(null, '', url.toString());
-        this._onSearchQueryUpdated(this._query.value, animate);
+        this._onSearchQueryUpdated(text, animate);
     }
 
     _onSearchQueryUpdated(query, animate) {
