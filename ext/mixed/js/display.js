@@ -456,7 +456,8 @@ class Display extends EventDispatcher {
             const {state} = this._history;
 
             state.index = this._entryIndexFind(link);
-            state.scroll = this._windowScroll.y;
+            state.scrollX = this._windowScroll.x;
+            state.scrollY = this._windowScroll.y;
             this._historyStateUpdate(state);
 
             const query = link.textContent;
@@ -514,7 +515,8 @@ class Display extends EventDispatcher {
             const sentence = docSentenceExtract(textSource, sentenceExtent, layoutAwareScan);
 
             state.index = this._entryIndexFind(scannedElement);
-            state.scroll = this._windowScroll.y;
+            state.scrollX = this._windowScroll.x;
+            state.scrollY = this._windowScroll.y;
             this._historyStateUpdate(state);
 
             this.setContent({
@@ -707,7 +709,7 @@ class Display extends EventDispatcher {
         }
     }
 
-    async _setContentTermsOrKanji(token, isTerms, definitions, {sentence=null, url=null, index=0, scroll=null}) {
+    async _setContentTermsOrKanji(token, isTerms, definitions, {sentence=null, url=null, index=0, scrollX=null, scrollY=null}) {
         if (typeof url !== 'string') { url = window.location.href; }
         sentence = this._getValidSentenceData(sentence);
 
@@ -740,7 +742,16 @@ class Display extends EventDispatcher {
             container.appendChild(entry);
         }
 
-        this._entryScrollIntoView(index, scroll);
+        if (typeof index === 'number') {
+            this._focusEntry(index, false);
+        }
+        if (typeof scrollX === 'number' || typeof scrollY === 'number') {
+            let {x, y} = this._windowScroll;
+            if (typeof scrollX === 'number') { x = scrollX; }
+            if (typeof scrollY === 'number') { y = scrollY; }
+            this._windowScroll.stop();
+            this._windowScroll.to(x, y);
+        }
 
         if (
             isTerms &&
@@ -843,28 +854,6 @@ class Display extends EventDispatcher {
         }
 
         this._windowScroll.stop();
-        if (smooth) {
-            this._windowScroll.animate(this._windowScroll.x, target, 200);
-        } else {
-            this._windowScroll.toY(target);
-        }
-    }
-
-    _entryScrollIntoView(index, scroll, smooth) {
-        this._windowScroll.stop();
-
-        const entry = this._entrySetCurrent(index);
-        let target;
-        if (typeof scroll === 'number') {
-            target = scroll;
-        } else {
-            target = this._index === 0 || entry === null ? 0 : this._getElementTop(entry);
-
-            if (this._navigationHeader !== null) {
-                target -= this._navigationHeader.getBoundingClientRect().height;
-            }
-        }
-
         if (smooth) {
             this._windowScroll.animate(this._windowScroll.x, target, 200);
         } else {
