@@ -21,7 +21,10 @@ class DisplayHistory extends EventDispatcher {
         this._clearable = clearable;
         this._useBrowserHistory = useBrowserHistory;
         this._historyMap = new Map();
-        this._current = this._createHistoryEntry(location.href, history.state, null, null);
+
+        const historyState = history.state;
+        const {id, state} = isObject(historyState) ? historyState : {id: null, state: null};
+        this._current = this._createHistoryEntry(id, location.href, state, null, null);
     }
 
     get state() {
@@ -54,10 +57,7 @@ class DisplayHistory extends EventDispatcher {
 
     clear() {
         if (!this._clearable) { return; }
-        this._historyMap.clear();
-        this._historyMap.set(this._current.id, this._current);
-        this._current.next = null;
-        this._current.previous = null;
+        this._clear();
     }
 
     back() {
@@ -71,7 +71,7 @@ class DisplayHistory extends EventDispatcher {
     pushState(state, details, url) {
         if (typeof url === 'undefined') { url = location.href; }
 
-        const entry = this._createHistoryEntry(url, state, details, this._current);
+        const entry = this._createHistoryEntry(null, url, state, details, this._current);
         this._current.next = entry;
         this._current = entry;
         this._updateHistoryFromCurrent(!this._useBrowserHistory);
@@ -127,8 +127,9 @@ class DisplayHistory extends EventDispatcher {
 
     _updateStateFromHistory() {
         let state = history.state;
+        let id = null;
         if (isObject(state)) {
-            const id = state.id;
+            id = state.id;
             if (typeof id === 'string') {
                 const entry = this._historyMap.get(id);
                 if (typeof entry !== 'undefined') {
@@ -144,13 +145,14 @@ class DisplayHistory extends EventDispatcher {
         }
 
         // Fallback
-        this.clear();
+        this._current.id = (typeof id === 'string' ? id : this._generateId());
         this._current.state = state;
         this._current.details = null;
+        this._clear();
     }
 
-    _createHistoryEntry(url, state, details, previous) {
-        const id = yomichan.generateId(16);
+    _createHistoryEntry(id, url, state, details, previous) {
+        if (typeof id !== 'string') { id = this._generateId(); }
         const entry = {
             id,
             url,
@@ -161,5 +163,16 @@ class DisplayHistory extends EventDispatcher {
         };
         this._historyMap.set(id, entry);
         return entry;
+    }
+
+    _generateId() {
+        return yomichan.generateId(16);
+    }
+
+    _clear() {
+        this._historyMap.clear();
+        this._historyMap.set(this._current.id, this._current);
+        this._current.next = null;
+        this._current.previous = null;
     }
 }
