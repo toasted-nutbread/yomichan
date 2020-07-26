@@ -172,6 +172,7 @@ class DisplaySearch extends Display {
             case 'kanji':
                 animate = content.animate;
                 valid = content.definitions.length > 0;
+                this._query.blur();
                 break;
             case 'clear':
                 valid = false;
