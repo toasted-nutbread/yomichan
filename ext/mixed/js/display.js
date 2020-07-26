@@ -397,6 +397,14 @@ class Display extends EventDispatcher {
                         await this._setContentTermsOrKanji(token, isTerms, definitions, state);
                     }
                     break;
+                case 'unloaded':
+                    {
+                        const {content} = this._history;
+                        eventArgs.content = content;
+                        this.trigger('contentUpdating', eventArgs);
+                        this._setContentExtensionUnloaded();
+                    }
+                    break;
             }
 
             if (!asigned) {
