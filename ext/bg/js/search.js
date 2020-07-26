@@ -162,17 +162,6 @@ class DisplaySearch extends Display {
         }
     }
 
-    setContent(...args) {
-        this._query.blur();
-        this._closePopups();
-        return super.setContent(...args);
-    }
-
-    clearContent() {
-        this._closePopups();
-        return super.clearContent();
-    }
-
     // Private
 
     _onContentUpdating({type, source, content}) {
@@ -190,6 +179,7 @@ class DisplaySearch extends Display {
                 source = '';
                 break;
         }
+        this._closePopups();
         this._setQuery(source);
         this._setIntroVisible(!valid, animate);
         this._setTitleText(source);
