@@ -36,7 +36,6 @@ class DisplaySearch extends Display {
         this._queryText = '';
         this._introVisible = true;
         this._introAnimationTimer = null;
-        this._introAnimate = false;
         this._clipboardMonitor = new ClipboardMonitor({
             getClipboard: api.clipboardGet.bind(api)
         });
@@ -179,9 +178,8 @@ class DisplaySearch extends Display {
     _onContentUpdating({type, source, content}) {
         if (type !== 'terms') { return; }
 
-        const {definitions} = content;
+        const {definitions, animate} = content;
         const valid = definitions.length > 0;
-        const animate = this._introAnimate;
 
         this._setQuery(source);
         this._setIntroVisible(!valid, animate);
@@ -256,26 +254,21 @@ class DisplaySearch extends Display {
     }
 
     _onSearchQueryUpdated(query, animate) {
-        const introAnimatePre = this._introAnimate;
-        try {
-            this._introAnimate = animate;
-            this.setContent({
-                focus: false,
-                history: false,
-                type: 'terms',
-                source: query,
-                wildcards: true,
-                state: {
-                    sentence: {text: query, offset: 0},
-                    url: window.location.href
-                },
-                content: {
-                    definitions: null
-                }
-            });
-        } finally {
-            this._introAnimate = introAnimatePre;
-        }
+        this.setContent({
+            focus: false,
+            history: false,
+            type: 'terms',
+            source: query,
+            wildcards: true,
+            state: {
+                sentence: {text: query, offset: 0},
+                url: window.location.href
+            },
+            content: {
+                definitions: null,
+                animate
+            }
+        });
     }
 
     _onWanakanaEnableChange(e) {
