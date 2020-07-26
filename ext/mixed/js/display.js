@@ -241,11 +241,6 @@ class Display extends EventDispatcher {
         }
     }
 
-    clearContent() {
-        this._setEventListenersActive(false);
-        this._container.textContent = '';
-    }
-
     setCustomCss(css) {
         if (this._styleNode === null) {
             if (css.length === 0) { return; }
@@ -409,7 +404,7 @@ class Display extends EventDispatcher {
                 eventArgs.type = 'clear';
                 eventArgs.content = content;
                 this.trigger('contentUpdating', eventArgs);
-                this.clearContent();
+                this._clearContent();
             }
 
             eventArgs.stale = (this._setContentToken !== token);
@@ -763,6 +758,11 @@ class Display extends EventDispatcher {
 
         this._updateNavigation(null, null);
         this._setNoContentVisible(false);
+    }
+
+    _clearContent() {
+        this._setEventListenersActive(false);
+        this._container.textContent = '';
     }
 
     _setNoContentVisible(visible) {
