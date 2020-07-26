@@ -447,11 +447,7 @@ class Display extends EventDispatcher {
         const details = {
             focus: false,
             history: cause !== 'mouse',
-            params: {
-                type,
-                query,
-                wildcards: 'off'
-            },
+            params: this._createSearchParams(type, query, false),
             state: {
                 sentence,
                 url: window.location.href
@@ -502,11 +498,7 @@ class Display extends EventDispatcher {
             const details = {
                 focus: false,
                 history: true,
-                params: {
-                    type: 'kanji',
-                    query,
-                    wildcards: 'off'
-                },
+                params: this._createSearchParams('kanji', query, false),
                 state: {
                     focusEntry: 0,
                     sentence: state.sentence,
@@ -562,11 +554,7 @@ class Display extends EventDispatcher {
             const details = {
                 focus: false,
                 history: true,
-                params: {
-                    type: 'terms',
-                    query,
-                    wildcards: 'off'
-                },
+                params: this._createSearchParams('terms', query, false),
                 state: {
                     focusEntry: 0,
                     sentence,
@@ -1175,5 +1163,16 @@ class Display extends EventDispatcher {
         } finally {
             this._historyChangeIgnore = historyChangeIgnorePre;
         }
+    }
+
+    _createSearchParams(type, query, wildcards) {
+        const params = {query};
+        if (typeof type === 'string') {
+            params.type = type;
+        }
+        if (!wildcards) {
+            params.wildcards = 'off';
+        }
+        return params;
     }
 }
