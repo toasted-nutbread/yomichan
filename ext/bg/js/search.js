@@ -179,6 +179,7 @@ class DisplaySearch extends Display {
                 source = '';
                 break;
         }
+        if (typeof source !== 'string') { source = ''; }
         this._closePopups();
         this._setQuery(source);
         this._setIntroVisible(!valid, animate);
