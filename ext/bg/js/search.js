@@ -176,18 +176,24 @@ class DisplaySearch extends Display {
     // Private
 
     _onContentUpdating({type, source, content}) {
-        if (type !== 'terms') { return; }
-
-        const {definitions, animate} = content;
-        const valid = definitions.length > 0;
-
+        let animate = false;
+        let valid = false;
+        switch (type) {
+            case 'terms':
+            case 'kanji':
+                animate = content.animate;
+                valid = content.definitions.length > 0;
+                break;
+            case 'clear':
+                valid = false;
+                animate = true;
+                source = '';
+                break;
+        }
         this._setQuery(source);
         this._setIntroVisible(!valid, animate);
         this._setTitleText(source);
         this._updateSearchButton();
-        if (!valid) {
-            this.clearContent();
-        }
     }
 
     _onQueryParserSearch({type, definitions, sentence, cause, textSource}) {

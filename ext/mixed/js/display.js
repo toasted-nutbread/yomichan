@@ -358,21 +358,21 @@ class Display extends EventDispatcher {
         this._setContentToken = token;
         try {
             const urlSearchParams = new URLSearchParams(location.search);
-            const source = urlSearchParams.get('query');
-            if (source === null) { return; }
             let type = urlSearchParams.get('type');
             if (type === null) { type = 'terms'; }
 
-            const isTerms = (type === 'terms');
-            const eventArgs = {type, source, urlSearchParams, token};
-
+            let asigned = false;
+            const eventArgs = {type, urlSearchParams, token};
             this._historyHasChanged = true;
             this._mediaLoader.unloadAll();
-
             switch (type) {
                 case 'terms':
                 case 'kanji':
                     {
+                        const source = urlSearchParams.get('query');
+                        if (!source) { break; }
+
+                        const isTerms = (type === 'terms');
                         let {state, content} = this._history;
                         let changeHistory = false;
                         if (!isObject(content)) {
@@ -396,11 +396,21 @@ class Display extends EventDispatcher {
                             this._historyStateUpdate(state, content);
                         }
 
+                        asigned = true;
+                        eventArgs.source = source;
                         eventArgs.content = content;
                         this.trigger('contentUpdating', eventArgs);
                         await this._setContentTermsOrKanji(token, isTerms, definitions, state);
                     }
                     break;
+            }
+
+            if (!asigned) {
+                const {content} = this._history;
+                eventArgs.type = 'clear';
+                eventArgs.content = content;
+                this.trigger('contentUpdating', eventArgs);
+                this.clearContent();
             }
 
             eventArgs.stale = (this._setContentToken !== token);
