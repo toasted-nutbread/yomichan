@@ -20,7 +20,7 @@ class DisplayHistory extends EventDispatcher {
         super();
         this._clearable = clearable;
         this._historyMap = new Map();
-        this._current = this._createHistoryEntry(history.state, null, null);
+        this._current = this._createHistoryEntry(location.href, history.state, null, null);
     }
 
     get state() {
@@ -64,7 +64,9 @@ class DisplayHistory extends EventDispatcher {
     }
 
     pushState(state, details, url) {
-        const entry = this._createHistoryEntry(state, details, this._current);
+        if (typeof url === 'undefined') { url = location.href; }
+
+        const entry = this._createHistoryEntry(url, state, details, this._current);
         const id = entry.id;
         this._current.next = entry;
         this._current = entry;
@@ -73,7 +75,10 @@ class DisplayHistory extends EventDispatcher {
     }
 
     replaceState(state, details, url) {
+        if (typeof url === 'undefined') { url = location.href; }
+
         const id = this._current.id;
+        this._current.url = url;
         this._current.state = state;
         this._current.details = details;
         history.replaceState({id, state}, '', url);
@@ -113,10 +118,11 @@ class DisplayHistory extends EventDispatcher {
         this._current.details = null;
     }
 
-    _createHistoryEntry(state, details, previous) {
+    _createHistoryEntry(url, state, details, previous) {
         const id = yomichan.generateId(16);
         const entry = {
             id,
+            url,
             next: null,
             previous,
             state,
