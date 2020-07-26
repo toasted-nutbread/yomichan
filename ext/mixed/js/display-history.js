@@ -16,9 +16,10 @@
  */
 
 class DisplayHistory extends EventDispatcher {
-    constructor(clearable) {
+    constructor({clearable=true, useBrowserHistory=false}) {
         super();
         this._clearable = clearable;
+        this._useBrowserHistory = useBrowserHistory;
         this._historyMap = new Map();
         this._current = this._createHistoryEntry(location.href, history.state, null, null);
     }
@@ -29,6 +30,14 @@ class DisplayHistory extends EventDispatcher {
 
     get details() {
         return this._current.details;
+    }
+
+    get useBrowserHistory() {
+        return this._useBrowserHistory;
+    }
+
+    set useBrowserHistory(value) {
+        this._useBrowserHistory = value;
     }
 
     prepare() {
@@ -52,37 +61,29 @@ class DisplayHistory extends EventDispatcher {
     }
 
     back() {
-        if (!this.hasPrevious()) { return false; }
-        window.history.back();
-        return true;
+        return this._go(false);
     }
 
     forward() {
-        if (!this.hasNext()) { return false; }
-        window.history.forward();
-        return true;
+        return this._go(true);
     }
 
     pushState(state, details, url) {
         if (typeof url === 'undefined') { url = location.href; }
 
         const entry = this._createHistoryEntry(url, state, details, this._current);
-        const id = entry.id;
         this._current.next = entry;
         this._current = entry;
-        history.pushState({id, state}, '', url);
-        this._triggerStateChanged(true);
+        this._updateHistoryFromCurrent(!this._useBrowserHistory);
     }
 
     replaceState(state, details, url) {
         if (typeof url === 'undefined') { url = location.href; }
 
-        const id = this._current.id;
         this._current.url = url;
         this._current.state = state;
         this._current.details = details;
-        history.replaceState({id, state}, '', url);
-        this._triggerStateChanged(true);
+        this._updateHistoryFromCurrent(true);
     }
 
     _onPopState() {
@@ -90,8 +91,38 @@ class DisplayHistory extends EventDispatcher {
         this._triggerStateChanged(false);
     }
 
+    _go(forward) {
+        const target = forward ? this._current.next : this._current.previous;
+        if (target === null) {
+            return false;
+        }
+
+        if (this._useBrowserHistory) {
+            if (forward) {
+                history.forward();
+            } else {
+                history.back();
+            }
+        } else {
+            this._current = target;
+            this._updateHistoryFromCurrent(true);
+        }
+
+        return true;
+    }
+
     _triggerStateChanged(synthetic) {
         this.trigger('stateChanged', {history: this, synthetic});
+    }
+
+    _updateHistoryFromCurrent(replace) {
+        const {id, state, url} = this._current;
+        if (replace) {
+            history.replaceState({id, state}, '', url);
+        } else {
+            history.pushState({id, state}, '', url);
+        }
+        this._triggerStateChanged(true);
     }
 
     _updateStateFromHistory() {

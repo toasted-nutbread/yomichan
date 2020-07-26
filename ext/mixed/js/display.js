@@ -64,7 +64,7 @@ class Display extends EventDispatcher {
         this._hotkeys = new Map();
         this._actions = new Map();
         this._messageHandlers = new Map();
-        this._history = new DisplayHistory(true);
+        this._history = new DisplayHistory({clearable: true, useBrowserHistory: false});
         this._historyChangeIgnore = false;
         this._historyHasChanged = false;
 
