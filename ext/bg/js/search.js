@@ -191,9 +191,11 @@ class DisplaySearch extends Display {
         this.setContent({
             focus: false,
             history: cause !== 'mouse',
-            type,
-            source: textSource.text(),
-            wildcards: false,
+            params: {
+                type,
+                query: textSource.text(),
+                wildcards: 'off'
+            },
             state: {
                 sentence,
                 url: window.location.href
@@ -243,9 +245,9 @@ class DisplaySearch extends Display {
         this.setContent({
             focus: false,
             history: false,
-            type: 'terms',
-            source: query,
-            wildcards: true,
+            params: {
+                query
+            },
             state: {
                 sentence: {text: query, offset: 0},
                 url: window.location.href

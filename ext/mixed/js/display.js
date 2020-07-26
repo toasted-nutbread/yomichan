@@ -221,17 +221,17 @@ class Display extends EventDispatcher {
     }
 
     setContent(details) {
-        const {focus, history, type, source, wildcards, state, content} = details;
+        const {focus, history, params, state, content} = details;
 
         if (focus) {
             window.focus();
         }
 
-        const params = new URLSearchParams();
-        params.append('query', source);
-        if (!wildcards) { params.append('wildcards', 'off'); }
-        if (type !== 'terms') { params.append('type', type); }
-        const url = `${location.protocol}//${location.host}${location.pathname}?${params.toString()}`;
+        const urlSearchParams = new URLSearchParams();
+        for (const [key, value] of Object.entries(params)) {
+            urlSearchParams.append(key, value);
+        }
+        const url = `${location.protocol}//${location.host}${location.pathname}?${urlSearchParams.toString()}`;
 
         if (history && this._historyHasChanged) {
             this._history.pushState(state, content, url);
@@ -452,14 +452,16 @@ class Display extends EventDispatcher {
             state.scroll = this._windowScroll.y;
             this._historyStateUpdate(state);
 
-            const source = link.textContent;
-            const definitions = await api.kanjiFind(source, this.getOptionsContext());
+            const query = link.textContent;
+            const definitions = await api.kanjiFind(query, this.getOptionsContext());
             this.setContent({
                 focus: false,
                 history: true,
-                type: 'kanji',
-                source,
-                wildcards: false,
+                params: {
+                    type: 'kanji',
+                    query,
+                    wildcards: 'off'
+                },
                 state: {
                     sentence: state.sentence,
                     url: state.url
@@ -511,9 +513,11 @@ class Display extends EventDispatcher {
             this.setContent({
                 focus: false,
                 history: true,
-                type: 'terms',
-                source: textSource.text(),
-                wildcards: false,
+                params: {
+                    type: 'terms',
+                    query: textSource.text(),
+                    wildcards: 'off'
+                },
                 state: {
                     sentence,
                     url: state.url

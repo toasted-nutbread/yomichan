@@ -429,9 +429,11 @@ class Frontend {
             {
                 focus,
                 history: false,
-                type,
-                source: textSource.text(),
-                wildcards: false,
+                params: {
+                    type,
+                    query: textSource.text(),
+                    wildcards: 'off'
+                },
                 state: {
                     sentence,
                     url
