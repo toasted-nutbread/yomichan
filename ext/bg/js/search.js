@@ -67,7 +67,9 @@ class DisplaySearch extends Display {
 
         const options = this.getOptions();
 
-        const {queryParams: {query='', mode=''}} = parseUrl(window.location.href);
+        const urlSearchParams = new URLSearchParams(location.search);
+        let mode = urlSearchParams.get('mode');
+        if (mode === null) { mode = ''; }
 
         document.documentElement.dataset.searchMode = mode;
 
@@ -77,8 +79,6 @@ class DisplaySearch extends Display {
         } else {
             this._wanakanaEnable.checked = false;
         }
-
-        this._setQuery(query);
 
         if (mode !== 'popup') {
             if (options.general.enableClipboardMonitor === true) {
@@ -147,7 +147,6 @@ class DisplaySearch extends Display {
         if (!this._isPrepared) { return; }
         const query = this._query.value;
         if (query) {
-            this._setQuery(query);
             this._onSearchQueryUpdated(query, false);
         }
     }
