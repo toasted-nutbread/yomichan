@@ -63,6 +63,7 @@ class DisplaySearch extends Display {
 
         this.on('contentUpdating', this._onContentUpdating.bind(this));
 
+        this.queryParserVisible = true;
         this.setHistorySettings({useBrowserHistory: true});
 
         const options = this.getOptions();

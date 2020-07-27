@@ -70,6 +70,9 @@ class Display extends EventDispatcher {
         this._historyHasChanged = false;
         this._navigationHeader = document.querySelector('#navigation-header');
         this._fullQuery = '';
+        this._queryParserVisible = false;
+        this._queryParserVisibleOverride = null;
+        this._queryParserContainer = document.querySelector('#query-parser-container');
         this._queryParser = new QueryParser({
             getOptionsContext: this.getOptionsContext.bind(this),
             setSpinnerVisible: this.setSpinnerVisible.bind(this)
@@ -121,6 +124,15 @@ class Display extends EventDispatcher {
 
     set autoPlayAudioDelay(value) {
         this._autoPlayAudioDelay = value;
+    }
+
+    get queryParserVisible() {
+        return this._queryParserVisible;
+    }
+
+    set queryParserVisible(value) {
+        this._queryParserVisible = value;
+        this._updateQueryParserVisibility();
     }
 
     async prepare() {
@@ -370,6 +382,10 @@ class Display extends EventDispatcher {
             const urlSearchParams = new URLSearchParams(location.search);
             let type = urlSearchParams.get('type');
             if (type === null) { type = 'terms'; }
+
+            const fullVisible = urlSearchParams.get('full-visible');
+            this._queryParserVisibleOverride = (fullVisible === null ? null : (fullVisible !== 'false'));
+            this._updateQueryParserVisibility();
 
             let asigned = false;
             const eventArgs = {type, urlSearchParams, token};
@@ -1177,6 +1193,21 @@ class Display extends EventDispatcher {
         if (!wildcards) {
             params.wildcards = 'off';
         }
+        if (this._queryParserVisibleOverride !== null) {
+            params['full-visible'] = `${this._queryParserVisibleOverride}`;
+        }
         return params;
+    }
+
+    _isQueryParserVisible() {
+        return (
+            this._queryParserVisibleOverride !== null ?
+            this._queryParserVisibleOverride :
+            this._queryParserVisible
+        );
+    }
+
+    _updateQueryParserVisibility() {
+        this._queryParserContainer.hidden = !this._isQueryParserVisible();
     }
 }
