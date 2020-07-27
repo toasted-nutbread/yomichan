@@ -387,6 +387,8 @@ class Display extends EventDispatcher {
             this._queryParserVisibleOverride = (fullVisible === null ? null : (fullVisible !== 'false'));
             this._updateQueryParserVisibility();
 
+            this._setEventListenersActive(false);
+
             let asigned = false;
             const eventArgs = {type, urlSearchParams, token};
             this._historyHasChanged = true;
@@ -446,6 +448,8 @@ class Display extends EventDispatcher {
                 this.trigger('contentUpdating', eventArgs);
                 this._clearContent();
             }
+
+            this._setEventListenersActive(true);
 
             eventArgs.stale = (this._setContentToken !== token);
             this.trigger('contentUpdated', eventArgs);
@@ -759,8 +763,6 @@ class Display extends EventDispatcher {
         if (typeof url !== 'string') { url = window.location.href; }
         sentence = this._getValidSentenceData(sentence);
 
-        this._setEventListenersActive(false);
-
         this._definitions = definitions;
 
         for (const definition of definitions) {
@@ -807,8 +809,6 @@ class Display extends EventDispatcher {
             this.autoPlayAudio();
         }
 
-        this._setEventListenersActive(true);
-
         const modes = isTerms ? ['term-kanji', 'term-kana'] : ['kanji'];
         const states = await this._getDefinitionsAddable(definitions, modes);
         if (this._setContentToken !== token) { return; }
@@ -832,7 +832,6 @@ class Display extends EventDispatcher {
     }
 
     _clearContent() {
-        this._setEventListenersActive(false);
         this._container.textContent = '';
     }
 
