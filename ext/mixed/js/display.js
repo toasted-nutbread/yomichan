@@ -334,10 +334,8 @@ class Display extends EventDispatcher {
         return data;
     }
 
-    setQueryParserText(text) {
-        if (this._fullQuery === text) { return; }
-        this._fullQuery = text;
-        this._queryParser.setText(text);
+    postProcessQuery(query) {
+        return query;
     }
 
     // Message handlers
@@ -734,7 +732,7 @@ class Display extends EventDispatcher {
     }
 
     async _setContentTermsOrKanji(token, isTerms, urlSearchParams, eventArgs) {
-        const source = urlSearchParams.get('query');
+        let source = urlSearchParams.get('query');
         if (!source) { return false; }
 
         let {state, content} = this._history;
@@ -747,6 +745,11 @@ class Display extends EventDispatcher {
             state = {};
             changeHistory = true;
         }
+
+        source = this.postProcessQuery(source);
+        let full = urlSearchParams.get('full');
+        full = (full === null ? source : this.postProcessQuery(full));
+        this._setQueryParserText(full);
 
         let {definitions} = content;
         if (!Array.isArray(definitions)) {
@@ -852,6 +855,13 @@ class Display extends EventDispatcher {
         if (noResults !== null) {
             noResults.hidden = !visible;
         }
+    }
+
+    _setQueryParserText(text) {
+        if (this._fullQuery === text) { return; }
+        this._fullQuery = text;
+        if (!this._isQueryParserVisible()) { return; }
+        this._queryParser.setText(text);
     }
 
     _updateNavigation(previous, next) {

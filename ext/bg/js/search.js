@@ -152,6 +152,17 @@ class DisplaySearch extends Display {
         }
     }
 
+    postProcessQuery(query) {
+        if (this._isWanakanaEnabled()) {
+            try {
+                query = wanakana.toKana(query);
+            } catch (e) {
+                // NOP
+            }
+        }
+        return query;
+    }
+
     // Private
 
     _onContentUpdating({type, source, content, urlSearchParams}) {
@@ -177,7 +188,7 @@ class DisplaySearch extends Display {
         if (full === null) { full = source; }
 
         this._closePopups();
-        this._setQuery(full);
+        this._query.value = source;
         this._setIntroVisible(!valid, animate);
         this._setTitleText(source);
         this._updateSearchButton();
@@ -287,19 +298,6 @@ class DisplaySearch extends Display {
 
     _isWanakanaEnabled() {
         return this._wanakanaEnable !== null && this._wanakanaEnable.checked;
-    }
-
-    _setQuery(query) {
-        let interpretedQuery = query;
-        if (this._isWanakanaEnabled()) {
-            try {
-                interpretedQuery = wanakana.toKana(query);
-            } catch (e) {
-                // NOP
-            }
-        }
-        this._query.value = interpretedQuery;
-        this.setQueryParserText(interpretedQuery);
     }
 
     _setIntroVisible(visible, animate) {
