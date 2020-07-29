@@ -387,6 +387,7 @@ class Display extends EventDispatcher {
             this._queryParserVisibleOverride = (fullVisible === null ? null : (fullVisible !== 'false'));
             this._updateQueryParserVisibility();
 
+            this._closePopups();
             this._setEventListenersActive(false);
 
             let asigned = false;
@@ -1249,5 +1250,9 @@ class Display extends EventDispatcher {
 
     _updateQueryParserVisibility() {
         this._queryParserContainer.hidden = !this._isQueryParserVisible();
+    }
+
+    _closePopups() {
+        yomichan.trigger('closePopups');
     }
 }

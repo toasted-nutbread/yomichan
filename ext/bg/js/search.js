@@ -184,7 +184,6 @@ class DisplaySearch extends Display {
 
         if (typeof source !== 'string') { source = ''; }
 
-        this._closePopups();
         this._query.value = source;
         this._setIntroVisible(!valid, animate);
         this._updateSearchButton();
@@ -381,9 +380,5 @@ class DisplaySearch extends Display {
         yomichan.on('optionsUpdated', onOptionsUpdated);
 
         await onOptionsUpdated();
-    }
-
-    _closePopups() {
-        yomichan.trigger('closePopups');
     }
 }
