@@ -165,7 +165,7 @@ class DisplaySearch extends Display {
 
     // Private
 
-    _onContentUpdating({type, source, content, urlSearchParams}) {
+    _onContentUpdating({type, content, source}) {
         let animate = false;
         let valid = false;
         switch (type) {
@@ -184,13 +184,9 @@ class DisplaySearch extends Display {
 
         if (typeof source !== 'string') { source = ''; }
 
-        let full = urlSearchParams.get('full');
-        if (full === null) { full = source; }
-
         this._closePopups();
         this._query.value = source;
         this._setIntroVisible(!valid, animate);
-        this._setTitleText(source);
         this._updateSearchButton();
     }
 
@@ -358,19 +354,6 @@ class DisplaySearch extends Display {
 
     _updateSearchButton() {
         this._search.disabled = this._introVisible && (this._query === null || this._query.value.length === 0);
-    }
-
-    _setTitleText(text) {
-        // Chrome limits title to 1024 characters
-        if (text.length > 1000) {
-            text = text.substring(0, 1000) + '...';
-        }
-
-        if (text.length === 0) {
-            document.title = 'Yomichan Search';
-        } else {
-            document.title = `${text} - Yomichan Search`;
-        }
     }
 
     async _prepareNestedPopups() {

@@ -69,6 +69,8 @@ class Display extends EventDispatcher {
         this._historyChangeIgnore = false;
         this._historyHasChanged = false;
         this._navigationHeader = document.querySelector('#navigation-header');
+        this._defaultTitle = 'Yomichan Search';
+        this._defaultTitleMaxLength = 1000;
         this._fullQuery = '';
         this._queryParserVisible = false;
         this._queryParserVisibleOverride = null;
@@ -750,6 +752,7 @@ class Display extends EventDispatcher {
         let full = urlSearchParams.get('full');
         full = (full === null ? source : this.postProcessQuery(full));
         this._setQueryParserText(full);
+        this._setTitleText(source);
 
         let {definitions} = content;
         if (!Array.isArray(definitions)) {
@@ -843,10 +846,12 @@ class Display extends EventDispatcher {
 
         this._updateNavigation(null, null);
         this._setNoContentVisible(false);
+        this._setTitleText('');
     }
 
     _clearContent() {
         this._container.textContent = '';
+        this._setTitleText('');
     }
 
     _setNoContentVisible(visible) {
@@ -862,6 +867,21 @@ class Display extends EventDispatcher {
         this._fullQuery = text;
         if (!this._isQueryParserVisible()) { return; }
         this._queryParser.setText(text);
+    }
+
+    _setTitleText(text) {
+        // Chrome limits title to 1024 characters
+        const ellipsis = '...';
+        const maxLength = this._defaultTitleMaxLength - this._defaultTitle.length;
+        if (text.length > maxLength) {
+            text = `${text.substring(0, Math.max(0, maxLength - maxLength))}${ellipsis}`;
+        }
+
+        document.title = (
+            text.length === 0 ?
+            this._defaultTitle :
+            `${text} - ${this._defaultTitle}`
+        );
     }
 
     _updateNavigation(previous, next) {
