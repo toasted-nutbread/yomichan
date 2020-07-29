@@ -397,38 +397,8 @@ class Display extends EventDispatcher {
                 case 'terms':
                 case 'kanji':
                     {
-                        const source = urlSearchParams.get('query');
-                        if (!source) { break; }
-
                         const isTerms = (type === 'terms');
-                        let {state, content} = this._history;
-                        let changeHistory = false;
-                        if (!isObject(content)) {
-                            content = {};
-                            changeHistory = true;
-                        }
-                        if (!isObject(state)) {
-                            state = {};
-                            changeHistory = true;
-                        }
-
-                        let {definitions} = content;
-                        if (!Array.isArray(definitions)) {
-                            definitions = await this._findDefinitions(isTerms, source, urlSearchParams);
-                            if (this._setContentToken !== token) { return; }
-                            content.definitions = definitions;
-                            changeHistory = true;
-                        }
-
-                        if (changeHistory) {
-                            this._historyStateUpdate(state, content);
-                        }
-
-                        asigned = true;
-                        eventArgs.source = source;
-                        eventArgs.content = content;
-                        this.trigger('contentUpdating', eventArgs);
-                        await this._setContentTermsOrKanji(token, isTerms, definitions, state);
+                        asigned = await this._setContentTermsOrKanji(token, isTerms, urlSearchParams, eventArgs);
                     }
                     break;
                 case 'unloaded':
@@ -437,21 +407,25 @@ class Display extends EventDispatcher {
                         eventArgs.content = content;
                         this.trigger('contentUpdating', eventArgs);
                         this._setContentExtensionUnloaded();
+                        asigned = true;
                     }
                     break;
             }
 
-            if (!asigned) {
-                const {content} = this._history;
-                eventArgs.type = 'clear';
-                eventArgs.content = content;
-                this.trigger('contentUpdating', eventArgs);
-                this._clearContent();
+            const stale = (this._setContentToken !== token);
+            if (!stale) {
+                if (!asigned) {
+                    const {content} = this._history;
+                    eventArgs.type = 'clear';
+                    eventArgs.content = content;
+                    this.trigger('contentUpdating', eventArgs);
+                    this._clearContent();
+                }
+
+                this._setEventListenersActive(true);
             }
 
-            this._setEventListenersActive(true);
-
-            eventArgs.stale = (this._setContentToken !== token);
+            eventArgs.stale = stale;
             this.trigger('contentUpdated', eventArgs);
         } catch (e) {
             this.onError(e);
@@ -759,7 +733,38 @@ class Display extends EventDispatcher {
         }
     }
 
-    async _setContentTermsOrKanji(token, isTerms, definitions, {sentence=null, url=null, focusEntry=null, scrollX=null, scrollY=null}) {
+    async _setContentTermsOrKanji(token, isTerms, urlSearchParams, eventArgs) {
+        const source = urlSearchParams.get('query');
+        if (!source) { return false; }
+
+        let {state, content} = this._history;
+        let changeHistory = false;
+        if (!isObject(content)) {
+            content = {};
+            changeHistory = true;
+        }
+        if (!isObject(state)) {
+            state = {};
+            changeHistory = true;
+        }
+
+        let {definitions} = content;
+        if (!Array.isArray(definitions)) {
+            definitions = await this._findDefinitions(isTerms, source, urlSearchParams);
+            if (this._setContentToken !== token) { return true; }
+            content.definitions = definitions;
+            changeHistory = true;
+        }
+
+        if (changeHistory) {
+            this._historyStateUpdate(state, content);
+        }
+
+        eventArgs.source = source;
+        eventArgs.content = content;
+        this.trigger('contentUpdating', eventArgs);
+
+        let {sentence=null, url=null, focusEntry=null, scrollX=null, scrollY=null} = state;
         if (typeof url !== 'string') { url = window.location.href; }
         sentence = this._getValidSentenceData(sentence);
 
@@ -779,7 +784,7 @@ class Display extends EventDispatcher {
         for (let i = 0, ii = definitions.length; i < ii; ++i) {
             if (i > 0) {
                 await promiseTimeout(1);
-                if (this._setContentToken !== token) { return; }
+                if (this._setContentToken !== token) { return true; }
             }
 
             const entry = (
@@ -809,6 +814,12 @@ class Display extends EventDispatcher {
             this.autoPlayAudio();
         }
 
+        this._setContentTermsOrKanjiUpdateAdderButtons(token, isTerms, definitions);
+
+        return true;
+    }
+
+    async _setContentTermsOrKanjiUpdateAdderButtons(token, isTerms, definitions) {
         const modes = isTerms ? ['term-kanji', 'term-kana'] : ['kanji'];
         const states = await this._getDefinitionsAddable(definitions, modes);
         if (this._setContentToken !== token) { return; }
