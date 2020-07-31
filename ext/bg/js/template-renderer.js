@@ -70,7 +70,8 @@ class TemplateRenderer {
             ['regexReplace',     this._regexReplace.bind(this)],
             ['regexMatch',       this._regexMatch.bind(this)],
             ['mergeTags',        this._mergeTags.bind(this)],
-            ['eachUpTo',         this._eachUpTo.bind(this)]
+            ['eachUpTo',         this._eachUpTo.bind(this)],
+            ['spread',           this._spread.bind(this)]
         ];
 
         for (const [name, helper] of helpers) {
@@ -223,5 +224,17 @@ class TemplateRenderer {
             }
         }
         return options.inverse(context);
+    }
+
+    _spread(context, ...args) {
+        const result = [];
+        for (let i = 0, ii = args.length - 1; i < ii; ++i) {
+            try {
+                result.push(...args[i]);
+            } catch (e) {
+                // NOP
+            }
+        }
+        return result;
     }
 }
