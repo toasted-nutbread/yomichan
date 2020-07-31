@@ -71,7 +71,8 @@ class TemplateRenderer {
             ['regexMatch',       this._regexMatch.bind(this)],
             ['mergeTags',        this._mergeTags.bind(this)],
             ['eachUpTo',         this._eachUpTo.bind(this)],
-            ['spread',           this._spread.bind(this)]
+            ['spread',           this._spread.bind(this)],
+            ['op',               this._op.bind(this)]
         ];
 
         for (const [name, helper] of helpers) {
@@ -236,5 +237,59 @@ class TemplateRenderer {
             }
         }
         return result;
+    }
+
+    _op(context, ...args) {
+        switch (args.length) {
+            case 3: return this._evaluateUnaryExpression(args[0], args[1]);
+            case 4: return this._evaluateBinaryExpression(args[0], args[1], args[2]);
+            case 5: return this._evaluateTernaryExpression(args[0], args[1], args[2], args[3]);
+            default: return void 0;
+        }
+    }
+
+    _evaluateUnaryExpression(operator, operand1) {
+        switch (operator) {
+            case '+': return +operand1;
+            case '-': return -operand1;
+            case '~': return ~operand1;
+            case '!': return !operand1;
+            default: return void 0;
+        }
+    }
+
+    _evaluateBinaryExpression(operator, operand1, operand2) {
+        switch (operator) {
+            case '+': return operand1 + operand2;
+            case '-': return operand1 - operand2;
+            case '/': return operand1 / operand2;
+            case '*': return operand1 * operand2;
+            case '%': return operand1 % operand2;
+            case '**': return operand1 ** operand2;
+            case '==': return operand1 == operand2; // eslint-disable-line eqeqeq
+            case '!=': return operand1 != operand2; // eslint-disable-line eqeqeq
+            case '===': return operand1 === operand2;
+            case '!==': return operand1 !== operand2;
+            case '<':  return operand1 < operand2;
+            case '<=': return operand1 <= operand2;
+            case '>':  return operand1 > operand2;
+            case '>=': return operand1 >= operand2;
+            case '<<': return operand1 << operand2;
+            case '>>': return operand1 >> operand2;
+            case '>>>': return operand1 >>> operand2;
+            case '&': return operand1 & operand2;
+            case '|': return operand1 | operand2;
+            case '^': return operand1 ^ operand2;
+            case '&&': return operand1 && operand2;
+            case '||': return operand1 || operand2;
+            default: return void 0;
+        }
+    }
+
+    _evaluateTernaryExpression(operator, operand1, operand2, operand3) {
+        switch (operator) {
+            case '?:': return operand1 ? operand2 : operand3;
+            default: return void 0;
+        }
     }
 }
