@@ -83,6 +83,7 @@ class TemplateRenderer {
             ['set',              this._set.bind(this)],
             ['scope',            this._scope.bind(this)],
             ['property',         this._property.bind(this)],
+            ['noop',             this._noop.bind(this)],
             ['isMoraPitchHigh',  this._isMoraPitchHigh.bind(this)],
             ['getKanaMorae',     this._getKanaMorae.bind(this)]
         ];
@@ -358,6 +359,10 @@ class TemplateRenderer {
         } catch (e) {
             return void 0;
         }
+    }
+
+    _noop(context, options) {
+        return options.fn(context);
     }
 
     _isMoraPitchHigh(context, index, position) {
