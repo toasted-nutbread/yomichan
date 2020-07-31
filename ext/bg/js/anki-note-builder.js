@@ -15,6 +15,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+/* global
+ * DictionaryDataUtil
+ */
+
 class AnkiNoteBuilder {
     constructor({anki, audioSystem, renderTemplate}) {
         this._anki = anki;
@@ -55,10 +59,14 @@ class AnkiNoteBuilder {
         return note;
     }
 
-    async formatField(field, definition, mode, context, options, templates, errors=null) {
-        const data = {
+    createNoteData(definition, mode, context, options) {
+        const pitches = DictionaryDataUtil.getPitchAccentInfos(definition);
+        const pitchCount = pitches.reduce((i, v) => i + v.pitches.length, 0);
+        return {
             marker: null,
             definition,
+            pitches,
+            pitchCount,
             group: options.general.resultOutputMode === 'group',
             merge: options.general.resultOutputMode === 'merge',
             modeTermKanji: mode === 'term-kanji',
@@ -67,6 +75,10 @@ class AnkiNoteBuilder {
             compactGlossaries: options.general.compactGlossaries,
             context
         };
+    }
+
+    async formatField(field, definition, mode, context, options, templates, errors=null) {
+        const data = this.createNoteData(definition, mode, context, options);
         const pattern = /\{([\w-]+)\}/g;
         return await AnkiNoteBuilder.stringReplaceAsync(field, pattern, async (g0, marker) => {
             data.marker = marker;
