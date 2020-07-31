@@ -48,7 +48,7 @@ class DisplayGenerator {
         const {termTags, expressions, definitions} = details;
 
         const pitches = DictionaryDataUtil.getPitchAccentInfos(details);
-        const pitchCount = pitches.reduce((i, v) => i + v[1].length, 0);
+        const pitchCount = pitches.reduce((i, v) => i + v.pitches.length, 0);
 
         const expressionMulti = Array.isArray(expressions);
         const definitionMulti = Array.isArray(definitions);
@@ -364,18 +364,18 @@ class DisplayGenerator {
             document.head.appendChild(t);
         }
 
-        const [dictionary, dictionaryPitches] = details;
+        const {dictionary, pitches} = details;
 
         const node = this._templateHandler.instantiate('term-pitch-accent-group');
         node.dataset.dictionary = dictionary;
         node.dataset.pitchesMulti = 'true';
-        node.dataset.pitchesCount = `${dictionaryPitches.length}`;
+        node.dataset.pitchesCount = `${pitches.length}`;
 
         const tag = this._createTag({notes: '', name: dictionary, category: 'pitch-accent-dictionary'});
         node.querySelector('.term-pitch-accent-group-tag-list').appendChild(tag);
 
         const n = node.querySelector('.term-pitch-accent-list');
-        this._appendMultiple(n, this._createPitch.bind(this), dictionaryPitches);
+        this._appendMultiple(n, this._createPitch.bind(this), pitches);
 
         return node;
     }

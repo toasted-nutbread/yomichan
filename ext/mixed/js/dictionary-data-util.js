@@ -64,7 +64,11 @@ class DictionaryDataUtil {
             }
         }
 
-        return [...results.entries()];
+        const results2 = [];
+        for (const [dictionary, pitches] of results.entries()) {
+            results2.push({dictionary, pitches});
+        }
+        return results2;
     }
 
     static _findExistingPitchAccentInfo(reading, position, tags, pitchAccentInfoList) {
