@@ -81,7 +81,8 @@ class TemplateRenderer {
             ['op',               this._op.bind(this)],
             ['get',              this._get.bind(this)],
             ['set',              this._set.bind(this)],
-            ['scope',            this._scope.bind(this)]
+            ['scope',            this._scope.bind(this)],
+            ['isMoraPitchHigh',  this._isMoraPitchHigh.bind(this)]
         ];
 
         for (const [name, helper] of helpers) {
@@ -341,5 +342,9 @@ class TemplateRenderer {
                 this._stateStack.pop();
             }
         }
+    }
+
+    _isMoraPitchHigh(context, position, index) {
+        return jp.isMoraPitchHigh(index, position);
     }
 }
