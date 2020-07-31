@@ -25,6 +25,7 @@ class TemplateRenderer {
         this._cache = new Map();
         this._cacheMaxSize = 5;
         this._helpersRegistered = false;
+        this._stateStack = null;
     }
 
     async render(template, data) {
@@ -41,7 +42,12 @@ class TemplateRenderer {
             cache.set(template, instance);
         }
 
-        return instance(data).trim();
+        try {
+            this._stateStack = [new Map()];
+            return instance(data).trim();
+        } finally {
+            this._stateStack = null;
+        }
     }
 
     // Private
@@ -72,7 +78,10 @@ class TemplateRenderer {
             ['mergeTags',        this._mergeTags.bind(this)],
             ['eachUpTo',         this._eachUpTo.bind(this)],
             ['spread',           this._spread.bind(this)],
-            ['op',               this._op.bind(this)]
+            ['op',               this._op.bind(this)],
+            ['get',              this._get.bind(this)],
+            ['set',              this._set.bind(this)],
+            ['scope',            this._scope.bind(this)]
         ];
 
         for (const [name, helper] of helpers) {
@@ -290,6 +299,47 @@ class TemplateRenderer {
         switch (operator) {
             case '?:': return operand1 ? operand2 : operand3;
             default: return void 0;
+        }
+    }
+
+    _get(context, key) {
+        for (let i = this._stateStack.length; --i >= 0;) {
+            const map = this._stateStack[i];
+            if (map.has(key)) {
+                return map.get(key);
+            }
+        }
+        return void 0;
+    }
+
+    _set(context, ...args) {
+        switch (args.length) {
+            case 2:
+            {
+                const [key, options] = args;
+                const value = options.fn(context);
+                this._stateStack[this._stateStack.length - 1].set(key, value);
+                return value;
+            }
+            case 3:
+            {
+                const [key, value] = args;
+                this._stateStack[this._stateStack.length - 1].set(key, value);
+                return value;
+            }
+            default:
+                return void 0;
+        }
+    }
+
+    _scope(context, options) {
+        try {
+            this._stateStack.push(new Map());
+            return options.fn(context);
+        } finally {
+            if (this._stateStack.length > 1) {
+                this._stateStack.pop();
+            }
         }
     }
 }
