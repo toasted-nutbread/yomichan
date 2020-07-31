@@ -43,9 +43,10 @@ class AnkiNoteBuilder {
             }
         };
 
+        const data = this.createNoteData(definition, mode, context, options);
         const formattedFieldValuePromises = [];
         for (const [, fieldValue] of modeOptionsFieldEntries) {
-            const formattedFieldValuePromise = this.formatField(fieldValue, definition, mode, context, options, templates, null);
+            const formattedFieldValuePromise = this.formatField(fieldValue, data, templates, null);
             formattedFieldValuePromises.push(formattedFieldValuePromise);
         }
 
@@ -77,8 +78,7 @@ class AnkiNoteBuilder {
         };
     }
 
-    async formatField(field, definition, mode, context, options, templates, errors=null) {
-        const data = this.createNoteData(definition, mode, context, options);
+    async formatField(field, data, templates, errors=null) {
         const pattern = /\{([\w-]+)\}/g;
         return await AnkiNoteBuilder.stringReplaceAsync(field, pattern, async (g0, marker) => {
             data.marker = marker;
