@@ -15,7 +15,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 class OptionsUtil {
     static async update(options) {
         // Invalid options
