@@ -385,6 +385,10 @@ class OptionsUtil {
             {
                 async: false,
                 update: this._updateVersion2.bind(this)
+            },
+            {
+                async: true,
+                update: this._updateVersion3.bind(this)
             }
         ];
     }
@@ -410,5 +414,49 @@ class OptionsUtil {
             profile.options = this._legacyProfileUpdateUpdateVersion(profile.options);
         }
         return options;
+    }
+
+    static async _updateVersion3(options) {
+        // Version 3 changes:
+        //  Pitch accent Anki field templates added.
+        let addition = null;
+        for (const {options: profileOptions} of options.profiles) {
+            const fieldTemplates = profileOptions.anki.fieldTemplates;
+            if (fieldTemplates !== null) {
+                if (addition === null) {
+                    addition = await this._updateVersion3GetAnkiFieldTemplates();
+                }
+                profileOptions.anki.fieldTemplates = this._addFieldTemplatesBeforeEnd(fieldTemplates, addition);
+            }
+        }
+        return options;
+    }
+
+    static async _updateVersion3GetAnkiFieldTemplates() {
+        const url = chrome.runtime.getURL('/bg/data/anki-field-templates-upgrade-v2.handlebars');
+        const response = await fetch(url, {
+            method: 'GET',
+            mode: 'no-cors',
+            cache: 'default',
+            credentials: 'omit',
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer'
+        });
+        return await response.text();
+    }
+
+    static async _addFieldTemplatesBeforeEnd(fieldTemplates, addition) {
+        const pattern = /[ \t]*\{\{~?>\s*\(\s*lookup\s*\.\s*"marker"\s*\)\s*~?\}\}/;
+        const newline = '\n';
+        let replaced = false;
+        fieldTemplates = fieldTemplates.replace(pattern, (g0) => {
+            replaced = true;
+            return `${addition}${newline}${g0}`;
+        });
+        if (!replaced) {
+            fieldTemplates += newline;
+            fieldTemplates += addition;
+        }
+        return fieldTemplates;
     }
 }
