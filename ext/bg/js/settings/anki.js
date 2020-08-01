@@ -66,6 +66,9 @@ class AnkiController {
             case 'kanji':
                 return [
                     'character',
+                    'cloze-body',
+                    'cloze-prefix',
+                    'cloze-suffix',
                     'dictionary',
                     'document-title',
                     'glossary',
