@@ -521,48 +521,48 @@ class Display extends EventDispatcher {
 
     _onGlossaryMouseUp(e) {
         if (!this._clickScanPrevent && DOM.isMouseButtonPressed(e, 'primary')) {
-            this._onTermLookup(e);
+            try {
+                this._onTermLookup(e);
+            } catch (error) {
+                this.onError(error);
+            }
         }
     }
 
     async _onTermLookup(e) {
-        try {
-            if (!this._historyHasState()) { return; }
+        if (!this._historyHasState()) { return; }
 
-            const termLookupResults = await this._termLookup(e);
-            if (!termLookupResults || !this._historyHasState()) { return; }
+        const termLookupResults = await this._termLookup(e);
+        if (!termLookupResults || !this._historyHasState()) { return; }
 
-            const {state} = this._history;
-            const {textSource, definitions} = termLookupResults;
+        const {state} = this._history;
+        const {textSource, definitions} = termLookupResults;
 
-            const scannedElement = e.target;
-            const sentenceExtent = this._options.anki.sentenceExt;
-            const layoutAwareScan = this._options.scanning.layoutAwareScan;
-            const sentence = docSentenceExtract(textSource, sentenceExtent, layoutAwareScan);
+        const scannedElement = e.target;
+        const sentenceExtent = this._options.anki.sentenceExt;
+        const layoutAwareScan = this._options.scanning.layoutAwareScan;
+        const sentence = docSentenceExtract(textSource, sentenceExtent, layoutAwareScan);
 
-            state.focusEntry = this._entryIndexFind(scannedElement);
-            state.scrollX = this._windowScroll.x;
-            state.scrollY = this._windowScroll.y;
-            this._historyStateUpdate(state);
+        state.focusEntry = this._entryIndexFind(scannedElement);
+        state.scrollX = this._windowScroll.x;
+        state.scrollY = this._windowScroll.y;
+        this._historyStateUpdate(state);
 
-            const query = textSource.text();
-            const details = {
-                focus: false,
-                history: true,
-                params: this._createSearchParams('terms', query, false),
-                state: {
-                    focusEntry: 0,
-                    sentence,
-                    url: state.url
-                },
-                content: {
-                    definitions
-                }
-            };
-            this.setContent(details);
-        } catch (error) {
-            this.onError(error);
-        }
+        const query = textSource.text();
+        const details = {
+            focus: false,
+            history: true,
+            params: this._createSearchParams('terms', query, false),
+            state: {
+                focusEntry: 0,
+                sentence,
+                url: state.url
+            },
+            content: {
+                definitions
+            }
+        };
+        this.setContent(details);
     }
 
     async _termLookup(e) {
