@@ -201,7 +201,7 @@ class Backend {
 
             this._optionsSchema = await requestJson(chrome.runtime.getURL('/bg/data/options-schema.json'), 'GET');
             this._defaultAnkiFieldTemplates = (await requestText(chrome.runtime.getURL('/bg/data/default-anki-field-templates.handlebars'), 'GET')).trim();
-            this._options = await OptionsUtil.optionsLoad();
+            this._options = await OptionsUtil.load();
             this._options = JsonSchema.getValidValueOrDefault(this._optionsSchema, this._options);
 
             this._applyOptions('background');
@@ -395,7 +395,7 @@ class Backend {
 
     async _onApiOptionsSave({source}) {
         const options = this.getFullOptions();
-        await OptionsUtil.optionsSave(options);
+        await OptionsUtil.save(options);
         this._applyOptions(source);
     }
 

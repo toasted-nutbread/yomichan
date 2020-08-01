@@ -21,7 +21,7 @@ class OptionsUtil {
     * Generic options functions
     */
 
-    static optionsGetStringHashCode(string) {
+    static _getStringHashCode(string) {
         let hashCode = 0;
 
         if (typeof string !== 'string') { return hashCode; }
@@ -34,7 +34,7 @@ class OptionsUtil {
         return hashCode;
     }
 
-    static optionsGenericApplyUpdates(options, updates) {
+    static _applyUpdates(options, updates) {
         const targetVersion = updates.length;
         const currentVersion = options.version;
         if (typeof currentVersion === 'number' && Number.isFinite(currentVersion)) {
@@ -55,7 +55,7 @@ class OptionsUtil {
     * Per-profile options
     */
 
-    static getProfileOptionsVersionUpdates() {
+    static _getProfileVersionUpdates() {
         return [
             null,
             null,
@@ -75,12 +75,12 @@ class OptionsUtil {
                 options.anki.fieldTemplates = null;
             },
             (options) => {
-                if (this.optionsGetStringHashCode(options.anki.fieldTemplates) === 1285806040) {
+                if (this._getStringHashCode(options.anki.fieldTemplates) === 1285806040) {
                     options.anki.fieldTemplates = null;
                 }
             },
             (options) => {
-                if (this.optionsGetStringHashCode(options.anki.fieldTemplates) === -250091611) {
+                if (this._getStringHashCode(options.anki.fieldTemplates) === -250091611) {
                     options.anki.fieldTemplates = null;
                 }
             },
@@ -99,7 +99,7 @@ class OptionsUtil {
             (options) => {
                 // Version 12 changes:
                 //  The preferred default value of options.anki.fieldTemplates has been changed to null.
-                if (this.optionsGetStringHashCode(options.anki.fieldTemplates) === 1444379824) {
+                if (this._getStringHashCode(options.anki.fieldTemplates) === 1444379824) {
                     options.anki.fieldTemplates = null;
                 }
             },
@@ -146,7 +146,7 @@ class OptionsUtil {
         ];
     }
 
-    static profileOptionsCreateDefaults() {
+    static _createProfileDefaults() {
         return {
             general: {
                 enable: true,
@@ -245,8 +245,8 @@ class OptionsUtil {
         };
     }
 
-    static profileOptionsSetDefaults(options) {
-        const defaults = this.profileOptionsCreateDefaults();
+    static _setProfileDefaults(options) {
+        const defaults = this._createProfileDefaults();
 
         const combine = (target, source) => {
             for (const key in source) {
@@ -266,9 +266,9 @@ class OptionsUtil {
         return options;
     }
 
-    static profileOptionsUpdateVersion(options) {
-        this.profileOptionsSetDefaults(options);
-        return this.optionsGenericApplyUpdates(options, this.getProfileOptionsVersionUpdates());
+    static _updateProfileVersion(options) {
+        this._setProfileDefaults(options);
+        return this._applyUpdates(options, this._getProfileVersionUpdates());
     }
 
 
@@ -292,7 +292,7 @@ class OptionsUtil {
     * ]
     */
 
-    static getOptionsVersionUpdates() {
+    static _getVersionUpdates() {
         return [
             (options) => {
                 options.global = {
@@ -304,7 +304,7 @@ class OptionsUtil {
         ];
     }
 
-    static optionsUpdateVersion(options, defaultProfileOptions) {
+    static update(options, defaultProfileOptions) {
         // Ensure profiles is an array
         if (!Array.isArray(options.profiles)) {
             options.profiles = [];
@@ -344,7 +344,7 @@ class OptionsUtil {
             if (!Array.isArray(profile.conditionGroups)) {
                 profile.conditionGroups = [];
             }
-            profile.options = this.profileOptionsUpdateVersion(profile.options);
+            profile.options = this._updateProfileVersion(profile.options);
         }
 
         // Version
@@ -353,10 +353,10 @@ class OptionsUtil {
         }
 
         // Generic updates
-        return this.optionsGenericApplyUpdates(options, this.getOptionsVersionUpdates());
+        return this._applyUpdates(options, this._getVersionUpdates());
     }
 
-    static optionsLoad() {
+    static load() {
         return new Promise((resolve, reject) => {
             chrome.storage.local.get(['options'], (store) => {
                 const error = chrome.runtime.lastError;
@@ -379,13 +379,13 @@ class OptionsUtil {
         }).then((options) => {
             return (
                 Array.isArray(options.profiles) ?
-                this.optionsUpdateVersion(options, {}) :
-                this.optionsUpdateVersion({}, options)
+                this.update(options, {}) :
+                this.update({}, options)
             );
         });
     }
 
-    static optionsSave(options) {
+    static save(options) {
         return new Promise((resolve, reject) => {
             chrome.storage.local.set({options: JSON.stringify(options)}, () => {
                 const error = chrome.runtime.lastError;
@@ -398,7 +398,7 @@ class OptionsUtil {
         });
     }
 
-    static optionsGetDefault() {
-        return this.optionsUpdateVersion({}, {});
+    static getDefault() {
+        return this.update({}, {});
     }
 }
