@@ -361,15 +361,16 @@ class OptionsUtil {
 
     static _applyUpdates(options, updates) {
         const targetVersion = updates.length;
-        const currentVersion = options.version;
+        let currentVersion = options.version;
 
-        if (typeof currentVersion === 'number' && Number.isFinite(currentVersion)) {
-            for (let i = Math.max(0, Math.floor(currentVersion)); i < targetVersion; ++i) {
-                const update = updates[i];
-                if (update !== null) {
-                    update(options);
-                }
-            }
+        if (typeof currentVersion !== 'number' || !Number.isFinite(currentVersion)) {
+            currentVersion = 0;
+        }
+
+        for (let i = Math.max(0, Math.floor(currentVersion)); i < targetVersion; ++i) {
+            const {update} = updates[i];
+            const result = update(options);
+            options = result;
         }
 
         options.version = targetVersion;
@@ -378,23 +379,29 @@ class OptionsUtil {
 
     static _getVersionUpdates() {
         return [
-            (options) => {
-                // Version 1 changes:
-                //  Added options.global.database.prefixWildcardsSupported = false
-                options.global = {
-                    database: {
-                        prefixWildcardsSupported: false
-                    }
-                };
+            {
+                update: (options) => {
+                    // Version 1 changes:
+                    //  Added options.global.database.prefixWildcardsSupported = false
+                    options.global = {
+                        database: {
+                            prefixWildcardsSupported: false
+                        }
+                    };
+                    return options;
+                }
             },
-            (options) => {
-                // Version 2 changes:
-                //  Legacy profile update process moved into this upgrade function.
-                for (const profile of options.profiles) {
-                    if (!Array.isArray(profile.conditionGroups)) {
-                        profile.conditionGroups = [];
+            {
+                update: (options) => {
+                    // Version 2 changes:
+                    //  Legacy profile update process moved into this upgrade function.
+                    for (const profile of options.profiles) {
+                        if (!Array.isArray(profile.conditionGroups)) {
+                            profile.conditionGroups = [];
+                        }
+                        profile.options = this._legacyProfileUpdateUpdateVersion(profile.options);
                     }
-                    profile.options = this._legacyProfileUpdateUpdateVersion(profile.options);
+                    return options;
                 }
             }
         ];
