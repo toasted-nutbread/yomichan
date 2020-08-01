@@ -69,7 +69,7 @@ class OptionsUtil {
             if (!Array.isArray(profile.conditionGroups)) {
                 profile.conditionGroups = [];
             }
-            profile.options = this._updateProfileVersion(profile.options);
+            profile.options = this._legacyProfileUpdateUpdateVersion(profile.options);
         }
 
         // Version
@@ -150,7 +150,9 @@ class OptionsUtil {
         return options;
     }
 
-    static _getProfileVersionUpdates() {
+    // Legacy profile updating
+
+    static _legacyProfileUpdateGetUpdates() {
         return [
             null,
             null,
@@ -241,7 +243,7 @@ class OptionsUtil {
         ];
     }
 
-    static _createProfileDefaults() {
+    static _legacyProfileUpdateGetDefaults() {
         return {
             general: {
                 enable: true,
@@ -340,8 +342,8 @@ class OptionsUtil {
         };
     }
 
-    static _setProfileDefaults(options) {
-        const defaults = this._createProfileDefaults();
+    static _legacyProfileUpdateAssignDefaults(options) {
+        const defaults = this._legacyProfileUpdateGetDefaults();
 
         const combine = (target, source) => {
             for (const key in source) {
@@ -361,9 +363,9 @@ class OptionsUtil {
         return options;
     }
 
-    static _updateProfileVersion(options) {
-        this._setProfileDefaults(options);
-        return this._applyUpdates(options, this._getProfileVersionUpdates());
+    static _legacyProfileUpdateUpdateVersion(options) {
+        this._legacyProfileUpdateAssignDefaults(options);
+        return this._applyUpdates(options, this._legacyProfileUpdateGetUpdates());
     }
 
     static _getVersionUpdates() {
