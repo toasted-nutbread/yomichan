@@ -17,13 +17,25 @@
 
 
 class OptionsUtil {
-    static update(options, defaultProfileOptions) {
+    static update(options) {
+        // Invalid options
+        if (!isObject(options)) {
+            options = {};
+        }
+
+        // Check for legacy options
+        let defaultProfileOptions = {};
+        if (!Array.isArray(options.profiles)) {
+            defaultProfileOptions = options;
+            options = {};
+        }
+
         // Ensure profiles is an array
         if (!Array.isArray(options.profiles)) {
             options.profiles = [];
         }
 
-        // Remove invalid
+        // Remove invalid profiles
         const profiles = options.profiles;
         for (let i = profiles.length - 1; i >= 0; --i) {
             if (!isObject(profiles[i])) {
@@ -87,15 +99,7 @@ class OptionsUtil {
             // NOP
         }
 
-        if (!isObject(options)) {
-            options = {};
-        }
-
-        return (
-            Array.isArray(options.profiles) ?
-            this.update(options, {}) :
-            this.update({}, options)
-        );
+        return this.update(options);
     }
 
     static save(options) {
@@ -112,7 +116,7 @@ class OptionsUtil {
     }
 
     static getDefault() {
-        return this.update({}, {});
+        return this.update({});
     }
 
     // Private

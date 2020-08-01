@@ -322,7 +322,7 @@ class SettingsBackup {
         }
 
         // Upgrade options
-        optionsFull = OptionsUtil.update(optionsFull, {});
+        optionsFull = OptionsUtil.update(optionsFull);
 
         // Check for warnings
         const sanitizationWarnings = this._settingsImportSanitizeOptions(optionsFull, true);
