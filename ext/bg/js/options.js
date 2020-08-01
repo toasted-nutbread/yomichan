@@ -17,9 +17,105 @@
 
 
 class OptionsUtil {
-    /*
-    * Generic options functions
-    */
+    static update(options, defaultProfileOptions) {
+        // Ensure profiles is an array
+        if (!Array.isArray(options.profiles)) {
+            options.profiles = [];
+        }
+
+        // Remove invalid
+        const profiles = options.profiles;
+        for (let i = profiles.length - 1; i >= 0; --i) {
+            if (!isObject(profiles[i])) {
+                profiles.splice(i, 1);
+            }
+        }
+
+        // Require at least one profile
+        if (profiles.length === 0) {
+            profiles.push({
+                name: 'Default',
+                options: defaultProfileOptions,
+                conditionGroups: []
+            });
+        }
+
+        // Ensure profileCurrent is valid
+        const profileCurrent = options.profileCurrent;
+        if (!(
+            typeof profileCurrent === 'number' &&
+            Number.isFinite(profileCurrent) &&
+            Math.floor(profileCurrent) === profileCurrent &&
+            profileCurrent >= 0 &&
+            profileCurrent < profiles.length
+        )) {
+            options.profileCurrent = 0;
+        }
+
+        // Update profile options
+        for (const profile of profiles) {
+            if (!Array.isArray(profile.conditionGroups)) {
+                profile.conditionGroups = [];
+            }
+            profile.options = this._updateProfileVersion(profile.options);
+        }
+
+        // Version
+        if (typeof options.version !== 'number') {
+            options.version = 0;
+        }
+
+        // Generic updates
+        return this._applyUpdates(options, this._getVersionUpdates());
+    }
+
+    static load() {
+        return new Promise((resolve, reject) => {
+            chrome.storage.local.get(['options'], (store) => {
+                const error = chrome.runtime.lastError;
+                if (error) {
+                    reject(new Error(error));
+                } else {
+                    resolve(store.options);
+                }
+            });
+        }).then((optionsStr) => {
+            if (typeof optionsStr === 'string') {
+                const options = JSON.parse(optionsStr);
+                if (isObject(options)) {
+                    return options;
+                }
+            }
+            return {};
+        }).catch(() => {
+            return {};
+        }).then((options) => {
+            return (
+                Array.isArray(options.profiles) ?
+                this.update(options, {}) :
+                this.update({}, options)
+            );
+        });
+    }
+
+    static save(options) {
+        return new Promise((resolve, reject) => {
+            chrome.storage.local.set({options: JSON.stringify(options)}, () => {
+                const error = chrome.runtime.lastError;
+                if (error) {
+                    reject(new Error(error));
+                } else {
+                    resolve();
+                }
+            });
+        });
+    }
+
+    static getDefault() {
+        return this.update({}, {});
+    }
+
+    // Private
 
     static _getStringHashCode(string) {
         let hashCode = 0;
@@ -49,11 +145,6 @@ class OptionsUtil {
         options.version = targetVersion;
         return options;
     }
-
-
-    /*
-    * Per-profile options
-    */
 
     static _getProfileVersionUpdates() {
         return [
@@ -271,27 +362,6 @@ class OptionsUtil {
         return this._applyUpdates(options, this._getProfileVersionUpdates());
     }
 
-
-    /*
-    * Global options
-    *
-    * Each profile has an array named "conditionGroups", which is an array of condition groups
-    * which enable the contextual selection of profiles. The structure of the array is as follows:
-    * [
-    *     {
-    *         conditions: [
-    *             {
-    *                 type: "string",
-    *                 operator: "string",
-    *                 value: "string"
-    *             },
-    *             // ...
-    *         ]
-    *     },
-    *     // ...
-    * ]
-    */
-
     static _getVersionUpdates() {
         return [
             (options) => {
@@ -302,103 +372,5 @@ class OptionsUtil {
                 };
             }
         ];
-    }
-
-    static update(options, defaultProfileOptions) {
-        // Ensure profiles is an array
-        if (!Array.isArray(options.profiles)) {
-            options.profiles = [];
-        }
-
-        // Remove invalid
-        const profiles = options.profiles;
-        for (let i = profiles.length - 1; i >= 0; --i) {
-            if (!isObject(profiles[i])) {
-                profiles.splice(i, 1);
-            }
-        }
-
-        // Require at least one profile
-        if (profiles.length === 0) {
-            profiles.push({
-                name: 'Default',
-                options: defaultProfileOptions,
-                conditionGroups: []
-            });
-        }
-
-        // Ensure profileCurrent is valid
-        const profileCurrent = options.profileCurrent;
-        if (!(
-            typeof profileCurrent === 'number' &&
-            Number.isFinite(profileCurrent) &&
-            Math.floor(profileCurrent) === profileCurrent &&
-            profileCurrent >= 0 &&
-            profileCurrent < profiles.length
-        )) {
-            options.profileCurrent = 0;
-        }
-
-        // Update profile options
-        for (const profile of profiles) {
-            if (!Array.isArray(profile.conditionGroups)) {
-                profile.conditionGroups = [];
-            }
-            profile.options = this._updateProfileVersion(profile.options);
-        }
-
-        // Version
-        if (typeof options.version !== 'number') {
-            options.version = 0;
-        }
-
-        // Generic updates
-        return this._applyUpdates(options, this._getVersionUpdates());
-    }
-
-    static load() {
-        return new Promise((resolve, reject) => {
-            chrome.storage.local.get(['options'], (store) => {
-                const error = chrome.runtime.lastError;
-                if (error) {
-                    reject(new Error(error));
-                } else {
-                    resolve(store.options);
-                }
-            });
-        }).then((optionsStr) => {
-            if (typeof optionsStr === 'string') {
-                const options = JSON.parse(optionsStr);
-                if (isObject(options)) {
-                    return options;
-                }
-            }
-            return {};
-        }).catch(() => {
-            return {};
-        }).then((options) => {
-            return (
-                Array.isArray(options.profiles) ?
-                this.update(options, {}) :
-                this.update({}, options)
-            );
-        });
-    }
-
-    static save(options) {
-        return new Promise((resolve, reject) => {
-            chrome.storage.local.set({options: JSON.stringify(options)}, () => {
-                const error = chrome.runtime.lastError;
-                if (error) {
-                    reject(new Error(error));
-                } else {
-                    resolve();
-                }
-            });
-        });
-    }
-
-    static getDefault() {
-        return this.update({}, {});
     }
 }
