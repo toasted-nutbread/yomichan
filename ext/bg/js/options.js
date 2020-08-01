@@ -17,7 +17,7 @@
 
 
 class OptionsUtil {
-    static update(options) {
+    static async update(options) {
         // Invalid options
         if (!isObject(options)) {
             options = {};
@@ -70,7 +70,7 @@ class OptionsUtil {
         }
 
         // Generic updates
-        return this._applyUpdates(options, this._getVersionUpdates());
+        return await this._applyUpdates(options, this._getVersionUpdates());
     }
 
     static async load() {
@@ -91,7 +91,7 @@ class OptionsUtil {
             // NOP
         }
 
-        return this.update(options);
+        return await this.update(options);
     }
 
     static save(options) {
@@ -107,8 +107,8 @@ class OptionsUtil {
         });
     }
 
-    static getDefault() {
-        return this.update({});
+    static async getDefault() {
+        return await this.update({});
     }
 
     // Legacy profile updating
@@ -359,7 +359,7 @@ class OptionsUtil {
         return hashCode;
     }
 
-    static _applyUpdates(options, updates) {
+    static async _applyUpdates(options, updates) {
         const targetVersion = updates.length;
         let currentVersion = options.version;
 
@@ -368,9 +368,9 @@ class OptionsUtil {
         }
 
         for (let i = Math.max(0, Math.floor(currentVersion)); i < targetVersion; ++i) {
-            const {update} = updates[i];
+            const {update, async} = updates[i];
             const result = update(options);
-            options = result;
+            options = (async ? await result : result);
         }
 
         options.version = targetVersion;
@@ -380,6 +380,7 @@ class OptionsUtil {
     static _getVersionUpdates() {
         return [
             {
+                async: false,
                 update: (options) => {
                     // Version 1 changes:
                     //  Added options.global.database.prefixWildcardsSupported = false
@@ -392,6 +393,7 @@ class OptionsUtil {
                 }
             },
             {
+                async: false,
                 update: (options) => {
                     // Version 2 changes:
                     //  Legacy profile update process moved into this upgrade function.
