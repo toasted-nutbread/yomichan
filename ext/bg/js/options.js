@@ -364,8 +364,23 @@ class OptionsUtil {
     }
 
     static _legacyProfileUpdateUpdateVersion(options) {
+        const updates = this._legacyProfileUpdateGetUpdates();
         this._legacyProfileUpdateAssignDefaults(options);
-        return this._applyUpdates(options, this._legacyProfileUpdateGetUpdates());
+
+        const targetVersion = updates.length;
+        const currentVersion = options.version;
+
+        if (typeof currentVersion === 'number' && Number.isFinite(currentVersion)) {
+            for (let i = Math.max(0, Math.floor(currentVersion)); i < targetVersion; ++i) {
+                const update = updates[i];
+                if (update !== null) {
+                    update(options);
+                }
+            }
+        }
+
+        options.version = targetVersion;
+        return options;
     }
 
     static _getVersionUpdates() {
