@@ -64,14 +64,6 @@ class OptionsUtil {
             options.profileCurrent = 0;
         }
 
-        // Update profile options
-        for (const profile of profiles) {
-            if (!Array.isArray(profile.conditionGroups)) {
-                profile.conditionGroups = [];
-            }
-            profile.options = this._legacyProfileUpdateUpdateVersion(profile.options);
-        }
-
         // Version
         if (typeof options.version !== 'number') {
             options.version = 0;
@@ -394,6 +386,16 @@ class OptionsUtil {
                         prefixWildcardsSupported: false
                     }
                 };
+            },
+            (options) => {
+                // Version 2 changes:
+                //  Legacy profile update process moved into this upgrade function.
+                for (const profile of options.profiles) {
+                    if (!Array.isArray(profile.conditionGroups)) {
+                        profile.conditionGroups = [];
+                    }
+                    profile.options = this._legacyProfileUpdateUpdateVersion(profile.options);
+                }
             }
         ];
     }
