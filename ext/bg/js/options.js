@@ -395,7 +395,7 @@ class OptionsUtil {
 
     static _updateVersion1(options) {
         // Version 1 changes:
-        //  Added options.global.database.prefixWildcardsSupported = false
+        //  Added options.global.database.prefixWildcardsSupported = false.
         options.global = {
             database: {
                 prefixWildcardsSupported: false
