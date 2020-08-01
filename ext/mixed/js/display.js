@@ -566,33 +566,29 @@ class Display extends EventDispatcher {
     }
 
     async _termLookup(e) {
-        try {
-            e.preventDefault();
+        e.preventDefault();
 
-            const {length: scanLength, deepDomScan: deepScan, layoutAwareScan} = this._options.scanning;
-            const textSource = docRangeFromPoint(e.clientX, e.clientY, deepScan);
-            if (textSource === null) {
+        const {length: scanLength, deepDomScan: deepScan, layoutAwareScan} = this._options.scanning;
+        const textSource = docRangeFromPoint(e.clientX, e.clientY, deepScan);
+        if (textSource === null) {
+            return false;
+        }
+
+        let definitions, length;
+        try {
+            textSource.setEndOffset(scanLength, layoutAwareScan);
+
+            ({definitions, length} = await api.termsFind(textSource.text(), {}, this.getOptionsContext()));
+            if (definitions.length === 0) {
                 return false;
             }
 
-            let definitions, length;
-            try {
-                textSource.setEndOffset(scanLength, layoutAwareScan);
-
-                ({definitions, length} = await api.termsFind(textSource.text(), {}, this.getOptionsContext()));
-                if (definitions.length === 0) {
-                    return false;
-                }
-
-                textSource.setEndOffset(length, layoutAwareScan);
-            } finally {
-                textSource.cleanup();
-            }
-
-            return {textSource, definitions};
-        } catch (error) {
-            this.onError(error);
+            textSource.setEndOffset(length, layoutAwareScan);
+        } finally {
+            textSource.cleanup();
         }
+
+        return {textSource, definitions};
     }
 
     _onAudioPlay(e) {
