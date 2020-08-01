@@ -380,31 +380,35 @@ class OptionsUtil {
         return [
             {
                 async: false,
-                update: (options) => {
-                    // Version 1 changes:
-                    //  Added options.global.database.prefixWildcardsSupported = false
-                    options.global = {
-                        database: {
-                            prefixWildcardsSupported: false
-                        }
-                    };
-                    return options;
-                }
+                update: this._updateVersion1.bind(this)
             },
             {
                 async: false,
-                update: (options) => {
-                    // Version 2 changes:
-                    //  Legacy profile update process moved into this upgrade function.
-                    for (const profile of options.profiles) {
-                        if (!Array.isArray(profile.conditionGroups)) {
-                            profile.conditionGroups = [];
-                        }
-                        profile.options = this._legacyProfileUpdateUpdateVersion(profile.options);
-                    }
-                    return options;
-                }
+                update: this._updateVersion2.bind(this)
             }
         ];
+    }
+
+    static _updateVersion1(options) {
+        // Version 1 changes:
+        //  Added options.global.database.prefixWildcardsSupported = false
+        options.global = {
+            database: {
+                prefixWildcardsSupported: false
+            }
+        };
+        return options;
+    }
+
+    static _updateVersion2(options) {
+        // Version 2 changes:
+        //  Legacy profile update process moved into this upgrade function.
+        for (const profile of options.profiles) {
+            if (!Array.isArray(profile.conditionGroups)) {
+                profile.conditionGroups = [];
+            }
+            profile.options = this._legacyProfileUpdateUpdateVersion(profile.options);
+        }
+        return options;
     }
 }
