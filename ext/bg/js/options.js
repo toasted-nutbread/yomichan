@@ -119,37 +119,6 @@ class OptionsUtil {
         return this.update({});
     }
 
-    // Private
-
-    static _getStringHashCode(string) {
-        let hashCode = 0;
-
-        if (typeof string !== 'string') { return hashCode; }
-
-        for (let i = 0, charCode = string.charCodeAt(i); i < string.length; charCode = string.charCodeAt(++i)) {
-            hashCode = ((hashCode << 5) - hashCode) + charCode;
-            hashCode |= 0;
-        }
-
-        return hashCode;
-    }
-
-    static _applyUpdates(options, updates) {
-        const targetVersion = updates.length;
-        const currentVersion = options.version;
-        if (typeof currentVersion === 'number' && Number.isFinite(currentVersion)) {
-            for (let i = Math.max(0, Math.floor(currentVersion)); i < targetVersion; ++i) {
-                const update = updates[i];
-                if (update !== null) {
-                    update(options);
-                }
-            }
-        }
-
-        options.version = targetVersion;
-        return options;
-    }
-
     // Legacy profile updating
 
     static _legacyProfileUpdateGetUpdates() {
@@ -367,6 +336,38 @@ class OptionsUtil {
         const updates = this._legacyProfileUpdateGetUpdates();
         this._legacyProfileUpdateAssignDefaults(options);
 
+        const targetVersion = updates.length;
+        const currentVersion = options.version;
+
+        if (typeof currentVersion === 'number' && Number.isFinite(currentVersion)) {
+            for (let i = Math.max(0, Math.floor(currentVersion)); i < targetVersion; ++i) {
+                const update = updates[i];
+                if (update !== null) {
+                    update(options);
+                }
+            }
+        }
+
+        options.version = targetVersion;
+        return options;
+    }
+
+    // Private
+
+    static _getStringHashCode(string) {
+        let hashCode = 0;
+
+        if (typeof string !== 'string') { return hashCode; }
+
+        for (let i = 0, charCode = string.charCodeAt(i); i < string.length; charCode = string.charCodeAt(++i)) {
+            hashCode = ((hashCode << 5) - hashCode) + charCode;
+            hashCode |= 0;
+        }
+
+        return hashCode;
+    }
+
+    static _applyUpdates(options, updates) {
         const targetVersion = updates.length;
         const currentVersion = options.version;
 
