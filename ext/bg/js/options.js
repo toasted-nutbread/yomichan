@@ -69,33 +69,33 @@ class OptionsUtil {
         return this._applyUpdates(options, this._getVersionUpdates());
     }
 
-    static load() {
-        return new Promise((resolve, reject) => {
-            chrome.storage.local.get(['options'], (store) => {
-                const error = chrome.runtime.lastError;
-                if (error) {
-                    reject(new Error(error));
-                } else {
-                    resolve(store.options);
-                }
+    static async load() {
+        let options = null;
+        try {
+            const optionsStr = await new Promise((resolve, reject) => {
+                chrome.storage.local.get(['options'], (store) => {
+                    const error = chrome.runtime.lastError;
+                    if (error) {
+                        reject(new Error(error));
+                    } else {
+                        resolve(store.options);
+                    }
+                });
             });
-        }).then((optionsStr) => {
-            if (typeof optionsStr === 'string') {
-                const options = JSON.parse(optionsStr);
-                if (isObject(options)) {
-                    return options;
-                }
-            }
-            return {};
-        }).catch(() => {
-            return {};
-        }).then((options) => {
-            return (
-                Array.isArray(options.profiles) ?
-                this.update(options, {}) :
-                this.update({}, options)
-            );
-        });
+            options = JSON.parse(optionsStr);
+        } catch (e) {
+            // NOP
+        }
+
+        if (!isObject(options)) {
+            options = {};
+        }
+
+        return (
+            Array.isArray(options.profiles) ?
+            this.update(options, {}) :
+            this.update({}, options)
+        );
     }
 
     static save(options) {
