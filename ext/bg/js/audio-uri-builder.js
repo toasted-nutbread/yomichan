@@ -88,7 +88,7 @@ class AudioUriBuilder {
             xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
             xhr.addEventListener('error', () => reject(new Error('Failed to scrape audio data')));
             xhr.addEventListener('load', () => resolve(xhr.responseText));
-            xhr.send(`post=dictionary_reference&match_type=exact&search_query=${encodeURIComponent(definition.expression)}`);
+            xhr.send(`post=dictionary_reference&match_type=exact&search_query=${encodeURIComponent(definition.expression)}&vulgar=true`);
         });
 
         const dom = new DOMParser().parseFromString(responseText, 'text/html');
