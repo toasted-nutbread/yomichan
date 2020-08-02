@@ -17,6 +17,8 @@
 
 class RequestBuilder {
     constructor() {
+        this._extraHeadersSupported = null;
+        this._onBeforeSendHeadersExtraInfoSpec = ['blocking', 'requestHeaders', 'extraHeaders'];
     }
 
     async fetchAnonymous(url, init) {
@@ -44,11 +46,10 @@ class RequestBuilder {
             urls: [matchURL],
             types: ['xmlhttprequest']
         };
-        const extraInfoSpec = ['blocking', 'requestHeaders', 'extraHeaders'];
 
         let needsCleanup = false;
         try {
-            chrome.webRequest.onBeforeSendHeaders.addListener(callback, filter, extraInfoSpec);
+            this._onBeforeSendHeadersAddListener(callback, filter);
             needsCleanup = true;
         } catch (e) {
             // NOP
@@ -68,6 +69,30 @@ class RequestBuilder {
     }
 
     // Private
+
+    _onBeforeSendHeadersAddListener(callback, filter) {
+        const extraInfoSpec = this._onBeforeSendHeadersExtraInfoSpec;
+        for (let i = 0; i < 2; ++i) {
+            try {
+                chrome.webRequest.onBeforeSendHeaders.addListener(callback, filter, extraInfoSpec);
+                if (this._extraHeadersSupported === null) {
+                    this._extraHeadersSupported = true;
+                }
+                break;
+            } catch (e) {
+                // Firefox doesn't support the 'extraHeaders' option and will throw the following error:
+                // Type error for parameter extraInfoSpec (Error processing 2: Invalid enumeration value "extraHeaders") for webRequest.onBeforeSendHeaders.
+                if (this._extraHeadersSupported !== null || !`${e.message}`.includes('extraHeaders')) {
+                    throw e;
+                }
+            }
+
+            // addListener failed; remove 'extraHeaders' from extraInfoSpec.
+            this._extraHeadersSupported = false;
+            const index = extraInfoSpec.indexOf('extraHeaders');
+            if (index >= 0) { extraInfoSpec.splice(index, 1); }
+        }
+    }
 
     _getMatchURL(url) {
         const url2 = new URL(url);
