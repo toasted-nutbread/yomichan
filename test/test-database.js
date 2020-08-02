@@ -116,7 +116,6 @@ vm.execute([
     'bg/js/json-schema.js',
     'bg/js/dictionary.js',
     'bg/js/media-utility.js',
-    'bg/js/request.js',
     'bg/js/dictionary-importer.js',
     'bg/js/database.js',
     'bg/js/dictionary-database.js'
