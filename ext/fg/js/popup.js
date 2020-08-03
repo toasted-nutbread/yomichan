@@ -97,7 +97,7 @@ class Popup {
         this._options = await api.optionsGet(optionsContext);
         this.updateTheme();
 
-        this._invokeApi('setOptionsContext', {optionsContext});
+        this._invoke('setOptionsContext', {optionsContext});
     }
 
     hide(changeFocus) {
@@ -146,17 +146,17 @@ class Popup {
         }
 
         if (displayDetails !== null) {
-            this._invokeApi('setContent', {details: displayDetails});
+            this._invoke('setContent', {details: displayDetails});
         }
     }
 
     setCustomCss(css) {
-        this._invokeApi('setCustomCss', {css});
+        this._invoke('setCustomCss', {css});
     }
 
     async clearAutoPlayTimer() {
         try {
-            await this._invokeApi('clearAutoPlayTimer');
+            await this._invoke('clearAutoPlayTimer');
         } catch (e) {
             // NOP
         }
@@ -164,7 +164,7 @@ class Popup {
 
     setContentScale(scale) {
         this._contentScale = scale;
-        this._invokeApi('setContentScale', {scale});
+        this._invoke('setContentScale', {scale});
     }
 
     // Popup-only public functions
@@ -266,7 +266,7 @@ class Popup {
         await frameClient.connect(this._frame, this._targetOrigin, this._frameId, setupFrame);
 
         // Configure
-        await this._invokeApi('configure', {
+        await this._invoke('configure', {
             frameId: this._frameId,
             ownerFrameId: this._ownerFrameId,
             popupId: this._id,
@@ -448,7 +448,7 @@ class Popup {
         return dark ? 'dark' : 'light';
     }
 
-    async _invokeApi(action, params={}) {
+    async _invoke(action, params={}) {
         const contentWindow = this._frame.contentWindow;
         if (this._frameClient === null || !this._frameClient.isConnected() || contentWindow === null) { return; }
 
@@ -456,7 +456,7 @@ class Popup {
         return await api.crossFrame.invoke(this._frameClient.frameId, 'popupMessage', message);
     }
 
-    _invokeWindowApi(action, params={}) {
+    _invokeWindow(action, params={}) {
         const contentWindow = this._frame.contentWindow;
         if (this._frameClient === null || !this._frameClient.isConnected() || contentWindow === null) { return; }
 
@@ -465,7 +465,7 @@ class Popup {
     }
 
     _onExtensionUnloaded() {
-        this._invokeWindowApi('extensionUnloaded');
+        this._invokeWindow('extensionUnloaded');
     }
 
     _getFrameParentElement() {
