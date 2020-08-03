@@ -97,7 +97,7 @@ class Popup {
         this._options = await api.optionsGet(optionsContext);
         this.updateTheme();
 
-        this._invoke('setOptionsContext', {optionsContext});
+        this._invokeSafe('setOptionsContext', {optionsContext});
     }
 
     hide(changeFocus) {
@@ -146,25 +146,21 @@ class Popup {
         }
 
         if (displayDetails !== null) {
-            this._invoke('setContent', {details: displayDetails});
+            this._invokeSafe('setContent', {details: displayDetails});
         }
     }
 
     setCustomCss(css) {
-        this._invoke('setCustomCss', {css});
+        this._invokeSafe('setCustomCss', {css});
     }
 
-    async clearAutoPlayTimer() {
-        try {
-            await this._invoke('clearAutoPlayTimer');
-        } catch (e) {
-            // NOP
-        }
+    clearAutoPlayTimer() {
+        this._invokeSafe('clearAutoPlayTimer');
     }
 
     setContentScale(scale) {
         this._contentScale = scale;
-        this._invoke('setContentScale', {scale});
+        this._invokeSafe('setContentScale', {scale});
     }
 
     // Popup-only public functions
@@ -266,7 +262,7 @@ class Popup {
         await frameClient.connect(this._frame, this._targetOrigin, this._frameId, setupFrame);
 
         // Configure
-        await this._invoke('configure', {
+        await this._invokeSafe('configure', {
             frameId: this._frameId,
             ownerFrameId: this._ownerFrameId,
             popupId: this._id,
@@ -454,6 +450,15 @@ class Popup {
 
         const message = this._frameClient.createMessage({action, params});
         return await api.crossFrame.invoke(this._frameClient.frameId, 'popupMessage', message);
+    }
+
+    async _invokeSafe(action, params={}, defaultReturnValue) {
+        try {
+            return await this._invoke(action, params);
+        } catch (e) {
+            if (!yomichan.isExtensionUnloaded) { throw e; }
+            return defaultReturnValue;
+        }
     }
 
     _invokeWindow(action, params={}) {
