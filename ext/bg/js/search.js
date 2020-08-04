@@ -51,9 +51,6 @@ class DisplaySearch extends Display {
             ['AltGraph', new Set()],
             ['Shift', new Set()]
         ]);
-        this._runtimeMessageHandlers = new Map([
-            ['updateSearchQuery', {async: false, handler: this._onExternalSearchUpdate.bind(this)}]
-        ]);
     }
 
     async prepare() {
@@ -62,6 +59,10 @@ class DisplaySearch extends Display {
         yomichan.on('optionsUpdated', () => this.updateOptions());
 
         this.on('contentUpdating', this._onContentUpdating.bind(this));
+
+        this.registerMessageHandlers([
+            ['updateSearchQuery', {async: false, handler: this._onExternalSearchUpdate.bind(this)}]
+        ]);
 
         this.queryParserVisible = true;
         this.setHistorySettings({useBrowserHistory: true});
@@ -90,8 +91,6 @@ class DisplaySearch extends Display {
             }
             this._clipboardMonitorEnable.addEventListener('change', this._onClipboardMonitorEnableChange.bind(this));
         }
-
-        chrome.runtime.onMessage.addListener(this._onRuntimeMessage.bind(this));
 
         this._search.addEventListener('click', this._onSearch.bind(this), false);
         this._query.addEventListener('input', this._onSearchInput.bind(this), false);
@@ -207,12 +206,6 @@ class DisplaySearch extends Display {
 
         const query = this._query.value;
         this._onSearchQueryUpdated(query, true);
-    }
-
-    _onRuntimeMessage({action, params}, sender, callback) {
-        const messageHandler = this._runtimeMessageHandlers.get(action);
-        if (typeof messageHandler === 'undefined') { return false; }
-        return yomichan.invokeMessageHandler(messageHandler, params, callback, sender);
     }
 
     _onCopy() {

@@ -64,6 +64,7 @@ class Display extends EventDispatcher {
         this._windowScroll = new WindowScroll();
         this._hotkeys = new Map();
         this._actions = new Map();
+        this._messageHandlers = new Map();
         this._directMessageHandlers = new Map();
         this._history = new DisplayHistory({clearable: true, useBrowserHistory: false});
         this._historyChangeIgnore = false;
@@ -146,6 +147,7 @@ class Display extends EventDispatcher {
         this._history.on('stateChanged', this._onStateChanged.bind(this));
         this._queryParser.on('searched', this._onQueryParserSearch.bind(this));
         yomichan.on('extensionUnloaded', this._onExtensionUnloaded.bind(this));
+        chrome.runtime.onMessage.addListener(this._onMessage.bind(this));
         api.crossFrame.registerHandlers([
             ['popupMessage', {async: 'dynamic', handler: this._onDirectMessage.bind(this)}]
         ]);
@@ -307,6 +309,12 @@ class Display extends EventDispatcher {
         }
     }
 
+    registerMessageHandlers(handlers) {
+        for (const [name, handlerInfo] of handlers) {
+            this._messageHandlers.set(name, handlerInfo);
+        }
+    }
+
     registerDirectMessageHandlers(handlers) {
         for (const [name, handlerInfo] of handlers) {
             this._directMessageHandlers.set(name, handlerInfo);
@@ -342,6 +350,12 @@ class Display extends EventDispatcher {
     }
 
     // Message handlers
+
+    _onMessage({action, params}, sender, callback) {
+        const messageHandler = this._messageHandlers.get(action);
+        if (typeof messageHandler === 'undefined') { return false; }
+        return yomichan.invokeMessageHandler(messageHandler, params, callback, sender);
+    }
 
     _onDirectMessage(data) {
         data = this.authenticateMessageData(data);
