@@ -81,6 +81,7 @@ class Display extends EventDispatcher {
             getOptionsContext: this.getOptionsContext.bind(this),
             setSpinnerVisible: this.setSpinnerVisible.bind(this)
         });
+        this._mode = null;
 
         this.registerActions([
             ['close',            () => { this.onEscape(); }],
@@ -114,6 +115,9 @@ class Display extends EventDispatcher {
             {key: 'P',         modifiers: ['alt'], action: 'playAudio'},
             {key: 'V',         modifiers: ['alt'], action: 'viewNote'}
         ]);
+        this.registerMessageHandlers([
+            ['setMode', {async: false, handler: this._onMessageSetMode.bind(this)}]
+        ]);
         this.registerDirectMessageHandlers([
             ['setOptionsContext',  {async: false, handler: this._onMessageSetOptionsContext.bind(this)}],
             ['setContent',         {async: false, handler: this._onMessageSetContent.bind(this)}],
@@ -139,7 +143,12 @@ class Display extends EventDispatcher {
         this._updateQueryParserVisibility();
     }
 
+    get mode() {
+        return this._mode;
+    }
+
     async prepare() {
+        this._updateMode();
         this._setInteractive(true);
         await this._displayGenerator.prepare();
         await this._queryParser.prepare();
@@ -368,6 +377,10 @@ class Display extends EventDispatcher {
         const {async, handler} = handlerInfo;
         const result = handler(params);
         return {async, result};
+    }
+
+    _onMessageSetMode({mode}) {
+        this._setMode(mode, true);
     }
 
     _onMessageSetOptionsContext({optionsContext}) {
@@ -1266,5 +1279,23 @@ class Display extends EventDispatcher {
 
     _closePopups() {
         yomichan.trigger('closePopups');
+    }
+
+    _updateMode() {
+        const mode = sessionStorage.getItem('mode');
+        this._setMode(mode, false);
+    }
+
+    _setMode(mode, save) {
+        if (mode === this._mode) { return; }
+        if (save) {
+            if (mode === null) {
+                sessionStorage.removeItem('mode');
+            } else {
+                sessionStorage.setItem('mode', mode);
+            }
+        }
+        this._mode = mode;
+        this.trigger('modeChange', {mode});
     }
 }

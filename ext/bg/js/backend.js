@@ -943,6 +943,12 @@ class Backend {
         const tab = tabs[0];
         await this._waitUntilTabFrameIsReady(tab.id, 0, 2000);
 
+        await this._sendMessageTab(
+            tab.id,
+            {action: 'setMode', params: {mode: 'popup'}},
+            {frameId: 0}
+        );
+
         this._searchPopupTabId = tab.id;
         return {tab, created: true};
     }
