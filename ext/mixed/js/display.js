@@ -64,7 +64,7 @@ class Display extends EventDispatcher {
         this._windowScroll = new WindowScroll();
         this._hotkeys = new Map();
         this._actions = new Map();
-        this._messageHandlers = new Map();
+        this._directMessageHandlers = new Map();
         this._history = new DisplayHistory({clearable: true, useBrowserHistory: false});
         this._historyChangeIgnore = false;
         this._historyHasChanged = false;
@@ -113,7 +113,7 @@ class Display extends EventDispatcher {
             {key: 'P',         modifiers: ['alt'], action: 'playAudio'},
             {key: 'V',         modifiers: ['alt'], action: 'viewNote'}
         ]);
-        this.registerMessageHandlers([
+        this.registerDirectMessageHandlers([
             ['setOptionsContext',  {async: false, handler: this._onMessageSetOptionsContext.bind(this)}],
             ['setContent',         {async: false, handler: this._onMessageSetContent.bind(this)}],
             ['clearAutoPlayTimer', {async: false, handler: this._onMessageClearAutoPlayTimer.bind(this)}],
@@ -147,7 +147,7 @@ class Display extends EventDispatcher {
         this._queryParser.on('searched', this._onQueryParserSearch.bind(this));
         yomichan.on('extensionUnloaded', this._onExtensionUnloaded.bind(this));
         api.crossFrame.registerHandlers([
-            ['popupMessage', {async: 'dynamic', handler: this._onMessage.bind(this)}]
+            ['popupMessage', {async: 'dynamic', handler: this._onDirectMessage.bind(this)}]
         ]);
     }
 
@@ -307,9 +307,9 @@ class Display extends EventDispatcher {
         }
     }
 
-    registerMessageHandlers(handlers) {
+    registerDirectMessageHandlers(handlers) {
         for (const [name, handlerInfo] of handlers) {
-            this._messageHandlers.set(name, handlerInfo);
+            this._directMessageHandlers.set(name, handlerInfo);
         }
     }
 
@@ -343,10 +343,10 @@ class Display extends EventDispatcher {
 
     // Message handlers
 
-    _onMessage(data) {
+    _onDirectMessage(data) {
         data = this.authenticateMessageData(data);
         const {action, params} = data;
-        const handlerInfo = this._messageHandlers.get(action);
+        const handlerInfo = this._directMessageHandlers.get(action);
         if (typeof handlerInfo === 'undefined') {
             throw new Error(`Invalid action: ${action}`);
         }
