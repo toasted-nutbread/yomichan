@@ -899,24 +899,8 @@ class Backend {
                 );
             });
             if (tab !== null) {
-                const isValidTab = await new Promise((resolve) => {
-                    chrome.tabs.sendMessage(
-                        tabId,
-                        {action: 'getUrl', params: {}},
-                        {frameId: 0},
-                        (response) => {
-                            let result = false;
-                            try {
-                                const {url} = yomichan.getMessageResponseResult(response);
-                                result = url.startsWith(baseUrl);
-                            } catch (e) {
-                                // NOP
-                            }
-                            resolve(result);
-                        }
-                    );
-                });
-                // windowId
+                const url = await this._getTabUrl(tabId);
+                const isValidTab = (url !== null && url.startsWith(baseUrl));
                 if (isValidTab) {
                     return {tab, created: false};
                 }
@@ -964,18 +948,11 @@ class Backend {
     }
 
     _updateSearchQuery(tabId, text, animate) {
-        return new Promise((resolve, reject) => {
-            const callback = (response) => {
-                try {
-                    resolve(yomichan.getMessageResponseResult(response));
-                } catch (error) {
-                    reject(error);
-                }
-            };
-
-            const message = {action: 'updateSearchQuery', params: {text, animate}};
-            chrome.tabs.sendMessage(tabId, message, callback);
-        });
+        return this._sendMessageTab(
+            tabId,
+            {action: 'updateSearchQuery', params: {text, animate}},
+            {frameId: 0}
+        );
     }
 
     _sendMessageAllTabs(action, params={}) {
@@ -1381,18 +1358,20 @@ class Backend {
         return typeof templates === 'string' ? templates : this._defaultAnkiFieldTemplates;
     }
 
-    _getTabUrl(tab) {
-        return new Promise((resolve) => {
-            chrome.tabs.sendMessage(tab.id, {action: 'getUrl'}, {frameId: 0}, (response) => {
-                let url = null;
-                try {
-                    ({url} = yomichan.getMessageResponseResult(response));
-                } catch (error) {
-                    // NOP
-                }
-                resolve({tab, url});
-            });
-        });
+    async _getTabUrl(tabId) {
+        try {
+            const {url} = await this._sendMessageTab(
+                tabId,
+                {action: 'getUrl', params: {}},
+                {frameId: 0}
+            );
+            if (typeof url === 'string') {
+                return url;
+            }
+        } catch (e) {
+            // NOP
+        }
+        return null;
     }
 
     async _findTab(timeout, checkUrl) {
@@ -1537,5 +1516,19 @@ class Backend {
             throw new Error(`Failed to fetch ${url}: ${response.status}`);
         }
         return await (json ? response.json() : response.text());
+    }
+
+    _sendMessageTab(...args) {
+        return new Promise((resolve, reject) => {
+            const callback = (response) => {
+                try {
+                    resolve(yomichan.getMessageResponseResult(response));
+                } catch (error) {
+                    reject(error);
+                }
+            };
+
+            chrome.tabs.sendMessage(...args, callback);
+        });
     }
 }
