@@ -374,6 +374,23 @@ class JsonSchemaProxyHandler {
         if (typeof maxLength === 'number' && value.length > maxLength) {
             throw new JsonSchemaValidationError('String length too long', value, schema, info);
         }
+
+        const pattern = schema.pattern;
+        if (typeof pattern === 'string') {
+            let patternFlags = schema.patternFlags;
+            if (typeof patternFlags !== 'string') { patternFlags = ''; }
+
+            let regex;
+            try {
+                regex = new RegExp(pattern, patternFlags);
+            } catch (e) {
+                throw new JsonSchemaValidationError(`Pattern is invalid (${e.message})`, value, schema, info);
+            }
+
+            if (!regex.test(value)) {
+                throw new JsonSchemaValidationError('Pattern match failed', value, schema, info);
+            }
+        }
     }
 
     static validateArray(value, schema, info) {
