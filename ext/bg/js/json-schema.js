@@ -121,14 +121,14 @@ class JsonSchemaProxyHandler {
 
 class JsonSchemaValidator {
     static getPropertySchema(schema, property, value, path=null) {
-        const type = JsonSchemaValidator.getSchemaOrValueType(schema, value);
+        const type = this.getSchemaOrValueType(schema, value);
         switch (type) {
             case 'object':
             {
                 const properties = schema.properties;
-                if (JsonSchemaValidator.isObject(properties)) {
+                if (this.isObject(properties)) {
                     const propertySchema = properties[property];
-                    if (JsonSchemaValidator.isObject(propertySchema)) {
+                    if (this.isObject(propertySchema)) {
                         if (path !== null) { path.push(['properties', properties], [property, propertySchema]); }
                         return propertySchema;
                     }
@@ -137,7 +137,7 @@ class JsonSchemaValidator {
                 const additionalProperties = schema.additionalProperties;
                 if (additionalProperties === false) {
                     return null;
-                } else if (JsonSchemaValidator.isObject(additionalProperties)) {
+                } else if (this.isObject(additionalProperties)) {
                     if (path !== null) { path.push(['additionalProperties', additionalProperties]); }
                     return additionalProperties;
                 } else {
@@ -149,13 +149,13 @@ class JsonSchemaValidator {
             case 'array':
             {
                 const items = schema.items;
-                if (JsonSchemaValidator.isObject(items)) {
+                if (this.isObject(items)) {
                     return items;
                 }
                 if (Array.isArray(items)) {
                     if (property >= 0 && property < items.length) {
                         const propertySchema = items[property];
-                        if (JsonSchemaValidator.isObject(propertySchema)) {
+                        if (this.isObject(propertySchema)) {
                             if (path !== null) { path.push(['items', items], [property, propertySchema]); }
                             return propertySchema;
                         }
@@ -165,7 +165,7 @@ class JsonSchemaValidator {
                 const additionalItems = schema.additionalItems;
                 if (additionalItems === false) {
                     return null;
-                } else if (JsonSchemaValidator.isObject(additionalItems)) {
+                } else if (this.isObject(additionalItems)) {
                     if (path !== null) { path.push(['additionalItems', additionalItems]); }
                     return additionalItems;
                 } else {
@@ -184,7 +184,7 @@ class JsonSchemaValidator {
 
         if (Array.isArray(type)) {
             if (typeof value !== 'undefined') {
-                const valueType = JsonSchemaValidator.getValueType(value);
+                const valueType = this.getValueType(value);
                 if (type.indexOf(valueType) >= 0) {
                     return valueType;
                 }
@@ -194,7 +194,7 @@ class JsonSchemaValidator {
 
         if (typeof type === 'undefined') {
             if (typeof value !== 'undefined') {
-                return JsonSchemaValidator.getValueType(value);
+                return this.getValueType(value);
             }
             return null;
         }
@@ -203,31 +203,31 @@ class JsonSchemaValidator {
     }
 
     static validate(value, schema, info) {
-        JsonSchemaValidator.validateSingleSchema(value, schema, info);
-        JsonSchemaValidator.validateConditional(value, schema, info);
-        JsonSchemaValidator.validateAllOf(value, schema, info);
-        JsonSchemaValidator.validateAnyOf(value, schema, info);
-        JsonSchemaValidator.validateOneOf(value, schema, info);
-        JsonSchemaValidator.validateNoneOf(value, schema, info);
+        this.validateSingleSchema(value, schema, info);
+        this.validateConditional(value, schema, info);
+        this.validateAllOf(value, schema, info);
+        this.validateAnyOf(value, schema, info);
+        this.validateOneOf(value, schema, info);
+        this.validateNoneOf(value, schema, info);
     }
 
     static validateConditional(value, schema, info) {
         const ifSchema = schema.if;
-        if (!JsonSchemaValidator.isObject(ifSchema)) { return; }
+        if (!this.isObject(ifSchema)) { return; }
 
         let okay = true;
         info.schemaPush('if', ifSchema);
         try {
-            JsonSchemaValidator.validate(value, ifSchema, info);
+            this.validate(value, ifSchema, info);
         } catch (e) {
             okay = false;
         }
         info.schemaPop();
 
         const nextSchema = okay ? schema.then : schema.else;
-        if (JsonSchemaValidator.isObject(nextSchema)) {
+        if (this.isObject(nextSchema)) {
             info.schemaPush(okay ? 'then' : 'else', nextSchema);
-            JsonSchemaValidator.validate(value, nextSchema, info);
+            this.validate(value, nextSchema, info);
             info.schemaPop();
         }
     }
@@ -240,7 +240,7 @@ class JsonSchemaValidator {
         for (let i = 0; i < subSchemas.length; ++i) {
             const subSchema = subSchemas[i];
             info.schemaPush(i, subSchema);
-            JsonSchemaValidator.validate(value, subSchema, info);
+            this.validate(value, subSchema, info);
             info.schemaPop();
         }
         info.schemaPop();
@@ -255,7 +255,7 @@ class JsonSchemaValidator {
             const subSchema = subSchemas[i];
             info.schemaPush(i, subSchema);
             try {
-                JsonSchemaValidator.validate(value, subSchema, info);
+                this.validate(value, subSchema, info);
                 return;
             } catch (e) {
                 // NOP
@@ -277,7 +277,7 @@ class JsonSchemaValidator {
             const subSchema = subSchemas[i];
             info.schemaPush(i, subSchema);
             try {
-                JsonSchemaValidator.validate(value, subSchema, info);
+                this.validate(value, subSchema, info);
                 ++count;
             } catch (e) {
                 // NOP
@@ -301,7 +301,7 @@ class JsonSchemaValidator {
             const subSchema = subSchemas[i];
             info.schemaPush(i, subSchema);
             try {
-                JsonSchemaValidator.validate(value, subSchema, info);
+                this.validate(value, subSchema, info);
             } catch (e) {
                 info.schemaPop();
                 continue;
@@ -312,29 +312,29 @@ class JsonSchemaValidator {
     }
 
     static validateSingleSchema(value, schema, info) {
-        const type = JsonSchemaValidator.getValueType(value);
+        const type = this.getValueType(value);
         const schemaType = schema.type;
-        if (!JsonSchemaValidator.isValueTypeAny(value, type, schemaType)) {
+        if (!this.isValueTypeAny(value, type, schemaType)) {
             throw new JsonSchemaValidationError(`Value type ${type} does not match schema type ${schemaType}`, value, schema, info);
         }
 
         const schemaEnum = schema.enum;
-        if (Array.isArray(schemaEnum) && !JsonSchemaValidator.valuesAreEqualAny(value, schemaEnum)) {
+        if (Array.isArray(schemaEnum) && !this.valuesAreEqualAny(value, schemaEnum)) {
             throw new JsonSchemaValidationError('Invalid enum value', value, schema, info);
         }
 
         switch (type) {
             case 'number':
-                JsonSchemaValidator.validateNumber(value, schema, info);
+                this.validateNumber(value, schema, info);
                 break;
             case 'string':
-                JsonSchemaValidator.validateString(value, schema, info);
+                this.validateString(value, schema, info);
                 break;
             case 'array':
-                JsonSchemaValidator.validateArray(value, schema, info);
+                this.validateArray(value, schema, info);
                 break;
             case 'object':
-                JsonSchemaValidator.validateObject(value, schema, info);
+                this.validateObject(value, schema, info);
                 break;
         }
     }
@@ -408,7 +408,7 @@ class JsonSchemaValidator {
 
         for (let i = 0, ii = value.length; i < ii; ++i) {
             const schemaPath = [];
-            const propertySchema = JsonSchemaValidator.getPropertySchema(schema, i, value, schemaPath);
+            const propertySchema = this.getPropertySchema(schema, i, value, schemaPath);
             if (propertySchema === null) {
                 throw new JsonSchemaValidationError(`No schema found for array[${i}]`, value, schema, info);
             }
@@ -417,7 +417,7 @@ class JsonSchemaValidator {
 
             for (const [p, s] of schemaPath) { info.schemaPush(p, s); }
             info.valuePush(i, propertyValue);
-            JsonSchemaValidator.validate(propertyValue, propertySchema, info);
+            this.validate(propertyValue, propertySchema, info);
             info.valuePop();
             for (let j = 0, jj = schemaPath.length; j < jj; ++j) { info.schemaPop(); }
         }
@@ -447,7 +447,7 @@ class JsonSchemaValidator {
 
         for (const property of properties) {
             const schemaPath = [];
-            const propertySchema = JsonSchemaValidator.getPropertySchema(schema, property, value, schemaPath);
+            const propertySchema = this.getPropertySchema(schema, property, value, schemaPath);
             if (propertySchema === null) {
                 throw new JsonSchemaValidationError(`No schema found for ${property}`, value, schema, info);
             }
@@ -456,7 +456,7 @@ class JsonSchemaValidator {
 
             for (const [p, s] of schemaPath) { info.schemaPush(p, s); }
             info.valuePush(property, propertyValue);
-            JsonSchemaValidator.validate(propertyValue, propertySchema, info);
+            this.validate(propertyValue, propertySchema, info);
             info.valuePop();
             for (let i = 0; i < schemaPath.length; ++i) { info.schemaPop(); }
         }
@@ -464,10 +464,10 @@ class JsonSchemaValidator {
 
     static isValueTypeAny(value, type, schemaTypes) {
         if (typeof schemaTypes === 'string') {
-            return JsonSchemaValidator.isValueType(value, type, schemaTypes);
+            return this.isValueType(value, type, schemaTypes);
         } else if (Array.isArray(schemaTypes)) {
             for (const schemaType of schemaTypes) {
-                if (JsonSchemaValidator.isValueType(value, type, schemaType)) {
+                if (this.isValueType(value, type, schemaType)) {
                     return true;
                 }
             }
@@ -494,7 +494,7 @@ class JsonSchemaValidator {
 
     static valuesAreEqualAny(value1, valueList) {
         for (const value2 of valueList) {
-            if (JsonSchemaValidator.valuesAreEqual(value1, value2)) {
+            if (this.valuesAreEqual(value1, value2)) {
                 return true;
             }
         }
@@ -527,30 +527,30 @@ class JsonSchemaValidator {
     }
 
     static getValidValueOrDefault(schema, value) {
-        let type = JsonSchemaValidator.getValueType(value);
+        let type = this.getValueType(value);
         const schemaType = schema.type;
-        if (!JsonSchemaValidator.isValueTypeAny(value, type, schemaType)) {
+        if (!this.isValueTypeAny(value, type, schemaType)) {
             let assignDefault = true;
 
             const schemaDefault = schema.default;
             if (typeof schemaDefault !== 'undefined') {
                 value = JsonSchema.clone(schemaDefault);
-                type = JsonSchemaValidator.getValueType(value);
-                assignDefault = !JsonSchemaValidator.isValueTypeAny(value, type, schemaType);
+                type = this.getValueType(value);
+                assignDefault = !this.isValueTypeAny(value, type, schemaType);
             }
 
             if (assignDefault) {
-                value = JsonSchemaValidator.getDefaultTypeValue(schemaType);
-                type = JsonSchemaValidator.getValueType(value);
+                value = this.getDefaultTypeValue(schemaType);
+                type = this.getValueType(value);
             }
         }
 
         switch (type) {
             case 'object':
-                value = JsonSchemaValidator.populateObjectDefaults(value, schema);
+                value = this.populateObjectDefaults(value, schema);
                 break;
             case 'array':
-                value = JsonSchemaValidator.populateArrayDefaults(value, schema);
+                value = this.populateArrayDefaults(value, schema);
                 break;
         }
 
@@ -565,18 +565,18 @@ class JsonSchemaValidator {
             for (const property of required) {
                 properties.delete(property);
 
-                const propertySchema = JsonSchemaValidator.getPropertySchema(schema, property, value);
+                const propertySchema = this.getPropertySchema(schema, property, value);
                 if (propertySchema === null) { continue; }
-                value[property] = JsonSchemaValidator.getValidValueOrDefault(propertySchema, value[property]);
+                value[property] = this.getValidValueOrDefault(propertySchema, value[property]);
             }
         }
 
         for (const property of properties) {
-            const propertySchema = JsonSchemaValidator.getPropertySchema(schema, property, value);
+            const propertySchema = this.getPropertySchema(schema, property, value);
             if (propertySchema === null) {
                 Reflect.deleteProperty(value, property);
             } else {
-                value[property] = JsonSchemaValidator.getValidValueOrDefault(propertySchema, value[property]);
+                value[property] = this.getValidValueOrDefault(propertySchema, value[property]);
             }
         }
 
@@ -585,9 +585,9 @@ class JsonSchemaValidator {
 
     static populateArrayDefaults(value, schema) {
         for (let i = 0, ii = value.length; i < ii; ++i) {
-            const propertySchema = JsonSchemaValidator.getPropertySchema(schema, i, value);
+            const propertySchema = this.getPropertySchema(schema, i, value);
             if (propertySchema === null) { continue; }
-            value[i] = JsonSchemaValidator.getValidValueOrDefault(propertySchema, value[i]);
+            value[i] = this.getValidValueOrDefault(propertySchema, value[i]);
         }
 
         return value;
