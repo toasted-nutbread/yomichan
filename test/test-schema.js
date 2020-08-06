@@ -86,6 +86,124 @@ function testValidate1() {
     }
 }
 
+function testValidate2() {
+    const data = [
+        // String tests
+        {
+            schema: {
+                type: 'string'
+            },
+            inputs: [
+                {expected: false, value: null},
+                {expected: false, value: void 0},
+                {expected: false, value: 0},
+                {expected: false, value: {}},
+                {expected: false, value: []},
+                {expected: true,  value: ''}
+            ]
+        },
+        {
+            schema: {
+                type: 'string',
+                minLength: 2
+            },
+            inputs: [
+                {expected: false, value: ''},
+                {expected: false,  value: '1'},
+                {expected: true,  value: '12'},
+                {expected: true,  value: '123'}
+            ]
+        },
+        {
+            schema: {
+                type: 'string',
+                maxLength: 2
+            },
+            inputs: [
+                {expected: true,  value: ''},
+                {expected: true,  value: '1'},
+                {expected: true,  value: '12'},
+                {expected: false, value: '123'}
+            ]
+        },
+        {
+            schema: {
+                type: 'string',
+                pattern: 'test'
+            },
+            inputs: [
+                {expected: false, value: ''},
+                {expected: true,  value: 'test'},
+                {expected: false, value: 'TEST'},
+                {expected: true,  value: 'ABCtestDEF'},
+                {expected: false, value: 'ABCTESTDEF'}
+            ]
+        },
+        {
+            schema: {
+                type: 'string',
+                pattern: '^test$'
+            },
+            inputs: [
+                {expected: false, value: ''},
+                {expected: true,  value: 'test'},
+                {expected: false, value: 'TEST'},
+                {expected: false, value: 'ABCtestDEF'},
+                {expected: false, value: 'ABCTESTDEF'}
+            ]
+        },
+        {
+            schema: {
+                type: 'string',
+                pattern: '^test$',
+                patternFlags: 'i'
+            },
+            inputs: [
+                {expected: false, value: ''},
+                {expected: true,  value: 'test'},
+                {expected: true,  value: 'TEST'},
+                {expected: false, value: 'ABCtestDEF'},
+                {expected: false, value: 'ABCTESTDEF'}
+            ]
+        },
+        {
+            schema: {
+                type: 'string',
+                pattern: '*'
+            },
+            inputs: [
+                {expected: false, value: ''}
+            ]
+        },
+        {
+            schema: {
+                type: 'string',
+                pattern: '.',
+                patternFlags: '?'
+            },
+            inputs: [
+                {expected: false, value: ''}
+            ]
+        }
+    ];
+
+    const schemaValidate = (value, schema) => {
+        try {
+            JsonSchema.validate(value, schema);
+            return true;
+        } catch (e) {
+            return false;
+        }
+    };
+
+    for (const {schema, inputs} of data) {
+        for (const {expected, value} of inputs) {
+            const actual = schemaValidate(value, schema);
+            assert.strictEqual(actual, expected);
+        }
+    }
+}
+
 
 function testGetValidValueOrDefault1() {
     // Test value defaulting on objects with additionalProperties=false
@@ -246,6 +364,7 @@ function testGetValidValueOrDefault3() {
 
 function main() {
     testValidate1();
+    testValidate2();
     testGetValidValueOrDefault1();
     testGetValidValueOrDefault2();
     testGetValidValueOrDefault3();
