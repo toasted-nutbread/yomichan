@@ -15,6 +15,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+/* global
+ * CacheMap
+ */
 
 class JsonSchemaProxyHandler {
     constructor(schema, jsonSchemaValidator) {
@@ -122,6 +125,7 @@ class JsonSchemaProxyHandler {
 
 class JsonSchemaValidator {
     constructor() {
+        this._regexCache = new CacheMap(100, (pattern, flags) => new RegExp(pattern, flags));
     }
 
     getPropertySchema(schema, property, value, path=null) {
@@ -388,7 +392,7 @@ class JsonSchemaValidator {
 
             let regex;
             try {
-                regex = new RegExp(pattern, patternFlags);
+                regex = this._getRegex(pattern, patternFlags);
             } catch (e) {
                 throw new JsonSchemaValidationError(`Pattern is invalid (${e.message})`, value, schema, info);
             }
@@ -599,6 +603,12 @@ class JsonSchemaValidator {
 
     isObject(value) {
         return typeof value === 'object' && value !== null && !Array.isArray(value);
+    }
+
+    _getRegex(pattern, flags) {
+        const regex = this._regexCache.get(pattern, flags);
+        regex.lastIndex = 0;
+        return regex;
     }
 }
 
