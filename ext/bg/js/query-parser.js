@@ -103,28 +103,25 @@ class QueryParser extends EventDispatcher {
 
     _onParserChange(e) {
         const value = e.target.value;
+        this._setSelectedParser(value);
+    }
+
+    _refreshSelectedParser() {
+        if (this._parseResults.length > 0 && !this._getParseResult()) {
+            const value = this._parseResults[0].id;
+            this._setSelectedParser(value);
+        }
+    }
+
+    _setSelectedParser(value) {
+        const optionsContext = this._getOptionsContext();
         api.modifySettings([{
             action: 'set',
             path: 'parsing.selectedParser',
             value,
             scope: 'profile',
-            optionsContext: this._getOptionsContext()
+            optionsContext
         }], 'search');
-    }
-
-    _refreshSelectedParser() {
-        if (this._parseResults.length > 0) {
-            if (!this._getParseResult()) {
-                const value = this._parseResults[0].id;
-                api.modifySettings([{
-                    action: 'set',
-                    path: 'parsing.selectedParser',
-                    value,
-                    scope: 'profile',
-                    optionsContext: this._getOptionsContext()
-                }], 'search');
-            }
-        }
     }
 
     _getParseResult() {
