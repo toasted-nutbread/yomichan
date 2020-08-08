@@ -96,7 +96,7 @@ async function testDocument1() {
         'mixed/js/dom.js',
         'fg/js/dom-text-scanner.js',
         'fg/js/source.js',
-        'fg/js/document.js'
+        'fg/js/document-util.js'
     ]);
     const [DOMTextScanner, TextSourceRange, TextSourceElement, DocumentUtil] = vm.get([
         'DOMTextScanner',
