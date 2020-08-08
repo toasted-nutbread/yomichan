@@ -27,98 +27,6 @@ class DocumentUtil {
         this.REGEX_TRANSPARENT_COLOR = /rgba\s*\([^)]*,\s*0(?:\.0+)?\s*\)/;
     }
 
-    docSetImposterStyle(style, propertyName, value) {
-        style.setProperty(propertyName, value, 'important');
-    }
-
-    docImposterCreate(element, isTextarea) {
-        const body = document.body;
-        if (body === null) { return [null, null]; }
-
-        const elementStyle = window.getComputedStyle(element);
-        const elementRect = element.getBoundingClientRect();
-        const documentRect = document.documentElement.getBoundingClientRect();
-        let left = elementRect.left - documentRect.left;
-        let top = elementRect.top - documentRect.top;
-
-        // Container
-        const container = document.createElement('div');
-        const containerStyle = container.style;
-        this.docSetImposterStyle(containerStyle, 'all', 'initial');
-        this.docSetImposterStyle(containerStyle, 'position', 'absolute');
-        this.docSetImposterStyle(containerStyle, 'left', '0');
-        this.docSetImposterStyle(containerStyle, 'top', '0');
-        this.docSetImposterStyle(containerStyle, 'width', `${documentRect.width}px`);
-        this.docSetImposterStyle(containerStyle, 'height', `${documentRect.height}px`);
-        this.docSetImposterStyle(containerStyle, 'overflow', 'hidden');
-        this.docSetImposterStyle(containerStyle, 'opacity', '0');
-
-        this.docSetImposterStyle(containerStyle, 'pointer-events', 'none');
-        this.docSetImposterStyle(containerStyle, 'z-index', '2147483646');
-
-        // Imposter
-        const imposter = document.createElement('div');
-        const imposterStyle = imposter.style;
-
-        let value = element.value;
-        if (value.endsWith('\n')) { value += '\n'; }
-        imposter.textContent = value;
-
-        for (let i = 0, ii = elementStyle.length; i < ii; ++i) {
-            const property = elementStyle[i];
-            this.docSetImposterStyle(imposterStyle, property, elementStyle.getPropertyValue(property));
-        }
-        this.docSetImposterStyle(imposterStyle, 'position', 'absolute');
-        this.docSetImposterStyle(imposterStyle, 'top', `${top}px`);
-        this.docSetImposterStyle(imposterStyle, 'left', `${left}px`);
-        this.docSetImposterStyle(imposterStyle, 'margin', '0');
-        this.docSetImposterStyle(imposterStyle, 'pointer-events', 'auto');
-
-        if (isTextarea) {
-            if (elementStyle.overflow === 'visible') {
-                this.docSetImposterStyle(imposterStyle, 'overflow', 'auto');
-            }
-        } else {
-            this.docSetImposterStyle(imposterStyle, 'overflow', 'hidden');
-            this.docSetImposterStyle(imposterStyle, 'white-space', 'nowrap');
-            this.docSetImposterStyle(imposterStyle, 'line-height', elementStyle.height);
-        }
-
-        container.appendChild(imposter);
-        body.appendChild(container);
-
-        // Adjust size
-        const imposterRect = imposter.getBoundingClientRect();
-        if (imposterRect.width !== elementRect.width || imposterRect.height !== elementRect.height) {
-            const width = parseFloat(elementStyle.width) + (elementRect.width - imposterRect.width);
-            const height = parseFloat(elementStyle.height) + (elementRect.height - imposterRect.height);
-            this.docSetImposterStyle(imposterStyle, 'width', `${width}px`);
-            this.docSetImposterStyle(imposterStyle, 'height', `${height}px`);
-        }
-        if (imposterRect.x !== elementRect.x || imposterRect.y !== elementRect.y) {
-            left += (elementRect.left - imposterRect.left);
-            top += (elementRect.top - imposterRect.top);
-            this.docSetImposterStyle(imposterStyle, 'left', `${left}px`);
-            this.docSetImposterStyle(imposterStyle, 'top', `${top}px`);
-        }
-
-        imposter.scrollTop = element.scrollTop;
-        imposter.scrollLeft = element.scrollLeft;
-
-        return [imposter, container];
-    }
-
-    docElementsFromPoint(x, y, all) {
-        if (all) {
-            // document.elementsFromPoint can return duplicates which must be removed.
-            const elements = document.elementsFromPoint(x, y);
-            return elements.filter((e, i) => elements.indexOf(e) === i);
-        }
-
-        const e = document.elementFromPoint(x, y);
-        return e !== null ? [e] : [];
-    }
-
     docRangeFromPoint(x, y, deepDomScan) {
         const elements = this.docElementsFromPoint(x, y, deepDomScan);
         let imposter = null;
@@ -224,6 +132,98 @@ class DocumentUtil {
             text: text.trim(),
             offset: position - startPos - padding
         };
+    }
+
+    docSetImposterStyle(style, propertyName, value) {
+        style.setProperty(propertyName, value, 'important');
+    }
+
+    docImposterCreate(element, isTextarea) {
+        const body = document.body;
+        if (body === null) { return [null, null]; }
+
+        const elementStyle = window.getComputedStyle(element);
+        const elementRect = element.getBoundingClientRect();
+        const documentRect = document.documentElement.getBoundingClientRect();
+        let left = elementRect.left - documentRect.left;
+        let top = elementRect.top - documentRect.top;
+
+        // Container
+        const container = document.createElement('div');
+        const containerStyle = container.style;
+        this.docSetImposterStyle(containerStyle, 'all', 'initial');
+        this.docSetImposterStyle(containerStyle, 'position', 'absolute');
+        this.docSetImposterStyle(containerStyle, 'left', '0');
+        this.docSetImposterStyle(containerStyle, 'top', '0');
+        this.docSetImposterStyle(containerStyle, 'width', `${documentRect.width}px`);
+        this.docSetImposterStyle(containerStyle, 'height', `${documentRect.height}px`);
+        this.docSetImposterStyle(containerStyle, 'overflow', 'hidden');
+        this.docSetImposterStyle(containerStyle, 'opacity', '0');
+
+        this.docSetImposterStyle(containerStyle, 'pointer-events', 'none');
+        this.docSetImposterStyle(containerStyle, 'z-index', '2147483646');
+
+        // Imposter
+        const imposter = document.createElement('div');
+        const imposterStyle = imposter.style;
+
+        let value = element.value;
+        if (value.endsWith('\n')) { value += '\n'; }
+        imposter.textContent = value;
+
+        for (let i = 0, ii = elementStyle.length; i < ii; ++i) {
+            const property = elementStyle[i];
+            this.docSetImposterStyle(imposterStyle, property, elementStyle.getPropertyValue(property));
+        }
+        this.docSetImposterStyle(imposterStyle, 'position', 'absolute');
+        this.docSetImposterStyle(imposterStyle, 'top', `${top}px`);
+        this.docSetImposterStyle(imposterStyle, 'left', `${left}px`);
+        this.docSetImposterStyle(imposterStyle, 'margin', '0');
+        this.docSetImposterStyle(imposterStyle, 'pointer-events', 'auto');
+
+        if (isTextarea) {
+            if (elementStyle.overflow === 'visible') {
+                this.docSetImposterStyle(imposterStyle, 'overflow', 'auto');
+            }
+        } else {
+            this.docSetImposterStyle(imposterStyle, 'overflow', 'hidden');
+            this.docSetImposterStyle(imposterStyle, 'white-space', 'nowrap');
+            this.docSetImposterStyle(imposterStyle, 'line-height', elementStyle.height);
+        }
+
+        container.appendChild(imposter);
+        body.appendChild(container);
+
+        // Adjust size
+        const imposterRect = imposter.getBoundingClientRect();
+        if (imposterRect.width !== elementRect.width || imposterRect.height !== elementRect.height) {
+            const width = parseFloat(elementStyle.width) + (elementRect.width - imposterRect.width);
+            const height = parseFloat(elementStyle.height) + (elementRect.height - imposterRect.height);
+            this.docSetImposterStyle(imposterStyle, 'width', `${width}px`);
+            this.docSetImposterStyle(imposterStyle, 'height', `${height}px`);
+        }
+        if (imposterRect.x !== elementRect.x || imposterRect.y !== elementRect.y) {
+            left += (elementRect.left - imposterRect.left);
+            top += (elementRect.top - imposterRect.top);
+            this.docSetImposterStyle(imposterStyle, 'left', `${left}px`);
+            this.docSetImposterStyle(imposterStyle, 'top', `${top}px`);
+        }
+
+        imposter.scrollTop = element.scrollTop;
+        imposter.scrollLeft = element.scrollLeft;
+
+        return [imposter, container];
+    }
+
+    docElementsFromPoint(x, y, all) {
+        if (all) {
+            // document.elementsFromPoint can return duplicates which must be removed.
+            const elements = document.elementsFromPoint(x, y);
+            return elements.filter((e, i) => elements.indexOf(e) === i);
+        }
+
+        const e = document.elementFromPoint(x, y);
+        return e !== null ? [e] : [];
     }
 
     isPointInRange(x, y, range) {
