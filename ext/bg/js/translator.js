@@ -124,7 +124,7 @@ class Translator {
             for (const [reading, termTagsMap] of readingMap.entries()) {
                 const termTags = [...termTagsMap.values()];
                 const score = termTags.map((tag) => tag.score).reduce((p, v) => p + v, 0);
-                expressions.push(Translator.createExpression(expression, reading, dictTagsSort(termTags), Translator.scoreToTermFrequency(score)));
+                expressions.push(this.createExpression(expression, reading, dictTagsSort(termTags), this.scoreToTermFrequency(score)));
             }
         }
 
@@ -200,7 +200,7 @@ class Translator {
                 score,
                 expression: [expression],
                 reading: [reading],
-                expressions: [Translator.createExpression(groupedDefinition.expression, groupedDefinition.reading)],
+                expressions: [this.createExpression(groupedDefinition.expression, groupedDefinition.reading)],
                 source,
                 dictionary,
                 definitions: groupedDefinition.definitions
@@ -236,7 +236,7 @@ class Translator {
     }
 
     async findTermsInternal(text, dictionaries, details, options) {
-        text = Translator.getSearchableText(text, options);
+        text = this.getSearchableText(text, options);
         if (text.length === 0) {
             return [[], 0];
         }
@@ -351,17 +351,17 @@ class Translator {
                 break;
         }
         const textOptionVariantArray = [
-            Translator.getTextOptionEntryVariants(translationOptions.convertHalfWidthCharacters),
-            Translator.getTextOptionEntryVariants(translationOptions.convertNumericCharacters),
-            Translator.getTextOptionEntryVariants(translationOptions.convertAlphabeticCharacters),
-            Translator.getTextOptionEntryVariants(translationOptions.convertHiraganaToKatakana),
-            Translator.getTextOptionEntryVariants(translationOptions.convertKatakanaToHiragana),
+            this.getTextOptionEntryVariants(translationOptions.convertHalfWidthCharacters),
+            this.getTextOptionEntryVariants(translationOptions.convertNumericCharacters),
+            this.getTextOptionEntryVariants(translationOptions.convertAlphabeticCharacters),
+            this.getTextOptionEntryVariants(translationOptions.convertHiraganaToKatakana),
+            this.getTextOptionEntryVariants(translationOptions.convertKatakanaToHiragana),
             collapseEmphaticOptions
         ];
 
         const deinflections = [];
         const used = new Set();
-        for (const [halfWidth, numeric, alphabetic, katakana, hiragana, [collapseEmphatic, collapseEmphaticFull]] of Translator.getArrayVariants(textOptionVariantArray)) {
+        for (const [halfWidth, numeric, alphabetic, katakana, hiragana, [collapseEmphatic, collapseEmphaticFull]] of this.getArrayVariants(textOptionVariantArray)) {
             let text2 = text;
             const sourceMap = new TextSourceMap(text2);
             if (halfWidth) {
@@ -396,7 +396,7 @@ class Translator {
         return deinflections;
     }
 
-    static getTextOptionEntryVariants(value) {
+    getTextOptionEntryVariants(value) {
         switch (value) {
             case 'true': return [true];
             case 'variant': return [false, true];
@@ -557,7 +557,7 @@ class Translator {
         }
 
         for (const name of names) {
-            const base = Translator.getNameBase(name);
+            const base = this.getNameBase(name);
 
             let tagMeta = cache.get(base);
             if (typeof tagMeta === 'undefined') {
@@ -597,7 +597,7 @@ class Translator {
         return {reading, pitches, dictionary};
     }
 
-    static createExpression(expression, reading, termTags=null, termFrequency=null) {
+    createExpression(expression, reading, termTags=null, termFrequency=null) {
         const furiganaSegments = jp.distributeFurigana(expression, reading);
         return {
             expression,
@@ -608,7 +608,7 @@ class Translator {
         };
     }
 
-    static scoreToTermFrequency(score) {
+    scoreToTermFrequency(score) {
         if (score > 0) {
             return 'popular';
         } else if (score < 0) {
@@ -618,12 +618,12 @@ class Translator {
         }
     }
 
-    static getNameBase(name) {
+    getNameBase(name) {
         const pos = name.indexOf(':');
         return (pos >= 0 ? name.substring(0, pos) : name);
     }
 
-    static *getArrayVariants(arrayVariants) {
+    *getArrayVariants(arrayVariants) {
         const ii = arrayVariants.length;
 
         let total = 1;
@@ -643,7 +643,7 @@ class Translator {
         }
     }
 
-    static getSearchableText(text, options) {
+    getSearchableText(text, options) {
         if (!options.scanning.alphanumeric) {
             let newText = '';
             for (const c of text) {
