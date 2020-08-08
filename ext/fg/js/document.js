@@ -24,10 +24,10 @@
 
 class DocumentUtil {
     constructor() {
-        this.REGEX_TRANSPARENT_COLOR = /rgba\s*\([^)]*,\s*0(?:\.0+)?\s*\)/;
+        this._transparentColorPattern = /rgba\s*\([^)]*,\s*0(?:\.0+)?\s*\)/;
     }
 
-    docRangeFromPoint(x, y, deepDomScan) {
+    getRangeFromPoint(x, y, deepDomScan) {
         const elements = this._getElementsFromPoint(x, y, deepDomScan);
         let imposter = null;
         let imposterContainer = null;
@@ -64,7 +64,7 @@ class DocumentUtil {
         }
     }
 
-    docSentenceExtract(source, extent, layoutAwareScan) {
+    extractSentence(source, extent, layoutAwareScan) {
         const quotesFwd = {'「': '」', '『': '』', "'": "'", '"': '"'};
         const quotesBwd = {'」': '「', '』': '『', "'": "'", '"': '"'};
         const terminators = '…。．.？?！!';
@@ -377,15 +377,15 @@ class DocumentUtil {
     }
 
     _isColorTransparent(cssColor) {
-        return this.REGEX_TRANSPARENT_COLOR.test(cssColor);
+        return this._transparentColorPattern.test(cssColor);
     }
 }
 
 // Temporary public exports for compatibility
 function docRangeFromPoint(...args) {
-    return new DocumentUtil().docRangeFromPoint(...args);
+    return new DocumentUtil().getRangeFromPoint(...args);
 }
 
 function docSentenceExtract(...args) {
-    return new DocumentUtil().docSentenceExtract(...args);
+    return new DocumentUtil().extractSentence(...args);
 }
