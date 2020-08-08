@@ -47,7 +47,7 @@ class Translator {
         this._tagCache.clear();
     }
 
-    async getSequencedDefinitions(definitions, mainDictionary) {
+    async _getSequencedDefinitions(definitions, mainDictionary) {
         const [definitionsBySequence, defaultDefinitions] = dictTermsMergeBySequence(definitions, mainDictionary);
 
         const sequenceList = [];
@@ -64,7 +64,7 @@ class Translator {
         return {sequencedDefinitions, defaultDefinitions};
     }
 
-    async getMergedSecondarySearchResults(text, expressionsMap, secondarySearchDictionaries) {
+    async _getMergedSecondarySearchResults(text, expressionsMap, secondarySearchDictionaries) {
         if (secondarySearchDictionaries.size === 0) {
             return [];
         }
@@ -81,10 +81,10 @@ class Translator {
 
         const definitions = await this._database.findTermsExactBulk(expressionList, readingList, secondarySearchDictionaries);
         for (const definition of definitions) {
-            const definitionTags = await this.expandTags(definition.definitionTags, definition.dictionary);
+            const definitionTags = await this._expandTags(definition.definitionTags, definition.dictionary);
             definitionTags.push(dictTagBuildSource(definition.dictionary));
             definition.definitionTags = definitionTags;
-            const termTags = await this.expandTags(definition.termTags, definition.dictionary);
+            const termTags = await this._expandTags(definition.termTags, definition.dictionary);
             definition.termTags = termTags;
         }
 
@@ -95,20 +95,20 @@ class Translator {
         return definitions;
     }
 
-    async getMergedDefinition(text, dictionaries, sequencedDefinition, defaultDefinitions, secondarySearchDictionaries, mergedByTermIndices) {
+    async _getMergedDefinition(text, dictionaries, sequencedDefinition, defaultDefinitions, secondarySearchDictionaries, mergedByTermIndices) {
         const result = sequencedDefinition.definitions;
         const rawDefinitionsBySequence = sequencedDefinition.rawDefinitions;
 
         for (const definition of rawDefinitionsBySequence) {
-            const definitionTags = await this.expandTags(definition.definitionTags, definition.dictionary);
+            const definitionTags = await this._expandTags(definition.definitionTags, definition.dictionary);
             definitionTags.push(dictTagBuildSource(definition.dictionary));
             definition.definitionTags = definitionTags;
-            const termTags = await this.expandTags(definition.termTags, definition.dictionary);
+            const termTags = await this._expandTags(definition.termTags, definition.dictionary);
             definition.termTags = termTags;
         }
 
         const definitionsByGloss = dictTermsMergeByGloss(result, rawDefinitionsBySequence);
-        const secondarySearchResults = await this.getMergedSecondarySearchResults(text, result.expressions, secondarySearchDictionaries);
+        const secondarySearchResults = await this._getMergedSecondarySearchResults(text, result.expressions, secondarySearchDictionaries);
 
         dictTermsMergeByGloss(result, defaultDefinitions.concat(secondarySearchResults), definitionsByGloss, mergedByTermIndices);
 
@@ -124,7 +124,7 @@ class Translator {
             for (const [reading, termTagsMap] of readingMap.entries()) {
                 const termTags = [...termTagsMap.values()];
                 const score = termTags.map((tag) => tag.score).reduce((p, v) => p + v, 0);
-                expressions.push(this.createExpression(expression, reading, dictTagsSort(termTags), this.scoreToTermFrequency(score)));
+                expressions.push(this._createExpression(expression, reading, dictTagsSort(termTags), this._scoreToTermFrequency(score)));
             }
         }
 
@@ -138,24 +138,24 @@ class Translator {
     async findTerms(mode, text, details, options) {
         switch (mode) {
             case 'group':
-                return await this.findTermsGrouped(text, details, options);
+                return await this._findTermsGrouped(text, details, options);
             case 'merge':
-                return await this.findTermsMerged(text, details, options);
+                return await this._findTermsMerged(text, details, options);
             case 'split':
-                return await this.findTermsSplit(text, details, options);
+                return await this._findTermsSplit(text, details, options);
             case 'simple':
-                return await this.findTermsSimple(text, details, options);
+                return await this._findTermsSimple(text, details, options);
             default:
                 return [[], 0];
         }
     }
 
-    async findTermsGrouped(text, details, options) {
+    async _findTermsGrouped(text, details, options) {
         const dictionaries = dictEnabledSet(options);
-        const [definitions, length] = await this.findTermsInternal(text, dictionaries, details, options);
+        const [definitions, length] = await this._findTermsInternal(text, dictionaries, details, options);
 
         const definitionsGrouped = dictTermsGroup(definitions, dictionaries);
-        await this.buildTermMeta(definitionsGrouped, dictionaries);
+        await this._buildTermMeta(definitionsGrouped, dictionaries);
 
         if (options.general.compactTags) {
             for (const definition of definitionsGrouped) {
@@ -166,7 +166,7 @@ class Translator {
         return [definitionsGrouped, length];
     }
 
-    async findTermsMerged(text, details, options) {
+    async _findTermsMerged(text, details, options) {
         const dictionaries = dictEnabledSet(options);
         const secondarySearchDictionaries = new Map();
         for (const [title, dictionary] of dictionaries.entries()) {
@@ -174,13 +174,13 @@ class Translator {
             secondarySearchDictionaries.set(title, dictionary);
         }
 
-        const [definitions, length] = await this.findTermsInternal(text, dictionaries, details, options);
-        const {sequencedDefinitions, defaultDefinitions} = await this.getSequencedDefinitions(definitions, options.general.mainDictionary);
+        const [definitions, length] = await this._findTermsInternal(text, dictionaries, details, options);
+        const {sequencedDefinitions, defaultDefinitions} = await this._getSequencedDefinitions(definitions, options.general.mainDictionary);
         const definitionsMerged = [];
         const mergedByTermIndices = new Set();
 
         for (const sequencedDefinition of sequencedDefinitions) {
-            const result = await this.getMergedDefinition(
+            const result = await this._getMergedDefinition(
                 text,
                 dictionaries,
                 sequencedDefinition,
@@ -200,7 +200,7 @@ class Translator {
                 score,
                 expression: [expression],
                 reading: [reading],
-                expressions: [this.createExpression(groupedDefinition.expression, groupedDefinition.reading)],
+                expressions: [this._createExpression(groupedDefinition.expression, groupedDefinition.reading)],
                 source,
                 dictionary,
                 definitions: groupedDefinition.definitions
@@ -208,7 +208,7 @@ class Translator {
             definitionsMerged.push(compatibilityDefinition);
         }
 
-        await this.buildTermMeta(definitionsMerged, dictionaries);
+        await this._buildTermMeta(definitionsMerged, dictionaries);
 
         if (options.general.compactTags) {
             for (const definition of definitionsMerged) {
@@ -219,40 +219,40 @@ class Translator {
         return [dictTermsSort(definitionsMerged), length];
     }
 
-    async findTermsSplit(text, details, options) {
+    async _findTermsSplit(text, details, options) {
         const dictionaries = dictEnabledSet(options);
-        const [definitions, length] = await this.findTermsInternal(text, dictionaries, details, options);
+        const [definitions, length] = await this._findTermsInternal(text, dictionaries, details, options);
 
-        await this.buildTermMeta(definitions, dictionaries);
+        await this._buildTermMeta(definitions, dictionaries);
 
         return [definitions, length];
     }
 
-    async findTermsSimple(text, details, options) {
+    async _findTermsSimple(text, details, options) {
         const dictionaries = dictEnabledSet(options);
-        const [definitions, length] = await this.findTermsInternal(text, dictionaries, details, options);
+        const [definitions, length] = await this._findTermsInternal(text, dictionaries, details, options);
         dictTermsSort(definitions);
         return [definitions, length];
     }
 
-    async findTermsInternal(text, dictionaries, details, options) {
-        text = this.getSearchableText(text, options);
+    async _findTermsInternal(text, dictionaries, details, options) {
+        text = this._getSearchableText(text, options);
         if (text.length === 0) {
             return [[], 0];
         }
 
         const deinflections = (
             details.wildcard ?
-            await this.findTermWildcard(text, dictionaries, details.wildcard) :
-            await this.findTermDeinflections(text, dictionaries, options)
+            await this._findTermWildcard(text, dictionaries, details.wildcard) :
+            await this._findTermDeinflections(text, dictionaries, options)
         );
 
         let definitions = [];
         for (const deinflection of deinflections) {
             for (const definition of deinflection.definitions) {
-                const definitionTags = await this.expandTags(definition.definitionTags, definition.dictionary);
+                const definitionTags = await this._expandTags(definition.definitionTags, definition.dictionary);
                 definitionTags.push(dictTagBuildSource(definition.dictionary));
-                const termTags = await this.expandTags(definition.termTags, definition.dictionary);
+                const termTags = await this._expandTags(definition.termTags, definition.dictionary);
 
                 const {expression, reading} = definition;
                 const furiganaSegments = jp.distributeFurigana(expression, reading);
@@ -286,7 +286,7 @@ class Translator {
         return [definitions, length];
     }
 
-    async findTermWildcard(text, dictionaries, wildcard) {
+    async _findTermWildcard(text, dictionaries, wildcard) {
         const definitions = await this._database.findTermsBulk([text], dictionaries, wildcard);
         if (definitions.length === 0) {
             return [];
@@ -302,8 +302,8 @@ class Translator {
         }];
     }
 
-    async findTermDeinflections(text, dictionaries, options) {
-        const deinflections = this.getAllDeinflections(text, options);
+    async _findTermDeinflections(text, dictionaries, options) {
+        const deinflections = this._getAllDeinflections(text, options);
 
         if (deinflections.length === 0) {
             return [];
@@ -339,7 +339,7 @@ class Translator {
         return deinflections.filter((e) => e.definitions.length > 0);
     }
 
-    getAllDeinflections(text, options) {
+    _getAllDeinflections(text, options) {
         const translationOptions = options.translation;
         const collapseEmphaticOptions = [[false, false]];
         switch (translationOptions.collapseEmphaticSequences) {
@@ -351,17 +351,17 @@ class Translator {
                 break;
         }
         const textOptionVariantArray = [
-            this.getTextOptionEntryVariants(translationOptions.convertHalfWidthCharacters),
-            this.getTextOptionEntryVariants(translationOptions.convertNumericCharacters),
-            this.getTextOptionEntryVariants(translationOptions.convertAlphabeticCharacters),
-            this.getTextOptionEntryVariants(translationOptions.convertHiraganaToKatakana),
-            this.getTextOptionEntryVariants(translationOptions.convertKatakanaToHiragana),
+            this._getTextOptionEntryVariants(translationOptions.convertHalfWidthCharacters),
+            this._getTextOptionEntryVariants(translationOptions.convertNumericCharacters),
+            this._getTextOptionEntryVariants(translationOptions.convertAlphabeticCharacters),
+            this._getTextOptionEntryVariants(translationOptions.convertHiraganaToKatakana),
+            this._getTextOptionEntryVariants(translationOptions.convertKatakanaToHiragana),
             collapseEmphaticOptions
         ];
 
         const deinflections = [];
         const used = new Set();
-        for (const [halfWidth, numeric, alphabetic, katakana, hiragana, [collapseEmphatic, collapseEmphaticFull]] of this.getArrayVariants(textOptionVariantArray)) {
+        for (const [halfWidth, numeric, alphabetic, katakana, hiragana, [collapseEmphatic, collapseEmphaticFull]] of this._getArrayVariants(textOptionVariantArray)) {
             let text2 = text;
             const sourceMap = new TextSourceMap(text2);
             if (halfWidth) {
@@ -396,7 +396,7 @@ class Translator {
         return deinflections;
     }
 
-    getTextOptionEntryVariants(value) {
+    _getTextOptionEntryVariants(value) {
         switch (value) {
             case 'true': return [true];
             case 'variant': return [false, true];
@@ -421,22 +421,22 @@ class Translator {
         }
 
         for (const definition of definitions) {
-            const tags = await this.expandTags(definition.tags, definition.dictionary);
+            const tags = await this._expandTags(definition.tags, definition.dictionary);
             tags.push(dictTagBuildSource(definition.dictionary));
             dictTagsSort(tags);
 
-            const stats = await this.expandStats(definition.stats, definition.dictionary);
+            const stats = await this._expandStats(definition.stats, definition.dictionary);
 
             definition.tags = tags;
             definition.stats = stats;
         }
 
-        await this.buildKanjiMeta(definitions, dictionaries);
+        await this._buildKanjiMeta(definitions, dictionaries);
 
         return definitions;
     }
 
-    async buildTermMeta(definitions, dictionaries) {
+    async _buildTermMeta(definitions, dictionaries) {
         const terms = [];
         for (const definition of definitions) {
             if (definition.expressions) {
@@ -476,14 +476,14 @@ class Translator {
             switch (mode) {
                 case 'freq':
                     for (const term of termsUnique[index]) {
-                        const frequencyData = this.getFrequencyData(expression, data, dictionary, term);
+                        const frequencyData = this._getFrequencyData(expression, data, dictionary, term);
                         if (frequencyData === null) { continue; }
                         term.frequencies.push(frequencyData);
                     }
                     break;
                 case 'pitch':
                     for (const term of termsUnique[index]) {
-                        const pitchData = await this.getPitchData(expression, data, dictionary, term);
+                        const pitchData = await this._getPitchData(expression, data, dictionary, term);
                         if (pitchData === null) { continue; }
                         term.pitches.push(pitchData);
                     }
@@ -492,7 +492,7 @@ class Translator {
         }
     }
 
-    async buildKanjiMeta(definitions, dictionaries) {
+    async _buildKanjiMeta(definitions, dictionaries) {
         const kanjiList = [];
         for (const definition of definitions) {
             kanjiList.push(definition.character);
@@ -509,8 +509,8 @@ class Translator {
         }
     }
 
-    async expandTags(names, title) {
-        const tagMetaList = await this.getTagMetaList(names, title);
+    async _expandTags(names, title) {
+        const tagMetaList = await this._getTagMetaList(names, title);
         return tagMetaList.map((meta, index) => {
             const name = names[index];
             const tag = dictTagSanitize(Object.assign({}, meta !== null ? meta : {}, {name}));
@@ -518,9 +518,9 @@ class Translator {
         });
     }
 
-    async expandStats(items, title) {
+    async _expandStats(items, title) {
         const names = Object.keys(items);
-        const tagMetaList = await this.getTagMetaList(names, title);
+        const tagMetaList = await this._getTagMetaList(names, title);
 
         const statsGroups = new Map();
         for (let i = 0; i < names.length; ++i) {
@@ -548,7 +548,7 @@ class Translator {
         return stats;
     }
 
-    async getTagMetaList(names, title) {
+    async _getTagMetaList(names, title) {
         const tagMetaList = [];
         let cache = this._tagCache.get(title);
         if (typeof cache === 'undefined') {
@@ -557,7 +557,7 @@ class Translator {
         }
 
         for (const name of names) {
-            const base = this.getNameBase(name);
+            const base = this._getNameBase(name);
 
             let tagMeta = cache.get(base);
             if (typeof tagMeta === 'undefined') {
@@ -571,7 +571,7 @@ class Translator {
         return tagMetaList;
     }
 
-    getFrequencyData(expression, data, dictionary, term) {
+    _getFrequencyData(expression, data, dictionary, term) {
         if (data !== null && typeof data === 'object') {
             const {frequency, reading} = data;
 
@@ -583,21 +583,21 @@ class Translator {
         return {expression, frequency: data, dictionary};
     }
 
-    async getPitchData(expression, data, dictionary, term) {
+    async _getPitchData(expression, data, dictionary, term) {
         const reading = data.reading;
         const termReading = term.reading || expression;
         if (reading !== termReading) { return null; }
 
         const pitches = [];
         for (let {position, tags} of data.pitches) {
-            tags = Array.isArray(tags) ? await this.getTagMetaList(tags, dictionary) : [];
+            tags = Array.isArray(tags) ? await this._getTagMetaList(tags, dictionary) : [];
             pitches.push({position, tags});
         }
 
         return {reading, pitches, dictionary};
     }
 
-    createExpression(expression, reading, termTags=null, termFrequency=null) {
+    _createExpression(expression, reading, termTags=null, termFrequency=null) {
         const furiganaSegments = jp.distributeFurigana(expression, reading);
         return {
             expression,
@@ -608,7 +608,7 @@ class Translator {
         };
     }
 
-    scoreToTermFrequency(score) {
+    _scoreToTermFrequency(score) {
         if (score > 0) {
             return 'popular';
         } else if (score < 0) {
@@ -618,12 +618,12 @@ class Translator {
         }
     }
 
-    getNameBase(name) {
+    _getNameBase(name) {
         const pos = name.indexOf(':');
         return (pos >= 0 ? name.substring(0, pos) : name);
     }
 
-    *getArrayVariants(arrayVariants) {
+    *_getArrayVariants(arrayVariants) {
         const ii = arrayVariants.length;
 
         let total = 1;
@@ -643,7 +643,7 @@ class Translator {
         }
     }
 
-    getSearchableText(text, options) {
+    _getSearchableText(text, options) {
         if (!options.scanning.alphanumeric) {
             let newText = '';
             for (const c of text) {
