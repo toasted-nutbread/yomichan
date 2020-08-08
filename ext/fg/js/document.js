@@ -380,12 +380,3 @@ class DocumentUtil {
         return this._transparentColorPattern.test(cssColor);
     }
 }
-
-// Temporary public exports for compatibility
-function docRangeFromPoint(...args) {
-    return new DocumentUtil().getRangeFromPoint(...args);
-}
-
-function docSentenceExtract(...args) {
-    return new DocumentUtil().extractSentence(...args);
-}
