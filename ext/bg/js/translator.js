@@ -33,18 +33,18 @@
 
 class Translator {
     constructor(database) {
-        this.database = database;
-        this.deinflector = null;
-        this.tagCache = new Map();
+        this._database = database;
+        this._deinflector = null;
+        this._tagCache = new Map();
     }
 
     async prepare() {
         const reasons = await this._fetchJsonAsset('/bg/lang/deinflect.json');
-        this.deinflector = new Deinflector(reasons);
+        this._deinflector = new Deinflector(reasons);
     }
 
     clearDatabaseCaches() {
-        this.tagCache.clear();
+        this._tagCache.clear();
     }
 
     async getSequencedDefinitions(definitions, mainDictionary) {
@@ -57,7 +57,7 @@ class Translator {
             sequencedDefinitions.push({definitions: value, rawDefinitions: []});
         }
 
-        for (const definition of await this.database.findTermsBySequenceBulk(sequenceList, mainDictionary)) {
+        for (const definition of await this._database.findTermsBySequenceBulk(sequenceList, mainDictionary)) {
             sequencedDefinitions[definition.index].rawDefinitions.push(definition);
         }
 
@@ -79,7 +79,7 @@ class Translator {
             }
         }
 
-        const definitions = await this.database.findTermsExactBulk(expressionList, readingList, secondarySearchDictionaries);
+        const definitions = await this._database.findTermsExactBulk(expressionList, readingList, secondarySearchDictionaries);
         for (const definition of definitions) {
             const definitionTags = await this.expandTags(definition.definitionTags, definition.dictionary);
             definitionTags.push(dictTagBuildSource(definition.dictionary));
@@ -287,7 +287,7 @@ class Translator {
     }
 
     async findTermWildcard(text, dictionaries, wildcard) {
-        const definitions = await this.database.findTermsBulk([text], dictionaries, wildcard);
+        const definitions = await this._database.findTermsBulk([text], dictionaries, wildcard);
         if (definitions.length === 0) {
             return [];
         }
@@ -324,7 +324,7 @@ class Translator {
             deinflectionArray.push(deinflection);
         }
 
-        const definitions = await this.database.findTermsBulk(uniqueDeinflectionTerms, dictionaries, null);
+        const definitions = await this._database.findTermsBulk(uniqueDeinflectionTerms, dictionaries, null);
 
         for (const definition of definitions) {
             const definitionRules = Deinflector.rulesToRuleFlags(definition.rules);
@@ -387,7 +387,7 @@ class Translator {
                 const text2Substring = text2.substring(0, i);
                 if (used.has(text2Substring)) { break; }
                 used.add(text2Substring);
-                for (const deinflection of this.deinflector.deinflect(text2Substring)) {
+                for (const deinflection of this._deinflector.deinflect(text2Substring)) {
                     deinflection.rawSource = sourceMap.source.substring(0, sourceMap.getSourceLength(i));
                     deinflections.push(deinflection);
                 }
@@ -411,7 +411,7 @@ class Translator {
             kanjiUnique.add(c);
         }
 
-        const definitions = await this.database.findKanjiBulk([...kanjiUnique], dictionaries);
+        const definitions = await this._database.findKanjiBulk([...kanjiUnique], dictionaries);
         if (definitions.length === 0) {
             return definitions;
         }
@@ -471,7 +471,7 @@ class Translator {
             term.pitches = [];
         }
 
-        const metas = await this.database.findTermMetaBulk(expressionsUnique, dictionaries);
+        const metas = await this._database.findTermMetaBulk(expressionsUnique, dictionaries);
         for (const {expression, mode, data, dictionary, index} of metas) {
             switch (mode) {
                 case 'freq':
@@ -499,7 +499,7 @@ class Translator {
             definition.frequencies = [];
         }
 
-        const metas = await this.database.findKanjiMetaBulk(kanjiList, dictionaries);
+        const metas = await this._database.findKanjiMetaBulk(kanjiList, dictionaries);
         for (const {character, mode, data, dictionary, index} of metas) {
             switch (mode) {
                 case 'freq':
@@ -550,10 +550,10 @@ class Translator {
 
     async getTagMetaList(names, title) {
         const tagMetaList = [];
-        let cache = this.tagCache.get(title);
+        let cache = this._tagCache.get(title);
         if (typeof cache === 'undefined') {
             cache = new Map();
-            this.tagCache.set(title, cache);
+            this._tagCache.set(title, cache);
         }
 
         for (const name of names) {
@@ -561,7 +561,7 @@ class Translator {
 
             let tagMeta = cache.get(base);
             if (typeof tagMeta === 'undefined') {
-                tagMeta = await this.database.findTagForTitle(base, title);
+                tagMeta = await this._database.findTagForTitle(base, title);
                 cache.set(base, tagMeta);
             }
 
