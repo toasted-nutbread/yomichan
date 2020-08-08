@@ -48,7 +48,15 @@ class QueryParser extends EventDispatcher {
 
     setOptions(options) {
         this._options = options;
-        this._textScanner.setOptions(options);
+        const scanningOptions = options.scanning;
+        this._textScanner.setOptions({
+            deepContentScan: scanningOptions.deepDomScan,
+            selectText: scanningOptions.selectText,
+            modifier: scanningOptions.modifier,
+            useMiddleMouse: scanningOptions.middleMouse,
+            delay: scanningOptions.delay,
+            touchInputEnabled: scanningOptions.touchInputEnabled
+        });
         this._textScanner.setEnabled(true);
         this._queryParser.dataset.termSpacing = `${options.parsing.termSpacing}`;
     }
