@@ -27,8 +27,8 @@ class DocumentUtil {
         this._transparentColorPattern = /rgba\s*\([^)]*,\s*0(?:\.0+)?\s*\)/;
     }
 
-    getRangeFromPoint(x, y, deepDomScan) {
-        const elements = this._getElementsFromPoint(x, y, deepDomScan);
+    getRangeFromPoint(x, y, deepContentScan) {
+        const elements = this._getElementsFromPoint(x, y, deepContentScan);
         let imposter = null;
         let imposterContainer = null;
         let imposterSourceElement = null;
@@ -49,7 +49,7 @@ class DocumentUtil {
             }
         }
 
-        const range = this._caretRangeFromPointExt(x, y, deepDomScan ? elements : []);
+        const range = this._caretRangeFromPointExt(x, y, deepContentScan ? elements : []);
         if (range !== null) {
             if (imposter !== null) {
                 this._setImposterStyle(imposterContainer.style, 'z-index', '-2147483646');
