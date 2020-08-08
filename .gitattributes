@@ -1,3 +1,4 @@
+*.sh text eol=lf
 ext/*.handlebars text eol=lf
 ext/*.js text eol=lf
 ext/*.json text eol=lf
