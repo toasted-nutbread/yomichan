@@ -161,7 +161,6 @@ class DocumentUtil {
         this._setImposterStyle(containerStyle, 'height', `${documentRect.height}px`);
         this._setImposterStyle(containerStyle, 'overflow', 'hidden');
         this._setImposterStyle(containerStyle, 'opacity', '0');
-
         this._setImposterStyle(containerStyle, 'pointer-events', 'none');
         this._setImposterStyle(containerStyle, 'z-index', '2147483646');
 
