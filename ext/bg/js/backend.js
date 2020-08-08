@@ -706,11 +706,11 @@ class Backend {
     }
 
     async _onApiGetDictionaryInfo() {
-        return await this._translator.database.getDictionaryInfo();
+        return await this._dictionaryDatabase.getDictionaryInfo();
     }
 
     async _onApiGetDictionaryCounts({dictionaryNames, getTotal}) {
-        return await this._translator.database.getDictionaryCounts(dictionaryNames, getTotal);
+        return await this._dictionaryDatabase.getDictionaryCounts(dictionaryNames, getTotal);
     }
 
     async _onApiPurgeDatabase() {
