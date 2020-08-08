@@ -230,7 +230,9 @@ class Translator {
 
     async findTermsSimple(text, details, options) {
         const dictionaries = dictEnabledSet(options);
-        return await this.findTermsInternal(text, dictionaries, details, options);
+        const [definitions, length] = await this.findTermsInternal(text, dictionaries, details, options);
+        dictTermsSort(definitions);
+        return [definitions, length];
     }
 
     async findTermsInternal(text, dictionaries, details, options) {
