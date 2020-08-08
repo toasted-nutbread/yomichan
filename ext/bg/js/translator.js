@@ -47,6 +47,55 @@ class Translator {
         this._tagCache.clear();
     }
 
+    async findTerms(mode, text, details, options) {
+        switch (mode) {
+            case 'group':
+                return await this._findTermsGrouped(text, details, options);
+            case 'merge':
+                return await this._findTermsMerged(text, details, options);
+            case 'split':
+                return await this._findTermsSplit(text, details, options);
+            case 'simple':
+                return await this._findTermsSimple(text, details, options);
+            default:
+                return [[], 0];
+        }
+    }
+
+    async findKanji(text, options) {
+        const dictionaries = dictEnabledSet(options);
+        const kanjiUnique = new Set();
+        for (const c of text) {
+            kanjiUnique.add(c);
+        }
+
+        const definitions = await this._database.findKanjiBulk([...kanjiUnique], dictionaries);
+        if (definitions.length === 0) {
+            return definitions;
+        }
+
+        if (definitions.length > 1) {
+            definitions.sort((a, b) => a.index - b.index);
+        }
+
+        for (const definition of definitions) {
+            const tags = await this._expandTags(definition.tags, definition.dictionary);
+            tags.push(dictTagBuildSource(definition.dictionary));
+            dictTagsSort(tags);
+
+            const stats = await this._expandStats(definition.stats, definition.dictionary);
+
+            definition.tags = tags;
+            definition.stats = stats;
+        }
+
+        await this._buildKanjiMeta(definitions, dictionaries);
+
+        return definitions;
+    }
+
+    // Private
+
     async _getSequencedDefinitions(definitions, mainDictionary) {
         const [definitionsBySequence, defaultDefinitions] = dictTermsMergeBySequence(definitions, mainDictionary);
 
@@ -133,21 +182,6 @@ class Translator {
         result.reading = Array.from(result.reading);
 
         return result;
-    }
-
-    async findTerms(mode, text, details, options) {
-        switch (mode) {
-            case 'group':
-                return await this._findTermsGrouped(text, details, options);
-            case 'merge':
-                return await this._findTermsMerged(text, details, options);
-            case 'split':
-                return await this._findTermsSplit(text, details, options);
-            case 'simple':
-                return await this._findTermsSimple(text, details, options);
-            default:
-                return [[], 0];
-        }
     }
 
     async _findTermsGrouped(text, details, options) {
@@ -402,38 +436,6 @@ class Translator {
             case 'variant': return [false, true];
             default: return [false];
         }
-    }
-
-    async findKanji(text, options) {
-        const dictionaries = dictEnabledSet(options);
-        const kanjiUnique = new Set();
-        for (const c of text) {
-            kanjiUnique.add(c);
-        }
-
-        const definitions = await this._database.findKanjiBulk([...kanjiUnique], dictionaries);
-        if (definitions.length === 0) {
-            return definitions;
-        }
-
-        if (definitions.length > 1) {
-            definitions.sort((a, b) => a.index - b.index);
-        }
-
-        for (const definition of definitions) {
-            const tags = await this._expandTags(definition.tags, definition.dictionary);
-            tags.push(dictTagBuildSource(definition.dictionary));
-            dictTagsSort(tags);
-
-            const stats = await this._expandStats(definition.stats, definition.dictionary);
-
-            definition.tags = tags;
-            definition.stats = stats;
-        }
-
-        await this._buildKanjiMeta(definitions, dictionaries);
-
-        return definitions;
     }
 
     async _buildTermMeta(definitions, dictionaries) {
