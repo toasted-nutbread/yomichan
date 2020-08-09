@@ -134,13 +134,24 @@ function getObjectProperties(object, path2, count) {
     return object;
 }
 
+function loadDefaultManifest() {
+    const {manifest} = loadDefaultManifestAndVariants();
+    return manifest;
+}
+
+function loadDefaultManifestAndVariants() {
+    const fileName = path.join(__dirname, 'data', 'manifest-variants.json');
+    const {manifest, variants} = JSON.parse(fs.readFileSync(fileName));
+    return {manifest, variants};
+}
+
 function createManifestString(manifest) {
     return JSON.stringify(manifest, null, 4) + '\n';
 }
 
 
 async function main() {
-    const {manifest, variants} = JSON.parse(fs.readFileSync(path.join(__dirname, 'data', 'manifest-variants.json')));
+    const {manifest, variants} = loadDefaultManifestAndVariants();
 
     const rootDir = path.join(__dirname, '..');
     const extDir = path.join(rootDir, 'ext');
@@ -191,6 +202,13 @@ async function main() {
         fs.writeFileSync(manifestPath, createManifestString(manifest));
     }
 }
+
+
+module.exports = {
+    loadDefaultManifest,
+    loadDefaultManifestAndVariants,
+    createManifestString
+};
 
 
 if (require.main === module) { main(); }
