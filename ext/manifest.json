@@ -41,7 +41,6 @@
                 "mixed/js/core.js",
                 "mixed/js/yomichan.js",
                 "mixed/js/comm.js",
-                "mixed/js/dom.js",
                 "mixed/js/api.js",
                 "mixed/js/dynamic-loader.js",
                 "mixed/js/frame-client.js",
