@@ -26,18 +26,18 @@
 class DisplaySearch extends Display {
     constructor() {
         super(document.querySelector('#spinner'), document.querySelector('#content'));
-        this._isPrepared = false;
         this._searchButton = document.querySelector('#search');
         this._queryInput = document.querySelector('#query');
         this._introElement = document.querySelector('#intro');
         this._clipboardMonitorEnableCheckbox = document.querySelector('#clipboard-monitor-enable');
         this._wanakanaEnableCheckbox = document.querySelector('#wanakana-enable');
+        this._isPrepared = false;
         this._introVisible = true;
         this._introAnimationTimer = null;
+        this._clipboardMonitorEnabled = false;
         this._clipboardMonitor = new ClipboardMonitor({
             getClipboard: api.clipboardGet.bind(api)
         });
-        this._clipboardMonitorEnabled = false;
         this._onKeyDownIgnoreKeys = new Map([
             ['ANY_MOD', new Set([
                 'Tab', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'PageDown', 'PageUp', 'Home', 'End',
