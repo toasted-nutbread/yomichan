@@ -435,9 +435,9 @@ class DictionaryDatabase {
             index,
             expression: row.expression,
             reading: row.reading,
-            definitionTags: this._dictFieldSplit(row.definitionTags || row.tags || ''),
-            termTags: this._dictFieldSplit(row.termTags || ''),
-            rules: this._dictFieldSplit(row.rules),
+            definitionTags: this._splitField(row.definitionTags || row.tags || ''),
+            termTags: this._splitField(row.termTags || ''),
+            rules: this._splitField(row.rules),
             glossary: row.glossary,
             score: row.score,
             dictionary: row.dictionary,
@@ -450,9 +450,9 @@ class DictionaryDatabase {
         return {
             index,
             character: row.character,
-            onyomi: this._dictFieldSplit(row.onyomi),
-            kunyomi: this._dictFieldSplit(row.kunyomi),
-            tags: this._dictFieldSplit(row.tags),
+            onyomi: this._splitField(row.onyomi),
+            kunyomi: this._splitField(row.kunyomi),
+            tags: this._splitField(row.tags),
             glossary: row.meanings,
             stats: row.stats,
             dictionary: row.dictionary
@@ -471,7 +471,7 @@ class DictionaryDatabase {
         return Object.assign({}, row, {index});
     }
 
-    _dictFieldSplit(field) {
+    _splitField(field) {
         return field.length === 0 ? [] : field.split(' ');
     }
 }
