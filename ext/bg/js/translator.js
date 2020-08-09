@@ -53,7 +53,7 @@ class Translator {
     }
 
     async findKanji(text, options) {
-        const dictionaries = this._dictEnabledSet(options);
+        const dictionaries = this._getEnabledDictionaryMap(options);
         const kanjiUnique = new Set();
         for (const c of text) {
             kanjiUnique.add(c);
@@ -70,8 +70,8 @@ class Translator {
 
         for (const definition of definitions) {
             const tags = await this._expandTags(definition.tags, definition.dictionary);
-            tags.push(this._dictTagBuildSource(definition.dictionary));
-            this._dictTagsSort(tags);
+            tags.push(this._createDictionaryTag(definition.dictionary));
+            this._sortTags(tags);
 
             const stats = await this._expandStats(definition.stats, definition.dictionary);
 
@@ -87,7 +87,7 @@ class Translator {
     // Private
 
     async _getSequencedDefinitions(definitions, mainDictionary) {
-        const [definitionsBySequence, defaultDefinitions] = this._dictTermsMergeBySequence(definitions, mainDictionary);
+        const [definitionsBySequence, defaultDefinitions] = this._mergeBySequence(definitions, mainDictionary);
 
         const sequenceList = [];
         const sequencedDefinitions = [];
@@ -121,7 +121,7 @@ class Translator {
         const definitions = await this._database.findTermsExactBulk(expressionList, readingList, secondarySearchDictionaries);
         for (const definition of definitions) {
             const definitionTags = await this._expandTags(definition.definitionTags, definition.dictionary);
-            definitionTags.push(this._dictTagBuildSource(definition.dictionary));
+            definitionTags.push(this._createDictionaryTag(definition.dictionary));
             definition.definitionTags = definitionTags;
             const termTags = await this._expandTags(definition.termTags, definition.dictionary);
             definition.termTags = termTags;
@@ -140,30 +140,30 @@ class Translator {
 
         for (const definition of rawDefinitionsBySequence) {
             const definitionTags = await this._expandTags(definition.definitionTags, definition.dictionary);
-            definitionTags.push(this._dictTagBuildSource(definition.dictionary));
+            definitionTags.push(this._createDictionaryTag(definition.dictionary));
             definition.definitionTags = definitionTags;
             const termTags = await this._expandTags(definition.termTags, definition.dictionary);
             definition.termTags = termTags;
         }
 
-        const definitionsByGloss = this._dictTermsMergeByGloss(result, rawDefinitionsBySequence);
+        const definitionsByGloss = this._mergeByGlossary(result, rawDefinitionsBySequence);
         const secondarySearchResults = await this._getMergedSecondarySearchResults(text, result.expressions, secondarySearchDictionaries);
 
-        this._dictTermsMergeByGloss(result, defaultDefinitions.concat(secondarySearchResults), definitionsByGloss, mergedByTermIndices);
+        this._mergeByGlossary(result, defaultDefinitions.concat(secondarySearchResults), definitionsByGloss, mergedByTermIndices);
 
         for (const definition of definitionsByGloss.values()) {
-            this._dictTagsSort(definition.definitionTags);
+            this._sortTags(definition.definitionTags);
             result.definitions.push(definition);
         }
 
-        this._dictTermsSort(result.definitions, dictionaries);
+        this._sortDefinitions(result.definitions, dictionaries);
 
         const expressions = [];
         for (const [expression, readingMap] of result.expressions.entries()) {
             for (const [reading, termTagsMap] of readingMap.entries()) {
                 const termTags = [...termTagsMap.values()];
                 const score = termTags.map((tag) => tag.score).reduce((p, v) => p + v, 0);
-                expressions.push(this._createExpression(expression, reading, this._dictTagsSort(termTags), this._scoreToTermFrequency(score)));
+                expressions.push(this._createExpression(expression, reading, this._sortTags(termTags), this._scoreToTermFrequency(score)));
             }
         }
 
@@ -175,15 +175,15 @@ class Translator {
     }
 
     async _findTermsGrouped(text, details, options) {
-        const dictionaries = this._dictEnabledSet(options);
+        const dictionaries = this._getEnabledDictionaryMap(options);
         const [definitions, length] = await this._findTermsInternal(text, dictionaries, details, options);
 
-        const definitionsGrouped = this._dictTermsGroup(definitions, dictionaries);
+        const definitionsGrouped = this._groupTerms(definitions, dictionaries);
         await this._buildTermMeta(definitionsGrouped, dictionaries);
 
         if (options.general.compactTags) {
             for (const definition of definitionsGrouped) {
-                this._dictTermsCompressTags(definition.definitions);
+                this._compressDefinitionTags(definition.definitions);
             }
         }
 
@@ -191,7 +191,7 @@ class Translator {
     }
 
     async _findTermsMerged(text, details, options) {
-        const dictionaries = this._dictEnabledSet(options);
+        const dictionaries = this._getEnabledDictionaryMap(options);
         const secondarySearchDictionaries = new Map();
         for (const [title, dictionary] of dictionaries.entries()) {
             if (!dictionary.allowSecondarySearches) { continue; }
@@ -216,7 +216,7 @@ class Translator {
         }
 
         const strayDefinitions = defaultDefinitions.filter((definition, index) => !mergedByTermIndices.has(index));
-        for (const groupedDefinition of this._dictTermsGroup(strayDefinitions, dictionaries)) {
+        for (const groupedDefinition of this._groupTerms(strayDefinitions, dictionaries)) {
             // from dictTermsMergeBySequence
             const {reasons, score, expression, reading, source, dictionary} = groupedDefinition;
             const compatibilityDefinition = {
@@ -236,15 +236,15 @@ class Translator {
 
         if (options.general.compactTags) {
             for (const definition of definitionsMerged) {
-                this._dictTermsCompressTags(definition.definitions);
+                this._compressDefinitionTags(definition.definitions);
             }
         }
 
-        return [this._dictTermsSort(definitionsMerged), length];
+        return [this._sortDefinitions(definitionsMerged), length];
     }
 
     async _findTermsSplit(text, details, options) {
-        const dictionaries = this._dictEnabledSet(options);
+        const dictionaries = this._getEnabledDictionaryMap(options);
         const [definitions, length] = await this._findTermsInternal(text, dictionaries, details, options);
 
         await this._buildTermMeta(definitions, dictionaries);
@@ -253,9 +253,9 @@ class Translator {
     }
 
     async _findTermsSimple(text, details, options) {
-        const dictionaries = this._dictEnabledSet(options);
+        const dictionaries = this._getEnabledDictionaryMap(options);
         const [definitions, length] = await this._findTermsInternal(text, dictionaries, details, options);
-        this._dictTermsSort(definitions);
+        this._sortDefinitions(definitions);
         return [definitions, length];
     }
 
@@ -275,7 +275,7 @@ class Translator {
         for (const deinflection of deinflections) {
             for (const definition of deinflection.definitions) {
                 const definitionTags = await this._expandTags(definition.definitionTags, definition.dictionary);
-                definitionTags.push(this._dictTagBuildSource(definition.dictionary));
+                definitionTags.push(this._createDictionaryTag(definition.dictionary));
                 const termTags = await this._expandTags(definition.termTags, definition.dictionary);
 
                 const {expression, reading} = definition;
@@ -292,15 +292,15 @@ class Translator {
                     reading,
                     furiganaSegments,
                     glossary: definition.glossary,
-                    definitionTags: this._dictTagsSort(definitionTags),
-                    termTags: this._dictTagsSort(termTags),
+                    definitionTags: this._sortTags(definitionTags),
+                    termTags: this._sortTags(termTags),
                     sequence: definition.sequence
                 });
             }
         }
 
-        definitions = this._dictTermsUndupe(definitions);
-        definitions = this._dictTermsSort(definitions, dictionaries);
+        definitions = this._removeDuplicateDefinitions(definitions);
+        definitions = this._sortDefinitions(definitions, dictionaries);
 
         let length = 0;
         for (const definition of definitions) {
@@ -505,8 +505,8 @@ class Translator {
         const tagMetaList = await this._getTagMetaList(names, title);
         return tagMetaList.map((meta, index) => {
             const name = names[index];
-            const tag = this._dictTagSanitize(Object.assign({}, meta !== null ? meta : {}, {name}));
-            return this._dictTagSanitize(tag);
+            const tag = this._sanitizeTag(Object.assign({}, meta !== null ? meta : {}, {name}));
+            return this._sanitizeTag(tag);
         });
     }
 
@@ -528,7 +528,7 @@ class Translator {
             }
 
             const stat = Object.assign({}, meta, {name, value: items[name]});
-            group.push(this._dictTagSanitize(stat));
+            group.push(this._sanitizeTag(stat));
         }
 
         const stats = {};
@@ -665,7 +665,7 @@ class Translator {
         return await response.json();
     }
 
-    _dictEnabledSet(options) {
+    _getEnabledDictionaryMap(options) {
         const enabledDictionaryMap = new Map();
         for (const [title, {enabled, priority, allowSecondarySearches}] of Object.entries(options.dictionaries)) {
             if (!enabled) { continue; }
@@ -674,7 +674,7 @@ class Translator {
         return enabledDictionaryMap;
     }
 
-    _dictTermsSort(definitions, dictionaries=null) {
+    _sortDefinitions(definitions, dictionaries=null) {
         return definitions.sort((v1, v2) => {
             let i;
             if (dictionaries !== null) {
@@ -699,7 +699,7 @@ class Translator {
         });
     }
 
-    _dictTermsUndupe(definitions) {
+    _removeDuplicateDefinitions(definitions) {
         const definitionGroups = new Map();
         for (const definition of definitions) {
             const id = definition.id;
@@ -712,7 +712,7 @@ class Translator {
         return [...definitionGroups.values()];
     }
 
-    _dictTermsCompressTags(definitions) {
+    _compressDefinitionTags(definitions) {
         let lastDictionary = '';
         let lastPartOfSpeech = '';
 
@@ -739,7 +739,7 @@ class Translator {
         }
     }
 
-    _dictTermsGroup(definitions, dictionaries) {
+    _groupTerms(definitions, dictionaries) {
         const groups = new Map();
         for (const definition of definitions) {
             const key = [definition.source, definition.expression, ...definition.reasons];
@@ -760,7 +760,7 @@ class Translator {
         const results = [];
         for (const groupDefinitions of groups.values()) {
             const firstDef = groupDefinitions[0];
-            this._dictTermsSort(groupDefinitions, dictionaries);
+            this._sortDefinitions(groupDefinitions, dictionaries);
             results.push({
                 definitions: groupDefinitions,
                 expression: firstDef.expression,
@@ -773,10 +773,10 @@ class Translator {
             });
         }
 
-        return this._dictTermsSort(results);
+        return this._sortDefinitions(results);
     }
 
-    _dictTermsMergeBySequence(definitions, mainDictionary) {
+    _mergeBySequence(definitions, mainDictionary) {
         const sequencedDefinitions = new Map();
         const nonSequencedDefinitions = [];
         for (const definition of definitions) {
@@ -806,8 +806,8 @@ class Translator {
         return [sequencedDefinitions, nonSequencedDefinitions];
     }
 
-    _dictTermsMergeByGloss(result, definitions, appendTo=null, mergedIndices=null) {
-        const definitionsByGloss = appendTo !== null ? appendTo : new Map();
+    _mergeByGlossary(result, definitions, appendTo=null, mergedIndices=null) {
+        const definitionsByGlossary = appendTo !== null ? appendTo : new Map();
 
         const resultExpressionsMap = result.expressions;
         const resultExpressionSet = result.expression;
@@ -830,7 +830,7 @@ class Translator {
             }
 
             const gloss = JSON.stringify(definition.glossary.concat(definition.dictionary));
-            let glossDefinition = definitionsByGloss.get(gloss);
+            let glossDefinition = definitionsByGlossary.get(gloss);
             if (typeof glossDefinition === 'undefined') {
                 glossDefinition = {
                     expression: new Set(),
@@ -843,7 +843,7 @@ class Translator {
                     id: definition.id,
                     dictionary: definition.dictionary
                 };
-                definitionsByGloss.set(gloss, glossDefinition);
+                definitionsByGlossary.set(gloss, glossDefinition);
             }
 
             glossDefinition.expression.add(expression);
@@ -892,7 +892,7 @@ class Translator {
             }
         }
 
-        for (const definition of definitionsByGloss.values()) {
+        for (const definition of definitionsByGlossary.values()) {
             const only = [];
             const expressionSet = definition.expression;
             const readingSet = definition.reading;
@@ -905,14 +905,14 @@ class Translator {
             definition.only = only;
         }
 
-        return definitionsByGloss;
+        return definitionsByGlossary;
     }
 
-    _dictTagBuildSource(name) {
-        return this._dictTagSanitize({name, category: 'dictionary', order: 100});
+    _createDictionaryTag(name) {
+        return this._sanitizeTag({name, category: 'dictionary', order: 100});
     }
 
-    _dictTagSanitize(tag) {
+    _sanitizeTag(tag) {
         tag.name = tag.name || 'untitled';
         tag.category = tag.category || 'default';
         tag.notes = tag.notes || '';
@@ -921,7 +921,7 @@ class Translator {
         return tag;
     }
 
-    _dictTagsSort(tags) {
+    _sortTags(tags) {
         return tags.sort((v1, v2) => {
             const order1 = v1.order;
             const order2 = v2.order;
