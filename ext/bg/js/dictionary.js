@@ -292,7 +292,3 @@ function dictTagsSort(tags) {
         return 0;
     });
 }
-
-function dictFieldSplit(field) {
-    return field.length === 0 ? [] : field.split(' ');
-}
