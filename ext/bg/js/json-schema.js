@@ -326,6 +326,11 @@ class JsonSchemaValidator {
             throw new JsonSchemaValidationError(`Value type ${type} does not match schema type ${schemaType}`, value, schema, info);
         }
 
+        const schemaConst = schema.const;
+        if (typeof schemaConst !== 'undefined' && !this.valuesAreEqual(value, schemaConst)) {
+            throw new JsonSchemaValidationError('Invalid constant value', value, schema, info);
+        }
+
         const schemaEnum = schema.enum;
         if (Array.isArray(schemaEnum) && !this.valuesAreEqualAny(value, schemaEnum)) {
             throw new JsonSchemaValidationError('Invalid enum value', value, schema, info);
