@@ -413,158 +413,151 @@ function testValidate2() {
 
 
 function testGetValidValueOrDefault1() {
-    // Test value defaulting on objects with additionalProperties=false
-    const schema = {
-        type: 'object',
-        required: ['test'],
-        properties: {
-            test: {
-                type: 'string',
-                default: 'default'
-            }
+    const data = [
+        // Test value defaulting on objects with additionalProperties=false
+        {
+            schema: {
+                type: 'object',
+                required: ['test'],
+                properties: {
+                    test: {
+                        type: 'string',
+                        default: 'default'
+                    }
+                },
+                additionalProperties: false
+            },
+            inputs: [
+                [
+                    void 0,
+                    {test: 'default'}
+                ],
+                [
+                    null,
+                    {test: 'default'}
+                ],
+                [
+                    0,
+                    {test: 'default'}
+                ],
+                [
+                    '',
+                    {test: 'default'}
+                ],
+                [
+                    [],
+                    {test: 'default'}
+                ],
+                [
+                    {},
+                    {test: 'default'}
+                ],
+                [
+                    {test: 'value'},
+                    {test: 'value'}
+                ],
+                [
+                    {test2: 'value2'},
+                    {test: 'default'}
+                ],
+                [
+                    {test: 'value', test2: 'value2'},
+                    {test: 'value'}
+                ]
+            ]
         },
-        additionalProperties: false
-    };
 
-    const testData = [
-        [
-            void 0,
-            {test: 'default'}
-        ],
-        [
-            null,
-            {test: 'default'}
-        ],
-        [
-            0,
-            {test: 'default'}
-        ],
-        [
-            '',
-            {test: 'default'}
-        ],
-        [
-            [],
-            {test: 'default'}
-        ],
-        [
-            {},
-            {test: 'default'}
-        ],
-        [
-            {test: 'value'},
-            {test: 'value'}
-        ],
-        [
-            {test2: 'value2'},
-            {test: 'default'}
-        ],
-        [
-            {test: 'value', test2: 'value2'},
-            {test: 'value'}
-        ]
-    ];
-
-    for (const [value, expected] of testData) {
-        const actual = JsonSchema.getValidValueOrDefault(schema, value);
-        vm.assert.deepStrictEqual(actual, expected);
-    }
-}
-
-function testGetValidValueOrDefault2() {
-    // Test value defaulting on objects with additionalProperties=true
-    const schema = {
-        type: 'object',
-        required: ['test'],
-        properties: {
-            test: {
-                type: 'string',
-                default: 'default'
-            }
+        // Test value defaulting on objects with additionalProperties=true
+        {
+            schema: {
+                type: 'object',
+                required: ['test'],
+                properties: {
+                    test: {
+                        type: 'string',
+                        default: 'default'
+                    }
+                },
+                additionalProperties: true
+            },
+            inputs: [
+                [
+                    {},
+                    {test: 'default'}
+                ],
+                [
+                    {test: 'value'},
+                    {test: 'value'}
+                ],
+                [
+                    {test2: 'value2'},
+                    {test: 'default', test2: 'value2'}
+                ],
+                [
+                    {test: 'value', test2: 'value2'},
+                    {test: 'value', test2: 'value2'}
+                ]
+            ]
         },
-        additionalProperties: true
-    };
 
-    const testData = [
-        [
-            {},
-            {test: 'default'}
-        ],
-        [
-            {test: 'value'},
-            {test: 'value'}
-        ],
-        [
-            {test2: 'value2'},
-            {test: 'default', test2: 'value2'}
-        ],
-        [
-            {test: 'value', test2: 'value2'},
-            {test: 'value', test2: 'value2'}
-        ]
-    ];
-
-    for (const [value, expected] of testData) {
-        const actual = JsonSchema.getValidValueOrDefault(schema, value);
-        vm.assert.deepStrictEqual(actual, expected);
-    }
-}
-
-function testGetValidValueOrDefault3() {
-    // Test value defaulting on objects with additionalProperties={schema}
-    const schema = {
-        type: 'object',
-        required: ['test'],
-        properties: {
-            test: {
-                type: 'string',
-                default: 'default'
-            }
-        },
-        additionalProperties: {
-            type: 'number',
-            default: 10
+        // Test value defaulting on objects with additionalProperties={schema}
+        {
+            schema: {
+                type: 'object',
+                required: ['test'],
+                properties: {
+                    test: {
+                        type: 'string',
+                        default: 'default'
+                    }
+                },
+                additionalProperties: {
+                    type: 'number',
+                    default: 10
+                }
+            },
+            inputs: [
+                [
+                    {},
+                    {test: 'default'}
+                ],
+                [
+                    {test: 'value'},
+                    {test: 'value'}
+                ],
+                [
+                    {test2: 'value2'},
+                    {test: 'default', test2: 10}
+                ],
+                [
+                    {test: 'value', test2: 'value2'},
+                    {test: 'value', test2: 10}
+                ],
+                [
+                    {test2: 2},
+                    {test: 'default', test2: 2}
+                ],
+                [
+                    {test: 'value', test2: 2},
+                    {test: 'value', test2: 2}
+                ],
+                [
+                    {test: 'value', test2: 2, test3: null},
+                    {test: 'value', test2: 2, test3: 10}
+                ],
+                [
+                    {test: 'value', test2: 2, test3: void 0},
+                    {test: 'value', test2: 2, test3: 10}
+                ]
+            ]
         }
-    };
-
-    const testData = [
-        [
-            {},
-            {test: 'default'}
-        ],
-        [
-            {test: 'value'},
-            {test: 'value'}
-        ],
-        [
-            {test2: 'value2'},
-            {test: 'default', test2: 10}
-        ],
-        [
-            {test: 'value', test2: 'value2'},
-            {test: 'value', test2: 10}
-        ],
-        [
-            {test2: 2},
-            {test: 'default', test2: 2}
-        ],
-        [
-            {test: 'value', test2: 2},
-            {test: 'value', test2: 2}
-        ],
-        [
-            {test: 'value', test2: 2, test3: null},
-            {test: 'value', test2: 2, test3: 10}
-        ],
-        [
-            {test: 'value', test2: 2, test3: void 0},
-            {test: 'value', test2: 2, test3: 10}
-        ]
     ];
 
-    for (const [value, expected] of testData) {
-        const actual = JsonSchema.getValidValueOrDefault(schema, value);
-        vm.assert.deepStrictEqual(actual, expected);
+    for (const {schema, inputs} of data) {
+        for (const [value, expected] of inputs) {
+            const actual = JsonSchema.getValidValueOrDefault(schema, value);
+            vm.assert.deepStrictEqual(actual, expected);
+        }
     }
 }
 
@@ -573,8 +566,6 @@ function main() {
     testValidate1();
     testValidate2();
     testGetValidValueOrDefault1();
-    testGetValidValueOrDefault2();
-    testGetValidValueOrDefault3();
 }
 
 
