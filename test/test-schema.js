@@ -185,6 +185,212 @@ function testValidate2() {
             inputs: [
                 {expected: false, value: ''}
             ]
+        },
+
+        // Const tests
+        {
+            schema: {
+                const: 32
+            },
+            inputs: [
+                {expected: true,  value: 32},
+                {expected: false, value: 0},
+                {expected: false, value: '32'},
+                {expected: false, value: null},
+                {expected: false, value: {a: 'b'}},
+                {expected: false, value: [1, 2, 3]}
+            ]
+        },
+        {
+            schema: {
+                const: '32'
+            },
+            inputs: [
+                {expected: false, value: 32},
+                {expected: false, value: 0},
+                {expected: true,  value: '32'},
+                {expected: false, value: null},
+                {expected: false, value: {a: 'b'}},
+                {expected: false, value: [1, 2, 3]}
+            ]
+        },
+        {
+            schema: {
+                const: null
+            },
+            inputs: [
+                {expected: false, value: 32},
+                {expected: false, value: 0},
+                {expected: false, value: '32'},
+                {expected: true,  value: null},
+                {expected: false, value: {a: 'b'}},
+                {expected: false, value: [1, 2, 3]}
+            ]
+        },
+        {
+            schema: {
+                const: {a: 'b'}
+            },
+            inputs: [
+                {expected: false, value: 32},
+                {expected: false, value: 0},
+                {expected: false, value: '32'},
+                {expected: false, value: null},
+                {expected: false, value: {a: 'b'}},
+                {expected: false, value: [1, 2, 3]}
+            ]
+        },
+        {
+            schema: {
+                const: [1, 2, 3]
+            },
+            inputs: [
+                {expected: false, value: 32},
+                {expected: false, value: 0},
+                {expected: false,  value: '32'},
+                {expected: false, value: null},
+                {expected: false, value: {a: 'b'}},
+                {expected: false, value: [1, 2, 3]}
+            ]
+        },
+
+        // Array contains tests
+        {
+            schema: {
+                type: 'array',
+                contains: {const: 32}
+            },
+            inputs: [
+                {expected: false, value: []},
+                {expected: true,  value: [32]},
+                {expected: true,  value: [1, 32]},
+                {expected: true,  value: [1, 32, 1]},
+                {expected: false, value: [33]},
+                {expected: false, value: [1, 33]},
+                {expected: false, value: [1, 33, 1]}
+            ]
+        },
+
+        // Number limits tests
+        {
+            schema: {
+                type: 'number',
+                minimum: 0
+            },
+            inputs: [
+                {expected: false, value: -1},
+                {expected: true,  value: 0},
+                {expected: true,  value: 1}
+            ]
+        },
+        {
+            schema: {
+                type: 'number',
+                exclusiveMinimum: 0
+            },
+            inputs: [
+                {expected: false, value: -1},
+                {expected: false, value: 0},
+                {expected: true,  value: 1}
+            ]
+        },
+        {
+            schema: {
+                type: 'number',
+                maximum: 0
+            },
+            inputs: [
+                {expected: true,  value: -1},
+                {expected: true,  value: 0},
+                {expected: false, value: 1}
+            ]
+        },
+        {
+            schema: {
+                type: 'number',
+                exclusiveMaximum: 0
+            },
+            inputs: [
+                {expected: true,  value: -1},
+                {expected: false, value: 0},
+                {expected: false, value: 1}
+            ]
+        },
+
+        // Integer limits tests
+        {
+            schema: {
+                type: 'integer',
+                minimum: 0
+            },
+            inputs: [
+                {expected: false, value: -1},
+                {expected: true,  value: 0},
+                {expected: true,  value: 1}
+            ]
+        },
+        {
+            schema: {
+                type: 'integer',
+                exclusiveMinimum: 0
+            },
+            inputs: [
+                {expected: false, value: -1},
+                {expected: false, value: 0},
+                {expected: true,  value: 1}
+            ]
+        },
+        {
+            schema: {
+                type: 'integer',
+                maximum: 0
+            },
+            inputs: [
+                {expected: true,  value: -1},
+                {expected: true,  value: 0},
+                {expected: false, value: 1}
+            ]
+        },
+        {
+            schema: {
+                type: 'integer',
+                exclusiveMaximum: 0
+            },
+            inputs: [
+                {expected: true,  value: -1},
+                {expected: false, value: 0},
+                {expected: false, value: 1}
+            ]
+        },
+
+        // Numeric type tests
+        {
+            schema: {
+                type: 'number'
+            },
+            inputs: [
+                {expected: true,  value: 0},
+                {expected: true,  value: 0.5},
+                {expected: true,  value: 1},
+                {expected: false, value: '0'},
+                {expected: false, value: null},
+                {expected: false, value: []},
+                {expected: false, value: {}}
+            ]
+        },
+        {
+            schema: {
+                type: 'integer'
+            },
+            inputs: [
+                {expected: true,  value: 0},
+                {expected: false, value: 0.5},
+                {expected: true,  value: 1},
+                {expected: false, value: '0'},
+                {expected: false, value: null},
+                {expected: false, value: []},
+                {expected: false, value: {}}
+            ]
         }
     ];
 
