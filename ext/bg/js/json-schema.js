@@ -419,6 +419,8 @@ class JsonSchemaValidator {
             throw new JsonSchemaValidationError('Array length too long', value, schema, info);
         }
 
+        this.validateArrayContains(value, schema, info);
+
         for (let i = 0, ii = value.length; i < ii; ++i) {
             const schemaPath = [];
             const propertySchema = this.getPropertySchema(schema, i, value, schemaPath);
@@ -434,6 +436,26 @@ class JsonSchemaValidator {
             info.valuePop();
             for (let j = 0, jj = schemaPath.length; j < jj; ++j) { info.schemaPop(); }
         }
+    }
+
+    validateArrayContains(value, schema, info) {
+        const containsSchema = schema.contains;
+        if (!this.isObject(containsSchema)) { return; }
+
+        info.schemaPush('contains', containsSchema);
+        for (let i = 0, ii = value.length; i < ii; ++i) {
+            const propertyValue = value[i];
+            info.valuePush(i, propertyValue);
+            try {
+                this.validate(propertyValue, containsSchema, info);
+                info.schemaPop();
+                return;
+            } catch (e) {
+                // NOP
+            }
+            info.valuePop();
+        }
+        throw new JsonSchemaValidationError('contains schema didn\'t match', value, schema, info);
     }
 
     validateObject(value, schema, info) {
