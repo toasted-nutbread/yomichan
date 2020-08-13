@@ -694,13 +694,3 @@ class JsonSchemaValidationError extends Error {
         this.info = info;
     }
 }
-
-class JsonSchema {
-    static validate(value, schema) {
-        return new JsonSchemaValidator().validate(value, schema);
-    }
-
-    static getValidValueOrDefault(schema, value) {
-        return new JsonSchemaValidator().getValidValueOrDefault(schema, value);
-    }
-}
