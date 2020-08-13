@@ -132,6 +132,46 @@ class JsonSchemaValidator {
         return new Proxy(target, new JsonSchemaProxyHandler(schema, this));
     }
 
+    validate(value, schema, info) {
+        this.validateSingleSchema(value, schema, info);
+        this.validateConditional(value, schema, info);
+        this.validateAllOf(value, schema, info);
+        this.validateAnyOf(value, schema, info);
+        this.validateOneOf(value, schema, info);
+        this.validateNoneOf(value, schema, info);
+    }
+
+    getValidValueOrDefault(schema, value) {
+        let type = this.getValueType(value);
+        const schemaType = schema.type;
+        if (!this.isValueTypeAny(value, type, schemaType)) {
+            let assignDefault = true;
+
+            const schemaDefault = schema.default;
+            if (typeof schemaDefault !== 'undefined') {
+                value = clone(schemaDefault);
+                type = this.getValueType(value);
+                assignDefault = !this.isValueTypeAny(value, type, schemaType);
+            }
+
+            if (assignDefault) {
+                value = this.getDefaultTypeValue(schemaType);
+                type = this.getValueType(value);
+            }
+        }
+
+        switch (type) {
+            case 'object':
+                value = this.populateObjectDefaults(value, schema);
+                break;
+            case 'array':
+                value = this.populateArrayDefaults(value, schema);
+                break;
+        }
+
+        return value;
+    }
+
     getPropertySchema(schema, property, value, path=null) {
         const type = this.getSchemaOrValueType(schema, value);
         switch (type) {
@@ -212,15 +252,6 @@ class JsonSchemaValidator {
         }
 
         return type;
-    }
-
-    validate(value, schema, info) {
-        this.validateSingleSchema(value, schema, info);
-        this.validateConditional(value, schema, info);
-        this.validateAllOf(value, schema, info);
-        this.validateAnyOf(value, schema, info);
-        this.validateOneOf(value, schema, info);
-        this.validateNoneOf(value, schema, info);
     }
 
     validateConditional(value, schema, info) {
@@ -563,37 +594,6 @@ class JsonSchemaValidator {
             }
         }
         return null;
-    }
-
-    getValidValueOrDefault(schema, value) {
-        let type = this.getValueType(value);
-        const schemaType = schema.type;
-        if (!this.isValueTypeAny(value, type, schemaType)) {
-            let assignDefault = true;
-
-            const schemaDefault = schema.default;
-            if (typeof schemaDefault !== 'undefined') {
-                value = clone(schemaDefault);
-                type = this.getValueType(value);
-                assignDefault = !this.isValueTypeAny(value, type, schemaType);
-            }
-
-            if (assignDefault) {
-                value = this.getDefaultTypeValue(schemaType);
-                type = this.getValueType(value);
-            }
-        }
-
-        switch (type) {
-            case 'object':
-                value = this.populateObjectDefaults(value, schema);
-                break;
-            case 'array':
-                value = this.populateArrayDefaults(value, schema);
-                break;
-        }
-
-        return value;
     }
 
     populateObjectDefaults(value, schema) {
