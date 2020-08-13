@@ -96,7 +96,7 @@ class JsonSchemaProxyHandler {
 
         value = clone(value);
 
-        this._jsonSchemaValidator.validate(value, propertySchema, new JsonSchemaTraversalInfo(value, propertySchema));
+        this._jsonSchemaValidator.validate(value, propertySchema);
 
         target[property] = value;
         return true;
@@ -132,13 +132,9 @@ class JsonSchemaValidator {
         return new Proxy(target, new JsonSchemaProxyHandler(schema, this));
     }
 
-    validate(value, schema, info) {
-        this._validateSingleSchema(value, schema, info);
-        this._validateConditional(value, schema, info);
-        this._validateAllOf(value, schema, info);
-        this._validateAnyOf(value, schema, info);
-        this._validateOneOf(value, schema, info);
-        this._validateNoneOf(value, schema, info);
+    validate(value, schema) {
+        const info = new JsonSchemaTraversalInfo(value, schema);
+        this._validate(value, schema, info);
     }
 
     getValidValueOrDefault(schema, value) {
@@ -260,6 +256,15 @@ class JsonSchemaValidator {
         return type;
     }
 
+    _validate(value, schema, info) {
+        this._validateSingleSchema(value, schema, info);
+        this._validateConditional(value, schema, info);
+        this._validateAllOf(value, schema, info);
+        this._validateAnyOf(value, schema, info);
+        this._validateOneOf(value, schema, info);
+        this._validateNoneOf(value, schema, info);
+    }
+
     _validateConditional(value, schema, info) {
         const ifSchema = schema.if;
         if (!this._isObject(ifSchema)) { return; }
@@ -267,7 +272,7 @@ class JsonSchemaValidator {
         let okay = true;
         info.schemaPush('if', ifSchema);
         try {
-            this.validate(value, ifSchema, info);
+            this._validate(value, ifSchema, info);
         } catch (e) {
             okay = false;
         }
@@ -276,7 +281,7 @@ class JsonSchemaValidator {
         const nextSchema = okay ? schema.then : schema.else;
         if (this._isObject(nextSchema)) {
             info.schemaPush(okay ? 'then' : 'else', nextSchema);
-            this.validate(value, nextSchema, info);
+            this._validate(value, nextSchema, info);
             info.schemaPop();
         }
     }
@@ -289,7 +294,7 @@ class JsonSchemaValidator {
         for (let i = 0; i < subSchemas.length; ++i) {
             const subSchema = subSchemas[i];
             info.schemaPush(i, subSchema);
-            this.validate(value, subSchema, info);
+            this._validate(value, subSchema, info);
             info.schemaPop();
         }
         info.schemaPop();
@@ -304,7 +309,7 @@ class JsonSchemaValidator {
             const subSchema = subSchemas[i];
             info.schemaPush(i, subSchema);
             try {
-                this.validate(value, subSchema, info);
+                this._validate(value, subSchema, info);
                 return;
             } catch (e) {
                 // NOP
@@ -326,7 +331,7 @@ class JsonSchemaValidator {
             const subSchema = subSchemas[i];
             info.schemaPush(i, subSchema);
             try {
-                this.validate(value, subSchema, info);
+                this._validate(value, subSchema, info);
                 ++count;
             } catch (e) {
                 // NOP
@@ -350,7 +355,7 @@ class JsonSchemaValidator {
             const subSchema = subSchemas[i];
             info.schemaPush(i, subSchema);
             try {
-                this.validate(value, subSchema, info);
+                this._validate(value, subSchema, info);
             } catch (e) {
                 info.schemaPop();
                 continue;
@@ -473,7 +478,7 @@ class JsonSchemaValidator {
 
             for (const [p, s] of schemaPath) { info.schemaPush(p, s); }
             info.valuePush(i, propertyValue);
-            this.validate(propertyValue, propertySchema, info);
+            this._validate(propertyValue, propertySchema, info);
             info.valuePop();
             for (let j = 0, jj = schemaPath.length; j < jj; ++j) { info.schemaPop(); }
         }
@@ -488,7 +493,7 @@ class JsonSchemaValidator {
             const propertyValue = value[i];
             info.valuePush(i, propertyValue);
             try {
-                this.validate(propertyValue, containsSchema, info);
+                this._validate(propertyValue, containsSchema, info);
                 info.schemaPop();
                 return;
             } catch (e) {
@@ -532,7 +537,7 @@ class JsonSchemaValidator {
 
             for (const [p, s] of schemaPath) { info.schemaPush(p, s); }
             info.valuePush(property, propertyValue);
-            this.validate(propertyValue, propertySchema, info);
+            this._validate(propertyValue, propertySchema, info);
             info.valuePop();
             for (let i = 0; i < schemaPath.length; ++i) { info.schemaPop(); }
         }
@@ -692,7 +697,7 @@ class JsonSchemaValidationError extends Error {
 
 class JsonSchema {
     static validate(value, schema) {
-        return new JsonSchemaValidator().validate(value, schema, new JsonSchemaTraversalInfo(value, schema));
+        return new JsonSchemaValidator().validate(value, schema);
     }
 
     static getValidValueOrDefault(schema, value) {
