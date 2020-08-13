@@ -24,7 +24,6 @@
  * DictionaryDatabase
  * DictionaryImporter
  * Environment
- * JsonSchema
  * JsonSchemaProxyHandler
  * Mecab
  * ObjectPropertyAccessor
@@ -206,7 +205,7 @@ class Backend {
             this._optionsSchema = await this._fetchAsset('/bg/data/options-schema.json', true);
             this._defaultAnkiFieldTemplates = (await this._fetchAsset('/bg/data/default-anki-field-templates.handlebars')).trim();
             this._options = await OptionsUtil.load();
-            this._options = JsonSchema.getValidValueOrDefault(this._optionsSchema, this._options);
+            this._options = this._optionsSchemaValidator.getValidValueOrDefault(this._optionsSchema, this._options);
 
             this._applyOptions('background');
 
@@ -794,7 +793,7 @@ class Backend {
     }
 
     async _onApiSetAllSettings({value, source}) {
-        this._options = JsonSchema.getValidValueOrDefault(this._optionsSchema, value);
+        this._options = this._optionsSchemaValidator.getValidValueOrDefault(this._optionsSchema, value);
         await this._onApiOptionsSave({source});
     }
 
