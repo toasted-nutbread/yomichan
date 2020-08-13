@@ -25,6 +25,7 @@
  * DictionaryImporter
  * Environment
  * JsonSchema
+ * JsonSchemaProxyHandler
  * Mecab
  * ObjectPropertyAccessor
  * OptionsUtil
@@ -48,6 +49,7 @@ class Backend {
         this._clipboardMonitor = new ClipboardMonitor({getClipboard: this._onApiClipboardGet.bind(this)});
         this._options = null;
         this._optionsSchema = null;
+        this._optionsSchemaValidator = new JsonSchemaProxyHandler();
         this._defaultAnkiFieldTemplates = null;
         this._requestBuilder = new RequestBuilder();
         this._audioUriBuilder = new AudioUriBuilder({
@@ -235,7 +237,7 @@ class Backend {
 
     getFullOptions(useSchema=false) {
         const options = this._options;
-        return useSchema ? JsonSchema.createProxy(options, this._optionsSchema) : options;
+        return useSchema ? this._optionsSchemaValidator.createProxy(options, this._optionsSchema) : options;
     }
 
     getOptions(optionsContext, useSchema=false) {

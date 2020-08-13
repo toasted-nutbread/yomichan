@@ -73,7 +73,7 @@ class JsonSchemaProxyHandler {
         }
 
         const value = target[property];
-        return value !== null && typeof value === 'object' ? JsonSchema.createProxy(value, propertySchema) : value;
+        return value !== null && typeof value === 'object' ? this._jsonSchemaValidator.createProxy(value, propertySchema) : value;
     }
 
     set(target, property, value) {
@@ -126,6 +126,10 @@ class JsonSchemaProxyHandler {
 class JsonSchemaValidator {
     constructor() {
         this._regexCache = new CacheMap(100, (pattern, flags) => new RegExp(pattern, flags));
+    }
+
+    createProxy(target, schema) {
+        return new Proxy(target, new JsonSchemaProxyHandler(schema, this));
     }
 
     getPropertySchema(schema, property, value, path=null) {
@@ -681,11 +685,6 @@ class JsonSchemaValidationError extends Error {
 }
 
 class JsonSchema {
-    static createProxy(target, schema) {
-        const validator = new JsonSchemaValidator();
-        return new Proxy(target, new JsonSchemaProxyHandler(schema, validator));
-    }
-
     static validate(value, schema) {
         return new JsonSchemaValidator().validate(value, schema, new JsonSchemaTraversalInfo(value, schema));
     }
