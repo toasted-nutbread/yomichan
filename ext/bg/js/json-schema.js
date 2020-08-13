@@ -172,7 +172,11 @@ class JsonSchemaValidator {
         return value;
     }
 
-    getPropertySchema(schema, property, value, path=null) {
+    getPropertySchema(schema, property, value) {
+        return this._getPropertySchema(schema, property, value, null);
+    }
+
+    _getPropertySchema(schema, property, value, path) {
         const type = this.getSchemaOrValueType(schema, value);
         switch (type) {
             case 'object':
@@ -458,7 +462,7 @@ class JsonSchemaValidator {
 
         for (let i = 0, ii = value.length; i < ii; ++i) {
             const schemaPath = [];
-            const propertySchema = this.getPropertySchema(schema, i, value, schemaPath);
+            const propertySchema = this._getPropertySchema(schema, i, value, schemaPath);
             if (propertySchema === null) {
                 throw new JsonSchemaValidationError(`No schema found for array[${i}]`, value, schema, info);
             }
@@ -517,7 +521,7 @@ class JsonSchemaValidator {
 
         for (const property of properties) {
             const schemaPath = [];
-            const propertySchema = this.getPropertySchema(schema, property, value, schemaPath);
+            const propertySchema = this._getPropertySchema(schema, property, value, schemaPath);
             if (propertySchema === null) {
                 throw new JsonSchemaValidationError(`No schema found for ${property}`, value, schema, info);
             }
@@ -604,14 +608,14 @@ class JsonSchemaValidator {
             for (const property of required) {
                 properties.delete(property);
 
-                const propertySchema = this.getPropertySchema(schema, property, value);
+                const propertySchema = this._getPropertySchema(schema, property, value, null);
                 if (propertySchema === null) { continue; }
                 value[property] = this.getValidValueOrDefault(propertySchema, value[property]);
             }
         }
 
         for (const property of properties) {
-            const propertySchema = this.getPropertySchema(schema, property, value);
+            const propertySchema = this._getPropertySchema(schema, property, value, null);
             if (propertySchema === null) {
                 Reflect.deleteProperty(value, property);
             } else {
@@ -624,7 +628,7 @@ class JsonSchemaValidator {
 
     populateArrayDefaults(value, schema) {
         for (let i = 0, ii = value.length; i < ii; ++i) {
-            const propertySchema = this.getPropertySchema(schema, i, value);
+            const propertySchema = this._getPropertySchema(schema, i, value, null);
             if (propertySchema === null) { continue; }
             value[i] = this.getValidValueOrDefault(propertySchema, value[i]);
         }
