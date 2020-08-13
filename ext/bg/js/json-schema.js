@@ -133,39 +133,39 @@ class JsonSchemaValidator {
     }
 
     validate(value, schema, info) {
-        this.validateSingleSchema(value, schema, info);
-        this.validateConditional(value, schema, info);
-        this.validateAllOf(value, schema, info);
-        this.validateAnyOf(value, schema, info);
-        this.validateOneOf(value, schema, info);
-        this.validateNoneOf(value, schema, info);
+        this._validateSingleSchema(value, schema, info);
+        this._validateConditional(value, schema, info);
+        this._validateAllOf(value, schema, info);
+        this._validateAnyOf(value, schema, info);
+        this._validateOneOf(value, schema, info);
+        this._validateNoneOf(value, schema, info);
     }
 
     getValidValueOrDefault(schema, value) {
-        let type = this.getValueType(value);
+        let type = this._getValueType(value);
         const schemaType = schema.type;
-        if (!this.isValueTypeAny(value, type, schemaType)) {
+        if (!this._isValueTypeAny(value, type, schemaType)) {
             let assignDefault = true;
 
             const schemaDefault = schema.default;
             if (typeof schemaDefault !== 'undefined') {
                 value = clone(schemaDefault);
-                type = this.getValueType(value);
-                assignDefault = !this.isValueTypeAny(value, type, schemaType);
+                type = this._getValueType(value);
+                assignDefault = !this._isValueTypeAny(value, type, schemaType);
             }
 
             if (assignDefault) {
                 value = this.getDefaultTypeValue(schemaType);
-                type = this.getValueType(value);
+                type = this._getValueType(value);
             }
         }
 
         switch (type) {
             case 'object':
-                value = this.populateObjectDefaults(value, schema);
+                value = this._populateObjectDefaults(value, schema);
                 break;
             case 'array':
-                value = this.populateArrayDefaults(value, schema);
+                value = this._populateArrayDefaults(value, schema);
                 break;
         }
 
@@ -176,15 +176,17 @@ class JsonSchemaValidator {
         return this._getPropertySchema(schema, property, value, null);
     }
 
+    // Private
+
     _getPropertySchema(schema, property, value, path) {
-        const type = this.getSchemaOrValueType(schema, value);
+        const type = this._getSchemaOrValueType(schema, value);
         switch (type) {
             case 'object':
             {
                 const properties = schema.properties;
-                if (this.isObject(properties)) {
+                if (this._isObject(properties)) {
                     const propertySchema = properties[property];
-                    if (this.isObject(propertySchema)) {
+                    if (this._isObject(propertySchema)) {
                         if (path !== null) { path.push(['properties', properties], [property, propertySchema]); }
                         return propertySchema;
                     }
@@ -193,7 +195,7 @@ class JsonSchemaValidator {
                 const additionalProperties = schema.additionalProperties;
                 if (additionalProperties === false) {
                     return null;
-                } else if (this.isObject(additionalProperties)) {
+                } else if (this._isObject(additionalProperties)) {
                     if (path !== null) { path.push(['additionalProperties', additionalProperties]); }
                     return additionalProperties;
                 } else {
@@ -205,13 +207,13 @@ class JsonSchemaValidator {
             case 'array':
             {
                 const items = schema.items;
-                if (this.isObject(items)) {
+                if (this._isObject(items)) {
                     return items;
                 }
                 if (Array.isArray(items)) {
                     if (property >= 0 && property < items.length) {
                         const propertySchema = items[property];
-                        if (this.isObject(propertySchema)) {
+                        if (this._isObject(propertySchema)) {
                             if (path !== null) { path.push(['items', items], [property, propertySchema]); }
                             return propertySchema;
                         }
@@ -221,7 +223,7 @@ class JsonSchemaValidator {
                 const additionalItems = schema.additionalItems;
                 if (additionalItems === false) {
                     return null;
-                } else if (this.isObject(additionalItems)) {
+                } else if (this._isObject(additionalItems)) {
                     if (path !== null) { path.push(['additionalItems', additionalItems]); }
                     return additionalItems;
                 } else {
@@ -235,12 +237,12 @@ class JsonSchemaValidator {
         }
     }
 
-    getSchemaOrValueType(schema, value) {
+    _getSchemaOrValueType(schema, value) {
         const type = schema.type;
 
         if (Array.isArray(type)) {
             if (typeof value !== 'undefined') {
-                const valueType = this.getValueType(value);
+                const valueType = this._getValueType(value);
                 if (type.indexOf(valueType) >= 0) {
                     return valueType;
                 }
@@ -250,7 +252,7 @@ class JsonSchemaValidator {
 
         if (typeof type === 'undefined') {
             if (typeof value !== 'undefined') {
-                return this.getValueType(value);
+                return this._getValueType(value);
             }
             return null;
         }
@@ -258,9 +260,9 @@ class JsonSchemaValidator {
         return type;
     }
 
-    validateConditional(value, schema, info) {
+    _validateConditional(value, schema, info) {
         const ifSchema = schema.if;
-        if (!this.isObject(ifSchema)) { return; }
+        if (!this._isObject(ifSchema)) { return; }
 
         let okay = true;
         info.schemaPush('if', ifSchema);
@@ -272,14 +274,14 @@ class JsonSchemaValidator {
         info.schemaPop();
 
         const nextSchema = okay ? schema.then : schema.else;
-        if (this.isObject(nextSchema)) {
+        if (this._isObject(nextSchema)) {
             info.schemaPush(okay ? 'then' : 'else', nextSchema);
             this.validate(value, nextSchema, info);
             info.schemaPop();
         }
     }
 
-    validateAllOf(value, schema, info) {
+    _validateAllOf(value, schema, info) {
         const subSchemas = schema.allOf;
         if (!Array.isArray(subSchemas)) { return; }
 
@@ -293,7 +295,7 @@ class JsonSchemaValidator {
         info.schemaPop();
     }
 
-    validateAnyOf(value, schema, info) {
+    _validateAnyOf(value, schema, info) {
         const subSchemas = schema.anyOf;
         if (!Array.isArray(subSchemas)) { return; }
 
@@ -314,7 +316,7 @@ class JsonSchemaValidator {
         // info.schemaPop(); // Unreachable
     }
 
-    validateOneOf(value, schema, info) {
+    _validateOneOf(value, schema, info) {
         const subSchemas = schema.oneOf;
         if (!Array.isArray(subSchemas)) { return; }
 
@@ -339,7 +341,7 @@ class JsonSchemaValidator {
         info.schemaPop();
     }
 
-    validateNoneOf(value, schema, info) {
+    _validateNoneOf(value, schema, info) {
         const subSchemas = schema.not;
         if (!Array.isArray(subSchemas)) { return; }
 
@@ -358,40 +360,40 @@ class JsonSchemaValidator {
         info.schemaPop();
     }
 
-    validateSingleSchema(value, schema, info) {
-        const type = this.getValueType(value);
+    _validateSingleSchema(value, schema, info) {
+        const type = this._getValueType(value);
         const schemaType = schema.type;
-        if (!this.isValueTypeAny(value, type, schemaType)) {
+        if (!this._isValueTypeAny(value, type, schemaType)) {
             throw new JsonSchemaValidationError(`Value type ${type} does not match schema type ${schemaType}`, value, schema, info);
         }
 
         const schemaConst = schema.const;
-        if (typeof schemaConst !== 'undefined' && !this.valuesAreEqual(value, schemaConst)) {
+        if (typeof schemaConst !== 'undefined' && !this._valuesAreEqual(value, schemaConst)) {
             throw new JsonSchemaValidationError('Invalid constant value', value, schema, info);
         }
 
         const schemaEnum = schema.enum;
-        if (Array.isArray(schemaEnum) && !this.valuesAreEqualAny(value, schemaEnum)) {
+        if (Array.isArray(schemaEnum) && !this._valuesAreEqualAny(value, schemaEnum)) {
             throw new JsonSchemaValidationError('Invalid enum value', value, schema, info);
         }
 
         switch (type) {
             case 'number':
-                this.validateNumber(value, schema, info);
+                this._validateNumber(value, schema, info);
                 break;
             case 'string':
-                this.validateString(value, schema, info);
+                this._validateString(value, schema, info);
                 break;
             case 'array':
-                this.validateArray(value, schema, info);
+                this._validateArray(value, schema, info);
                 break;
             case 'object':
-                this.validateObject(value, schema, info);
+                this._validateObject(value, schema, info);
                 break;
         }
     }
 
-    validateNumber(value, schema, info) {
+    _validateNumber(value, schema, info) {
         const multipleOf = schema.multipleOf;
         if (typeof multipleOf === 'number' && Math.floor(value / multipleOf) * multipleOf !== value) {
             throw new JsonSchemaValidationError(`Number is not a multiple of ${multipleOf}`, value, schema, info);
@@ -418,7 +420,7 @@ class JsonSchemaValidator {
         }
     }
 
-    validateString(value, schema, info) {
+    _validateString(value, schema, info) {
         const minLength = schema.minLength;
         if (typeof minLength === 'number' && value.length < minLength) {
             throw new JsonSchemaValidationError('String length too short', value, schema, info);
@@ -447,7 +449,7 @@ class JsonSchemaValidator {
         }
     }
 
-    validateArray(value, schema, info) {
+    _validateArray(value, schema, info) {
         const minItems = schema.minItems;
         if (typeof minItems === 'number' && value.length < minItems) {
             throw new JsonSchemaValidationError('Array length too short', value, schema, info);
@@ -458,7 +460,7 @@ class JsonSchemaValidator {
             throw new JsonSchemaValidationError('Array length too long', value, schema, info);
         }
 
-        this.validateArrayContains(value, schema, info);
+        this._validateArrayContains(value, schema, info);
 
         for (let i = 0, ii = value.length; i < ii; ++i) {
             const schemaPath = [];
@@ -477,9 +479,9 @@ class JsonSchemaValidator {
         }
     }
 
-    validateArrayContains(value, schema, info) {
+    _validateArrayContains(value, schema, info) {
         const containsSchema = schema.contains;
-        if (!this.isObject(containsSchema)) { return; }
+        if (!this._isObject(containsSchema)) { return; }
 
         info.schemaPush('contains', containsSchema);
         for (let i = 0, ii = value.length; i < ii; ++i) {
@@ -497,7 +499,7 @@ class JsonSchemaValidator {
         throw new JsonSchemaValidationError('contains schema didn\'t match', value, schema, info);
     }
 
-    validateObject(value, schema, info) {
+    _validateObject(value, schema, info) {
         const properties = new Set(Object.getOwnPropertyNames(value));
 
         const required = schema.required;
@@ -536,12 +538,12 @@ class JsonSchemaValidator {
         }
     }
 
-    isValueTypeAny(value, type, schemaTypes) {
+    _isValueTypeAny(value, type, schemaTypes) {
         if (typeof schemaTypes === 'string') {
-            return this.isValueType(value, type, schemaTypes);
+            return this._isValueType(value, type, schemaTypes);
         } else if (Array.isArray(schemaTypes)) {
             for (const schemaType of schemaTypes) {
-                if (this.isValueType(value, type, schemaType)) {
+                if (this._isValueType(value, type, schemaType)) {
                     return true;
                 }
             }
@@ -550,14 +552,14 @@ class JsonSchemaValidator {
         return true;
     }
 
-    isValueType(value, type, schemaType) {
+    _isValueType(value, type, schemaType) {
         return (
             type === schemaType ||
             (schemaType === 'integer' && Math.floor(value) === value)
         );
     }
 
-    getValueType(value) {
+    _getValueType(value) {
         const type = typeof value;
         if (type === 'object') {
             if (value === null) { return 'null'; }
@@ -566,16 +568,16 @@ class JsonSchemaValidator {
         return type;
     }
 
-    valuesAreEqualAny(value1, valueList) {
+    _valuesAreEqualAny(value1, valueList) {
         for (const value2 of valueList) {
-            if (this.valuesAreEqual(value1, value2)) {
+            if (this._valuesAreEqual(value1, value2)) {
                 return true;
             }
         }
         return false;
     }
 
-    valuesAreEqual(value1, value2) {
+    _valuesAreEqual(value1, value2) {
         return value1 === value2;
     }
 
@@ -600,7 +602,7 @@ class JsonSchemaValidator {
         return null;
     }
 
-    populateObjectDefaults(value, schema) {
+    _populateObjectDefaults(value, schema) {
         const properties = new Set(Object.getOwnPropertyNames(value));
 
         const required = schema.required;
@@ -626,7 +628,7 @@ class JsonSchemaValidator {
         return value;
     }
 
-    populateArrayDefaults(value, schema) {
+    _populateArrayDefaults(value, schema) {
         for (let i = 0, ii = value.length; i < ii; ++i) {
             const propertySchema = this._getPropertySchema(schema, i, value, null);
             if (propertySchema === null) { continue; }
@@ -636,7 +638,7 @@ class JsonSchemaValidator {
         return value;
     }
 
-    isObject(value) {
+    _isObject(value) {
         return typeof value === 'object' && value !== null && !Array.isArray(value);
     }
 
