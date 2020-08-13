@@ -155,7 +155,7 @@ class JsonSchemaValidator {
             }
 
             if (assignDefault) {
-                value = this.getDefaultTypeValue(schemaType);
+                value = this._getDefaultTypeValue(schemaType);
                 type = this._getValueType(value);
             }
         }
@@ -581,7 +581,7 @@ class JsonSchemaValidator {
         return value1 === value2;
     }
 
-    getDefaultTypeValue(type) {
+    _getDefaultTypeValue(type) {
         if (typeof type === 'string') {
             switch (type) {
                 case 'null':
