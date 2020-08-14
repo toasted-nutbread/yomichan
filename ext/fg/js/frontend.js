@@ -167,6 +167,7 @@ class Frontend {
     // Message handlers
 
     _onMessagePopupSetVisibleOverride({visible}) {
+        if (this._popup === null) { return; }
         this._popup.setVisibleOverride(visible);
     }
 
@@ -226,15 +227,17 @@ class Frontend {
     }
 
     _onClearSelection({passive}) {
-        this._popup.hide(!passive);
-        this._popup.clearAutoPlayTimer();
+        if (this._popup !== null) {
+            this._popup.hide(!passive);
+            this._popup.clearAutoPlayTimer();
+        }
         this._updatePendingOptions();
     }
 
     async _onActiveModifiersChanged({modifiers}) {
         if (areSetsEqual(modifiers, this._activeModifiers)) { return; }
         this._activeModifiers = modifiers;
-        if (await this._popup.isVisible()) {
+        if (this._popup !== null && await this._popup.isVisible()) {
             this._optionsUpdatePending = true;
             return;
         }
@@ -311,7 +314,9 @@ class Frontend {
         const popup = await popupPromise;
         const optionsContext = await this.getOptionsContext();
         if (this._updatePopupToken !== token) { return; }
-        await popup.setOptionsContext(optionsContext, this._id);
+        if (popup !== null) {
+            await popup.setOptionsContext(optionsContext, this._id);
+        }
         if (this._updatePopupToken !== token) { return; }
 
         if (this._isSearchPage) {
@@ -368,6 +373,10 @@ class Frontend {
     }
 
     async _search(textSource, cause) {
+        if (this._popup === null) {
+            return null;
+        }
+
         await this._updatePendingOptions();
 
         let results = null;
@@ -466,14 +475,18 @@ class Frontend {
     }
 
     _showPopupContent(textSource, optionsContext, details=null) {
-        this._lastShowPromise = this._popup.showContent(
-            {
-                source: this._id,
-                optionsContext,
-                elementRect: textSource.getRect(),
-                writingMode: textSource.getWritingMode()
-            },
-            details
+        this._lastShowPromise = (
+            this._popup !== null ?
+            this._popup.showContent(
+                {
+                    source: this._id,
+                    optionsContext,
+                    elementRect: textSource.getRect(),
+                    writingMode: textSource.getWritingMode()
+                },
+                details
+            ) :
+            Promise.resolve()
         );
         this._lastShowPromise.catch((error) => {
             if (yomichan.isExtensionUnloaded) { return; }
