@@ -24,7 +24,7 @@
  * DictionaryDatabase
  * DictionaryImporter
  * Environment
- * JsonSchemaProxyHandler
+ * JsonSchemaValidator
  * Mecab
  * ObjectPropertyAccessor
  * OptionsUtil
@@ -48,7 +48,7 @@ class Backend {
         this._clipboardMonitor = new ClipboardMonitor({getClipboard: this._onApiClipboardGet.bind(this)});
         this._options = null;
         this._optionsSchema = null;
-        this._optionsSchemaValidator = new JsonSchemaProxyHandler();
+        this._optionsSchemaValidator = new JsonSchemaValidator();
         this._defaultAnkiFieldTemplates = null;
         this._requestBuilder = new RequestBuilder();
         this._audioUriBuilder = new AudioUriBuilder({
