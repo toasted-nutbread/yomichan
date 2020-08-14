@@ -54,12 +54,7 @@ function testValidate1() {
     };
 
     const schemaValidate = (value) => {
-        try {
-            new JsonSchemaValidator().validate(value, schema);
-            return true;
-        } catch (e) {
-            return false;
-        }
+        return new JsonSchemaValidator().isValid(value, schema);
     };
 
     const jsValidate = (value) => {
@@ -395,12 +390,7 @@ function testValidate2() {
     ];
 
     const schemaValidate = (value, schema) => {
-        try {
-            new JsonSchemaValidator().validate(value, schema);
-            return true;
-        } catch (e) {
-            return false;
-        }
+        return new JsonSchemaValidator().isValid(value, schema);
     };
 
     for (const {schema, inputs} of data) {
