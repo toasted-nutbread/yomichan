@@ -132,6 +132,15 @@ class JsonSchemaValidator {
         return new Proxy(target, new JsonSchemaProxyHandler(schema, this));
     }
 
+    isValid(value, schema) {
+        try {
+            this.validate(value, schema);
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
     validate(value, schema) {
         const info = new JsonSchemaTraversalInfo(value, schema);
         this._validate(value, schema, info);
