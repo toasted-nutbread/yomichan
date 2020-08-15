@@ -66,7 +66,6 @@ class Frontend {
 
         this._runtimeMessageHandlers = new Map([
             ['popupSetVisibleOverride',              {async: false, handler: this._onMessagePopupSetVisibleOverride.bind(this)}],
-            ['requestDocumentInformationBroadcast',  {async: false, handler: this._onMessageRequestDocumentInformationBroadcast.bind(this)}],
             ['requestFrontendReadyBroadcast',        {async: false, handler: this._onMessageRequestFrontendReadyBroadcast.bind(this)}]
         ]);
     }
@@ -114,10 +113,11 @@ class Frontend {
         this._textScanner.on('activeModifiersChanged', this._onActiveModifiersChanged.bind(this));
 
         api.crossFrame.registerHandlers([
-            ['getUrl',        {async: false, handler: this._onApiGetUrl.bind(this)}],
-            ['closePopup',    {async: false, handler: this._onApiClosePopup.bind(this)}],
-            ['copySelection', {async: false, handler: this._onApiCopySelection.bind(this)}],
-            ['getPopupInfo',  {async: false, handler: this._onApiGetPopupInfo.bind(this)}]
+            ['getUrl',                 {async: false, handler: this._onApiGetUrl.bind(this)}],
+            ['closePopup',             {async: false, handler: this._onApiClosePopup.bind(this)}],
+            ['copySelection',          {async: false, handler: this._onApiCopySelection.bind(this)}],
+            ['getPopupInfo',           {async: false, handler: this._onApiGetPopupInfo.bind(this)}],
+            ['getDocumentInformation', {async: false, handler: this._onApiGetDocumentInformation.bind(this)}]
         ]);
 
         this._updateContentScale();
@@ -170,10 +170,6 @@ class Frontend {
         this._popup.setVisibleOverride(visible);
     }
 
-    _onMessageRequestDocumentInformationBroadcast({uniqueId}) {
-        this._broadcastDocumentInformation(uniqueId);
-    }
-
     _onMessageRequestFrontendReadyBroadcast({frameId}) {
         this._signalFrontendReady(frameId);
     }
@@ -195,6 +191,12 @@ class Frontend {
     _onApiGetPopupInfo() {
         return {
             popupId: (this._popup !== null ? this._popup.id : null)
+        };
+    }
+
+    _onApiGetDocumentInformation() {
+        return {
+            title: document.title
         };
     }
 
@@ -526,14 +528,6 @@ class Frontend {
         ) {
             this._showPopupContent(textSource, await this.getOptionsContext());
         }
-    }
-
-    _broadcastDocumentInformation(uniqueId) {
-        api.broadcastTab('documentInformationBroadcast', {
-            uniqueId,
-            frameId: this._frameId,
-            title: document.title
-        });
     }
 
     _signalFrontendReady(targetFrameId=null) {
