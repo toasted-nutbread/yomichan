@@ -105,6 +105,26 @@ class PopupProxy extends EventDispatcher {
         return this._invokeSafe('setContentScale', {id: this._id, scale});
     }
 
+    isVisibleSync() {
+        throw new Error('Not supported on PopupProxy');
+    }
+
+    updateTheme() {
+        return this._invokeSafe('updateTheme', {id: this._id});
+    }
+
+    async setCustomOuterCss(css, useWebExtensionApi) {
+        return this._invokeSafe('updateTheme', {id: this._id, css, useWebExtensionApi});
+    }
+
+    setChildrenSupported(value) {
+        return this._invokeSafe('updateTheme', {id: this._id, value});
+    }
+
+    getFrameRect() {
+        return new DOMRect(0, 0, 0, 0);
+    }
+
     // Private
 
     _invoke(action, params={}) {

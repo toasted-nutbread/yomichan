@@ -171,8 +171,6 @@ class Popup {
         this._invokeSafe('setContentScale', {scale});
     }
 
-    // Popup-only public functions
-
     isVisibleSync() {
         return (this._visibleOverride !== null ? this._visibleOverride : this._visible);
     }
