@@ -82,7 +82,11 @@ class PopupFactory {
         }
         const popup = new Popup(id, depth, this._frameId, ownerFrameId);
         if (parent !== null) {
-            popup.setParent(parent);
+            if (parent.child !== null) {
+                throw new Error('Parent popup already has a child');
+            }
+            popup.parent = parent;
+            parent.child = popup;
         }
         this._popups.set(id, popup);
         popup.prepare();

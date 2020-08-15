@@ -64,8 +64,16 @@ class Popup {
         return this._parent;
     }
 
+    set parent(value) {
+        this._parent = value;
+    }
+
     get child() {
         return this._child;
+    }
+
+    set child(value) {
+        this._child = value;
     }
 
     get depth() {
@@ -164,24 +172,6 @@ class Popup {
     }
 
     // Popup-only public functions
-
-    setParent(parent) {
-        if (parent === null) {
-            throw new Error('Cannot set popup parent to null');
-        }
-        if (this._parent !== null) {
-            throw new Error('Popup already has a parent');
-        }
-        parent.setChild(this);
-        this._parent = parent;
-    }
-
-    setChild(popup) {
-        if (this._child !== null) {
-            throw new Error('Popup already has a child');
-        }
-        this._child = popup;
-    }
 
     isVisibleSync() {
         return (this._visibleOverride !== null ? this._visibleOverride : this._visible);
