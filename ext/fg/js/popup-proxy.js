@@ -45,8 +45,28 @@ class PopupProxy extends EventDispatcher {
         return null;
     }
 
+    set parent(value) {
+        throw new Error('Not supported on PopupProxy');
+    }
+
+    get child() {
+        return null;
+    }
+
+    set child(value) {
+        throw new Error('Not supported on PopupProxy');
+    }
+
     get depth() {
         return this._depth;
+    }
+
+    get frameContentWindow() {
+        return null;
+    }
+
+    get container() {
+        return null;
     }
 
     // Public functions
