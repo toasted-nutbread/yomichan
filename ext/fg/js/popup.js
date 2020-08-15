@@ -98,10 +98,6 @@ class Popup {
         yomichan.on('extensionUnloaded', this._onExtensionUnloaded.bind(this));
     }
 
-    isProxy() {
-        return false;
-    }
-
     async setOptionsContext(optionsContext, source) {
         this._optionsContext = optionsContext;
         this._previousOptionsContextSource = source;

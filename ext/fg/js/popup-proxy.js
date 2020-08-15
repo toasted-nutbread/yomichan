@@ -56,10 +56,6 @@ class PopupProxy extends EventDispatcher {
         this._id = id;
     }
 
-    isProxy() {
-        return true;
-    }
-
     setOptionsContext(optionsContext, source) {
         return this._invokeSafe('setOptionsContext', {id: this._id, optionsContext, source});
     }
