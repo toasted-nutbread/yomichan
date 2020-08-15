@@ -80,10 +80,6 @@ class Popup {
         return this._depth;
     }
 
-    get frameId() {
-        return this._frameId;
-    }
-
     // Public functions
 
     prepare() {
