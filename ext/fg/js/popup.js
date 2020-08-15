@@ -80,6 +80,10 @@ class Popup {
         return this._depth;
     }
 
+    get frameContentWindow() {
+        return this._frame.contentWindow;
+    }
+
     // Public functions
 
     prepare() {
@@ -189,10 +193,6 @@ class Popup {
 
     setChildrenSupported(value) {
         this._childrenSupported = value;
-    }
-
-    getFrame() {
-        return this._frame;
     }
 
     getFrameRect() {
@@ -404,7 +404,7 @@ class Popup {
     _focusParent() {
         if (this._parent !== null) {
             // Chrome doesn't like focusing iframe without contentWindow.
-            const contentWindow = this._parent.getFrame().contentWindow;
+            const contentWindow = this._parent.frameContentWindow;
             if (contentWindow !== null) {
                 contentWindow.focus();
             }
