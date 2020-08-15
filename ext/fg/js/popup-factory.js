@@ -171,8 +171,9 @@ class PopupFactory {
     }
 
     _convertPopupPointToRootPagePoint(popup, x, y) {
-        if (popup.parent !== null) {
-            const popupRect = popup.parent.getFrameRect();
+        const parent = popup.parent;
+        if (parent !== null) {
+            const popupRect = parent.getFrameRect();
             x += popupRect.x;
             y += popupRect.y;
         }
@@ -180,6 +181,7 @@ class PopupFactory {
     }
 
     _popupCanShow(popup) {
-        return popup.parent === null || popup.parent.isVisibleSync();
+        const parent = popup.parent;
+        return parent === null || parent.isVisibleSync();
     }
 }
