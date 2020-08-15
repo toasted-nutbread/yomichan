@@ -84,6 +84,10 @@ class Popup {
         return this._frame.contentWindow;
     }
 
+    get container() {
+        return this._container;
+    }
+
     // Public functions
 
     prepare() {
@@ -197,10 +201,6 @@ class Popup {
 
     getFrameRect() {
         return this._frame.getBoundingClientRect();
-    }
-
-    getContainer() {
-        return this._container;
     }
 
     // Private functions
