@@ -183,7 +183,7 @@ class DisplayFloat extends Display {
             try {
                 await this.setupNestedPopups({
                     id,
-                    depth,
+                    depth: depth + 1,
                     parentFrameId,
                     url,
                     proxy: true

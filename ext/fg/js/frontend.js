@@ -320,7 +320,6 @@ class Frontend {
 
         this._textScanner.clearSelection(true);
         this._popup = popup;
-        this._depth = popup.depth;
     }
 
     async _getDefaultPopup() {
@@ -328,7 +327,7 @@ class Frontend {
     }
 
     async _getProxyPopup() {
-        const popup = new PopupProxy(null, this._depth + 1, this._proxyPopupId, this._parentFrameId, this._frameId);
+        const popup = new PopupProxy(null, this._depth, this._proxyPopupId, this._parentFrameId, this._frameId);
         await popup.prepare();
         return popup;
     }
