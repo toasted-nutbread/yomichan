@@ -168,7 +168,7 @@ class DisplayFloat extends Display {
         body.style.fontSize = `${scale}em`;
     }
 
-    async _prepareNestedPopups(id, depth, parentFrameId, url) {
+    async _prepareNestedPopups(parentPopupId, depth, parentFrameId, url) {
         let complete = false;
 
         const onOptionsUpdated = async () => {
@@ -182,7 +182,7 @@ class DisplayFloat extends Display {
 
             try {
                 await this.setupNestedPopups({
-                    id,
+                    parentPopupId,
                     depth: depth + 1,
                     parentFrameId,
                     url,

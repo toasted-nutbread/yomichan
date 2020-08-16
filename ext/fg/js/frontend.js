@@ -46,13 +46,13 @@ class Frontend {
 
         const {
             depth=0,
-            id: proxyPopupId,
+            parentPopupId,
             parentFrameId,
             proxy: useProxyPopup=false,
             isSearchPage=false,
             allowRootFramePopupProxy=true
         } = frontendInitializationData;
-        this._proxyPopupId = proxyPopupId;
+        this._parentPopupId = parentPopupId;
         this._parentFrameId = parentFrameId;
         this._useProxyPopup = useProxyPopup;
         this._isSearchPage = isSearchPage;
@@ -327,7 +327,7 @@ class Frontend {
     }
 
     async _getProxyPopup() {
-        const popup = new PopupProxy(null, this._depth, this._proxyPopupId, this._parentFrameId, this._frameId);
+        const popup = new PopupProxy(null, this._depth, this._parentPopupId, this._parentFrameId, this._frameId);
         await popup.prepare();
         return popup;
     }
