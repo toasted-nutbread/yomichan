@@ -37,7 +37,14 @@
         const frontend = new Frontend(
             frameId,
             popupFactory,
-            {}
+            {
+                depth: 0,
+                parentPopupId: null,
+                parentFrameId: null,
+                useProxyPopup: false,
+                isSearchPage: false,
+                allowRootFramePopupProxy: true
+            }
         );
         await frontend.prepare();
 

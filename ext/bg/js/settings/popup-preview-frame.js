@@ -59,6 +59,11 @@ class PopupPreviewFrame {
             this._frameId,
             this._popupFactory,
             {
+                depth: 0,
+                parentPopupId: null,
+                parentFrameId: null,
+                useProxyPopup: false,
+                isSearchPage: false,
                 allowRootFramePopupProxy: false
             }
         );
