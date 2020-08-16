@@ -186,7 +186,7 @@ class DisplayFloat extends Display {
                     depth: depth + 1,
                     parentFrameId,
                     url,
-                    proxy: true
+                    useProxyPopup: true
                 });
             } catch (e) {
                 yomichan.logError(e);

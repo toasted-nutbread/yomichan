@@ -48,7 +48,7 @@ class Frontend {
             depth=0,
             parentPopupId,
             parentFrameId,
-            proxy: useProxyPopup=false,
+            useProxyPopup=false,
             isSearchPage=false,
             allowRootFramePopupProxy=true
         } = frontendInitializationData;
