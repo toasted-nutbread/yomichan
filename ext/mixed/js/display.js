@@ -364,16 +364,16 @@ class Display extends EventDispatcher {
         const popupFactory = new PopupFactory(frameId);
         popupFactory.prepare();
 
-        const frontend = new Frontend(
+        const frontend = new Frontend({
             frameId,
             popupFactory,
-            {
-                depth,
-                parentPopupId,
-                parentFrameId,
-                useProxyPopup
-            }
-        );
+            depth,
+            parentPopupId,
+            parentFrameId,
+            useProxyPopup,
+            isSearchPage: false,
+            allowRootFramePopupProxy: true
+        });
         await frontend.prepare();
     }
 
