@@ -328,6 +328,11 @@ class Frontend {
     }
 
     async _getDefaultPopup() {
+        const isXmlDocument = (typeof XMLDocument !== 'undefined' && document instanceof XMLDocument);
+        if (isXmlDocument) {
+            return null;
+        }
+
         return this._popupFactory.getOrCreatePopup({depth: this._depth, ownerFrameId: this._frameId});
     }
 
@@ -340,7 +345,12 @@ class Frontend {
     async _getIframeProxyPopup() {
         const targetFrameId = 0; // Root frameId
         await this._waitForFrontendReady(targetFrameId);
+
         const {popupId} = await api.crossFrame.invoke(targetFrameId, 'getPopupInfo');
+        if (popupId === null) {
+            return null;
+        }
+
         const popup = new PopupProxy(popupId, 0, null, targetFrameId, this._frameId, this._frameOffsetForwarder);
         popup.on('offsetNotFound', () => {
             this._allowRootFramePopupProxy = false;
