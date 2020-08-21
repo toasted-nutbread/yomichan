@@ -30,7 +30,7 @@ class PopupFactory {
 
     prepare() {
         api.crossFrame.registerHandlers([
-            ['getOrCreatePopup',     {async: false, handler: this._onApiGetOrCreatePopup.bind(this)}],
+            ['getOrCreatePopup',     {async: true,  handler: this._onApiGetOrCreatePopup.bind(this)}],
             ['setOptionsContext',    {async: true,  handler: this._onApiSetOptionsContext.bind(this)}],
             ['hide',                 {async: false, handler: this._onApiHide.bind(this)}],
             ['isVisible',            {async: true,  handler: this._onApiIsVisibleAsync.bind(this)}],
@@ -46,7 +46,7 @@ class PopupFactory {
         ]);
     }
 
-    getOrCreatePopup({id=null, parentId=null, ownerFrameId=null, depth=null}) {
+    async getOrCreatePopup({id=null, parentId=null, ownerFrameId=null, depth=null}) {
         // Find by existing id
         if (id !== null) {
             const popup = this._popups.get(id);
@@ -98,8 +98,8 @@ class PopupFactory {
 
     // API message handlers
 
-    _onApiGetOrCreatePopup({id, parentId, ownerFrameId}) {
-        const popup = this.getOrCreatePopup({id, parentId, ownerFrameId});
+    async _onApiGetOrCreatePopup({id, parentId, ownerFrameId}) {
+        const popup = await this.getOrCreatePopup({id, parentId, ownerFrameId});
         return {
             id: popup.id
         };

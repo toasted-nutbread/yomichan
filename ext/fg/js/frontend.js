@@ -333,7 +333,7 @@ class Frontend {
             return null;
         }
 
-        return this._popupFactory.getOrCreatePopup({depth: this._depth, ownerFrameId: this._frameId});
+        return await this._popupFactory.getOrCreatePopup({depth: this._depth, ownerFrameId: this._frameId});
     }
 
     async _getProxyPopup() {
