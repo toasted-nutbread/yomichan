@@ -20,12 +20,12 @@
  */
 
 class PopupProxy extends EventDispatcher {
-    constructor(id, depth, parentPopupId, parentFrameId, ownerFrameId, frameOffsetForwarder=null) {
+    constructor(id, depth, parentPopupId, frameId, ownerFrameId, frameOffsetForwarder=null) {
         super();
         this._id = id;
         this._depth = depth;
         this._parentPopupId = parentPopupId;
-        this._parentFrameId = parentFrameId;
+        this._frameId = frameId;
         this._ownerFrameId = ownerFrameId;
         this._frameOffsetForwarder = frameOffsetForwarder;
 
@@ -67,6 +67,10 @@ class PopupProxy extends EventDispatcher {
 
     get container() {
         return null;
+    }
+
+    get frameId() {
+        return this._frameId;
     }
 
     // Public functions
@@ -148,7 +152,7 @@ class PopupProxy extends EventDispatcher {
     // Private
 
     _invoke(action, params={}) {
-        return api.crossFrame.invoke(this._parentFrameId, action, params);
+        return api.crossFrame.invoke(this._frameId, action, params);
     }
 
     async _invokeSafe(action, params={}, defaultReturnValue) {
