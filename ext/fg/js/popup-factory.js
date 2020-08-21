@@ -39,6 +39,7 @@ class PopupFactory {
             ['hide',                 {async: false, handler: this._onApiHide.bind(this)}],
             ['isVisible',            {async: true,  handler: this._onApiIsVisibleAsync.bind(this)}],
             ['setVisibleOverride',   {async: true,  handler: this._onApiSetVisibleOverride.bind(this)}],
+            ['clearVisibleOverride', {async: true,  handler: this._onApiClearVisibleOverride.bind(this)}],
             ['containsPoint',        {async: true,  handler: this._onApiContainsPoint.bind(this)}],
             ['showContent',          {async: true,  handler: this._onApiShowContent.bind(this)}],
             ['setCustomCss',         {async: false, handler: this._onApiSetCustomCss.bind(this)}],
@@ -134,9 +135,14 @@ class PopupFactory {
         return await popup.isVisible();
     }
 
-    async _onApiSetVisibleOverride({id, visible}) {
+    async _onApiSetVisibleOverride({id, value, priority}) {
         const popup = this._getPopup(id);
-        return await popup.setVisibleOverride(visible);
+        return await popup.setVisibleOverride(value, priority);
+    }
+
+    async _onApiClearVisibleOverride({id, token}) {
+        const popup = this._getPopup(id);
+        return await popup.clearVisibleOverride(token);
     }
 
     async _onApiContainsPoint({id, x, y}) {

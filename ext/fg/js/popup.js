@@ -34,8 +34,7 @@ class Popup extends EventDispatcher {
         this._childrenSupported = true;
         this._injectPromise = null;
         this._injectPromiseComplete = false;
-        this._visible = false;
-        this._visibleOverride = null;
+        this._visible = new DynamicProperty(false);
         this._options = null;
         this._optionsContext = null;
         this._contentScale = 1.0;
@@ -131,9 +130,14 @@ class Popup extends EventDispatcher {
         return this.isVisibleSync();
     }
 
-    setVisibleOverride(visible) {
-        this._visibleOverride = visible;
+    async setVisibleOverride(value, priority) {
+        const token = this._visible.setOverride(value, priority);
         this._updateVisibility();
+        return token;
+    }
+
+    async clearVisibleOverride(token) {
+        return this._visible.clearOverride(token);
     }
 
     async containsPoint(x, y) {
@@ -177,7 +181,7 @@ class Popup extends EventDispatcher {
     }
 
     isVisibleSync() {
-        return (this._visibleOverride !== null ? this._visibleOverride : this._visible);
+        return this._visible.value;
     }
 
     updateTheme() {
@@ -392,7 +396,7 @@ class Popup extends EventDispatcher {
     }
 
     _setVisible(visible) {
-        this._visible = visible;
+        this._visible.defaultValue = visible;
         this._updateVisibility();
     }
 
