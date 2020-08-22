@@ -95,11 +95,12 @@ class Popup extends EventDispatcher {
     // Public functions
 
     prepare() {
-        this._updateVisibility();
         this._frame.addEventListener('mousedown', (e) => e.stopPropagation());
         this._frame.addEventListener('scroll', (e) => e.stopPropagation());
         this._frame.addEventListener('load', this._onFrameLoad.bind(this));
+        this._visible.on('change', this._onVisibleChange.bind(this));
         yomichan.on('extensionUnloaded', this._onExtensionUnloaded.bind(this));
+        this._onVisibleChange({value: this.isVisibleSync()});
     }
 
     async setOptionsContext(optionsContext, source) {
@@ -131,9 +132,7 @@ class Popup extends EventDispatcher {
     }
 
     async setVisibleOverride(value, priority) {
-        const token = this._visible.setOverride(value, priority);
-        this._updateVisibility();
-        return token;
+        return this._visible.setOverride(value, priority);
     }
 
     async clearVisibleOverride(token) {
@@ -397,11 +396,10 @@ class Popup extends EventDispatcher {
 
     _setVisible(visible) {
         this._visible.defaultValue = visible;
-        this._updateVisibility();
     }
 
-    _updateVisibility() {
-        this._frame.style.setProperty('visibility', this.isVisibleSync() ? 'visible' : 'hidden', 'important');
+    _onVisibleChange({value}) {
+        this._frame.style.setProperty('visibility', value ? 'visible' : 'hidden', 'important');
     }
 
     _focusParent() {
