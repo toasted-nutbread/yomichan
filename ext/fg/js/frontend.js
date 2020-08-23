@@ -62,7 +62,6 @@ class Frontend {
         this._updatePopupToken = null;
 
         this._runtimeMessageHandlers = new Map([
-            ['popupSetVisibleOverride',              {async: false, handler: this._onMessagePopupSetVisibleOverride.bind(this)}],
             ['requestFrontendReadyBroadcast',        {async: false, handler: this._onMessageRequestFrontendReadyBroadcast.bind(this)}]
         ]);
     }
@@ -162,11 +161,6 @@ class Frontend {
     }
 
     // Message handlers
-
-    _onMessagePopupSetVisibleOverride({visible}) {
-        if (this._popup === null) { return; }
-        this._popup.setVisibleOverride(visible);
-    }
 
     _onMessageRequestFrontendReadyBroadcast({frameId}) {
         this._signalFrontendReady(frameId);
