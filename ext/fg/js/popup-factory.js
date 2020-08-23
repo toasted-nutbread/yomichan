@@ -27,6 +27,7 @@ class PopupFactory {
         this._frameId = frameId;
         this._frameOffsetForwarder = new FrameOffsetForwarder(frameId);
         this._popups = new Map();
+        this._allPopupVisibilityTokenMap = new Map();
     }
 
     // Public functions
@@ -107,6 +108,40 @@ class PopupFactory {
             this._popups.set(id, popup);
             return popup;
         }
+    }
+
+    async setAllVisibleOverride(value, priority) {
+        const promises = [];
+        const errors = [];
+        for (const popup of this._popups.values()) {
+            const promise = popup.setVisibleOverride(value, priority)
+                .then(
+                    (token) => ({popup, token}),
+                    (error) => { errors.push(error); return null; }
+                );
+            promises.push(promise);
+        }
+
+        const results = await Promise.all(promises);
+
+        if (errors.length === 0) {
+            const token = generateId(16);
+            this._allPopupVisibilityTokenMap.set(token, results);
+            return token;
+        }
+
+        // Revert on error
+        await this._revertPopupVisibilityOverrides(results);
+        throw errors[0];
+    }
+
+    async clearAllVisibleOverride(token) {
+        const results = this._allPopupVisibilityTokenMap.get(token);
+        if (typeof results === 'undefined') { return false; }
+
+        this._allPopupVisibilityTokenMap.delete(token);
+        await this._revertPopupVisibilityOverrides(results);
+        return true;
     }
 
     // API message handlers
@@ -221,5 +256,20 @@ class PopupFactory {
     _popupCanShow(popup) {
         const parent = popup.parent;
         return parent === null || parent.isVisibleSync();
+    }
+
+    async _revertPopupVisibilityOverrides(overrides) {
+        const promises = [];
+        for (const value of overrides) {
+            if (value === null) { continue; }
+            const {popup, token} = value;
+            const promise = popup.clearVisibleOverride(token)
+                .then(
+                    (v) => v,
+                    () => false
+                );
+            promises.push(promise);
+        }
+        return await Promise.all(promises);
     }
 }
