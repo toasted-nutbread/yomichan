@@ -1149,7 +1149,7 @@ class Display extends EventDispatcher {
         let token = null;
         try {
             if (ownerFrameId !== null) {
-                token = await api.crossFrame.invoke(ownerFrameId, 'setAllVisibleOverride', {value: false, priority: 0});
+                token = await api.crossFrame.invoke(ownerFrameId, 'setAllVisibleOverride', {value: false, priority: 0, awaitFrame: true});
             }
 
             const {format, quality} = this._options.anki.screenshot;

@@ -192,8 +192,12 @@ class Frontend {
         };
     }
 
-    async _onApiSetAllVisibleOverride({value, priority}) {
-        return await this._popupFactory.setAllVisibleOverride(value, priority);
+    async _onApiSetAllVisibleOverride({value, priority, awaitFrame}) {
+        const result = await this._popupFactory.setAllVisibleOverride(value, priority);
+        if (awaitFrame) {
+            await promiseAnimationFrame(100);
+        }
+        return result;
     }
 
     async _onApiClearAllVisibleOverride({token}) {
