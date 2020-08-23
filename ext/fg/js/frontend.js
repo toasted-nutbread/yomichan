@@ -108,11 +108,13 @@ class Frontend {
         this._textScanner.on('activeModifiersChanged', this._onActiveModifiersChanged.bind(this));
 
         api.crossFrame.registerHandlers([
-            ['getUrl',                 {async: false, handler: this._onApiGetUrl.bind(this)}],
-            ['closePopup',             {async: false, handler: this._onApiClosePopup.bind(this)}],
-            ['copySelection',          {async: false, handler: this._onApiCopySelection.bind(this)}],
-            ['getPopupInfo',           {async: false, handler: this._onApiGetPopupInfo.bind(this)}],
-            ['getDocumentInformation', {async: false, handler: this._onApiGetDocumentInformation.bind(this)}]
+            ['getUrl',                  {async: false, handler: this._onApiGetUrl.bind(this)}],
+            ['closePopup',              {async: false, handler: this._onApiClosePopup.bind(this)}],
+            ['copySelection',           {async: false, handler: this._onApiCopySelection.bind(this)}],
+            ['getPopupInfo',            {async: false, handler: this._onApiGetPopupInfo.bind(this)}],
+            ['getDocumentInformation',  {async: false, handler: this._onApiGetDocumentInformation.bind(this)}],
+            ['setAllVisibleOverride',   {async: true,  handler: this._onApiSetAllVisibleOverride.bind(this)}],
+            ['clearAllVisibleOverride', {async: true,  handler: this._onApiClearAllVisibleOverride.bind(this)}]
         ]);
 
         this._updateContentScale();
@@ -194,6 +196,14 @@ class Frontend {
         return {
             title: document.title
         };
+    }
+
+    async _onApiSetAllVisibleOverride({value, priority}) {
+        return await this._popupFactory.setAllVisibleOverride(value, priority);
+    }
+
+    async _onApiClearAllVisibleOverride({token}) {
+        return await this._popupFactory.clearAllVisibleOverride(token);
     }
 
     // Private
