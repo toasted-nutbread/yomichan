@@ -1323,7 +1323,7 @@ class Display extends EventDispatcher {
         try {
             mode = sessionStorage.getItem('mode');
         } catch (e) {
-            // Chromium-based browsers can throw an "Access is denied for this document." error when cookie blocking is enabled.
+            // Browsers can throw a SecurityError when cookie blocking is enabled.
         }
         this._setMode(mode, false);
     }
@@ -1338,7 +1338,7 @@ class Display extends EventDispatcher {
                     sessionStorage.setItem('mode', mode);
                 }
             } catch (e) {
-                // Chromium-based browsers can throw an "Access is denied for this document." error when cookie blocking is enabled.
+                // Browsers can throw a SecurityError when cookie blocking is enabled.
             }
         }
         this._mode = mode;
