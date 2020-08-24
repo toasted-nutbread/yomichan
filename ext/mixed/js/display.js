@@ -1319,17 +1319,26 @@ class Display extends EventDispatcher {
     }
 
     _updateMode() {
-        const mode = sessionStorage.getItem('mode');
+        let mode = null;
+        try {
+            mode = sessionStorage.getItem('mode');
+        } catch (e) {
+            // Chromium-based browsers can throw an "Access is denied for this document." error when cookie blocking is enabled.
+        }
         this._setMode(mode, false);
     }
 
     _setMode(mode, save) {
         if (mode === this._mode) { return; }
         if (save) {
-            if (mode === null) {
-                sessionStorage.removeItem('mode');
-            } else {
-                sessionStorage.setItem('mode', mode);
+            try {
+                if (mode === null) {
+                    sessionStorage.removeItem('mode');
+                } else {
+                    sessionStorage.setItem('mode', mode);
+                }
+            } catch (e) {
+                // Chromium-based browsers can throw an "Access is denied for this document." error when cookie blocking is enabled.
             }
         }
         this._mode = mode;
