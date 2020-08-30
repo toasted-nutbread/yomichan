@@ -112,12 +112,19 @@
                     </div>
                 </div>
 
+                <template id="condition-group-template"><div class="condition-group">
+                    <div class="condition-list"></div>
+                    <div class="condition-group-options">
+                        <button class="btn btn-default condition-add"><span class="glyphicon glyphicon-plus"></span></button>
+                    </div>
+                    <div class="condition-group-separator-label">OR</div>
+                </div></template>
                 <template id="condition-template"><div class="input-group condition">
                     <div class="input-group-addon condition-prefix"></div>
                     <div class="input-group-btn"><select class="form-control btn btn-default condition-type"><optgroup label="Type"></optgroup></select></div>
                     <div class="input-group-btn"><select class="form-control btn btn-default condition-operator"><optgroup label="Operator"></optgroup></select></div>
                     <div class="condition-line-break"></div>
-                    <div class="condition-input"></div>
+                    <div class="condition-input"><input type="text" class="form-control condition-input-inner"></div>
                     <div class="input-group-btn"><button class="btn btn-danger condition-remove" title="Remove"><span class="glyphicon glyphicon-remove"></span></button></div>
                 </div></template>
                 <template id="condition-group-separator-template"><div class="input-group">
@@ -1158,6 +1165,7 @@
         <script src="/bg/js/settings/generic-setting-controller.js"></script>
         <script src="/bg/js/settings/popup-preview.js"></script>
         <script src="/bg/js/settings/profiles.js"></script>
+        <script src="/bg/js/settings/profile-conditions-ui.js"></script>
         <script src="/bg/js/settings/settings-controller.js"></script>
         <script src="/bg/js/settings/storage.js"></script>
         <script src="/mixed/js/dictionary-data-util.js"></script>
