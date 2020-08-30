@@ -51,7 +51,7 @@ class ProfileController {
         this._profileConditionsUI.setKeyInfo(modifiers.separator, modifiers.keys);
 
         const optionsFull = await this._settingsController.getOptionsFullMutable();
-        await this._formWrite(optionsFull);
+        this._formWrite(optionsFull);
     }
 
     _tryGetIntegerValue(selector, min, max) {
@@ -79,7 +79,7 @@ class ProfileController {
         profile.name = $('#profile-name').val();
     }
 
-    async _formWrite(optionsFull) {
+    _formWrite(optionsFull) {
         const currentProfileIndex = this._settingsController.profileIndex;
         const profile = optionsFull.profiles[currentProfileIndex];
 
