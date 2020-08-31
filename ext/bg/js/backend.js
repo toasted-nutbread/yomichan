@@ -22,7 +22,6 @@
  * AudioUriBuilder
  * ClipboardMonitor
  * DictionaryDatabase
- * DictionaryImporter
  * Environment
  * JsonSchemaValidator
  * Mecab
@@ -41,7 +40,6 @@ class Backend {
     constructor() {
         this._environment = new Environment();
         this._dictionaryDatabase = new DictionaryDatabase();
-        this._dictionaryImporter = new DictionaryImporter();
         this._translator = new Translator(this._dictionaryDatabase);
         this._anki = new AnkiConnect();
         this._mecab = new Mecab();
@@ -130,7 +128,6 @@ class Backend {
             ['getOrCreateSearchPopup',       {async: true,  contentScript: true,  handler: this._onApiGetOrCreateSearchPopup.bind(this)}]
         ]);
         this._messageHandlersWithProgress = new Map([
-            ['importDictionaryArchive', {async: true,  contentScript: false, handler: this._onApiImportDictionaryArchive.bind(this)}],
             ['deleteDictionary',        {async: true,  contentScript: false, handler: this._onApiDeleteDictionary.bind(this)}]
         ]);
 
@@ -756,10 +753,6 @@ class Backend {
         return details;
     }
 
-    async _onApiImportDictionaryArchive({archiveContent, details}, sender, onProgress) {
-        return await this._dictionaryImporter.importDictionary(this._dictionaryDatabase, archiveContent, details, onProgress);
-    }
-
     async _onApiDeleteDictionary({dictionaryName}, sender, onProgress) {
         this._translator.clearDatabaseCaches();
         await this._dictionaryDatabase.deleteDictionary(dictionaryName, {rate: 1000}, onProgress);
@@ -1047,10 +1040,6 @@ class Backend {
 
         handler(params);
         return true;
-    }
-
-    async _importDictionary(archiveSource, onProgress, details) {
-        return await this._dictionaryImporter.importDictionary(this._dictionaryDatabase, archiveSource, onProgress, details);
     }
 
     async _textParseScanning(text, options) {
