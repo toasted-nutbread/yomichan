@@ -86,11 +86,11 @@ class PopupProxy extends EventDispatcher {
         return this._invokeSafe('isVisible', {id: this._id}, false);
     }
 
-    async setVisibleOverride(value, priority) {
+    setVisibleOverride(value, priority) {
         return this._invokeSafe('setVisibleOverride', {id: this._id, value, priority}, null);
     }
 
-    async clearVisibleOverride(token) {
+    clearVisibleOverride(token) {
         return this._invokeSafe('clearVisibleOverride', {id: this._id, token});
     }
 
@@ -135,7 +135,7 @@ class PopupProxy extends EventDispatcher {
         return this._invokeSafe('updateTheme', {id: this._id});
     }
 
-    async setCustomOuterCss(css, useWebExtensionApi) {
+    setCustomOuterCss(css, useWebExtensionApi) {
         return this._invokeSafe('setCustomOuterCss', {id: this._id, css, useWebExtensionApi});
     }
 
