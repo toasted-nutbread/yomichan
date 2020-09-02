@@ -136,11 +136,11 @@ class PopupProxy extends EventDispatcher {
     }
 
     async setCustomOuterCss(css, useWebExtensionApi) {
-        return this._invokeSafe('updateTheme', {id: this._id, css, useWebExtensionApi});
+        return this._invokeSafe('setCustomOuterCss', {id: this._id, css, useWebExtensionApi});
     }
 
     setChildrenSupported(value) {
-        return this._invokeSafe('updateTheme', {id: this._id, value});
+        return this._invokeSafe('setChildrenSupported', {id: this._id, value});
     }
 
     getFrameRect() {
