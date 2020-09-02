@@ -811,7 +811,7 @@ class Backend {
 
     async _onApiIsTabSearchPopup({tabId}) {
         const baseUrl = chrome.runtime.getURL('/bg/search.html');
-        const tab = typeof tabId === 'number' ? this._checkTabUrl(tabId, (url) => url.startsWith(baseUrl)) : null;
+        const tab = typeof tabId === 'number' ? await this._checkTabUrl(tabId, (url) => url.startsWith(baseUrl)) : null;
         return (tab !== null);
     }
 
@@ -898,7 +898,7 @@ class Backend {
         // Reuse same tab
         const baseUrl = chrome.runtime.getURL('/bg/search.html');
         if (this._searchPopupTabId !== null) {
-            const tab = this._checkTabUrl(this._searchPopupTabId, (url) => url.startsWith(baseUrl));
+            const tab = await this._checkTabUrl(this._searchPopupTabId, (url) => url.startsWith(baseUrl));
             if (tab !== null) {
                 return {tab, created: false};
             }
