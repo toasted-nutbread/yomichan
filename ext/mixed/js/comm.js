@@ -173,11 +173,11 @@ class CrossFrameAPIPort extends EventDispatcher {
     _onInvoke(id, {action, params}) {
         const callback = (response) => this._sendResponse({type: 'result', id, data: response});
         const messageHandler = this._messageHandlers.get(action);
+        this._sendAck(id);
         if (typeof messageHandler === 'undefined') {
             callback({error: new Error(`Unknown action: ${action}`)});
             return false;
         }
-        this._sendAck(id);
         return yomichan.invokeMessageHandler(messageHandler, params, callback);
     }
 
