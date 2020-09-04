@@ -22,6 +22,9 @@ class RequestBuilder {
     }
 
     async fetchAnonymous(url, init) {
+        if (isObject(chrome.declarativeWebRequest)) {
+            return await this._fetchAnonymousDeclarative(url, init);
+        }
         const originURL = this._getOriginURL(url);
         const modifications = [
             ['cookie', null],
@@ -128,6 +131,44 @@ class RequestBuilder {
             if (header !== null) {
                 headers.push(header);
             }
+        }
+    }
+
+    async _fetchAnonymousDeclarative(url, init) {
+        const originUrl = this._getOriginURL(url);
+        const rules = [{
+            priority: 0,
+            conditions: [
+                new chrome.declarativeWebRequest.RequestMatcher({
+                    url: {urlEquals: url},
+                    resourceType: ['xmlhttprequest'],
+                    stages: ['onBeforeSendHeaders']
+                })
+            ],
+            actions: [
+                new chrome.declarativeWebRequest.RemoveRequestHeader({name: 'Cookie'}),
+                new chrome.declarativeWebRequest.SetRequestHeader({name: 'Origin', value: originUrl})
+            ]
+        }];
+
+        const registeredRules = await new Promise((resolve, reject) => {
+            chrome.declarativeWebRequest.onRequest.addRules(rules, (result) => {
+                const e = chrome.runtime.lastError;
+                if (e) {
+                    reject(new Error(e.message));
+                } else {
+                    resolve(result);
+                }
+            });
+        });
+        const registeredIds = registeredRules.map(({id}) => id);
+
+        try {
+            return await fetch(url, init);
+        } finally {
+            await new Promise((resolve) => {
+                chrome.declarativeWebRequest.onRequest.removeRules(registeredIds, () => resolve());
+            });
         }
     }
 }
