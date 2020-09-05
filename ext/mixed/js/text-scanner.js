@@ -174,37 +174,6 @@ class TextScanner extends EventDispatcher {
         }
     }
 
-    async findTerms(textSource, optionsContext) {
-        const scanLength = this._scanLength;
-        const sentenceExtent = this._sentenceExtent;
-        const layoutAwareScan = this._layoutAwareScan;
-        const searchText = this.getTextSourceContent(textSource, scanLength, layoutAwareScan);
-        if (searchText.length === 0) { return null; }
-
-        const {definitions, length} = await api.termsFind(searchText, {}, optionsContext);
-        if (definitions.length === 0) { return null; }
-
-        textSource.setEndOffset(length, layoutAwareScan);
-        const sentence = this._documentUtil.extractSentence(textSource, sentenceExtent, layoutAwareScan);
-
-        return {definitions, sentence, type: 'terms'};
-    }
-
-    async findKanji(textSource, optionsContext) {
-        const sentenceExtent = this._sentenceExtent;
-        const layoutAwareScan = this._layoutAwareScan;
-        const searchText = this.getTextSourceContent(textSource, 1, layoutAwareScan);
-        if (searchText.length === 0) { return null; }
-
-        const definitions = await api.kanjiFind(searchText, optionsContext);
-        if (definitions.length === 0) { return null; }
-
-        textSource.setEndOffset(1, layoutAwareScan);
-        const sentence = this._documentUtil.extractSentence(textSource, sentenceExtent, layoutAwareScan);
-
-        return {definitions, sentence, type: 'kanji'};
-    }
-
     async search(textSource, cause) {
         let definitions = null;
         let sentence = null;
@@ -449,14 +418,45 @@ class TextScanner extends EventDispatcher {
             return null;
         }
         if (this._searchTerms) {
-            const results = await this.findTerms(textSource, optionsContext);
+            const results = await this._findTerms(textSource, optionsContext);
             if (results !== null) { return results; }
         }
         if (this._searchKanji) {
-            const results = await this.findKanji(textSource, optionsContext);
+            const results = await this._findKanji(textSource, optionsContext);
             if (results !== null) { return results; }
         }
         return null;
+    }
+
+    async _findTerms(textSource, optionsContext) {
+        const scanLength = this._scanLength;
+        const sentenceExtent = this._sentenceExtent;
+        const layoutAwareScan = this._layoutAwareScan;
+        const searchText = this.getTextSourceContent(textSource, scanLength, layoutAwareScan);
+        if (searchText.length === 0) { return null; }
+
+        const {definitions, length} = await api.termsFind(searchText, {}, optionsContext);
+        if (definitions.length === 0) { return null; }
+
+        textSource.setEndOffset(length, layoutAwareScan);
+        const sentence = this._documentUtil.extractSentence(textSource, sentenceExtent, layoutAwareScan);
+
+        return {definitions, sentence, type: 'terms'};
+    }
+
+    async _findKanji(textSource, optionsContext) {
+        const sentenceExtent = this._sentenceExtent;
+        const layoutAwareScan = this._layoutAwareScan;
+        const searchText = this.getTextSourceContent(textSource, 1, layoutAwareScan);
+        if (searchText.length === 0) { return null; }
+
+        const definitions = await api.kanjiFind(searchText, optionsContext);
+        if (definitions.length === 0) { return null; }
+
+        textSource.setEndOffset(1, layoutAwareScan);
+        const sentence = this._documentUtil.extractSentence(textSource, sentenceExtent, layoutAwareScan);
+
+        return {definitions, sentence, type: 'kanji'};
     }
 
     async _searchAt(x, y, cause) {
