@@ -126,41 +126,6 @@ class TextScanner extends EventDispatcher {
         }
     }
 
-    async searchAt(x, y, cause) {
-        try {
-            this._scanTimerClear();
-
-            if (this._pendingLookup) {
-                return;
-            }
-
-            if (typeof this._ignorePoint === 'function' && await this._ignorePoint(x, y)) {
-                return;
-            }
-
-            const textSource = this._documentUtil.getRangeFromPoint(x, y, this._deepContentScan);
-            try {
-                if (this._textSourceCurrent !== null && this._textSourceCurrent.equals(textSource)) {
-                    return;
-                }
-
-                this._pendingLookup = true;
-                const result = await this._search(textSource, cause);
-                if (result !== null) {
-                    this._causeCurrent = cause;
-                    this.setCurrentTextSource(textSource);
-                }
-                this._pendingLookup = false;
-            } finally {
-                if (textSource !== null) {
-                    textSource.cleanup();
-                }
-            }
-        } catch (e) {
-            yomichan.logError(e);
-        }
-    }
-
     getTextSourceContent(textSource, length, layoutAwareScan) {
         const clonedTextSource = textSource.clone();
 
@@ -287,7 +252,7 @@ class TextScanner extends EventDispatcher {
 
     _onClick(e) {
         if (this._searchOnClick) {
-            this.searchAt(e.clientX, e.clientY, 'click');
+            this._searchAt(e.clientX, e.clientY, 'click');
         }
 
         if (this._preventNextClick) {
@@ -364,7 +329,7 @@ class TextScanner extends EventDispatcher {
             return;
         }
 
-        this.searchAt(primaryTouch.clientX, primaryTouch.clientY, 'touchMove');
+        this._searchAt(primaryTouch.clientX, primaryTouch.clientY, 'touchMove');
 
         e.preventDefault(); // Disable scroll
     }
@@ -441,6 +406,41 @@ class TextScanner extends EventDispatcher {
         return null;
     }
 
+    async _searchAt(x, y, cause) {
+        try {
+            this._scanTimerClear();
+
+            if (this._pendingLookup) {
+                return;
+            }
+
+            if (typeof this._ignorePoint === 'function' && await this._ignorePoint(x, y)) {
+                return;
+            }
+
+            const textSource = this._documentUtil.getRangeFromPoint(x, y, this._deepContentScan);
+            try {
+                if (this._textSourceCurrent !== null && this._textSourceCurrent.equals(textSource)) {
+                    return;
+                }
+
+                this._pendingLookup = true;
+                const result = await this._search(textSource, cause);
+                if (result !== null) {
+                    this._causeCurrent = cause;
+                    this.setCurrentTextSource(textSource);
+                }
+                this._pendingLookup = false;
+            } finally {
+                if (textSource !== null) {
+                    textSource.cleanup();
+                }
+            }
+        } catch (e) {
+            yomichan.logError(e);
+        }
+    }
+
     async _searchAtFromMouse(x, y) {
         if (this._modifier === 'none') {
             if (!await this._scanTimerWait()) {
@@ -449,13 +449,13 @@ class TextScanner extends EventDispatcher {
             }
         }
 
-        await this.searchAt(x, y, 'mouse');
+        await this._searchAt(x, y, 'mouse');
     }
 
     async _searchAtFromTouchStart(x, y) {
         const textSourceCurrentPrevious = this._textSourceCurrent !== null ? this._textSourceCurrent.clone() : null;
 
-        await this.searchAt(x, y, 'touchStart');
+        await this._searchAt(x, y, 'touchStart');
 
         if (
             this._textSourceCurrent !== null &&
