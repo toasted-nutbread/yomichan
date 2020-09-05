@@ -47,9 +47,10 @@ class Frontend {
             node: window,
             ignoreElements: this._ignoreElements.bind(this),
             ignorePoint: this._ignorePoint.bind(this),
-            search: this._search.bind(this),
             getOptionsContext: this._getUpToDateOptionsContext.bind(this),
-            documentUtil: this._documentUtil
+            documentUtil: this._documentUtil,
+            searchTerms: true,
+            searchKanji: true
         });
         this._parentPopupId = parentPopupId;
         this._parentFrameId = parentFrameId;
@@ -106,6 +107,7 @@ class Frontend {
 
         this._textScanner.on('clearSelection', this._onClearSelection.bind(this));
         this._textScanner.on('activeModifiersChanged', this._onActiveModifiersChanged.bind(this));
+        this._textScanner.on('searched', this._onSearched.bind(this));
 
         api.crossFrame.registerHandlers([
             ['getUrl',                  {async: false, handler: this._onApiGetUrl.bind(this)}],
@@ -127,8 +129,7 @@ class Frontend {
     }
 
     async setTextSource(textSource) {
-        await this._search(textSource, 'script');
-        this._textScanner.setCurrentTextSource(textSource);
+        await this._textScanner.search(textSource, 'script');
     }
 
     async getOptionsContext() {
@@ -248,6 +249,27 @@ class Frontend {
         await this.updateOptions();
     }
 
+    _onSearched({textScanner, type, definitions, sentence, cause, textSource, optionsContext, error}) {
+        if (error !== null) {
+            if (yomichan.isExtensionUnloaded) {
+                if (textSource !== null && this._options.scanning.modifier !== 'none') {
+                    this._showExtensionUnloaded(textSource);
+                }
+            } else {
+                yomichan.logError(error);
+            }
+        } else {
+            if (type !== null) {
+                const focus = (cause === 'mouse');
+                this._showContent(textSource, focus, definitions, type, sentence, optionsContext);
+            }
+        }
+
+        if (type === null && this._options.scanning.autoHideResults) {
+            textScanner.clearSelection(false);
+        }
+    }
+
     async _updateOptionsInternal() {
         const optionsContext = await this.getOptionsContext();
         const options = await api.optionsGet(optionsContext);
@@ -280,7 +302,7 @@ class Frontend {
         const textSourceCurrent = this._textScanner.getCurrentTextSource();
         const causeCurrent = this._textScanner.causeCurrent;
         if (textSourceCurrent !== null && causeCurrent !== null) {
-            await this._search(textSourceCurrent, causeCurrent);
+            await this._textScanner.search(textSourceCurrent, causeCurrent);
         }
     }
 
@@ -403,44 +425,6 @@ class Frontend {
         }
     }
 
-    async _search(textSource, cause) {
-        if (this._popup === null) {
-            return null;
-        }
-
-        await this._updatePendingOptions();
-
-        let results = null;
-
-        try {
-            if (textSource !== null) {
-                const optionsContext = await this.getOptionsContext();
-                results = (
-                    await this._textScanner.findTerms(textSource, optionsContext) ||
-                    await this._textScanner.findKanji(textSource, optionsContext)
-                );
-                if (results !== null) {
-                    const focus = (cause === 'mouse');
-                    this._showContent(textSource, focus, results.definitions, results.type, optionsContext);
-                }
-            }
-        } catch (e) {
-            if (yomichan.isExtensionUnloaded) {
-                if (textSource !== null && this._options.scanning.modifier !== 'none') {
-                    this._showExtensionUnloaded(textSource);
-                }
-            } else {
-                yomichan.logError(e);
-            }
-        } finally {
-            if (results === null && this._options.scanning.autoHideResults) {
-                this._textScanner.clearSelection(false);
-            }
-        }
-
-        return results;
-    }
-
     async _showExtensionUnloaded(textSource) {
         if (textSource === null) {
             textSource = this._textScanner.getCurrentTextSource();
@@ -449,11 +433,8 @@ class Frontend {
         this._showPopupContent(textSource, await this.getOptionsContext());
     }
 
-    _showContent(textSource, focus, definitions, type, optionsContext) {
+    _showContent(textSource, focus, definitions, type, sentence, optionsContext) {
         const {url} = optionsContext;
-        const sentenceExtent = this._options.anki.sentenceExt;
-        const layoutAwareScan = this._options.scanning.layoutAwareScan;
-        const sentence = this._documentUtil.extractSentence(textSource, sentenceExtent, layoutAwareScan);
         const query = textSource.text();
         const details = {
             focus,

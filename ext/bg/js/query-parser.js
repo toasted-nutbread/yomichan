@@ -36,9 +36,10 @@ class QueryParser extends EventDispatcher {
             node: this._queryParser,
             ignoreElements: () => [],
             ignorePoint: null,
-            search: this._search.bind(this),
             getOptionsContext,
             documentUtil,
+            searchTerms: true,
+            searchKanji: false,
             searchOnClick: true
         });
     }
@@ -46,6 +47,7 @@ class QueryParser extends EventDispatcher {
     async prepare() {
         await this._queryParserGenerator.prepare();
         this._textScanner.prepare();
+        this._textScanner.on('searched', this._onSearched.bind(this));
     }
 
     setOptions({selectedParser, termSpacing, scanning}) {
@@ -77,14 +79,12 @@ class QueryParser extends EventDispatcher {
 
     // Private
 
-    async _search(textSource, cause) {
-        if (textSource === null) { return null; }
-
-        const optionsContext = this._getOptionsContext();
-        const results = await this._textScanner.findTerms(textSource, optionsContext);
-        if (results === null) { return null; }
-
-        const {definitions, sentence, type} = results;
+    _onSearched({type, definitions, sentence, cause, textSource, optionsContext, error}) {
+        if (error !== null) {
+            yomichan.logError(error);
+            return;
+        }
+        if (type === null) { return; }
 
         this.trigger('searched', {
             type,
@@ -94,8 +94,6 @@ class QueryParser extends EventDispatcher {
             textSource,
             optionsContext
         });
-
-        return {definitions, type};
     }
 
     _onParserChange(e) {

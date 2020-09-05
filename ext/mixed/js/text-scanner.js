@@ -21,14 +21,15 @@
  */
 
 class TextScanner extends EventDispatcher {
-    constructor({node, ignoreElements, ignorePoint, search, documentUtil, getOptionsContext, searchOnClick=false}) {
+    constructor({node, ignoreElements, ignorePoint, documentUtil, getOptionsContext, searchTerms=false, searchKanji=false, searchOnClick=false}) {
         super();
         this._node = node;
         this._ignoreElements = ignoreElements;
         this._ignorePoint = ignorePoint;
-        this._search = search;
         this._documentUtil = documentUtil;
         this._getOptionsContext = getOptionsContext;
+        this._searchTerms = searchTerms;
+        this._searchKanji = searchKanji;
         this._searchOnClick = searchOnClick;
 
         this._isPrepared = false;
@@ -220,7 +221,7 @@ class TextScanner extends EventDispatcher {
             optionsContext = await this._getOptionsContext();
             searched = true;
 
-            const result = await this._search(textSource, cause);
+            const result = await this._findDefinitions(textSource, cause);
             if (result !== null) {
                 ({definitions, sentence, type} = result);
                 this._causeCurrent = cause;
@@ -439,6 +440,21 @@ class TextScanner extends EventDispatcher {
             if (touch.identifier === identifier) {
                 return touch;
             }
+        }
+        return null;
+    }
+
+    async _findDefinitions(textSource, optionsContext) {
+        if (textSource === null) {
+            return null;
+        }
+        if (this._searchTerms) {
+            const results = await this.findTerms(textSource, optionsContext);
+            if (results !== null) { return results; }
+        }
+        if (this._searchKanji) {
+            const results = await this.findKanji(textSource, optionsContext);
+            if (results !== null) { return results; }
         }
         return null;
     }
