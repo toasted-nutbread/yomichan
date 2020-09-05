@@ -48,6 +48,7 @@ class Frontend {
             ignoreElements: this._ignoreElements.bind(this),
             ignorePoint: this._ignorePoint.bind(this),
             search: this._search.bind(this),
+            getOptionsContext: this._getUpToDateOptionsContext.bind(this),
             documentUtil: this._documentUtil
         });
         this._parentPopupId = parentPopupId;
@@ -570,5 +571,10 @@ class Frontend {
         );
         api.broadcastTab('requestFrontendReadyBroadcast', {frameId: this._frameId});
         await promise;
+    }
+
+    async _getUpToDateOptionsContext() {
+        await this._updatePendingOptions();
+        return await this.getOptionsContext();
     }
 }

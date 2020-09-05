@@ -21,13 +21,14 @@
  */
 
 class TextScanner extends EventDispatcher {
-    constructor({node, ignoreElements, ignorePoint, search, documentUtil, searchOnClick=false}) {
+    constructor({node, ignoreElements, ignorePoint, search, documentUtil, getOptionsContext, searchOnClick=false}) {
         super();
         this._node = node;
         this._ignoreElements = ignoreElements;
         this._ignorePoint = ignorePoint;
         this._search = search;
         this._documentUtil = documentUtil;
+        this._getOptionsContext = getOptionsContext;
         this._searchOnClick = searchOnClick;
 
         this._isPrepared = false;
@@ -201,6 +202,46 @@ class TextScanner extends EventDispatcher {
         const sentence = this._documentUtil.extractSentence(textSource, sentenceExtent, layoutAwareScan);
 
         return {definitions, sentence, type: 'kanji'};
+    }
+
+    async search(textSource, cause) {
+        let definitions = null;
+        let sentence = null;
+        let type = null;
+        let error = null;
+        let searched = false;
+        let optionsContext = null;
+
+        try {
+            if (this._textSourceCurrent !== null && this._textSourceCurrent.equals(textSource)) {
+                return;
+            }
+
+            optionsContext = await this._getOptionsContext();
+            searched = true;
+
+            const result = await this._search(textSource, cause);
+            if (result !== null) {
+                ({definitions, sentence, type} = result);
+                this._causeCurrent = cause;
+                this.setCurrentTextSource(textSource);
+            }
+        } catch (e) {
+            error = e;
+        }
+
+        if (!searched) { return; }
+
+        this.trigger('searched', {
+            textScanner: this,
+            type,
+            definitions,
+            sentence,
+            cause,
+            textSource,
+            optionsContext,
+            error
+        });
     }
 
     // Private
@@ -415,15 +456,7 @@ class TextScanner extends EventDispatcher {
 
             const textSource = this._documentUtil.getRangeFromPoint(x, y, this._deepContentScan);
             try {
-                if (this._textSourceCurrent !== null && this._textSourceCurrent.equals(textSource)) {
-                    return;
-                }
-
-                const result = await this._search(textSource, cause);
-                if (result !== null) {
-                    this._causeCurrent = cause;
-                    this.setCurrentTextSource(textSource);
-                }
+                await this.search(textSource, cause);
             } finally {
                 if (textSource !== null) {
                     textSource.cleanup();

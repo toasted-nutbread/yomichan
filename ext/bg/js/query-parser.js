@@ -37,6 +37,7 @@ class QueryParser extends EventDispatcher {
             ignoreElements: () => [],
             ignorePoint: null,
             search: this._search.bind(this),
+            getOptionsContext,
             documentUtil,
             searchOnClick: true
         });
