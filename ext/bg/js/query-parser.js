@@ -37,14 +37,14 @@ class QueryParser extends EventDispatcher {
             ignoreElements: () => [],
             ignorePoint: null,
             search: this._search.bind(this),
-            documentUtil
+            documentUtil,
+            searchOnClick: true
         });
     }
 
     async prepare() {
         await this._queryParserGenerator.prepare();
         this._textScanner.prepare();
-        this._queryParser.addEventListener('click', this._onClick.bind(this));
     }
 
     setOptions({selectedParser, termSpacing, scanning}) {
@@ -75,10 +75,6 @@ class QueryParser extends EventDispatcher {
     }
 
     // Private
-
-    _onClick(e) {
-        this._textScanner.searchAt(e.clientX, e.clientY, 'click');
-    }
 
     async _search(textSource, cause) {
         if (textSource === null) { return null; }
