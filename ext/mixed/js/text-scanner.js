@@ -21,13 +21,14 @@
  */
 
 class TextScanner extends EventDispatcher {
-    constructor({node, ignoreElements, ignorePoint, search, documentUtil}) {
+    constructor({node, ignoreElements, ignorePoint, search, documentUtil, searchOnClick=false}) {
         super();
         this._node = node;
         this._ignoreElements = ignoreElements;
         this._ignorePoint = ignorePoint;
         this._search = search;
         this._documentUtil = documentUtil;
+        this._searchOnClick = searchOnClick;
 
         this._isPrepared = false;
         this._ignoreNodes = null;
@@ -285,6 +286,10 @@ class TextScanner extends EventDispatcher {
     }
 
     _onClick(e) {
+        if (this._searchOnClick) {
+            this.searchAt(e.clientX, e.clientY, 'click');
+        }
+
         if (this._preventNextClick) {
             this._preventNextClick = false;
             e.preventDefault();
@@ -400,13 +405,13 @@ class TextScanner extends EventDispatcher {
             [this._node, 'mousedown', this._onMouseDown.bind(this)],
             [this._node, 'mousemove', this._onMouseMove.bind(this)],
             [this._node, 'mouseover', this._onMouseOver.bind(this)],
-            [this._node, 'mouseout', this._onMouseOut.bind(this)]
+            [this._node, 'mouseout', this._onMouseOut.bind(this)],
+            [this._node, 'click', this._onClick.bind(this)]
         ];
     }
 
     _getTouchEventListeners() {
         return [
-            [this._node, 'click', this._onClick.bind(this)],
             [this._node, 'auxclick', this._onAuxClick.bind(this)],
             [this._node, 'touchstart', this._onTouchStart.bind(this)],
             [this._node, 'touchend', this._onTouchEnd.bind(this)],
