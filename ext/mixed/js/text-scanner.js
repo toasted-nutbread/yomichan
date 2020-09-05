@@ -262,18 +262,7 @@ class TextScanner extends EventDispatcher {
             return;
         }
 
-        const search = async () => {
-            if (this._modifier === 'none') {
-                if (!await this._scanTimerWait()) {
-                    // Aborted
-                    return;
-                }
-            }
-
-            await this.searchAt(e.clientX, e.clientY, 'mouse');
-        };
-
-        search();
+        this._searchAtFromMouse(e.clientX, e.clientY);
     }
 
     _onMouseDown(e) {
@@ -338,21 +327,7 @@ class TextScanner extends EventDispatcher {
             return;
         }
 
-        const textSourceCurrentPrevious = this._textSourceCurrent !== null ? this._textSourceCurrent.clone() : null;
-
-        this.searchAt(primaryTouch.clientX, primaryTouch.clientY, 'touchStart')
-            .then(() => {
-                if (
-                    this._textSourceCurrent === null ||
-                    this._textSourceCurrent.equals(textSourceCurrentPrevious)
-                ) {
-                    return;
-                }
-
-                this._preventScroll = true;
-                this._preventNextContextMenu = true;
-                this._preventNextMouseDown = true;
-            });
+        this._searchAtFromTouchStart(primaryTouch.clientX, primaryTouch.clientY);
     }
 
     _onTouchEnd(e) {
@@ -459,5 +434,31 @@ class TextScanner extends EventDispatcher {
             }
         }
         return null;
+    }
+
+    async _searchAtFromMouse(x, y) {
+        if (this._modifier === 'none') {
+            if (!await this._scanTimerWait()) {
+                // Aborted
+                return;
+            }
+        }
+
+        await this.searchAt(x, y, 'mouse');
+    }
+
+    async _searchAtFromTouchStart(x, y) {
+        const textSourceCurrentPrevious = this._textSourceCurrent !== null ? this._textSourceCurrent.clone() : null;
+
+        await this.searchAt(x, y, 'touchStart');
+
+        if (
+            this._textSourceCurrent !== null &&
+            !this._textSourceCurrent.equals(textSourceCurrentPrevious)
+        ) {
+            this._preventScroll = true;
+            this._preventNextContextMenu = true;
+            this._preventNextMouseDown = true;
+        }
     }
 }
