@@ -214,7 +214,7 @@ class TextScanner extends EventDispatcher {
     _onMouseMove(e) {
         this._scanTimerClear();
 
-        if (this._pendingLookup || DocumentUtil.isMouseButtonDown(e, 'primary')) {
+        if (DocumentUtil.isMouseButtonDown(e, 'primary')) {
             return;
         }
 
@@ -292,10 +292,6 @@ class TextScanner extends EventDispatcher {
         }
 
         this._primaryTouchIdentifier = primaryTouch.identifier;
-
-        if (this._pendingLookup) {
-            return;
-        }
 
         this._searchAtFromTouchStart(primaryTouch.clientX, primaryTouch.clientY);
     }
@@ -407,12 +403,11 @@ class TextScanner extends EventDispatcher {
     }
 
     async _searchAt(x, y, cause) {
-        try {
-            this._scanTimerClear();
+        if (this._pendingLookup) { return; }
 
-            if (this._pendingLookup) {
-                return;
-            }
+        try {
+            this._pendingLookup = true;
+            this._scanTimerClear();
 
             if (typeof this._ignorePoint === 'function' && await this._ignorePoint(x, y)) {
                 return;
@@ -424,13 +419,11 @@ class TextScanner extends EventDispatcher {
                     return;
                 }
 
-                this._pendingLookup = true;
                 const result = await this._search(textSource, cause);
                 if (result !== null) {
                     this._causeCurrent = cause;
                     this.setCurrentTextSource(textSource);
                 }
-                this._pendingLookup = false;
             } finally {
                 if (textSource !== null) {
                     textSource.cleanup();
@@ -438,10 +431,14 @@ class TextScanner extends EventDispatcher {
             }
         } catch (e) {
             yomichan.logError(e);
+        } finally {
+            this._pendingLookup = false;
         }
     }
 
     async _searchAtFromMouse(x, y) {
+        if (this._pendingLookup) { return; }
+
         if (this._modifier === 'none') {
             if (!await this._scanTimerWait()) {
                 // Aborted
@@ -453,6 +450,8 @@ class TextScanner extends EventDispatcher {
     }
 
     async _searchAtFromTouchStart(x, y) {
+        if (this._pendingLookup) { return; }
+
         const textSourceCurrentPrevious = this._textSourceCurrent !== null ? this._textSourceCurrent.clone() : null;
 
         await this._searchAt(x, y, 'touchStart');
