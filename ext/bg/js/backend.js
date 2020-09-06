@@ -64,11 +64,8 @@ class Backend {
         });
         this._templateRenderer = new TemplateRenderer();
 
-        this._clipboardPasteTarget = (
-            typeof document === 'object' && document !== null ?
-            document.querySelector('#clipboard-paste-target') :
-            null
-        );
+        this._clipboardPasteTarget = null;
+        this._clipboardPasteTargetInitialized = false;
 
         this._searchPopupTabId = null;
         this._searchPopupTabCreatePromise = null;
@@ -642,6 +639,11 @@ class Backend {
 
         if (!this._environmentHasDocument()) {
             throw new Error('Reading the clipboard is not supported in this context');
+        }
+
+        if (!this._clipboardPasteTargetInitialized) {
+            this._clipboardPasteTarget = document.querySelector('#clipboard-paste-target');
+            this._clipboardPasteTargetInitialized = true;
         }
 
         const target = this._clipboardPasteTarget;
