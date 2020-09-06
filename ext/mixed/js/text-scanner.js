@@ -306,19 +306,23 @@ class TextScanner extends EventDispatcher {
             return;
         }
 
+        const {clientX, clientY, identifier} = e.changedTouches[0];
+        this._onPrimaryTouchStart(e, clientX, clientY, identifier);
+    }
+
+    _onPrimaryTouchStart(e, x, y, identifier) {
         this._preventScroll = false;
         this._preventNextContextMenu = false;
         this._preventNextMouseDown = false;
         this._preventNextClick = false;
 
-        const primaryTouch = e.changedTouches[0];
-        if (DocumentUtil.isPointInSelection(primaryTouch.clientX, primaryTouch.clientY, window.getSelection())) {
+        if (DocumentUtil.isPointInSelection(x, y, window.getSelection())) {
             return;
         }
 
-        this._primaryTouchIdentifier = primaryTouch.identifier;
+        this._primaryTouchIdentifier = identifier;
 
-        this._searchAtFromTouchStart(e, primaryTouch.clientX, primaryTouch.clientY);
+        this._searchAtFromTouchStart(e, x, y);
     }
 
     _onTouchEnd(e) {
@@ -329,6 +333,10 @@ class TextScanner extends EventDispatcher {
             return;
         }
 
+        this._onPrimaryTouchEnd();
+    }
+
+    _onPrimaryTouchEnd() {
         this._primaryTouchIdentifier = null;
         this._preventScroll = false;
         this._preventNextClick = false;
