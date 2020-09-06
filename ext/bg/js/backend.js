@@ -444,12 +444,17 @@ class Backend {
     async _onApiDefinitionAdd({definition, mode, context, details, optionsContext}) {
         const options = this.getOptions(optionsContext);
         const templates = this._getTemplates(options);
+        const fields = (
+            mode === 'kanji' ?
+            options.anki.kanji.fields :
+            options.anki.terms.fields
+        );
 
         if (mode !== 'kanji') {
             const {customSourceUrl} = options.audio;
             await this._ankiNoteBuilder.injectAudio(
                 definition,
-                options.anki.terms.fields,
+                fields,
                 options.audio.sources,
                 customSourceUrl
             );
@@ -458,7 +463,7 @@ class Backend {
         if (details && details.screenshot) {
             await this._ankiNoteBuilder.injectScreenshot(
                 definition,
-                options.anki.terms.fields,
+                fields,
                 details.screenshot
             );
         }
