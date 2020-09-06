@@ -639,15 +639,15 @@ class Backend {
         if (browser === 'firefox' || browser === 'firefox-mobile') {
             return await navigator.clipboard.readText();
         } else {
-            const clipboardPasteTarget = this._clipboardPasteTarget;
-            if (clipboardPasteTarget === null) {
+            const target = this._clipboardPasteTarget;
+            if (target === null) {
                 throw new Error('Reading the clipboard is not supported in this context');
             }
-            clipboardPasteTarget.value = '';
-            clipboardPasteTarget.focus();
+            target.value = '';
+            target.focus();
             document.execCommand('paste');
-            const result = clipboardPasteTarget.value;
-            clipboardPasteTarget.value = '';
+            const result = target.value;
+            target.value = '';
             return result;
         }
     }
