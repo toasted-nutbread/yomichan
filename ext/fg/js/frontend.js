@@ -175,7 +175,7 @@ class Frontend {
     }
 
     _onApiClosePopup() {
-        this._textScanner.clearSelection(false);
+        this._clearSelection(false);
     }
 
     _onApiCopySelection() {
@@ -266,8 +266,12 @@ class Frontend {
         }
 
         if (type === null && this._options.scanning.autoHideResults) {
-            textScanner.clearSelection(false);
+            this._clearSelection(false);
         }
+    }
+
+    _clearSelection(passive) {
+        this._textScanner.clearSelection(passive);
     }
 
     async _updateOptionsInternal() {
@@ -354,7 +358,7 @@ class Frontend {
             this.setDisabledOverride(!this._options.scanning.enableOnSearchPage);
         }
 
-        this._textScanner.clearSelection(true);
+        this._clearSelection(true);
         this._popup = popup;
     }
 
