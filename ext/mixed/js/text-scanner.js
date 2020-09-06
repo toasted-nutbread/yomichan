@@ -384,6 +384,72 @@ class TextScanner extends EventDispatcher {
         e.preventDefault(); // Disable scroll
     }
 
+    _onPointerOver(e) {
+        if (!e.isPrimary) { return; }
+        switch (e.pointerType) {
+            case 'mouse': return this._onMousePointerOver(e);
+        }
+    }
+
+    _onPointerDown(e) {
+        if (!e.isPrimary) { return; }
+        switch (e.pointerType) {
+            case 'mouse': return this._onMousePointerDown(e);
+        }
+    }
+
+    _onPointerMove(e) {
+        if (!e.isPrimary) { return; }
+        switch (e.pointerType) {
+            case 'mouse': return this._onMousePointerMove(e);
+        }
+    }
+
+    _onPointerUp(e) {
+        if (!e.isPrimary) { return; }
+        switch (e.pointerType) {
+            case 'mouse': return this._onMousePointerUp(e);
+        }
+    }
+
+    _onPointerCancel(e) {
+        if (!e.isPrimary) { return; }
+        switch (e.pointerType) {
+            case 'mouse': return this._onMousePointerCancel(e);
+        }
+    }
+
+    _onPointerOut(e) {
+        if (!e.isPrimary) { return; }
+        switch (e.pointerType) {
+            case 'mouse': return this._onMousePointerOut(e);
+        }
+    }
+
+    _onMousePointerOver(e) {
+        return this._onMouseOver(e);
+    }
+
+    _onMousePointerDown(e) {
+        return this._onMouseDown(e);
+    }
+
+    _onMousePointerMove(e) {
+        return this._onMouseMove(e);
+    }
+
+    _onMousePointerUp() {
+        // NOP
+    }
+
+    _onMousePointerCancel(e) {
+        return this._onMouseOut(e);
+    }
+
+    _onMousePointerOut(e) {
+        return this._onMouseOut(e);
+    }
+
     async _scanTimerWait() {
         const delay = this._delay;
         const promise = promiseTimeout(delay, true);
@@ -409,14 +475,30 @@ class TextScanner extends EventDispatcher {
     }
 
     _hookEvents() {
-        const eventListenerInfos = this._getMouseEventListeners();
-        if (this._touchInputEnabled) {
-            eventListenerInfos.push(...this._getTouchEventListeners());
+        let eventListenerInfos;
+        if (this._arePointerEventsSupported()) {
+            eventListenerInfos = this._getPointerEventListeners();
+        } else {
+            eventListenerInfos = this._getMouseEventListeners();
+            if (this._touchInputEnabled) {
+                eventListenerInfos.push(...this._getTouchEventListeners());
+            }
         }
 
         for (const [node, type, listener, options] of eventListenerInfos) {
             this._eventListeners.addEventListener(node, type, listener, options);
         }
+    }
+
+    _getPointerEventListeners() {
+        return [
+            [this._node, 'pointerover', this._onPointerOver.bind(this)],
+            [this._node, 'pointerdown', this._onPointerDown.bind(this)],
+            [this._node, 'pointermove', this._onPointerMove.bind(this)],
+            [this._node, 'pointerup', this._onPointerUp.bind(this)],
+            [this._node, 'pointercancel', this._onPointerCancel.bind(this)],
+            [this._node, 'pointerout', this._onPointerOut.bind(this)]
+        ];
     }
 
     _getMouseEventListeners() {
