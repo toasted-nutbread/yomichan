@@ -388,6 +388,7 @@ class TextScanner extends EventDispatcher {
         if (!e.isPrimary) { return; }
         switch (e.pointerType) {
             case 'mouse': return this._onMousePointerOver(e);
+            case 'touch': return this._onTouchPointerOver(e);
         }
     }
 
@@ -395,6 +396,7 @@ class TextScanner extends EventDispatcher {
         if (!e.isPrimary) { return; }
         switch (e.pointerType) {
             case 'mouse': return this._onMousePointerDown(e);
+            case 'touch': return this._onTouchPointerDown(e);
         }
     }
 
@@ -402,6 +404,7 @@ class TextScanner extends EventDispatcher {
         if (!e.isPrimary) { return; }
         switch (e.pointerType) {
             case 'mouse': return this._onMousePointerMove(e);
+            case 'touch': return this._onTouchPointerMove(e);
         }
     }
 
@@ -409,6 +412,7 @@ class TextScanner extends EventDispatcher {
         if (!e.isPrimary) { return; }
         switch (e.pointerType) {
             case 'mouse': return this._onMousePointerUp(e);
+            case 'touch': return this._onTouchPointerUp(e);
         }
     }
 
@@ -416,6 +420,7 @@ class TextScanner extends EventDispatcher {
         if (!e.isPrimary) { return; }
         switch (e.pointerType) {
             case 'mouse': return this._onMousePointerCancel(e);
+            case 'touch': return this._onTouchPointerCancel(e);
         }
     }
 
@@ -423,6 +428,7 @@ class TextScanner extends EventDispatcher {
         if (!e.isPrimary) { return; }
         switch (e.pointerType) {
             case 'mouse': return this._onMousePointerOut(e);
+            case 'touch': return this._onTouchPointerOut(e);
         }
     }
 
@@ -448,6 +454,49 @@ class TextScanner extends EventDispatcher {
 
     _onMousePointerOut(e) {
         return this._onMouseOut(e);
+    }
+
+    _onTouchPointerOver() {
+        // NOP
+    }
+
+    _onTouchPointerDown(e) {
+        const {clientX, clientY, pointerId} = e;
+        return this._onPrimaryTouchStart(e, clientX, clientY, pointerId);
+    }
+
+    _onTouchPointerMove(e) {
+        if (!this._preventScroll || !e.cancelable) {
+            return;
+        }
+
+        const inputInfo = this._getMatchingInputGroupFromEvent(e, 'touch');
+        if (inputInfo === null) { return; }
+
+        const {index, empty} = inputInfo;
+        this._searchAt(e.clientX, e.clientY, {type: 'touch', cause: 'touchMove', index, empty});
+    }
+
+    _onTouchPointerUp() {
+        return this._onPrimaryTouchEnd();
+    }
+
+    _onTouchPointerCancel() {
+        return this._onPrimaryTouchEnd();
+    }
+
+    _onTouchPointerOut() {
+        // NOP
+    }
+
+    _onTouchMovePreventScroll(e) {
+        if (!this._preventScroll) { return; }
+
+        if (e.cancelable) {
+            e.preventDefault();
+        } else {
+            this._preventScroll = false;
+        }
     }
 
     async _scanTimerWait() {
@@ -497,7 +546,11 @@ class TextScanner extends EventDispatcher {
             [this._node, 'pointermove', this._onPointerMove.bind(this)],
             [this._node, 'pointerup', this._onPointerUp.bind(this)],
             [this._node, 'pointercancel', this._onPointerCancel.bind(this)],
-            [this._node, 'pointerout', this._onPointerOut.bind(this)]
+            [this._node, 'pointerout', this._onPointerOut.bind(this)],
+            [this._node, 'touchmove', this._onTouchMovePreventScroll.bind(this), {passive: false}],
+            [this._node, 'mousedown', this._onMouseDown.bind(this)],
+            [this._node, 'click', this._onClick.bind(this)],
+            [this._node, 'auxclick', this._onAuxClick.bind(this)]
         ];
     }
 
