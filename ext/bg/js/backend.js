@@ -640,14 +640,18 @@ class Backend {
             return await navigator.clipboard.readText();
         }
 
+        if (!this._environmentHasDocument()) {
+            throw new Error('Reading the clipboard is not supported in this context');
+        }
+
         const target = this._clipboardPasteTarget;
         if (target === null) {
-            throw new Error('Reading the clipboard is not supported in this context');
+            throw new Error('Clipboard paste target does not exist');
         }
 
         target.value = '';
         target.focus();
-        document.execCommand('paste');
+        this._executePasteCommand();
         const result = target.value;
         target.value = '';
         return result;
@@ -1532,5 +1536,13 @@ class Backend {
         const url = await this._getTabUrl(tabId);
         const isValidTab = urlPredicate(url);
         return isValidTab ? tab : null;
+    }
+
+    _environmentHasDocument() {
+        return (typeof document === 'object' && document !== null);
+    }
+
+    _executePasteCommand() {
+        document.execCommand('paste');
     }
 }
