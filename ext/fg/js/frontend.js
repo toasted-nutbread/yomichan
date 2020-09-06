@@ -62,6 +62,7 @@ class Frontend {
         this._allowRootFramePopupProxy = allowRootFramePopupProxy;
         this._popupCache = new Map();
         this._updatePopupToken = null;
+        this._clearSelectionTimer = null;
 
         this._runtimeMessageHandlers = new Map([
             ['requestFrontendReadyBroadcast',        {async: false, handler: this._onMessageRequestFrontendReadyBroadcast.bind(this)}]
@@ -232,6 +233,7 @@ class Frontend {
     }
 
     _onClearSelection({passive}) {
+        this._stopClearSelectionDelayed();
         if (this._popup !== null) {
             this._popup.hide(!passive);
             this._popup.clearAutoPlayTimer();
@@ -249,29 +251,51 @@ class Frontend {
         await this.updateOptions();
     }
 
-    _onSearched({textScanner, type, definitions, sentence, input: {cause}, textSource, optionsContext, error}) {
+    _onSearched({type, definitions, sentence, input: {cause}, textSource, optionsContext, error}) {
+        const scanningOptions = this._options.scanning;
+
         if (error !== null) {
             if (yomichan.isExtensionUnloaded) {
-                if (textSource !== null && this._options.scanning.modifier !== 'none') {
+                if (textSource !== null && scanningOptions.modifier !== 'none') {
                     this._showExtensionUnloaded(textSource);
                 }
             } else {
                 yomichan.logError(error);
             }
+        } if (type !== null) {
+            this._stopClearSelectionDelayed();
+            const focus = (cause === 'mouse');
+            this._showContent(textSource, focus, definitions, type, sentence, optionsContext);
         } else {
-            if (type !== null) {
-                const focus = (cause === 'mouse');
-                this._showContent(textSource, focus, definitions, type, sentence, optionsContext);
+            if (scanningOptions.autoHideResults) {
+                this._clearSelectionDelayed(scanningOptions.hideDelay, false);
             }
-        }
-
-        if (type === null && this._options.scanning.autoHideResults) {
-            this._clearSelection(false);
         }
     }
 
     _clearSelection(passive) {
+        this._stopClearSelectionDelayed();
         this._textScanner.clearSelection(passive);
+    }
+
+    _clearSelectionDelayed(delay, restart, passive) {
+        if (delay > 0) {
+            if (this._clearSelectionTimer !== null && !restart) { return; } // Already running
+            this._stopClearSelectionDelayed();
+            this._clearSelectionTimer = setTimeout(() => {
+                this._clearSelectionTimer = null;
+                this._clearSelection(passive);
+            }, delay);
+        } else {
+            this._clearSelection(passive);
+        }
+    }
+
+    _stopClearSelectionDelayed() {
+        if (this._clearSelectionTimer !== null) {
+            clearTimeout(this._clearSelectionTimer);
+            this._clearSelectionTimer = null;
+        }
     }
 
     async _updateOptionsInternal() {
