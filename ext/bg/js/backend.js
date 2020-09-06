@@ -60,7 +60,8 @@ class Backend {
         this._ankiNoteBuilder = new AnkiNoteBuilder({
             anki: this._anki,
             audioSystem: this._audioSystem,
-            renderTemplate: this._renderTemplate.bind(this)
+            renderTemplate: this._renderTemplate.bind(this),
+            getClipboardImage: this._onApiClipboardImageGet.bind(this)
         });
         this._templateRenderer = new TemplateRenderer();
 
@@ -459,6 +460,8 @@ class Backend {
                 customSourceUrl
             );
         }
+
+        await this._ankiNoteBuilder.injectClipboardImage(definition, fields);
 
         if (details && details.screenshot) {
             await this._ankiNoteBuilder.injectScreenshot(
