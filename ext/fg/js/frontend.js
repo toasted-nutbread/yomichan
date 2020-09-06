@@ -279,6 +279,7 @@ class Frontend {
     }
 
     _clearSelectionDelayed(delay, restart, passive) {
+        if (!this._textScanner.hasSelection()) { return; }
         if (delay > 0) {
             if (this._clearSelectionTimer !== null && !restart) { return; } // Already running
             this._stopClearSelectionDelayed();
