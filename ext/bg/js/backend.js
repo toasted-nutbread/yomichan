@@ -638,18 +638,19 @@ class Backend {
         const {browser} = this._environment.getInfo();
         if (browser === 'firefox' || browser === 'firefox-mobile') {
             return await navigator.clipboard.readText();
-        } else {
-            const target = this._clipboardPasteTarget;
-            if (target === null) {
-                throw new Error('Reading the clipboard is not supported in this context');
-            }
-            target.value = '';
-            target.focus();
-            document.execCommand('paste');
-            const result = target.value;
-            target.value = '';
-            return result;
         }
+
+        const target = this._clipboardPasteTarget;
+        if (target === null) {
+            throw new Error('Reading the clipboard is not supported in this context');
+        }
+
+        target.value = '';
+        target.focus();
+        document.execCommand('paste');
+        const result = target.value;
+        target.value = '';
+        return result;
     }
 
     async _onApiGetDisplayTemplatesHtml() {
