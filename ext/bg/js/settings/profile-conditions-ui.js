@@ -501,9 +501,14 @@ class ProfileConditionUI {
         const operators = this._getDescriptorOperators(type);
         const operator = operators.length > 0 ? operators[0].name : '';
         const operatorDetails = this._getOperatorDetails(type, operator);
+        const {defaultValue} = operatorDetails;
         this._updateSelect(this._operatorInput, this._operatorOptionContainer, operators, operator);
-        this._updateValueInput(operatorDetails.defaultValue, operatorDetails);
-        this.settingsController.setGlobalSetting(this.getPath('type'), type);
+        this._updateValueInput(defaultValue, operatorDetails);
+        this.settingsController.modifyGlobalSettings([
+            {action: 'set', path: this.getPath('type'), value: type},
+            {action: 'set', path: this.getPath('operator'), value: operator},
+            {action: 'set', path: this.getPath('value'), value: defaultValue}
+        ]);
     }
 
     _onOperatorChange(e) {
