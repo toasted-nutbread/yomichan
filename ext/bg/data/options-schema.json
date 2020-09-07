@@ -318,6 +318,7 @@
                             "scanning": {
                                 "type": "object",
                                 "required": [
+                                    "inputs",
                                     "middleMouse",
                                     "touchInputEnabled",
                                     "selectText",
@@ -336,6 +337,31 @@
                                     "layoutAwareScan"
                                 ],
                                 "properties": {
+                                    "inputs": {
+                                        "type": "array",
+                                        "default": [
+                                            {
+                                                "include": "shift",
+                                                "exclude": ""
+                                            }
+                                        ],
+                                        "items": {
+                                            "required": [
+                                                "include",
+                                                "exclude"
+                                            ],
+                                            "properties": {
+                                                "include": {
+                                                    "type": "string",
+                                                    "default": "shift"
+                                                },
+                                                "exclude": {
+                                                    "type": "string",
+                                                    "default": ""
+                                                }
+                                            }
+                                        }
+                                    },
                                     "middleMouse": {
                                         "type": "boolean",
                                         "default": true
