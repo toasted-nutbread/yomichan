@@ -568,7 +568,6 @@ class ProfileConditionUI {
         this._value = value;
         if (okay) {
             const normalizedValue = this._normalizeValue(value, normalize);
-            node.value = normalizedValue;
             this.settingsController.setGlobalSetting(this.getPath('value'), normalizedValue);
         }
     }
