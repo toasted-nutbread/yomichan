@@ -204,7 +204,7 @@ class ProfileConditionsUI {
         return value.split(/[,;\s]+/).map((v) => v.trim().toLowerCase()).filter((v) => v.length > 0);
     }
 
-    getModifierKeyStrings(modifiers) {
+    getModifierInputStrings(modifiers) {
         let value = '';
         let displayValue = '';
         let first = true;
@@ -630,8 +630,8 @@ class ProfileConditionUI {
         return this._parent.parent.getOperatorDetails(type, operator);
     }
 
-    _getModifierKeyStrings(modifiers) {
-        return this._parent.parent.getModifierKeyStrings(modifiers);
+    _getModifierInputStrings(modifiers) {
+        return this._parent.parent.getModifierInputStrings(modifiers);
     }
 
     _sortModifiers(modifiers) {
@@ -684,7 +684,7 @@ class ProfileConditionUI {
             case 'modifierInputs':
                 {
                     const modifiers = this._splitValue(value);
-                    const {displayValue} = this._getModifierKeyStrings(modifiers);
+                    const {displayValue} = this._getModifierInputStrings(modifiers);
                     inputValue = displayValue;
                     events.push([node, 'keydown', this._onModifierKeyDown.bind(this, inputData), false]);
                     if (type === 'modifierInputs') {
@@ -753,7 +753,7 @@ class ProfileConditionUI {
         modifiers = this._sortModifiers(modifiers);
 
         const node = this._valueInput;
-        const {value, displayValue} = this._getModifierKeyStrings(modifiers);
+        const {value, displayValue} = this._getModifierInputStrings(modifiers);
         node.value = displayValue;
         const okay = this._validateValue(value, validate);
         this._value = value;
