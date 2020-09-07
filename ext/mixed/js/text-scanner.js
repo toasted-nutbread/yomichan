@@ -241,7 +241,7 @@ class TextScanner extends EventDispatcher {
             return;
         }
 
-        const modifiers = DocumentUtil.getActiveModifiers(e);
+        const modifiers = DocumentUtil.getActiveModifiersAndButtons(e);
         this.trigger('activeModifiersChanged', {modifiers});
 
         if (!this._modifiersMatchInput(modifiers)) { return; }
