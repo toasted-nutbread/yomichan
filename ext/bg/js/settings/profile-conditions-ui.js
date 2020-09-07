@@ -425,6 +425,7 @@ class ProfileConditionUI {
         this._operatorInput = null;
         this._valueInputContainer = null;
         this._removeButton = null;
+        this._mouseButton = null;
         this._value = '';
         this._eventListeners = new EventListenerCollection();
         this._inputEventListeners = new EventListenerCollection();
@@ -460,6 +461,7 @@ class ProfileConditionUI {
         this._operatorOptionContainer = this._operatorInput.querySelector('optgroup');
         this._valueInput = this._node.querySelector('.condition-input-inner');
         this._removeButton = this._node.querySelector('.condition-remove');
+        this._mouseButton = this._node.querySelector('.condition-mouse-button');
 
         const operatorDetails = this._getOperatorDetails(type, operator);
         this._updateTypes(type);
@@ -567,6 +569,25 @@ class ProfileConditionUI {
         this._parent.removeCondition(this);
     }
 
+    _onMouseButtonMouseDown({validate, normalize}, e) {
+        e.preventDefault();
+
+        const button = e.button;
+        let modifiers = new Set(this._splitValue(this._value));
+        modifiers.add(`mouse${button}`);
+        modifiers = [...modifiers];
+
+        this._updateModifiers(modifiers, validate, normalize);
+    }
+
+    _onMouseButtonMouseUp(e) {
+        e.preventDefault();
+    }
+
+    _onMouseButtonContextMenu(e) {
+        e.preventDefault();
+    }
+
     _getDescriptorTypes() {
         return this._parent.parent.getDescriptorTypes();
     }
@@ -618,6 +639,7 @@ class ProfileConditionUI {
         let inputType = 'text';
         let inputValue = value;
         let inputStep = null;
+        let mouseButtonHidden = true;
         const events = [];
         const inputData = {validate, normalize};
         const node = this._valueInput;
@@ -629,11 +651,20 @@ class ProfileConditionUI {
                 events.push([node, 'change', this._onValueInputChange.bind(this, inputData), false]);
                 break;
             case 'modifierKeys':
+            case 'modifierInputs':
                 {
                     const modifiers = this._splitValue(value);
                     const {displayValue} = this._getModifierKeyStrings(modifiers);
                     inputValue = displayValue;
                     events.push([node, 'keydown', this._onModifierKeyDown.bind(this, inputData), false]);
+                    if (type === 'modifierInputs') {
+                        mouseButtonHidden = false;
+                        events.push(
+                            [this._mouseButton, 'mousedown', this._onMouseButtonMouseDown.bind(this, inputData), false],
+                            [this._mouseButton, 'mouseup', this._onMouseButtonMouseUp.bind(this), false],
+                            [this._mouseButton, 'contextmenu', this._onMouseButtonContextMenu.bind(this), false]
+                        );
+                    }
                 }
                 break;
             default: // 'string'
@@ -650,6 +681,7 @@ class ProfileConditionUI {
         } else {
             node.removeAttribute('step');
         }
+        this._mouseButton.hidden = mouseButtonHidden;
         for (const args of events) {
             this._inputEventListeners.addEventListener(...args);
         }
