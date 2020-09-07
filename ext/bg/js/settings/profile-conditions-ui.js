@@ -510,12 +510,15 @@ class ProfileConditionUI {
         const type = this._typeInput.value;
         const operator = e.currentTarget.value;
         const operatorDetails = this._getOperatorDetails(type, operator);
+        const settingsModifications = [{action: 'set', path: this.getPath('operator'), value: operator}];
         if (operatorDetails.resetDefaultOnChange) {
-            const okay = this._updateValueInput(operatorDetails.defaultValue, operatorDetails);
+            const {defaultValue} = operatorDetails;
+            const okay = this._updateValueInput(defaultValue, operatorDetails);
             if (okay) {
-                this.settingsController.setGlobalSetting(this.getPath('operator'), operator);
+                settingsModifications.push({action: 'set', path: this.getPath('value'), value: defaultValue});
             }
         }
+        this.settingsController.modifyGlobalSettings(settingsModifications);
     }
 
     _onValueInputChange({validate, normalize}, e) {
