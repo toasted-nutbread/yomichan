@@ -224,7 +224,26 @@ class ProfileConditionsUI {
     }
 
     sortModifiers(modifiers) {
-        return modifiers.sort();
+        const pattern = this._mouseInputNamePattern;
+        const modifierInfo = modifiers.map((value, index) => {
+            const match = pattern.exec(value);
+            return (
+                match !== null ?
+                [value, 1, Number.parseInt(match[1], 10), index] :
+                [value, 0, 0, index]
+            );
+        });
+        modifierInfo.sort((a, b) => {
+            let i = a[1] - b[1];
+            if (i !== 0) { return i; }
+
+            i = a[2] - b[2];
+            if (i !== 0) { return i; }
+
+            i = a[3] - b[3];
+            return i;
+        });
+        return modifierInfo.map(([value]) => value);
     }
 
     getPath(property) {
