@@ -540,7 +540,6 @@ class ProfileConditionUI {
 
     _onModifierKeyDown({validate, normalize}, e) {
         e.preventDefault();
-        const node = e.currentTarget;
 
         let modifiers;
         const key = DocumentUtil.getKeyFromEvent(e);
@@ -557,19 +556,11 @@ class ProfileConditionUI {
                         modifiers.add(modifier);
                     }
                     modifiers = [...modifiers];
-                    modifiers = this._sortModifiers(modifiers);
                 }
                 break;
         }
 
-        const {value, displayValue} = this._getModifierKeyStrings(modifiers);
-        node.value = displayValue;
-        const okay = this._validateValue(value, validate);
-        this._value = value;
-        if (okay) {
-            const normalizedValue = this._normalizeValue(value, normalize);
-            this.settingsController.setGlobalSetting(this.getPath('value'), normalizedValue);
-        }
+        this._updateModifiers(modifiers, validate, normalize);
     }
 
     _onRemoveButtonClick() {
@@ -694,5 +685,19 @@ class ProfileConditionUI {
             modifiers.add('meta');
         }
         return modifiers;
+    }
+
+    _updateModifiers(modifiers, validate, normalize) {
+        modifiers = this._sortModifiers(modifiers);
+
+        const node = this._valueInput;
+        const {value, displayValue} = this._getModifierKeyStrings(modifiers);
+        node.value = displayValue;
+        const okay = this._validateValue(value, validate);
+        this._value = value;
+        if (okay) {
+            const normalizedValue = this._normalizeValue(value, normalize);
+            this.settingsController.setGlobalSetting(this.getPath('value'), normalizedValue);
+        }
     }
 }
