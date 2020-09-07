@@ -29,6 +29,7 @@ class ProfileConditionsUI {
         this._children = [];
         this._eventListeners = new EventListenerCollection();
         this._defaultType = 'popupLevel';
+        this._mouseInputNamePattern = /^mouse(\d+)$/;
         this._descriptors = new Map([
             [
                 'popupLevel',
@@ -208,8 +209,7 @@ class ProfileConditionsUI {
         let displayValue = '';
         let first = true;
         for (const modifier of modifiers) {
-            let keyName = this._keyNames.get(modifier);
-            if (typeof keyName === 'undefined') { keyName = modifier; }
+            const keyName = this._getModifierInputName(modifier);
 
             if (first) {
                 first = false;
@@ -289,6 +289,17 @@ class ProfileConditionsUI {
 
     _normalizeDomains(value) {
         return this.splitValue(value).join(', ');
+    }
+
+    _getModifierInputName(value) {
+        const keyName = this._keyNames.get(value);
+        if (typeof keyName !== 'undefined') { return keyName; }
+
+        const pattern = this._mouseInputNamePattern;
+        const match = pattern.exec(value);
+        if (match !== null) { return `Mouse ${match[1]}`; }
+
+        return value;
     }
 }
 
