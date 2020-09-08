@@ -61,8 +61,10 @@ class Frontend {
         this._popupFactory = popupFactory;
         this._allowRootFramePopupProxy = allowRootFramePopupProxy;
         this._popupCache = new Map();
+        this._popupEventListeners = new EventListenerCollection();
         this._updatePopupToken = null;
         this._clearSelectionTimer = null;
+        this._isPointerOverPopup = false;
 
         this._runtimeMessageHandlers = new Map([
             ['requestFrontendReadyBroadcast',        {async: false, handler: this._onMessageRequestFrontendReadyBroadcast.bind(this)}]
@@ -237,6 +239,7 @@ class Frontend {
         if (this._popup !== null) {
             this._popup.hide(!passive);
             this._popup.clearAutoPlayTimer();
+            this._isPointerOverPopup = false;
         }
         this._updatePendingOptions();
     }
@@ -273,6 +276,15 @@ class Frontend {
         }
     }
 
+    _onPopupFramePointerOver() {
+        this._isPointerOverPopup = true;
+        this._stopClearSelectionDelayed();
+    }
+
+    _onPopupFramePointerOut() {
+        this._isPointerOverPopup = false;
+    }
+
     _clearSelection(passive) {
         this._stopClearSelectionDelayed();
         this._textScanner.clearSelection(passive);
@@ -285,6 +297,7 @@ class Frontend {
             this._stopClearSelectionDelayed();
             this._clearSelectionTimer = setTimeout(() => {
                 this._clearSelectionTimer = null;
+                if (this._isPointerOverPopup) { return; }
                 this._clearSelection(passive);
             }, delay);
         } else {
@@ -384,7 +397,11 @@ class Frontend {
         }
 
         this._clearSelection(true);
+        this._popupEventListeners.removeAllEventListeners();
         this._popup = popup;
+        this._popupEventListeners.on(popup, 'framePointerOver', this._onPopupFramePointerOver.bind(this));
+        this._popupEventListeners.on(popup, 'framePointerOut', this._onPopupFramePointerOut.bind(this));
+        this._isPointerOverPopup = false;
     }
 
     async _getDefaultPopup() {
