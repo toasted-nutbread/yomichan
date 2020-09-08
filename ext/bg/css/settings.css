@@ -46,6 +46,21 @@ html:root:not([data-options-general-result-output-mode=merge]) #dict-main-group 
     border-color: #f00000;
 }
 
+.mouse-button {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.mouse-button[hidden] {
+    display: none;
+}
+.mouse-button-icon {
+    width: 20px;
+    height: 20px;
+    display: block;
+    background: url(/mixed/img/mouse.svg) no-repeat center center;
+    background-size: 20px 20px;
+}
+
 .condition {
     display: flex;
     -flex-wrap: wrap;
@@ -110,10 +125,6 @@ html:root:not([data-options-general-result-output-mode=merge]) #dict-main-group 
 }
 
 .condition-groups>.condition-group:last-child>.condition-group-separator-label {
-    display: none;
-}
-
-.condition-mouse-button[hidden] {
     display: none;
 }
 
