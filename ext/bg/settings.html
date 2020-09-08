@@ -436,6 +436,30 @@
                     <label for="scan-modifier-key">Scan modifier key</label>
                     <select class="form-control" id="scan-modifier-key" data-setting="scanning.modifier"></select>
                 </div>
+
+                <div class="form-group">
+                    <label>Scan inputs</label>
+                    <div class="scan-input-list" id="scan-input-list"></div>
+                    <button class="btn btn-default" id="scan-input-add" title="Add scan input"><span class="glyphicon glyphicon-plus"></span></button>
+
+                    <template id="scan-input-template"><div class="scan-input">
+                        <table class="scan-input-table"><tbody>
+                            <tr class="scan-input-include">
+                                <td class="scan-input-index-cell" rowspan="2"><div class="scan-input-index"></div></td>
+                                <td class="scan-input-prefix-cell"><div class="scan-input-prefix">Include</div></td>
+                                <td class="scan-input-input-cell"><input type="text" class="form-control scan-input-field" placeholder="No inputs"></td>
+                                <td class="scan-input-mouse-button-cell"><button class="btn btn-default mouse-button" title="Mouse button"><span class="mouse-button-icon"></span></button></td>
+                                <td class="scan-input-remove-button-cell"><button class="btn btn-danger scan-input-remove" title="Remove"><span class="glyphicon glyphicon-remove"></span></button></td>
+                            </tr>
+                            <tr class="scan-input-exclude">
+                                <td class="scan-input-prefix-cell"><div class="scan-input-prefix">Exclude</div></td>
+                                <td class="scan-input-input-cell"><input type="text" class="form-control scan-input-field" placeholder="No inputs"></td>
+                                <td class="scan-input-mouse-button-cell"><button class="btn btn-default mouse-button" title="Mouse button"><span class="mouse-button-icon"></span></button></td>
+                                <td class="scan-input-empty-cell"></td>
+                            </tr>
+                        </tbody></table>
+                    </div></template>
+                </div>
             </div>
 
             <div>
