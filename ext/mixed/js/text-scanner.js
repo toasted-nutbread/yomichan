@@ -200,7 +200,7 @@ class TextScanner extends EventDispatcher {
             optionsContext = await this._getOptionsContext();
             searched = true;
 
-            const result = await this._findDefinitions(textSource, cause);
+            const result = await this._findDefinitions(textSource, optionsContext);
             if (result !== null) {
                 ({definitions, sentence, type} = result);
                 this._causeCurrent = cause;
