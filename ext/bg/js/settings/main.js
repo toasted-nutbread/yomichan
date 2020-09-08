@@ -22,7 +22,6 @@
  * ClipboardPopupsController
  * DictionaryController
  * DictionaryImportController
- * DocumentUtil
  * GenericSettingController
  * PopupPreviewController
  * ProfileController
