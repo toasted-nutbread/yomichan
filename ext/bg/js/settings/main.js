@@ -26,6 +26,7 @@
  * GenericSettingController
  * PopupPreviewController
  * ProfileController
+ * ScanInputsController
  * SettingsBackup
  * SettingsController
  * StorageController
@@ -110,6 +111,9 @@ async function setupEnvironmentInfo() {
 
         const settingsBackup = new SettingsBackup(settingsController);
         settingsBackup.prepare();
+
+        const scanInputsController = new ScanInputsController(settingsController);
+        scanInputsController.prepare();
 
         yomichan.ready();
     } catch (e) {
