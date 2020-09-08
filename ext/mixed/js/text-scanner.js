@@ -183,7 +183,7 @@ class TextScanner extends EventDispatcher {
     }
 
     async search(textSource) {
-        return await this._search(textSource, {cause: 'script'});
+        return await this._search(textSource, {cause: 'script', index: -1, empty: false});
     }
 
     // Private
@@ -244,9 +244,11 @@ class TextScanner extends EventDispatcher {
         const modifiers = DocumentUtil.getActiveModifiersAndButtons(e);
         this.trigger('activeModifiersChanged', {modifiers});
 
-        if (!this._modifiersMatchInput(modifiers)) { return; }
+        const inputInfo = this._getMatchingInputGroup(modifiers);
+        if (inputInfo === null) { return; }
 
-        this._searchAtFromMouse(e.clientX, e.clientY);
+        const {index, empty} = inputInfo;
+        this._searchAtFromMouse(e.clientX, e.clientY, index, empty);
     }
 
     _onMouseDown(e) {
@@ -270,7 +272,7 @@ class TextScanner extends EventDispatcher {
 
     _onClick(e) {
         if (this._searchOnClick) {
-            this._searchAt(e.clientX, e.clientY, {cause: 'click'});
+            this._searchAt(e.clientX, e.clientY, {cause: 'click', index: -1, empty: false});
         }
 
         if (this._preventNextClick) {
@@ -343,7 +345,7 @@ class TextScanner extends EventDispatcher {
             return;
         }
 
-        this._searchAt(primaryTouch.clientX, primaryTouch.clientY, {cause: 'touchMove'});
+        this._searchAt(primaryTouch.clientX, primaryTouch.clientY, {cause: 'touchMove', index: -1, empty: false});
 
         e.preventDefault(); // Disable scroll
     }
@@ -481,17 +483,17 @@ class TextScanner extends EventDispatcher {
         }
     }
 
-    async _searchAtFromMouse(x, y) {
+    async _searchAtFromMouse(x, y, inputIndex, inputEmpty) {
         if (this._pendingLookup) { return; }
 
-        if (this._hasEmptyInputIncludeArray()) {
+        if (inputEmpty) {
             if (!await this._scanTimerWait()) {
                 // Aborted
                 return;
             }
         }
 
-        await this._searchAt(x, y, {cause: 'mouse'});
+        await this._searchAt(x, y, {cause: 'mouse', index: inputIndex, empty: inputEmpty});
     }
 
     async _searchAtFromTouchStart(x, y) {
@@ -499,7 +501,7 @@ class TextScanner extends EventDispatcher {
 
         const textSourceCurrentPrevious = this._textSourceCurrent !== null ? this._textSourceCurrent.clone() : null;
 
-        await this._searchAt(x, y, {cause: 'touchStart'});
+        await this._searchAt(x, y, {cause: 'touchStart', index: -1, empty: false});
 
         if (
             this._textSourceCurrent !== null &&
@@ -511,20 +513,20 @@ class TextScanner extends EventDispatcher {
         }
     }
 
-    _hasEmptyInputIncludeArray() {
-        for (const {include} of this._inputs) {
-            if (include.length === 0) { return true; }
-        }
-        return false;
-    }
-
-    _modifiersMatchInput(modifiers) {
-        for (const {include, exclude} of this._inputs) {
+    _getMatchingInputGroup(modifiers) {
+        let fallback = null;
+        for (let i = 0, ii = this._inputs.length; i < ii; ++i) {
+            const input = this._inputs[i];
+            const {include, exclude} = input;
             if (this._setHasAll(modifiers, include) && (exclude.length === 0 || !this._setHasAll(modifiers, exclude))) {
-                return true;
+                if (include.length > 0) {
+                    return {index: i, empty: false, input};
+                } else if (fallback === null) {
+                    fallback = {index: i, empty: true, input};
+                }
             }
         }
-        return false;
+        return fallback;
     }
 
     _setHasAll(set, values) {
