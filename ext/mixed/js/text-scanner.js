@@ -43,13 +43,12 @@ class TextScanner extends EventDispatcher {
 
         this._deepContentScan = false;
         this._selectText = false;
-        this._modifier = 'none';
-        this._useMiddleMouse = false;
         this._delay = 0;
         this._touchInputEnabled = false;
         this._scanLength = 1;
         this._sentenceExtent = 1;
         this._layoutAwareScan = false;
+        this._inputs = [];
 
         this._enabled = false;
         this._eventListeners = new EventListenerCollection();
@@ -94,18 +93,18 @@ class TextScanner extends EventDispatcher {
         }
     }
 
-    setOptions({deepContentScan, selectText, modifier, useMiddleMouse, delay, touchInputEnabled, scanLength, sentenceExtent, layoutAwareScan}) {
+    setOptions({inputs, deepContentScan, selectText, delay, touchInputEnabled, scanLength, sentenceExtent, layoutAwareScan}) {
+        if (Array.isArray(inputs)) {
+            this._inputs = inputs.map(({include, exclude}) => ({
+                include: this._getInputArray(include),
+                exclude: this._getInputArray(exclude)
+            }));
+        }
         if (typeof deepContentScan === 'boolean') {
             this._deepContentScan = deepContentScan;
         }
         if (typeof selectText === 'boolean') {
             this._selectText = selectText;
-        }
-        if (typeof modifier === 'string') {
-            this._modifier = modifier;
-        }
-        if (typeof useMiddleMouse === 'boolean') {
-            this._useMiddleMouse = useMiddleMouse;
         }
         if (typeof delay === 'number') {
             this._delay = delay;
@@ -245,12 +244,7 @@ class TextScanner extends EventDispatcher {
         const modifiers = DocumentUtil.getActiveModifiers(e);
         this.trigger('activeModifiersChanged', {modifiers});
 
-        if (!(
-            this._isScanningModifierPressed(this._modifier, e) ||
-            (this._useMiddleMouse && DocumentUtil.isMouseButtonDown(e, 'auxiliary'))
-        )) {
-            return;
-        }
+        if (!this._modifiersMatchInput(modifiers)) { return; }
 
         this._searchAtFromMouse(e.clientX, e.clientY);
     }
@@ -406,17 +400,6 @@ class TextScanner extends EventDispatcher {
         ];
     }
 
-    _isScanningModifierPressed(scanningModifier, mouseEvent) {
-        switch (scanningModifier) {
-            case 'alt': return mouseEvent.altKey;
-            case 'ctrl': return mouseEvent.ctrlKey;
-            case 'shift': return mouseEvent.shiftKey;
-            case 'meta': return mouseEvent.metaKey;
-            case 'none': return true;
-            default: return false;
-        }
-    }
-
     _getTouch(touchList, identifier) {
         for (const touch of touchList) {
             if (touch.identifier === identifier) {
@@ -501,7 +484,7 @@ class TextScanner extends EventDispatcher {
     async _searchAtFromMouse(x, y) {
         if (this._pendingLookup) { return; }
 
-        if (this._modifier === 'none') {
+        if (this._hasEmptyInputIncludeArray()) {
             if (!await this._scanTimerWait()) {
                 // Aborted
                 return;
@@ -526,5 +509,38 @@ class TextScanner extends EventDispatcher {
             this._preventNextContextMenu = true;
             this._preventNextMouseDown = true;
         }
+    }
+
+    _hasEmptyInputIncludeArray() {
+        for (const {include} of this._inputs) {
+            if (include.length === 0) { return true; }
+        }
+        return false;
+    }
+
+    _modifiersMatchInput(modifiers) {
+        for (const {include, exclude} of this._inputs) {
+            if (this._setHasAll(modifiers, include) && (exclude.length === 0 || !this._setHasAll(modifiers, exclude))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    _setHasAll(set, values) {
+        for (const value of values) {
+            if (!set.has(value)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    _getInputArray(value) {
+        return (
+            typeof value === 'string' ?
+            value.split(/[,;\s]+/).map((v) => v.trim().toLowerCase()).filter((v) => v.length > 0) :
+            []
+        );
     }
 }

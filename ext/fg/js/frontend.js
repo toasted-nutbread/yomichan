@@ -321,10 +321,9 @@ class Frontend {
         await this._updatePopup();
 
         this._textScanner.setOptions({
+            inputs: scanningOptions.inputs,
             deepContentScan: scanningOptions.deepDomScan,
             selectText: scanningOptions.selectText,
-            modifier: scanningOptions.modifier,
-            useMiddleMouse: scanningOptions.middleMouse,
             delay: scanningOptions.delay,
             touchInputEnabled: scanningOptions.touchInputEnabled,
             scanLength: scanningOptions.length,
