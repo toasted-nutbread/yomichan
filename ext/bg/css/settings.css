@@ -128,17 +128,17 @@ html:root:not([data-options-general-result-output-mode=merge]) #dict-main-group 
     display: none;
 }
 
-.audio-source-list {
-    counter-reset: audio-source-id;
+.generic-input-list {
+    counter-reset: generic-input-id;
 }
-.audio-source-list .audio-source-prefix {
+.generic-input-list .generic-input-prefix {
     flex: 0 0 auto;
     width: 39px;
     text-align: center;
 }
-.audio-source-list .audio-source-prefix:after {
-    counter-increment: audio-source-id;
-    content: counter(audio-source-id);
+.generic-input-list .generic-input-prefix:after {
+    counter-increment: generic-input-id;
+    content: counter(generic-input-id);
 }
 
 #custom-popup-css,
