@@ -41,23 +41,6 @@ function showExtensionInformation() {
     node.textContent = `${manifest.name} v${manifest.version}`;
 }
 
-async function settingsPopulateModifierKeys() {
-    const scanModifierKeySelect = document.querySelector('#scan-modifier-key');
-    scanModifierKeySelect.textContent = '';
-
-    const {platform: {os}} = await api.getEnvironmentInfo();
-    const modifierKeys = [
-        ['none', 'None'],
-        ...DocumentUtil.getModifierKeys(os)
-    ];
-    for (const [value, name] of modifierKeys) {
-        const option = document.createElement('option');
-        option.value = value;
-        option.textContent = name;
-        scanModifierKeySelect.appendChild(option);
-    }
-}
-
 async function setupEnvironmentInfo() {
     const {browser, platform} = await api.getEnvironmentInfo();
     document.documentElement.dataset.browser = browser;
@@ -72,7 +55,6 @@ async function setupEnvironmentInfo() {
 
         setupEnvironmentInfo();
         showExtensionInformation();
-        settingsPopulateModifierKeys();
 
         const optionsFull = await api.optionsGetFull();
 
