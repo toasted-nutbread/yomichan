@@ -152,6 +152,7 @@ class TextScanner extends EventDispatcher {
             }
             this._textSourceCurrent = null;
             this._textSourceCurrentSelected = false;
+            this._causeCurrent = null;
         }
         this.trigger('clearSelection', {passive});
     }
