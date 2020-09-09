@@ -24,20 +24,20 @@ class AnkiConnect {
         this._versionCheckPromise = null;
     }
 
-    setServer(server) {
-        this._server = server;
-    }
-
-    getServer() {
+    get server() {
         return this._server;
     }
 
-    setEnabled(enabled) {
-        this._enabled = enabled;
+    set server(value) {
+        this._server = value;
     }
 
-    isEnabled() {
+    get enabled() {
         return this._enabled;
+    }
+
+    set enabled(value) {
+        this._enabled = value;
     }
 
     async addNote(note) {

@@ -1023,8 +1023,8 @@ class Backend {
         const options = this.getOptions({current: true});
         this._updateBadge();
 
-        this._anki.setServer(options.anki.server);
-        this._anki.setEnabled(options.anki.enable);
+        this._anki.server = options.anki.server;
+        this._anki.enabled = options.anki.enable;
 
         if (options.parsing.enableMecabParser) {
             this._mecab.startListener();
