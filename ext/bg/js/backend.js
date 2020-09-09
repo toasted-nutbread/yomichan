@@ -445,35 +445,8 @@ class Backend {
     async _onApiDefinitionAdd({definition, mode, context, ownerFrameId, optionsContext}, sender) {
         const options = this.getOptions(optionsContext);
         const templates = this._getTemplates(options);
-        const fields = (
-            mode === 'kanji' ?
-            options.anki.kanji.fields :
-            options.anki.terms.fields
-        );
-        const anki = this._anki;
-
-        if (mode !== 'kanji') {
-            const {sources, customSourceUrl} = options.audio;
-            await this._ankiNoteBuilder.injectAudio(
-                anki,
-                definition,
-                fields,
-                {sources, customSourceUrl}
-            );
-        }
-
-        await this._ankiNoteBuilder.injectClipboardImage(anki, definition, fields);
-
         const {id: tabId, windowId} = (sender && sender.tab ? sender.tab : {});
-        const {format, quality} = options.anki.screenshot;
-        await this._ankiNoteBuilder.injectScreenshot(
-            anki,
-            definition,
-            fields,
-            {windowId, tabId, ownerFrameId, format, quality}
-        );
-
-        const note = await this._createNote(definition, mode, context, options, templates);
+        const note = await this._createNote(definition, mode, context, options, templates, true, {windowId, tabId, ownerFrameId});
         return this._anki.addNote(note);
     }
 
@@ -486,7 +459,7 @@ class Backend {
             const notePromises = [];
             for (const definition of definitions) {
                 for (const mode of modes) {
-                    const notePromise = this._createNote(definition, mode, context, options, templates);
+                    const notePromise = this._createNote(definition, mode, context, options, templates, false, null);
                     notePromises.push(notePromise);
                 }
             }
@@ -1612,14 +1585,17 @@ class Backend {
         });
     }
 
-    async _createNote(definition, mode, context, options, templates) {
+    async _createNote(definition, mode, context, options, templates, injectMedia, screenshotTarget) {
         const {
             general: {resultOutputMode, compactGlossaries},
-            anki: {tags, duplicateScope, kanji, terms}
+            anki: {tags, duplicateScope, kanji, terms, screenshot: {format, quality}},
+            audio: {sources, customSourceUrl}
         } = options;
         const modeOptions = (mode === 'kanji') ? kanji : terms;
+        const {windowId, tabId, ownerFrameId} = (isObject(screenshotTarget) ? screenshotTarget : {});
 
         return await this._ankiNoteBuilder.createNote({
+            anki: injectMedia ? this._anki : null,
             definition,
             mode,
             context,
@@ -1628,7 +1604,10 @@ class Backend {
             duplicateScope,
             resultOutputMode,
             compactGlossaries,
-            modeOptions
+            modeOptions,
+            audioDetails: {sources, customSourceUrl},
+            screenshotDetails: {windowId, tabId, ownerFrameId, format, quality},
+            clipboardImage: true
         });
     }
 

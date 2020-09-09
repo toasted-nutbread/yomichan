@@ -28,6 +28,7 @@ class AnkiNoteBuilder {
     }
 
     async createNote({
+        anki=null,
         definition,
         mode,
         context,
@@ -37,8 +38,15 @@ class AnkiNoteBuilder {
         resultOutputMode='split',
         compactGlossaries=false,
         modeOptions: {fields, deck, model},
+        audioDetails=null,
+        screenshotDetails=null,
+        clipboardImage=false,
         errors=null
     }) {
+        if (anki !== null) {
+            await this.injectMedia(anki, definition, fields, mode, audioDetails, screenshotDetails, clipboardImage);
+        }
+
         const fieldEntries = Object.entries(fields);
         const noteFields = {};
         const note = {
@@ -94,6 +102,18 @@ class AnkiNoteBuilder {
                 return `{${marker}-render-error}`;
             }
         });
+    }
+
+    async injectMedia(anki, definition, fields, mode, audioDetails, screenshotDetails, clipboardImage) {
+        if (mode !== 'kanji' && audioDetails !== null) {
+            await this.injectAudio(anki, definition, fields, audioDetails);
+        }
+        if (screenshotDetails !== null) {
+            await this.injectScreenshot(anki, definition, fields, screenshotDetails);
+        }
+        if (clipboardImage) {
+            await this.injectClipboardImage(anki, definition, fields);
+        }
     }
 
     async injectAudio(anki, definition, fields, details) {
