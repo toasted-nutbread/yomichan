@@ -105,14 +105,14 @@ class AnkiNoteBuilder {
     }
 
     async injectMedia(anki, definition, fields, mode, audioDetails, screenshotDetails, clipboardImage) {
-        if (mode !== 'kanji' && audioDetails !== null) {
-            await this.injectAudio(anki, definition, fields, audioDetails);
-        }
         if (screenshotDetails !== null) {
             await this.injectScreenshot(anki, definition, fields, screenshotDetails);
         }
         if (clipboardImage) {
             await this.injectClipboardImage(anki, definition, fields);
+        }
+        if (mode !== 'kanji' && audioDetails !== null) {
+            await this.injectAudio(anki, definition, fields, audioDetails);
         }
     }
 
