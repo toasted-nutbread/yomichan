@@ -471,7 +471,7 @@ class Backend {
             );
         }
 
-        const note = await this._ankiNoteBuilder.createNote(definition, mode, context, options, templates);
+        const note = await this._createNote(definition, mode, context, options, templates);
         return this._anki.addNote(note);
     }
 
@@ -484,7 +484,7 @@ class Backend {
             const notePromises = [];
             for (const definition of definitions) {
                 for (const mode of modes) {
-                    const notePromise = this._ankiNoteBuilder.createNote(definition, mode, context, options, templates);
+                    const notePromise = this._createNote(definition, mode, context, options, templates);
                     notePromises.push(notePromise);
                 }
             }
@@ -1607,6 +1607,23 @@ class Backend {
             reader.onload = () => resolve(reader.result);
             reader.onerror = () => reject(reader.error);
             reader.readAsDataURL(file);
+        });
+    }
+
+    async _createNote(definition, mode, context, options, templates) {
+        const {general: {resultOutputMode, compactGlossaries}, anki: ankiOptions} = options;
+        const {tags, duplicateScope} = ankiOptions;
+        const modeOptions = (mode === 'kanji') ? ankiOptions.kanji : ankiOptions.terms;
+        return await this._ankiNoteBuilder.createNote({
+            definition,
+            mode,
+            context,
+            templates,
+            tags,
+            duplicateScope,
+            resultOutputMode,
+            compactGlossaries,
+            modeOptions
         });
     }
 }

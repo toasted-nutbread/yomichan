@@ -27,22 +27,28 @@ class AnkiNoteBuilder {
         this._getClipboardImage = getClipboardImage;
     }
 
-    async createNote(definition, mode, context, options, templates) {
-        const ankiOptions = options.anki;
-        const {tags, duplicateScope} = ankiOptions;
-        const modeOptions = (mode === 'kanji') ? ankiOptions.kanji : ankiOptions.terms;
-        const fieldEntries = Object.entries(modeOptions.fields);
-
+    async createNote({
+        definition,
+        mode,
+        context,
+        templates,
+        tags=[],
+        duplicateScope='collection',
+        resultOutputMode='split',
+        compactGlossaries=false,
+        modeOptions: {fields, deck, model}
+    }) {
+        const fieldEntries = Object.entries(fields);
         const noteFields = {};
         const note = {
             fields: noteFields,
             tags,
-            deckName: modeOptions.deck,
-            modelName: modeOptions.model,
+            deckName: deck,
+            modelName: model,
             options: {duplicateScope}
         };
 
-        const data = this.createNoteData(definition, mode, context, options);
+        const data = this.createNoteData(definition, mode, context, resultOutputMode, compactGlossaries);
         const formattedFieldValuePromises = [];
         for (const [, fieldValue] of fieldEntries) {
             const formattedFieldValuePromise = this.formatField(fieldValue, data, templates, null);
@@ -59,10 +65,9 @@ class AnkiNoteBuilder {
         return note;
     }
 
-    createNoteData(definition, mode, context, options) {
+    createNoteData(definition, mode, context, resultOutputMode, compactGlossaries) {
         const pitches = DictionaryDataUtil.getPitchAccentInfos(definition);
         const pitchCount = pitches.reduce((i, v) => i + v.pitches.length, 0);
-        const {general: {resultOutputMode, compactGlossaries}} = options;
         return {
             marker: null,
             definition,

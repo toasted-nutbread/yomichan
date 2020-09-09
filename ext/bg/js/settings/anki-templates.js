@@ -147,7 +147,8 @@ class AnkiTemplatesController {
                     renderTemplate: api.templateRender.bind(api),
                     getClipboardImage: api.clipboardGetImage.bind(api)
                 });
-                const data = ankiNoteBuilder.createNoteData(definition, mode, context, options);
+                const {general: {resultOutputMode, compactGlossaries}} = options;
+                const data = ankiNoteBuilder.createNoteData(definition, mode, context, resultOutputMode, compactGlossaries);
                 result = await ankiNoteBuilder.formatField(field, data, templates, exceptions);
             }
         } catch (e) {
