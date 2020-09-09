@@ -16,9 +16,9 @@
  */
 
 class AnkiConnect {
-    constructor(server) {
+    constructor() {
         this._enabled = false;
-        this._server = server;
+        this._server = null;
         this._localVersion = 2;
         this._remoteVersion = 0;
         this._versionCheckPromise = null;
