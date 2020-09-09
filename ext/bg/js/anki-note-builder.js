@@ -96,10 +96,11 @@ class AnkiNoteBuilder {
         });
     }
 
-    async injectAudio(anki, definition, fields, sources, customSourceUrl) {
+    async injectAudio(anki, definition, fields, details) {
         if (!this._containsMarker(fields, 'audio')) { return; }
 
         try {
+            const {sources, customSourceUrl} = details;
             const expressions = definition.expressions;
             const audioSourceDefinition = Array.isArray(expressions) ? expressions[0] : definition;
 
@@ -127,14 +128,14 @@ class AnkiNoteBuilder {
         }
     }
 
-    async injectScreenshot(anki, definition, fields, screenshot) {
+    async injectScreenshot(anki, definition, fields, details) {
         if (!this._containsMarker(fields, 'screenshot')) { return; }
 
         const reading = definition.reading;
         const now = new Date(Date.now());
 
         try {
-            const {windowId, tabId, ownerFrameId, format, quality} = screenshot;
+            const {windowId, tabId, ownerFrameId, format, quality} = details;
             const dataUrl = await this._getScreenshot(windowId, tabId, ownerFrameId, format, quality);
 
             const {mediaType, data} = this._getDataUrlInfo(dataUrl);

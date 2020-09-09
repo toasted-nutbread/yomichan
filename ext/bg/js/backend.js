@@ -453,13 +453,12 @@ class Backend {
         const anki = this._anki;
 
         if (mode !== 'kanji') {
-            const {customSourceUrl} = options.audio;
+            const {sources, customSourceUrl} = options.audio;
             await this._ankiNoteBuilder.injectAudio(
                 anki,
                 definition,
                 fields,
-                options.audio.sources,
-                customSourceUrl
+                {sources, customSourceUrl}
             );
         }
 
