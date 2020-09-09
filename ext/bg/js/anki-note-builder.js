@@ -20,11 +20,12 @@
  */
 
 class AnkiNoteBuilder {
-    constructor({anki, audioSystem, renderTemplate, getClipboardImage=null}) {
+    constructor({anki, audioSystem, renderTemplate, getClipboardImage=null, getScreenshot=null}) {
         this._anki = anki;
         this._audioSystem = audioSystem;
         this._renderTemplate = renderTemplate;
         this._getClipboardImage = getClipboardImage;
+        this._getScreenshot = getScreenshot;
     }
 
     async createNote({
@@ -134,9 +135,12 @@ class AnkiNoteBuilder {
         const now = new Date(Date.now());
 
         try {
-            let fileName = `yomichan_browser_screenshot_${reading}_${this._dateToString(now)}.${screenshot.format}`;
+            const {windowId, tabId, ownerFrameId, format, quality} = screenshot;
+            const dataUrl = await this._getScreenshot(windowId, tabId, ownerFrameId, format, quality);
+
+            let fileName = `yomichan_browser_screenshot_${reading}_${this._dateToString(now)}.${format}`;
             fileName = AnkiNoteBuilder.replaceInvalidFileNameCharacters(fileName);
-            const data = screenshot.dataUrl.replace(/^data:[\w\W]*?,/, '');
+            const data = dataUrl.replace(/^data:[\w\W]*?,/, '');
 
             await this._anki.storeMediaFile(fileName, data);
 
