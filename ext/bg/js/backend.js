@@ -1613,9 +1613,12 @@ class Backend {
     }
 
     async _createNote(definition, mode, context, options, templates) {
-        const {general: {resultOutputMode, compactGlossaries}, anki: ankiOptions} = options;
-        const {tags, duplicateScope} = ankiOptions;
-        const modeOptions = (mode === 'kanji') ? ankiOptions.kanji : ankiOptions.terms;
+        const {
+            general: {resultOutputMode, compactGlossaries},
+            anki: {tags, duplicateScope, kanji, terms}
+        } = options;
+        const modeOptions = (mode === 'kanji') ? kanji : terms;
+
         return await this._ankiNoteBuilder.createNote({
             definition,
             mode,
