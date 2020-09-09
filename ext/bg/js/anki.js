@@ -76,6 +76,10 @@ class AnkiConnect {
         return await this._invoke('guiBrowse', {query});
     }
 
+    async guiBrowseNote(noteId) {
+        return await this.guiBrowse(`nid:${noteId}`);
+    }
+
     async storeMediaFile(fileName, dataBase64) {
         if (!this._enabled) {
             throw new Error('AnkiConnect not enabled');

@@ -524,7 +524,7 @@ class Backend {
     }
 
     async _onApiNoteView({noteId}) {
-        return await this._anki.guiBrowse(`nid:${noteId}`);
+        return await this._anki.guiBrowseNote(noteId);
     }
 
     async _onApiTemplateRender({template, data, marker}) {
