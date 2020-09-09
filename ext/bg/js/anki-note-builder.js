@@ -36,7 +36,8 @@ class AnkiNoteBuilder {
         duplicateScope='collection',
         resultOutputMode='split',
         compactGlossaries=false,
-        modeOptions: {fields, deck, model}
+        modeOptions: {fields, deck, model},
+        errors=null
     }) {
         const fieldEntries = Object.entries(fields);
         const noteFields = {};
@@ -51,7 +52,7 @@ class AnkiNoteBuilder {
         const data = this.createNoteData(definition, mode, context, resultOutputMode, compactGlossaries);
         const formattedFieldValuePromises = [];
         for (const [, fieldValue] of fieldEntries) {
-            const formattedFieldValuePromise = this.formatField(fieldValue, data, templates, null);
+            const formattedFieldValuePromise = this.formatField(fieldValue, data, templates, errors);
             formattedFieldValuePromises.push(formattedFieldValuePromise);
         }
 

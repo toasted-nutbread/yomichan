@@ -159,7 +159,8 @@ class AnkiTemplatesController {
                         fields: {field},
                         deck: '',
                         model: ''
-                    }
+                    },
+                    errors: exceptions
                 });
                 result = note.fields.field;
             }
