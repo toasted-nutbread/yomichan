@@ -44,7 +44,7 @@ class AnkiNoteBuilder {
         errors=null
     }) {
         if (anki !== null) {
-            await this.injectMedia(anki, definition, fields, mode, audioDetails, screenshotDetails, clipboardImage);
+            await this._injectMedia(anki, definition, fields, mode, audioDetails, screenshotDetails, clipboardImage);
         }
 
         const fieldEntries = Object.entries(fields);
@@ -57,10 +57,10 @@ class AnkiNoteBuilder {
             options: {duplicateScope}
         };
 
-        const data = this.createNoteData(definition, mode, context, resultOutputMode, compactGlossaries);
+        const data = this._createNoteData(definition, mode, context, resultOutputMode, compactGlossaries);
         const formattedFieldValuePromises = [];
         for (const [, fieldValue] of fieldEntries) {
-            const formattedFieldValuePromise = this.formatField(fieldValue, data, templates, errors);
+            const formattedFieldValuePromise = this._formatField(fieldValue, data, templates, errors);
             formattedFieldValuePromises.push(formattedFieldValuePromise);
         }
 
@@ -74,7 +74,9 @@ class AnkiNoteBuilder {
         return note;
     }
 
-    createNoteData(definition, mode, context, resultOutputMode, compactGlossaries) {
+    // Private
+
+    _createNoteData(definition, mode, context, resultOutputMode, compactGlossaries) {
         const pitches = DictionaryDataUtil.getPitchAccentInfos(definition);
         const pitchCount = pitches.reduce((i, v) => i + v.pitches.length, 0);
         return {
@@ -92,7 +94,7 @@ class AnkiNoteBuilder {
         };
     }
 
-    async formatField(field, data, templates, errors=null) {
+    async _formatField(field, data, templates, errors=null) {
         const pattern = /\{([\w-]+)\}/g;
         return await AnkiNoteBuilder.stringReplaceAsync(field, pattern, async (g0, marker) => {
             try {
@@ -104,19 +106,19 @@ class AnkiNoteBuilder {
         });
     }
 
-    async injectMedia(anki, definition, fields, mode, audioDetails, screenshotDetails, clipboardImage) {
+    async _injectMedia(anki, definition, fields, mode, audioDetails, screenshotDetails, clipboardImage) {
         if (screenshotDetails !== null) {
-            await this.injectScreenshot(anki, definition, fields, screenshotDetails);
+            await this._injectScreenshot(anki, definition, fields, screenshotDetails);
         }
         if (clipboardImage) {
-            await this.injectClipboardImage(anki, definition, fields);
+            await this._injectClipboardImage(anki, definition, fields);
         }
         if (mode !== 'kanji' && audioDetails !== null) {
-            await this.injectAudio(anki, definition, fields, audioDetails);
+            await this._injectAudio(anki, definition, fields, audioDetails);
         }
     }
 
-    async injectAudio(anki, definition, fields, details) {
+    async _injectAudio(anki, definition, fields, details) {
         if (!this._containsMarker(fields, 'audio')) { return; }
 
         try {
@@ -148,7 +150,7 @@ class AnkiNoteBuilder {
         }
     }
 
-    async injectScreenshot(anki, definition, fields, details) {
+    async _injectScreenshot(anki, definition, fields, details) {
         if (!this._containsMarker(fields, 'screenshot')) { return; }
 
         const reading = definition.reading;
@@ -173,7 +175,7 @@ class AnkiNoteBuilder {
         }
     }
 
-    async injectClipboardImage(anki, definition, fields) {
+    async _injectClipboardImage(anki, definition, fields) {
         if (!this._containsMarker(fields, 'clipboard-image')) { return; }
 
         const reading = definition.reading;
