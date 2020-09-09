@@ -130,18 +130,20 @@ class AnkiNoteBuilder {
     async injectScreenshot(definition, fields, screenshot) {
         if (!this._containsMarker(fields, 'screenshot')) { return; }
 
+        const reading = definition.reading;
         const now = new Date(Date.now());
-        let fileName = `yomichan_browser_screenshot_${definition.reading}_${this._dateToString(now)}.${screenshot.format}`;
-        fileName = AnkiNoteBuilder.replaceInvalidFileNameCharacters(fileName);
-        const data = screenshot.dataUrl.replace(/^data:[\w\W]*?,/, '');
 
         try {
-            await this._anki.storeMediaFile(fileName, data);
-        } catch (e) {
-            return;
-        }
+            let fileName = `yomichan_browser_screenshot_${reading}_${this._dateToString(now)}.${screenshot.format}`;
+            fileName = AnkiNoteBuilder.replaceInvalidFileNameCharacters(fileName);
+            const data = screenshot.dataUrl.replace(/^data:[\w\W]*?,/, '');
 
-        definition.screenshotFileName = fileName;
+            await this._anki.storeMediaFile(fileName, data);
+
+            definition.screenshotFileName = fileName;
+        } catch (e) {
+            // NOP
+        }
     }
 
     async injectClipboardImage(definition, fields) {
