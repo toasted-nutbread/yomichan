@@ -96,7 +96,7 @@ class AnkiNoteBuilder {
 
     async _formatField(field, data, templates, errors=null) {
         const pattern = /\{([\w-]+)\}/g;
-        return await AnkiNoteBuilder.stringReplaceAsync(field, pattern, async (g0, marker) => {
+        return await this._stringReplaceAsync(field, pattern, async (g0, marker) => {
             try {
                 return await this._renderTemplate(templates, data, marker);
             } catch (e) {
@@ -128,7 +128,7 @@ class AnkiNoteBuilder {
 
             let fileName = this._createInjectedAudioFileName(audioSourceDefinition);
             if (fileName === null) { return; }
-            fileName = AnkiNoteBuilder.replaceInvalidFileNameCharacters(fileName);
+            fileName = this._replaceInvalidFileNameCharacters(fileName);
 
             const {audio} = await this._audioSystem.getDefinitionAudio(
                 audioSourceDefinition,
@@ -141,7 +141,7 @@ class AnkiNoteBuilder {
                 }
             );
 
-            const data = AnkiNoteBuilder.arrayBufferToBase64(audio);
+            const data = this._arrayBufferToBase64(audio);
             await anki.storeMediaFile(fileName, data);
 
             definition.audioFileName = fileName;
@@ -165,7 +165,7 @@ class AnkiNoteBuilder {
             if (extension === null) { return; }
 
             let fileName = `yomichan_browser_screenshot_${reading}_${this._dateToString(now)}.${extension}`;
-            fileName = AnkiNoteBuilder.replaceInvalidFileNameCharacters(fileName);
+            fileName = this._replaceInvalidFileNameCharacters(fileName);
 
             await anki.storeMediaFile(fileName, data);
 
@@ -190,7 +190,7 @@ class AnkiNoteBuilder {
             if (extension === null) { return; }
 
             let fileName = `yomichan_clipboard_image_${reading}_${this._dateToString(now)}.${extension}`;
-            fileName = AnkiNoteBuilder.replaceInvalidFileNameCharacters(fileName);
+            fileName = this._replaceInvalidFileNameCharacters(fileName);
 
             await anki.storeMediaFile(fileName, data);
 
@@ -255,16 +255,16 @@ class AnkiNoteBuilder {
         }
     }
 
-    static replaceInvalidFileNameCharacters(fileName) {
+    _replaceInvalidFileNameCharacters(fileName) {
         // eslint-disable-next-line no-control-regex
         return fileName.replace(/[<>:"/\\|?*\x00-\x1F]/g, '-');
     }
 
-    static arrayBufferToBase64(arrayBuffer) {
+    _arrayBufferToBase64(arrayBuffer) {
         return btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
     }
 
-    static stringReplaceAsync(str, regex, replacer) {
+    _stringReplaceAsync(str, regex, replacer) {
         let match;
         let index = 0;
         const parts = [];
