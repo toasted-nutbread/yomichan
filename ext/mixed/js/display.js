@@ -1048,8 +1048,9 @@ class Display extends EventDispatcher {
             this.setSpinnerVisible(true);
 
             const ownerFrameId = this._ownerFrameId;
+            const optionsContext = this.getOptionsContext();
             const noteContext = await this._getNoteContext();
-            const noteId = await api.definitionAdd(definition, mode, noteContext, ownerFrameId, this.getOptionsContext());
+            const noteId = await api.definitionAdd(definition, mode, noteContext, ownerFrameId, optionsContext);
             if (noteId) {
                 const index = this._definitions.indexOf(definition);
                 const adderButton = this._adderButtonFind(index, mode);
