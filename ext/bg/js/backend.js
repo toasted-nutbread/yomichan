@@ -58,7 +58,6 @@ class Backend {
             useCache: false
         });
         this._ankiNoteBuilder = new AnkiNoteBuilder({
-            anki: this._anki,
             audioSystem: this._audioSystem,
             renderTemplate: this._renderTemplate.bind(this),
             getClipboardImage: this._onApiClipboardImageGet.bind(this),
@@ -451,10 +450,12 @@ class Backend {
             options.anki.kanji.fields :
             options.anki.terms.fields
         );
+        const anki = this._anki;
 
         if (mode !== 'kanji') {
             const {customSourceUrl} = options.audio;
             await this._ankiNoteBuilder.injectAudio(
+                anki,
                 definition,
                 fields,
                 options.audio.sources,
@@ -462,11 +463,12 @@ class Backend {
             );
         }
 
-        await this._ankiNoteBuilder.injectClipboardImage(definition, fields);
+        await this._ankiNoteBuilder.injectClipboardImage(anki, definition, fields);
 
         const {id: tabId, windowId} = (sender && sender.tab ? sender.tab : {});
         const {format, quality} = options.anki.screenshot;
         await this._ankiNoteBuilder.injectScreenshot(
+            anki,
             definition,
             fields,
             {windowId, tabId, ownerFrameId, format, quality}

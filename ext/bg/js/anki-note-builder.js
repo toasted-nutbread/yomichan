@@ -20,8 +20,7 @@
  */
 
 class AnkiNoteBuilder {
-    constructor({anki, audioSystem, renderTemplate, getClipboardImage=null, getScreenshot=null}) {
-        this._anki = anki;
+    constructor({audioSystem, renderTemplate, getClipboardImage=null, getScreenshot=null}) {
         this._audioSystem = audioSystem;
         this._renderTemplate = renderTemplate;
         this._getClipboardImage = getClipboardImage;
@@ -97,7 +96,7 @@ class AnkiNoteBuilder {
         });
     }
 
-    async injectAudio(definition, fields, sources, customSourceUrl) {
+    async injectAudio(anki, definition, fields, sources, customSourceUrl) {
         if (!this._containsMarker(fields, 'audio')) { return; }
 
         try {
@@ -120,7 +119,7 @@ class AnkiNoteBuilder {
             );
 
             const data = AnkiNoteBuilder.arrayBufferToBase64(audio);
-            await this._anki.storeMediaFile(fileName, data);
+            await anki.storeMediaFile(fileName, data);
 
             definition.audioFileName = fileName;
         } catch (e) {
@@ -128,7 +127,7 @@ class AnkiNoteBuilder {
         }
     }
 
-    async injectScreenshot(definition, fields, screenshot) {
+    async injectScreenshot(anki, definition, fields, screenshot) {
         if (!this._containsMarker(fields, 'screenshot')) { return; }
 
         const reading = definition.reading;
@@ -145,7 +144,7 @@ class AnkiNoteBuilder {
             let fileName = `yomichan_browser_screenshot_${reading}_${this._dateToString(now)}.${extension}`;
             fileName = AnkiNoteBuilder.replaceInvalidFileNameCharacters(fileName);
 
-            await this._anki.storeMediaFile(fileName, data);
+            await anki.storeMediaFile(fileName, data);
 
             definition.screenshotFileName = fileName;
         } catch (e) {
@@ -153,7 +152,7 @@ class AnkiNoteBuilder {
         }
     }
 
-    async injectClipboardImage(definition, fields) {
+    async injectClipboardImage(anki, definition, fields) {
         if (!this._containsMarker(fields, 'clipboard-image')) { return; }
 
         const reading = definition.reading;
@@ -170,7 +169,7 @@ class AnkiNoteBuilder {
             let fileName = `yomichan_clipboard_image_${reading}_${this._dateToString(now)}.${extension}`;
             fileName = AnkiNoteBuilder.replaceInvalidFileNameCharacters(fileName);
 
-            await this._anki.storeMediaFile(fileName, data);
+            await anki.storeMediaFile(fileName, data);
 
             definition.clipboardImageFileName = fileName;
         } catch (e) {
