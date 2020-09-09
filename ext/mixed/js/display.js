@@ -24,6 +24,7 @@
  * MediaLoader
  * PopupFactory
  * QueryParser
+ * TemplateRenderer
  * WindowScroll
  * api
  * dynamicLoader
@@ -85,6 +86,7 @@ class Display extends EventDispatcher {
         this._ownerFrameId = null;
         this._defaultAnkiFieldTemplates = null;
         this._defaultAnkiFieldTemplatesPromise = null;
+        this._templateRenderer = new TemplateRenderer();
 
         this.registerActions([
             ['close',            () => { this.onEscape(); }],
@@ -1335,5 +1337,9 @@ class Display extends EventDispatcher {
         const value = await api.getDefaultAnkiFieldTemplates();
         this._defaultAnkiFieldTemplates = value;
         return value;
+    }
+
+    async _renderTemplate(template, data, marker) {
+        return await this._templateRenderer.render(template, data, marker);
     }
 }
