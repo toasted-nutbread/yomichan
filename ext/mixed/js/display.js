@@ -83,6 +83,8 @@ class Display extends EventDispatcher {
         });
         this._mode = null;
         this._ownerFrameId = null;
+        this._defaultAnkiFieldTemplates = null;
+        this._defaultAnkiFieldTemplatesPromise = null;
 
         this.registerActions([
             ['close',            () => { this.onEscape(); }],
@@ -1314,5 +1316,32 @@ class Display extends EventDispatcher {
         }
         this._mode = mode;
         this.trigger('modeChange', {mode});
+    }
+
+    async _getTemplates(options) {
+        let templates = options.anki.fieldTemplates;
+        if (typeof templates === 'string') { return templates; }
+
+        templates = this._defaultAnkiFieldTemplates;
+        if (typeof templates === 'string') { return templates; }
+
+        return await this._getDefaultTemplatesPromise();
+    }
+
+    _getDefaultTemplatesPromise() {
+        if (this._defaultAnkiFieldTemplatesPromise === null) {
+            this._defaultAnkiFieldTemplatesPromise = this._getDefaultTemplates();
+            this._defaultAnkiFieldTemplatesPromise.then(
+                () => { this._defaultAnkiFieldTemplatesPromise = null; },
+                () => {} // NOP
+            );
+        }
+        return this._defaultAnkiFieldTemplatesPromise;
+    }
+
+    async _getDefaultTemplates() {
+        const value = await api.getDefaultAnkiFieldTemplates();
+        this._defaultAnkiFieldTemplates = value;
+        return value;
     }
 }
