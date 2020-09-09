@@ -148,8 +148,20 @@ class AnkiTemplatesController {
                     getClipboardImage: api.clipboardGetImage.bind(api)
                 });
                 const {general: {resultOutputMode, compactGlossaries}} = options;
-                const data = ankiNoteBuilder.createNoteData(definition, mode, context, resultOutputMode, compactGlossaries);
-                result = await ankiNoteBuilder.formatField(field, data, templates, exceptions);
+                const note = await ankiNoteBuilder.createNote({
+                    definition,
+                    mode,
+                    context,
+                    templates,
+                    resultOutputMode,
+                    compactGlossaries,
+                    modeOptions: {
+                        fields: {field},
+                        deck: '',
+                        model: ''
+                    }
+                });
+                result = note.fields.field;
             }
         } catch (e) {
             exceptions.push(e);
