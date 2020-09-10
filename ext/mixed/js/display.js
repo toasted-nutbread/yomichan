@@ -16,6 +16,7 @@
  */
 
 /* global
+ * AnkiNoteBuilder
  * AudioSystem
  * DisplayGenerator
  * DisplayHistory
@@ -87,6 +88,9 @@ class Display extends EventDispatcher {
         this._defaultAnkiFieldTemplates = null;
         this._defaultAnkiFieldTemplatesPromise = null;
         this._templateRenderer = new TemplateRenderer();
+        this._ankiNoteBuilder = new AnkiNoteBuilder({
+            renderTemplate: this._renderTemplate.bind(this)
+        });
 
         this.registerActions([
             ['close',            () => { this.onEscape(); }],
@@ -895,7 +899,8 @@ class Display extends EventDispatcher {
         const modes = isTerms ? ['term-kanji', 'term-kana'] : ['kanji'];
         let states;
         try {
-            states = await this._getDefinitionsAddable(definitions, modes);
+            const noteContext = await this._getNoteContext();
+            states = await this._areDefinitionsAddable(definitions, modes, noteContext);
         } catch (e) {
             return;
         }
@@ -1058,10 +1063,8 @@ class Display extends EventDispatcher {
         try {
             this.setSpinnerVisible(true);
 
-            const ownerFrameId = this._ownerFrameId;
-            const optionsContext = this.getOptionsContext();
             const noteContext = await this._getNoteContext();
-            const noteId = await api.definitionAdd(definition, mode, noteContext, ownerFrameId, optionsContext);
+            const noteId = await this._addDefinition(definition, mode, noteContext);
             if (noteId) {
                 const index = this._definitions.indexOf(definition);
                 const adderButton = this._adderButtonFind(index, mode);
@@ -1198,15 +1201,6 @@ class Display extends EventDispatcher {
             entry
         );
         return container !== null ? container.querySelector('.action-play-audio>img') : null;
-    }
-
-    async _getDefinitionsAddable(definitions, modes) {
-        try {
-            const noteContext = await this._getNoteContext();
-            return await api.definitionsAddable(definitions, modes, noteContext, this.getOptionsContext());
-        } catch (e) {
-            return [];
-        }
     }
 
     _indexOf(nodeList, node) {
@@ -1349,5 +1343,78 @@ class Display extends EventDispatcher {
 
     async _renderTemplate(template, data, marker) {
         return await this._templateRenderer.render(template, data, marker);
+    }
+
+    async _addDefinition(definition, mode, context) {
+        const options = this._options;
+        const templates = await this._getTemplates(options);
+        const note = await this._createNote(definition, mode, context, options, templates, true);
+        return await api.addAnkiNote(note);
+    }
+
+    async _areDefinitionsAddable(definitions, modes, context) {
+        const options = this._options;
+        const templates = await this._getTemplates(options);
+
+        const modeCount = modes.length;
+        const {duplicateScope} = options.anki;
+        const notePromises = [];
+        for (const definition of definitions) {
+            for (const mode of modes) {
+                const notePromise = this._createNote(definition, mode, context, options, templates, false);
+                notePromises.push(notePromise);
+            }
+        }
+        const notes = await Promise.all(notePromises);
+
+        const infos = await api.getAnkiNoteInfo(notes, duplicateScope);
+        const results = [];
+        for (let i = 0, ii = infos.length; i < ii; i += modeCount) {
+            results.push(infos.slice(i, i + modeCount));
+        }
+        return results;
+    }
+
+    async _createNote(definition, mode, context, options, templates, injectMedia) {
+        const {
+            general: {resultOutputMode, compactGlossaries},
+            anki: {tags, duplicateScope, kanji, terms, screenshot: {format, quality}},
+            audio: {sources, customSourceUrl}
+        } = options;
+        const modeOptions = (mode === 'kanji') ? kanji : terms;
+
+        if (injectMedia) {
+            const timestamp = Date.now();
+            const ownerFrameId = this._ownerFrameId;
+            const {fields} = modeOptions;
+            const definitionExpressions = definition.expressions;
+            const {expression, reading} = Array.isArray(definitionExpressions) ? definitionExpressions[0] : definition;
+            const audioDetails = (mode !== 'kanji' && this._ankiNoteBuilder.containsMarker(fields, 'audio') ? {sources, customSourceUrl} : null);
+            const screenshotDetails = (this._ankiNoteBuilder.containsMarker(fields, 'screenshot') ? {ownerFrameId, format, quality} : null);
+            const clipboardImage = (this._ankiNoteBuilder.containsMarker(fields, 'clipboard-image'));
+            const {screenshotFileName, clipboardImageFileName, audioFileName} = await api.injectAnkiNoteMedia(
+                expression,
+                reading,
+                timestamp,
+                audioDetails,
+                screenshotDetails,
+                clipboardImage
+            );
+            if (screenshotFileName !== null) { definition.screenshotFileName = screenshotFileName; }
+            if (clipboardImageFileName !== null) { definition.clipboardImageFileName = clipboardImageFileName; }
+            if (audioFileName !== null) { definition.audioFileName = audioFileName; }
+        }
+
+        return await this._ankiNoteBuilder.createNote({
+            definition,
+            mode,
+            context,
+            templates,
+            tags,
+            duplicateScope,
+            resultOutputMode,
+            compactGlossaries,
+            modeOptions
+        });
     }
 }

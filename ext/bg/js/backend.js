@@ -473,7 +473,11 @@ class Backend {
         return results;
     }
 
-    async _onApiInjectAnkiNoteMedia({expression, reading, timestamp, audioDetails, screenshotDetails, clipboardImage}) {
+    async _onApiInjectAnkiNoteMedia({expression, reading, timestamp, audioDetails, screenshotDetails, clipboardImage}, sender) {
+        if (isObject(screenshotDetails)) {
+            const {id: tabId, windowId} = (sender && sender.tab ? sender.tab : {});
+            screenshotDetails = Object.assign({}, screenshotDetails, {tabId, windowId});
+        }
         return await this._injectAnkNoteMedia(
             this._anki,
             expression,
