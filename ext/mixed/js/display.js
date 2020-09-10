@@ -42,8 +42,8 @@ class Display extends EventDispatcher {
         this._audioFallback = null;
         this._audioSystem = new AudioSystem({
             audioUriBuilder: {
-                getUri: async (definition, source, details) => {
-                    return await api.audioGetUri(definition, source, details);
+                getUri: async (source, expression, reading, details) => {
+                    return await api.audioGetUri(source, expression, reading, details);
                 }
             },
             useCache: true

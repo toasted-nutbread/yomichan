@@ -93,8 +93,8 @@ const api = (() => {
             return this._invoke('templateRender', {data, template, marker});
         }
 
-        audioGetUri(definition, source, details) {
-            return this._invoke('audioGetUri', {definition, source, details});
+        audioGetUri(source, expression, reading, details) {
+            return this._invoke('audioGetUri', {source, expression, reading, details});
         }
 
         commandExec(command, params) {

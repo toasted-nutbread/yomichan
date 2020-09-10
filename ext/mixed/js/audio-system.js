@@ -129,10 +129,10 @@ class AudioSystem {
         // NOP
     }
 
-    _getAudioUri(definition, source, details) {
+    _getAudioUri({expression, reading}, source, details) {
         return (
             this._audioUriBuilder !== null ?
-            this._audioUriBuilder.getUri(definition, source, details) :
+            this._audioUriBuilder.getUri(source, expression, reading, details) :
             null
         );
     }

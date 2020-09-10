@@ -508,8 +508,8 @@ class Backend {
         return this._runCommand(command, params);
     }
 
-    async _onApiAudioGetUri({definition, source, details}) {
-        return await this._audioUriBuilder.getUri(definition, source, details);
+    async _onApiAudioGetUri({source, expression, reading, details}) {
+        return await this._audioUriBuilder.getUri(source, expression, reading, details);
     }
 
     _onApiScreenshotGet({options}, sender) {

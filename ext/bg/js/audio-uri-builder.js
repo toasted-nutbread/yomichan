@@ -51,7 +51,7 @@ class AudioUriBuilder {
         return url;
     }
 
-    async getUri({expression, reading}, source, details) {
+    async getUri(source, expression, reading, details) {
         const handler = this._getUrlHandlers.get(source);
         if (typeof handler === 'function') {
             try {
