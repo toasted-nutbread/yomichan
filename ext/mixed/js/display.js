@@ -16,6 +16,8 @@
  */
 
 /* global
+ * AnkiConnect
+ * AnkiNoteBuilder
  * AudioSystem
  * DisplayGenerator
  * DisplayHistory
@@ -87,6 +89,13 @@ class Display extends EventDispatcher {
         this._defaultAnkiFieldTemplates = null;
         this._defaultAnkiFieldTemplatesPromise = null;
         this._templateRenderer = new TemplateRenderer();
+        this._ankiConnect = new AnkiConnect();
+        this._ankiNoteBuilder = new AnkiNoteBuilder({
+            renderTemplate: this._renderTemplate.bind(this),
+            getDefinitionAudio: this._getDefinitionAudio.bind(this),
+            getClipboardImage: this._getClipboardImage.bind(this),
+            getScreenshot: this._getScreenshot.bind(this)
+        });
 
         this.registerActions([
             ['close',            () => { this.onEscape(); }],
@@ -234,6 +243,10 @@ class Display extends EventDispatcher {
         const options = await api.optionsGet(this.getOptionsContext());
         const scanning = options.scanning;
         this._options = options;
+
+        const {server, enable: enabled} = options.anki;
+        this._ankiConnect.server = server;
+        this._ankiConnect.enabled = enabled;
 
         this._updateDocumentOptions(options);
         this._updateTheme(options.general.popupTheme);
@@ -688,7 +701,7 @@ class Display extends EventDispatcher {
     _onNoteView(e) {
         e.preventDefault();
         const link = e.currentTarget;
-        api.noteView(link.dataset.noteId);
+        this._viewNote(link.dataset.noteId);
     }
 
     _onWheel(e) {
@@ -1042,7 +1055,7 @@ class Display extends EventDispatcher {
     _noteTryView() {
         const button = this._viewerButtonFind(this._index);
         if (button !== null && !button.classList.contains('disabled')) {
-            api.noteView(button.dataset.noteId);
+            this._viewNote(button.dataset.noteId);
         }
     }
 
@@ -1050,10 +1063,8 @@ class Display extends EventDispatcher {
         try {
             this.setSpinnerVisible(true);
 
-            const ownerFrameId = this._ownerFrameId;
-            const optionsContext = this.getOptionsContext();
             const noteContext = await this._getNoteContext();
-            const noteId = await api.definitionAdd(definition, mode, noteContext, ownerFrameId, optionsContext);
+            const noteId = await this._addDefinition(definition, mode, noteContext);
             if (noteId) {
                 const index = this._definitions.indexOf(definition);
                 const adderButton = this._adderButtonFind(index, mode);
@@ -1195,7 +1206,7 @@ class Display extends EventDispatcher {
     async _getDefinitionsAddable(definitions, modes) {
         try {
             const noteContext = await this._getNoteContext();
-            return await api.definitionsAddable(definitions, modes, noteContext, this.getOptionsContext());
+            return await this._areDefinitionsAddable(definitions, modes, noteContext);
         } catch (e) {
             return [];
         }
@@ -1341,5 +1352,117 @@ class Display extends EventDispatcher {
 
     async _renderTemplate(template, data, marker) {
         return await this._templateRenderer.render(template, data, marker);
+    }
+
+    async _addDefinition(definition, mode, context) {
+        const options = this._options;
+        const templates = await this._getTemplates(options);
+        const note = await this._createNote(definition, mode, context, options, templates, true);
+        return this._ankiConnect.addNote(note);
+    }
+
+    async _areDefinitionsAddable(definitions, modes, context) {
+        const options = this._options;
+        const templates = await this._getTemplates(options);
+        const states = [];
+
+        try {
+            const notePromises = [];
+            for (const definition of definitions) {
+                for (const mode of modes) {
+                    const notePromise = this._createNote(definition, mode, context, options, templates, false, null);
+                    notePromises.push(notePromise);
+                }
+            }
+            const notes = await Promise.all(notePromises);
+
+            const cannotAdd = [];
+            const results = await this._ankiConnect.canAddNotes(notes);
+            for (let resultBase = 0; resultBase < results.length; resultBase += modes.length) {
+                const state = {};
+                for (let modeOffset = 0; modeOffset < modes.length; ++modeOffset) {
+                    const index = resultBase + modeOffset;
+                    const result = results[index];
+                    const info = {canAdd: result};
+                    state[modes[modeOffset]] = info;
+                    if (!result) {
+                        cannotAdd.push([notes[index], info]);
+                    }
+                }
+
+                states.push(state);
+            }
+
+            if (cannotAdd.length > 0) {
+                const noteIdsArray = await this._ankiConnect.findNoteIds(cannotAdd.map((e) => e[0]), options.anki.duplicateScope);
+                for (let i = 0, ii = Math.min(cannotAdd.length, noteIdsArray.length); i < ii; ++i) {
+                    const noteIds = noteIdsArray[i];
+                    if (noteIds.length > 0) {
+                        cannotAdd[i][1].noteId = noteIds[0];
+                    }
+                }
+            }
+        } catch (e) {
+            // NOP
+        }
+
+        return states;
+    }
+
+    async _viewNote(noteId) {
+        return await this._ankiConnect.guiBrowseNote(noteId);
+    }
+
+    async _createNote(definition, mode, context, options, templates, injectMedia) {
+        const {
+            general: {resultOutputMode, compactGlossaries},
+            anki: {tags, duplicateScope, kanji, terms, screenshot: {format, quality}},
+            audio: {sources, customSourceUrl}
+        } = options;
+        const modeOptions = (mode === 'kanji') ? kanji : terms;
+
+        return await this._ankiNoteBuilder.createNote({
+            anki: injectMedia ? this._ankiConnect : null,
+            definition,
+            mode,
+            context,
+            templates,
+            tags,
+            duplicateScope,
+            resultOutputMode,
+            compactGlossaries,
+            modeOptions,
+            audioDetails: {sources, customSourceUrl},
+            screenshotDetails: {format, quality},
+            clipboardImage: true
+        });
+    }
+
+    async _getScreenshot(format, quality) {
+        const ownerFrameId = this._ownerFrameId;
+        let token = null;
+        try {
+            if (typeof ownerFrameId === 'number') {
+                token = await api.crossFrame.invoke(ownerFrameId, 'setAllVisibleOverride', {value: false, priority: 0, awaitFrame: true});
+            }
+
+            return await api.screenshotGet({format, quality});
+        } finally {
+            if (token !== null) {
+                try {
+                    await api.crossFrame.invoke(ownerFrameId, 'clearAllVisibleOverride', {token});
+                } catch (e) {
+                    // NOP
+                }
+            }
+        }
+    }
+
+    async _getClipboardImage() {
+        return await api.clipboardGetImage();
+    }
+
+    async _getDefinitionAudio(sources, expression, reading, details) {
+        return await api.getDefinitionAudio(sources, expression, reading, details);
     }
 }

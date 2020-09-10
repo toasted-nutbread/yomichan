@@ -119,7 +119,9 @@ class Frontend {
             ['closePopup',              {async: false, handler: this._onApiClosePopup.bind(this)}],
             ['copySelection',           {async: false, handler: this._onApiCopySelection.bind(this)}],
             ['getPopupInfo',            {async: false, handler: this._onApiGetPopupInfo.bind(this)}],
-            ['getDocumentInformation',  {async: false, handler: this._onApiGetDocumentInformation.bind(this)}]
+            ['getDocumentInformation',  {async: false, handler: this._onApiGetDocumentInformation.bind(this)}],
+            ['setAllVisibleOverride',   {async: true,  handler: this._onApiSetAllVisibleOverride.bind(this)}],
+            ['clearAllVisibleOverride', {async: true,  handler: this._onApiClearAllVisibleOverride.bind(this)}]
         ]);
 
         this._updateContentScale();

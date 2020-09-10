@@ -157,8 +157,8 @@ class AnkiNoteBuilder {
         const now = new Date(Date.now());
 
         try {
-            const {windowId, tabId, ownerFrameId, format, quality} = details;
-            const dataUrl = await this._getScreenshot(windowId, tabId, ownerFrameId, format, quality);
+            const {format, quality} = details;
+            const dataUrl = await this._getScreenshot(format, quality);
 
             const {mediaType, data} = this._getDataUrlInfo(dataUrl);
             const extension = this._getImageExtensionFromMediaType(mediaType);
