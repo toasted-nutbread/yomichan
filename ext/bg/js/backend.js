@@ -16,8 +16,6 @@
  */
 
 /* global
- * AnkiConnect
- * AnkiNoteBuilder
  * AudioSystem
  * AudioUriBuilder
  * ClipboardMonitor
@@ -39,7 +37,6 @@ class Backend {
         this._environment = new Environment();
         this._dictionaryDatabase = new DictionaryDatabase();
         this._translator = new Translator(this._dictionaryDatabase);
-        this._anki = new AnkiConnect();
         this._mecab = new Mecab();
         this._clipboardMonitor = new ClipboardMonitor({getClipboard: this._onApiClipboardGet.bind(this)});
         this._options = null;
@@ -56,12 +53,6 @@ class Backend {
             audioUriBuilder: this._audioUriBuilder,
             requestBuilder: this._requestBuilder,
             useCache: false
-        });
-        this._ankiNoteBuilder = new AnkiNoteBuilder({
-            renderTemplate: this._renderTemplate.bind(this),
-            getDefinitionAudio: this._getDefinitionAudio.bind(this),
-            getClipboardImage: this._onApiClipboardImageGet.bind(this),
-            getScreenshot: this._getScreenshot.bind(this)
         });
         this._templateRenderer = new TemplateRenderer();
 
@@ -94,9 +85,6 @@ class Backend {
             ['kanjiFind',                    {async: true,  contentScript: true,  handler: this._onApiKanjiFind.bind(this)}],
             ['termsFind',                    {async: true,  contentScript: true,  handler: this._onApiTermsFind.bind(this)}],
             ['textParse',                    {async: true,  contentScript: true,  handler: this._onApiTextParse.bind(this)}],
-            ['definitionAdd',                {async: true,  contentScript: true,  handler: this._onApiDefinitionAdd.bind(this)}],
-            ['definitionsAddable',           {async: true,  contentScript: true,  handler: this._onApiDefinitionsAddable.bind(this)}],
-            ['noteView',                     {async: true,  contentScript: true,  handler: this._onApiNoteView.bind(this)}],
             ['templateRender',               {async: true,  contentScript: true,  handler: this._onApiTemplateRender.bind(this)}],
             ['commandExec',                  {async: false, contentScript: true,  handler: this._onApiCommandExec.bind(this)}],
             ['audioGetUri',                  {async: true,  contentScript: true,  handler: this._onApiAudioGetUri.bind(this)}],
@@ -438,66 +426,6 @@ class Backend {
         }
 
         return results;
-    }
-
-    async _onApiDefinitionAdd({definition, mode, context, ownerFrameId, optionsContext}, sender) {
-        const options = this.getOptions(optionsContext);
-        const templates = this._getTemplates(options);
-        const {id: tabId, windowId} = (sender && sender.tab ? sender.tab : {});
-        const note = await this._createNote(definition, mode, context, options, templates, true, {windowId, tabId, ownerFrameId});
-        return this._anki.addNote(note);
-    }
-
-    async _onApiDefinitionsAddable({definitions, modes, context, optionsContext}) {
-        const options = this.getOptions(optionsContext);
-        const templates = this._getTemplates(options);
-        const states = [];
-
-        try {
-            const notePromises = [];
-            for (const definition of definitions) {
-                for (const mode of modes) {
-                    const notePromise = this._createNote(definition, mode, context, options, templates, false, null);
-                    notePromises.push(notePromise);
-                }
-            }
-            const notes = await Promise.all(notePromises);
-
-            const cannotAdd = [];
-            const results = await this._anki.canAddNotes(notes);
-            for (let resultBase = 0; resultBase < results.length; resultBase += modes.length) {
-                const state = {};
-                for (let modeOffset = 0; modeOffset < modes.length; ++modeOffset) {
-                    const index = resultBase + modeOffset;
-                    const result = results[index];
-                    const info = {canAdd: result};
-                    state[modes[modeOffset]] = info;
-                    if (!result) {
-                        cannotAdd.push([notes[index], info]);
-                    }
-                }
-
-                states.push(state);
-            }
-
-            if (cannotAdd.length > 0) {
-                const noteIdsArray = await this._anki.findNoteIds(cannotAdd.map((e) => e[0]), options.anki.duplicateScope);
-                for (let i = 0, ii = Math.min(cannotAdd.length, noteIdsArray.length); i < ii; ++i) {
-                    const noteIds = noteIdsArray[i];
-                    if (noteIds.length > 0) {
-                        cannotAdd[i][1].noteId = noteIds[0];
-                    }
-                }
-            }
-        } catch (e) {
-            // NOP
-        }
-
-        return states;
-    }
-
-    async _onApiNoteView({noteId}) {
-        return await this._anki.guiBrowseNote(noteId);
     }
 
     async _onApiTemplateRender({template, data, marker}) {
@@ -987,9 +915,6 @@ class Backend {
     _applyOptions(source) {
         const options = this.getOptions({current: true});
         this._updateBadge();
-
-        this._anki.server = options.anki.server;
-        this._anki.enabled = options.anki.enable;
 
         if (options.parsing.enableMecabParser) {
             this._mecab.startListener();
@@ -1573,68 +1498,6 @@ class Backend {
             reader.onerror = () => reject(reader.error);
             reader.readAsDataURL(file);
         });
-    }
-
-    async _createNote(definition, mode, context, options, templates, injectMedia, screenshotTarget) {
-        const {
-            general: {resultOutputMode, compactGlossaries},
-            anki: {tags, duplicateScope, kanji, terms, screenshot: {format, quality}},
-            audio: {sources, customSourceUrl}
-        } = options;
-        const modeOptions = (mode === 'kanji') ? kanji : terms;
-        const {windowId, tabId, ownerFrameId} = (isObject(screenshotTarget) ? screenshotTarget : {});
-
-        return await this._ankiNoteBuilder.createNote({
-            anki: injectMedia ? this._anki : null,
-            definition,
-            mode,
-            context,
-            templates,
-            tags,
-            duplicateScope,
-            resultOutputMode,
-            compactGlossaries,
-            modeOptions,
-            audioDetails: {sources, customSourceUrl},
-            screenshotDetails: {windowId, tabId, ownerFrameId, format, quality},
-            clipboardImage: true
-        });
-    }
-
-    async _getScreenshot(windowId, tabId, ownerFrameId, format, quality) {
-        if (typeof windowId !== 'number') {
-            throw new Error('Invalid window ID');
-        }
-
-        let token = null;
-        try {
-            if (typeof tabId === 'number' && typeof ownerFrameId === 'number') {
-                const action = 'setAllVisibleOverride';
-                const params = {value: false, priority: 0, awaitFrame: true};
-                token = await this._sendMessageTab(tabId, {action, params}, {frameId: ownerFrameId});
-            }
-
-            return await new Promise((resolve, reject) => {
-                chrome.tabs.captureVisibleTab(windowId, {format, quality}, (result) => {
-                    const e = chrome.runtime.lastError;
-                    if (e) {
-                        reject(new Error(e.message));
-                    } else {
-                        resolve(result);
-                    }
-                });
-            });
-        } finally {
-            if (token !== null) {
-                const action = 'clearAllVisibleOverride';
-                const params = {token};
-                try {
-                    await this._sendMessageTab(tabId, {action, params}, {frameId: ownerFrameId});
-                } catch (e) {
-                    // NOP
-                }
-            }
-        }
     }
 
     async _getDefinitionAudio(sources, expression, reading, details) {

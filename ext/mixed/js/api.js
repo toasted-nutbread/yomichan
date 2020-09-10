@@ -77,18 +77,6 @@ const api = (() => {
             return this._invoke('kanjiFind', {text, optionsContext});
         }
 
-        definitionAdd(definition, mode, context, ownerFrameId, optionsContext) {
-            return this._invoke('definitionAdd', {definition, mode, context, ownerFrameId, optionsContext});
-        }
-
-        definitionsAddable(definitions, modes, context, optionsContext) {
-            return this._invoke('definitionsAddable', {definitions, modes, context, optionsContext});
-        }
-
-        noteView(noteId) {
-            return this._invoke('noteView', {noteId});
-        }
-
         templateRender(template, data, marker) {
             return this._invoke('templateRender', {data, template, marker});
         }
