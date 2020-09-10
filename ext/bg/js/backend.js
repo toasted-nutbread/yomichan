@@ -828,8 +828,8 @@ class Backend {
         return (tab !== null);
     }
 
-    async _onApiGetDefinitionAudio({definition, sources, details}) {
-        return this._getDefinitionAudio(definition, sources, details);
+    async _onApiGetDefinitionAudio({sources, expression, reading, details}) {
+        return this._getDefinitionAudio(sources, expression, reading, details);
     }
 
     // Command handlers
@@ -1637,7 +1637,7 @@ class Backend {
         }
     }
 
-    async _getDefinitionAudio(definition, sources, details) {
-        return await this._audioSystem.getDefinitionAudio(definition, sources, details);
+    async _getDefinitionAudio(sources, expression, reading, details) {
+        return await this._audioSystem.getDefinitionAudio(sources, expression, reading, details);
     }
 }

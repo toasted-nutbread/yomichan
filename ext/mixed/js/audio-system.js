@@ -78,7 +78,7 @@ class AudioSystem {
         }
     }
 
-    async getDefinitionAudio({expression, reading}, sources, details) {
+    async getDefinitionAudio(sources, expression, reading, details) {
         const key = `${expression}:${reading}`;
         const hasCache = (this._cache !== null && !details.disableCache);
 
