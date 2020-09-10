@@ -1585,17 +1585,21 @@ class Backend {
         const {windowId, tabId, ownerFrameId} = (isObject(screenshotTarget) ? screenshotTarget : {});
 
         if (injectMedia) {
+            const fields = modeOptions.fields;
             const timestamp = Date.now();
             const definitionExpressions = definition.expressions;
             const {expression, reading} = Array.isArray(definitionExpressions) ? definitionExpressions[0] : definition;
+            const audioDetails = (mode !== 'kanji' && this._ankiNoteBuilder.containsMarker(fields, 'audio') ? {sources, customSourceUrl} : null);
+            const screenshotDetails = (this._ankiNoteBuilder.containsMarker(fields, 'screenshot') ? {windowId, tabId, ownerFrameId, format, quality} : null);
+            const clipboardImage = (this._ankiNoteBuilder.containsMarker(fields, 'clipboard-image'));
             const {screenshotFileName, clipboardImageFileName, audioFileName} = await this._injectAnkNoteMedia(
                 this._anki,
                 expression,
                 reading,
                 timestamp,
-                {sources, customSourceUrl},
-                {windowId, tabId, ownerFrameId, format, quality},
-                true
+                audioDetails,
+                screenshotDetails,
+                clipboardImage
             );
             if (screenshotFileName !== null) { definition.screenshotFileName = screenshotFileName; }
             if (clipboardImageFileName !== null) { definition.clipboardImageFileName = clipboardImageFileName; }

@@ -74,6 +74,16 @@ class AnkiNoteBuilder {
         return note;
     }
 
+    containsMarker(fields, marker) {
+        marker = `{${marker}}`;
+        for (const fieldValue of Object.values(fields)) {
+            if (fieldValue.includes(marker)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // Private
 
     _createNoteData(definition, mode, context, resultOutputMode, compactGlossaries) {
@@ -119,7 +129,7 @@ class AnkiNoteBuilder {
     }
 
     async _injectAudio(anki, definition, fields, details) {
-        if (!this._containsMarker(fields, 'audio')) { return; }
+        if (!this.containsMarker(fields, 'audio')) { return; }
 
         try {
             const {sources, customSourceUrl} = details;
@@ -151,7 +161,7 @@ class AnkiNoteBuilder {
     }
 
     async _injectScreenshot(anki, definition, fields, details) {
-        if (!this._containsMarker(fields, 'screenshot')) { return; }
+        if (!this.containsMarker(fields, 'screenshot')) { return; }
 
         const reading = definition.reading;
         const now = new Date(Date.now());
@@ -176,7 +186,7 @@ class AnkiNoteBuilder {
     }
 
     async _injectClipboardImage(anki, definition, fields) {
-        if (!this._containsMarker(fields, 'clipboard-image')) { return; }
+        if (!this.containsMarker(fields, 'clipboard-image')) { return; }
 
         const reading = definition.reading;
         const now = new Date(Date.now());
@@ -219,16 +229,6 @@ class AnkiNoteBuilder {
         const minutes = date.getUTCMinutes().toString().padStart(2, '0');
         const seconds = date.getUTCSeconds().toString().padStart(2, '0');
         return `${year}-${month}-${day}-${hours}-${minutes}-${seconds}`;
-    }
-
-    _containsMarker(fields, marker) {
-        marker = `{${marker}}`;
-        for (const fieldValue of Object.values(fields)) {
-            if (fieldValue.includes(marker)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     _getDataUrlInfo(dataUrl) {
