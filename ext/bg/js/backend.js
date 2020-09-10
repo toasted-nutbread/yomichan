@@ -451,6 +451,7 @@ class Backend {
         const states = [];
 
         try {
+            const {duplicateScope} = options.anki;
             const notePromises = [];
             for (const definition of definitions) {
                 for (const mode of modes) {
@@ -478,7 +479,7 @@ class Backend {
             }
 
             if (cannotAdd.length > 0) {
-                const noteIdsArray = await this._anki.findNoteIds(cannotAdd.map((e) => e[0]), options.anki.duplicateScope);
+                const noteIdsArray = await this._anki.findNoteIds(cannotAdd.map((e) => e[0]), duplicateScope);
                 for (let i = 0, ii = Math.min(cannotAdd.length, noteIdsArray.length); i < ii; ++i) {
                     const noteIds = noteIdsArray[i];
                     if (noteIds.length > 0) {
