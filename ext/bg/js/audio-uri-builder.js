@@ -112,11 +112,11 @@ class AudioUriBuilder {
                 const url = dom.getAttribute(source, 'src');
                 if (url === null) { continue; }
 
-                const readings = dom.getElementsByClassName('dc-vocab_kana');
-                if (readings.length === 0) { continue; }
+                const htmlReadings = dom.getElementsByClassName('dc-vocab_kana');
+                if (htmlReadings.length === 0) { continue; }
 
-                const reading = dom.getTextContent(readings[0]);
-                if (reading && (!definition.reading || definition.reading === reading)) {
+                const htmlReading = dom.getTextContent(htmlReadings[0]);
+                if (htmlReading && (!definition.reading || definition.reading === htmlReading)) {
                     return this.normalizeUrl(url, 'https://www.japanesepod101.com', '/learningcenter/reference/');
                 }
             } catch (e) {
