@@ -197,6 +197,10 @@ const api = (() => {
             return this._invoke('isTabSearchPopup', {tabId});
         }
 
+        getDefinitionAudio(sources, expression, reading, details) {
+            return this._invoke('getDefinitionAudio', {sources, expression, reading, details});
+        }
+
         // Invoke functions with progress
 
         deleteDictionary(dictionaryName, onProgress) {
