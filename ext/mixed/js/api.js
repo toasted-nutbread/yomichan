@@ -81,6 +81,10 @@ const api = (() => {
             return this._invoke('addAnkiNote', {note});
         }
 
+        getAnkiNoteInfo(notes, duplicateScope) {
+            return this._invoke('getAnkiNoteInfo', {notes, duplicateScope});
+        }
+
         definitionAdd(definition, mode, context, ownerFrameId, optionsContext) {
             return this._invoke('definitionAdd', {definition, mode, context, ownerFrameId, optionsContext});
         }
