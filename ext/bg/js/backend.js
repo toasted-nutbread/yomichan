@@ -58,10 +58,7 @@ class Backend {
             useCache: false
         });
         this._ankiNoteBuilder = new AnkiNoteBuilder({
-            renderTemplate: this._renderTemplate.bind(this),
-            getDefinitionAudio: this._getDefinitionAudio.bind(this),
-            getClipboardImage: this._onApiClipboardImageGet.bind(this),
-            getScreenshot: this._getScreenshot.bind(this)
+            renderTemplate: this._renderTemplate.bind(this)
         });
         this._templateRenderer = new TemplateRenderer();
 
