@@ -77,10 +77,6 @@ const api = (() => {
             return this._invoke('kanjiFind', {text, optionsContext});
         }
 
-        templateRender(template, data, marker) {
-            return this._invoke('templateRender', {data, template, marker});
-        }
-
         audioGetUri(source, expression, reading, details) {
             return this._invoke('audioGetUri', {source, expression, reading, details});
         }

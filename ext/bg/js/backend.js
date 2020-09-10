@@ -27,7 +27,6 @@
  * OptionsUtil
  * ProfileConditions
  * RequestBuilder
- * TemplateRenderer
  * Translator
  * jp
  */
@@ -54,7 +53,6 @@ class Backend {
             requestBuilder: this._requestBuilder,
             useCache: false
         });
-        this._templateRenderer = new TemplateRenderer();
 
         this._clipboardPasteTarget = null;
         this._clipboardPasteTargetInitialized = false;
@@ -85,7 +83,6 @@ class Backend {
             ['kanjiFind',                    {async: true,  contentScript: true,  handler: this._onApiKanjiFind.bind(this)}],
             ['termsFind',                    {async: true,  contentScript: true,  handler: this._onApiTermsFind.bind(this)}],
             ['textParse',                    {async: true,  contentScript: true,  handler: this._onApiTextParse.bind(this)}],
-            ['templateRender',               {async: true,  contentScript: true,  handler: this._onApiTemplateRender.bind(this)}],
             ['commandExec',                  {async: false, contentScript: true,  handler: this._onApiCommandExec.bind(this)}],
             ['audioGetUri',                  {async: true,  contentScript: true,  handler: this._onApiAudioGetUri.bind(this)}],
             ['screenshotGet',                {async: true,  contentScript: true,  handler: this._onApiScreenshotGet.bind(this)}],
@@ -426,10 +423,6 @@ class Backend {
         }
 
         return results;
-    }
-
-    async _onApiTemplateRender({template, data, marker}) {
-        return this._renderTemplate(template, data, marker);
     }
 
     _onApiCommandExec({command, params}) {
@@ -1284,10 +1277,6 @@ class Backend {
             if (value) { return value; }
         }
         return false;
-    }
-
-    async _renderTemplate(template, data, marker) {
-        return await this._templateRenderer.render(template, data, marker);
     }
 
     _getTemplates(options) {
