@@ -78,8 +78,8 @@ class AudioSystem {
         }
     }
 
-    async getDefinitionAudio(definition, sources, details) {
-        const key = `${definition.expression}:${definition.reading}`;
+    async getDefinitionAudio({expression, reading}, sources, details) {
+        const key = `${expression}:${reading}`;
         const hasCache = (this._cache !== null && !details.disableCache);
 
         if (hasCache) {
@@ -95,7 +95,7 @@ class AudioSystem {
 
         for (let i = 0, ii = sources.length; i < ii; ++i) {
             const source = sources[i];
-            const uri = await this._getAudioUri(definition, source, details);
+            const uri = await this._getAudioUri(source, expression, reading, details);
             if (uri === null) { continue; }
 
             try {
@@ -129,7 +129,7 @@ class AudioSystem {
         // NOP
     }
 
-    _getAudioUri({expression, reading}, source, details) {
+    _getAudioUri(source, expression, reading, details) {
         return (
             this._audioUriBuilder !== null ?
             this._audioUriBuilder.getUri(source, expression, reading, details) :
