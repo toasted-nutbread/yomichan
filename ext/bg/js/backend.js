@@ -91,6 +91,7 @@ class Backend {
             ['kanjiFind',                    {async: true,  contentScript: true,  handler: this._onApiKanjiFind.bind(this)}],
             ['termsFind',                    {async: true,  contentScript: true,  handler: this._onApiTermsFind.bind(this)}],
             ['textParse',                    {async: true,  contentScript: true,  handler: this._onApiTextParse.bind(this)}],
+            ['addAnkiNote',                  {async: true,  contentScript: true,  handler: this._onApiAddAnkiNote.bind(this)}],
             ['definitionAdd',                {async: true,  contentScript: true,  handler: this._onApiDefinitionAdd.bind(this)}],
             ['definitionsAddable',           {async: true,  contentScript: true,  handler: this._onApiDefinitionsAddable.bind(this)}],
             ['noteView',                     {async: true,  contentScript: true,  handler: this._onApiNoteView.bind(this)}],
@@ -437,12 +438,16 @@ class Backend {
         return results;
     }
 
+    async _onApiAddAnkiNote({note}) {
+        return await this._anki.addNote(note);
+    }
+
     async _onApiDefinitionAdd({definition, mode, context, ownerFrameId, optionsContext}, sender) {
         const options = this.getOptions(optionsContext);
         const templates = this._getTemplates(options);
         const {id: tabId, windowId} = (sender && sender.tab ? sender.tab : {});
         const note = await this._createNote(definition, mode, context, options, templates, true, {windowId, tabId, ownerFrameId});
-        return this._anki.addNote(note);
+        return await this._onApiAddAnkiNote({note});
     }
 
     async _onApiDefinitionsAddable({definitions, modes, context, optionsContext}) {

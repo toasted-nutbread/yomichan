@@ -77,6 +77,10 @@ const api = (() => {
             return this._invoke('kanjiFind', {text, optionsContext});
         }
 
+        addAnkiNote(note) {
+            return this._invoke('addAnkiNote', {note});
+        }
+
         definitionAdd(definition, mode, context, ownerFrameId, optionsContext) {
             return this._invoke('definitionAdd', {definition, mode, context, ownerFrameId, optionsContext});
         }
