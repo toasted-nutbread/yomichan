@@ -41,7 +41,7 @@ class Backend {
         this._mecab = new Mecab();
         this._clipboardMonitor = new ClipboardMonitor({getClipboard: this._onApiClipboardGet.bind(this)});
         this._options = null;
-        this._optionsSchemaValidator = new JsonSchemaValidator();
+        this._profileConditionsSchemaValidator = new JsonSchemaValidator();
         this._profileConditionsSchemaCache = [];
         this._profileConditionsUtil = new ProfileConditions();
         this._defaultAnkiFieldTemplates = null;
@@ -1009,7 +1009,7 @@ class Backend {
                 this._profileConditionsSchemaCache.push(schema);
             }
 
-            if (conditionGroups.length > 0 && this._optionsSchemaValidator.isValid(optionsContext, schema)) {
+            if (conditionGroups.length > 0 && this._profileConditionsSchemaValidator.isValid(optionsContext, schema)) {
                 return profile;
             }
             ++index;
@@ -1020,7 +1020,7 @@ class Backend {
 
     _clearProfileConditionsSchemaCache() {
         this._profileConditionsSchemaCache = [];
-        this._optionsSchemaValidator.clearCache();
+        this._profileConditionsSchemaValidator.clearCache();
     }
 
     _checkLastError() {
