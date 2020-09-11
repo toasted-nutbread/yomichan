@@ -16,6 +16,7 @@
  */
 
 /* global
+ * JsonSchemaValidator
  * OptionsUtil
  * api
  */
@@ -26,10 +27,12 @@ class BackupController {
         this._settingsExportToken = null;
         this._settingsExportRevoke = null;
         this._currentVersion = 0;
-        this._optionsUtil = new OptionsUtil();
+        this._optionsUtil = new OptionsUtil(new JsonSchemaValidator());
     }
 
-    prepare() {
+    async prepare() {
+        await this._optionsUtil.prepare();
+
         document.querySelector('#settings-export').addEventListener('click', this._onSettingsExportClick.bind(this), false);
         document.querySelector('#settings-import').addEventListener('click', this._onSettingsImportClick.bind(this), false);
         document.querySelector('#settings-import-file').addEventListener('change', this._onSettingsImportFileChange.bind(this), false);

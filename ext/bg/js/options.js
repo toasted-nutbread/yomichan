@@ -16,6 +16,19 @@
  */
 
 class OptionsUtil {
+    constructor(schemaValidator) {
+        this._schemaValidator = schemaValidator;
+        this._optionsSchema = null;
+    }
+
+    get optionsSchema() {
+        return this._optionsSchema;
+    }
+
+    async prepare() {
+        this._optionsSchema = await this._fetchAsset('/bg/data/options-schema.json', true);
+    }
+
     async update(options) {
         // Invalid options
         if (!isObject(options)) {
@@ -73,7 +86,7 @@ class OptionsUtil {
     }
 
     async load() {
-        let options = null;
+        let options;
         try {
             const optionsStr = await new Promise((resolve, reject) => {
                 chrome.storage.local.get(['options'], (store) => {
@@ -90,7 +103,13 @@ class OptionsUtil {
             // NOP
         }
 
-        return await this.update(options);
+        if (typeof options !== 'undefined') {
+            options = await this.update(options);
+        }
+
+        options = this._schemaValidator.getValidValueOrDefault(this._optionsSchema, options);
+
+        return options;
     }
 
     save(options) {
@@ -107,7 +126,7 @@ class OptionsUtil {
     }
 
     async getDefault() {
-        return await this.update({});
+        return this._schemaValidator.getValidValueOrDefault(this._optionsSchema);
     }
 
     // Legacy profile updating

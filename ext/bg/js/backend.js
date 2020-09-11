@@ -55,7 +55,7 @@ class Backend {
             requestBuilder: this._requestBuilder,
             useCache: false
         });
-        this._optionsUtil = new OptionsUtil();
+        this._optionsUtil = new OptionsUtil(this._optionsSchemaValidator);
 
         this._clipboardPasteTarget = null;
         this._clipboardPasteTargetInitialized = false;
@@ -189,10 +189,10 @@ class Backend {
             }
             await this._translator.prepare();
 
-            this._optionsSchema = await this._fetchAsset('/bg/data/options-schema.json', true);
+            await this._optionsUtil.prepare();
+            this._optionsSchema = this._optionsUtil.optionsSchema;
             this._defaultAnkiFieldTemplates = (await this._fetchAsset('/bg/data/default-anki-field-templates.handlebars')).trim();
             this._options = await this._optionsUtil.load();
-            this._options = this._optionsSchemaValidator.getValidValueOrDefault(this._optionsSchema, this._options);
 
             this._applyOptions('background');
 
