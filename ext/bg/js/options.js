@@ -16,7 +16,7 @@
  */
 
 class OptionsUtil {
-    static async update(options) {
+    async update(options) {
         // Invalid options
         if (!isObject(options)) {
             options = {};
@@ -72,7 +72,7 @@ class OptionsUtil {
         return await this._applyUpdates(options, this._getVersionUpdates());
     }
 
-    static async load() {
+    async load() {
         let options = null;
         try {
             const optionsStr = await new Promise((resolve, reject) => {
@@ -93,7 +93,7 @@ class OptionsUtil {
         return await this.update(options);
     }
 
-    static save(options) {
+    save(options) {
         return new Promise((resolve, reject) => {
             chrome.storage.local.set({options: JSON.stringify(options)}, () => {
                 const error = chrome.runtime.lastError;
@@ -106,13 +106,13 @@ class OptionsUtil {
         });
     }
 
-    static async getDefault() {
+    async getDefault() {
         return await this.update({});
     }
 
     // Legacy profile updating
 
-    static _legacyProfileUpdateGetUpdates() {
+    _legacyProfileUpdateGetUpdates() {
         return [
             null,
             null,
@@ -203,7 +203,7 @@ class OptionsUtil {
         ];
     }
 
-    static _legacyProfileUpdateGetDefaults() {
+    _legacyProfileUpdateGetDefaults() {
         return {
             general: {
                 enable: true,
@@ -302,7 +302,7 @@ class OptionsUtil {
         };
     }
 
-    static _legacyProfileUpdateAssignDefaults(options) {
+    _legacyProfileUpdateAssignDefaults(options) {
         const defaults = this._legacyProfileUpdateGetDefaults();
 
         const combine = (target, source) => {
@@ -323,7 +323,7 @@ class OptionsUtil {
         return options;
     }
 
-    static _legacyProfileUpdateUpdateVersion(options) {
+    _legacyProfileUpdateUpdateVersion(options) {
         const updates = this._legacyProfileUpdateGetUpdates();
         this._legacyProfileUpdateAssignDefaults(options);
 
@@ -345,7 +345,7 @@ class OptionsUtil {
 
     // Private
 
-    static async _addFieldTemplatesToOptions(options, additionSourceUrl) {
+    async _addFieldTemplatesToOptions(options, additionSourceUrl) {
         let addition = null;
         for (const {options: profileOptions} of options.profiles) {
             const fieldTemplates = profileOptions.anki.fieldTemplates;
@@ -358,7 +358,7 @@ class OptionsUtil {
         }
     }
 
-    static async _addFieldTemplatesBeforeEnd(fieldTemplates, addition) {
+    async _addFieldTemplatesBeforeEnd(fieldTemplates, addition) {
         const pattern = /[ \t]*\{\{~?>\s*\(\s*lookup\s*\.\s*"marker"\s*\)\s*~?\}\}/;
         const newline = '\n';
         let replaced = false;
@@ -373,7 +373,7 @@ class OptionsUtil {
         return fieldTemplates;
     }
 
-    static async _fetchAsset(url, json=false) {
+    async _fetchAsset(url, json=false) {
         url = chrome.runtime.getURL(url);
         const response = await fetch(url, {
             method: 'GET',
@@ -389,7 +389,7 @@ class OptionsUtil {
         return await (json ? response.json() : response.text());
     }
 
-    static _getStringHashCode(string) {
+    _getStringHashCode(string) {
         let hashCode = 0;
 
         if (typeof string !== 'string') { return hashCode; }
@@ -402,7 +402,7 @@ class OptionsUtil {
         return hashCode;
     }
 
-    static async _applyUpdates(options, updates) {
+    async _applyUpdates(options, updates) {
         const targetVersion = updates.length;
         let currentVersion = options.version;
 
@@ -420,7 +420,7 @@ class OptionsUtil {
         return options;
     }
 
-    static _getVersionUpdates() {
+    _getVersionUpdates() {
         return [
             {
                 async: false,
@@ -441,7 +441,7 @@ class OptionsUtil {
         ];
     }
 
-    static _updateVersion1(options) {
+    _updateVersion1(options) {
         // Version 1 changes:
         //  Added options.global.database.prefixWildcardsSupported = false.
         options.global = {
@@ -452,7 +452,7 @@ class OptionsUtil {
         return options;
     }
 
-    static _updateVersion2(options) {
+    _updateVersion2(options) {
         // Version 2 changes:
         //  Legacy profile update process moved into this upgrade function.
         for (const profile of options.profiles) {
@@ -464,14 +464,14 @@ class OptionsUtil {
         return options;
     }
 
-    static async _updateVersion3(options) {
+    async _updateVersion3(options) {
         // Version 3 changes:
         //  Pitch accent Anki field templates added.
         await this._addFieldTemplatesToOptions(options, '/bg/data/anki-field-templates-upgrade-v2.handlebars');
         return options;
     }
 
-    static async _updateVersion4(options) {
+    async _updateVersion4(options) {
         // Version 4 changes:
         //  Options conditions converted to string representations.
         //  Added usePopupWindow.

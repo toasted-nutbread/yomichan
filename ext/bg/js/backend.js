@@ -55,6 +55,7 @@ class Backend {
             requestBuilder: this._requestBuilder,
             useCache: false
         });
+        this._optionsUtil = new OptionsUtil();
 
         this._clipboardPasteTarget = null;
         this._clipboardPasteTargetInitialized = false;
@@ -190,7 +191,7 @@ class Backend {
 
             this._optionsSchema = await this._fetchAsset('/bg/data/options-schema.json', true);
             this._defaultAnkiFieldTemplates = (await this._fetchAsset('/bg/data/default-anki-field-templates.handlebars')).trim();
-            this._options = await OptionsUtil.load();
+            this._options = await this._optionsUtil.load();
             this._options = this._optionsSchemaValidator.getValidValueOrDefault(this._optionsSchema, this._options);
 
             this._applyOptions('background');
@@ -385,7 +386,7 @@ class Backend {
     async _onApiOptionsSave({source}) {
         this._clearProfileConditionsSchemaCache();
         const options = this.getFullOptions();
-        await OptionsUtil.save(options);
+        await this._optionsUtil.save(options);
         this._applyOptions(source);
     }
 
