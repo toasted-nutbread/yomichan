@@ -79,7 +79,7 @@ class OptionsUtil {
                 chrome.storage.local.get(['options'], (store) => {
                     const error = chrome.runtime.lastError;
                     if (error) {
-                        reject(new Error(error));
+                        reject(new Error(error.message));
                     } else {
                         resolve(store.options);
                     }
@@ -98,7 +98,7 @@ class OptionsUtil {
             chrome.storage.local.set({options: JSON.stringify(options)}, () => {
                 const error = chrome.runtime.lastError;
                 if (error) {
-                    reject(new Error(error));
+                    reject(new Error(error.message));
                 } else {
                     resolve();
                 }
