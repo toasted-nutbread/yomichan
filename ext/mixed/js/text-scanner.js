@@ -95,9 +95,10 @@ class TextScanner extends EventDispatcher {
 
     setOptions({inputs, deepContentScan, selectText, delay, touchInputEnabled, scanLength, sentenceExtent, layoutAwareScan}) {
         if (Array.isArray(inputs)) {
-            this._inputs = inputs.map(({include, exclude}) => ({
+            this._inputs = inputs.map(({include, exclude, types}) => ({
                 include: this._getInputArray(include),
-                exclude: this._getInputArray(exclude)
+                exclude: this._getInputArray(exclude),
+                types: this._getInputTypeSet(types)
             }));
         }
         if (typeof deepContentScan === 'boolean') {
@@ -244,7 +245,7 @@ class TextScanner extends EventDispatcher {
         const modifiers = DocumentUtil.getActiveModifiersAndButtons(e);
         this.trigger('activeModifiersChanged', {modifiers});
 
-        const inputInfo = this._getMatchingInputGroup(modifiers);
+        const inputInfo = this._getMatchingInputGroup(modifiers, 'mouse');
         if (inputInfo === null) { return; }
 
         const {index, empty} = inputInfo;
@@ -513,11 +514,12 @@ class TextScanner extends EventDispatcher {
         }
     }
 
-    _getMatchingInputGroup(modifiers) {
+    _getMatchingInputGroup(modifiers, type) {
         let fallback = null;
         for (let i = 0, ii = this._inputs.length; i < ii; ++i) {
             const input = this._inputs[i];
-            const {include, exclude} = input;
+            const {include, exclude, types} = input;
+            if (!types.has(type)) { continue; }
             if (this._setHasAll(modifiers, include) && (exclude.length === 0 || !this._setHasAll(modifiers, exclude))) {
                 if (include.length > 0) {
                     return {index: i, empty: false, input};
@@ -544,5 +546,13 @@ class TextScanner extends EventDispatcher {
             value.split(/[,;\s]+/).map((v) => v.trim().toLowerCase()).filter((v) => v.length > 0) :
             []
         );
+    }
+
+    _getInputTypeSet({mouse, touch, pen}) {
+        const set = new Set();
+        if (mouse) { set.add('mouse'); }
+        if (touch) { set.add('touch'); }
+        if (pen) { set.add('pen'); }
+        return set;
     }
 }
