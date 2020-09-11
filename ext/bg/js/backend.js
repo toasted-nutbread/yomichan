@@ -79,7 +79,6 @@ class Backend {
 
         this._messageHandlers = new Map([
             ['requestBackendReadySignal',    {async: false, contentScript: true,  handler: this._onApiRequestBackendReadySignal.bind(this)}],
-            ['optionsSchemaGet',             {async: false, contentScript: true,  handler: this._onApiOptionsSchemaGet.bind(this)}],
             ['optionsGet',                   {async: false, contentScript: true,  handler: this._onApiOptionsGet.bind(this)}],
             ['optionsGetFull',               {async: false, contentScript: true,  handler: this._onApiOptionsGetFull.bind(this)}],
             ['optionsSave',                  {async: true,  contentScript: true,  handler: this._onApiOptionsSave.bind(this)}],
@@ -369,10 +368,6 @@ class Backend {
             chrome.tabs.sendMessage(sender.tab.id, data, callback);
             return true;
         }
-    }
-
-    _onApiOptionsSchemaGet() {
-        return this._optionsSchema;
     }
 
     _onApiOptionsGet({optionsContext}) {
