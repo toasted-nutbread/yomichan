@@ -54,7 +54,7 @@ class Backend {
             requestBuilder: this._requestBuilder,
             useCache: false
         });
-        this._optionsUtil = new OptionsUtil(this._optionsSchemaValidator);
+        this._optionsUtil = new OptionsUtil();
 
         this._clipboardPasteTarget = null;
         this._clipboardPasteTargetInitialized = false;

@@ -15,9 +15,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+/* global
+ * JsonSchemaValidator
+ */
+
 class OptionsUtil {
-    constructor(schemaValidator) {
-        this._schemaValidator = schemaValidator;
+    constructor() {
+        this._schemaValidator = new JsonSchemaValidator();
         this._optionsSchema = null;
     }
 

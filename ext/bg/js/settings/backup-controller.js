@@ -16,7 +16,6 @@
  */
 
 /* global
- * JsonSchemaValidator
  * OptionsUtil
  * api
  */
@@ -27,7 +26,7 @@ class BackupController {
         this._settingsExportToken = null;
         this._settingsExportRevoke = null;
         this._currentVersion = 0;
-        this._optionsUtil = new OptionsUtil(new JsonSchemaValidator());
+        this._optionsUtil = new OptionsUtil();
     }
 
     async prepare() {
