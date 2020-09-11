@@ -242,10 +242,7 @@ class TextScanner extends EventDispatcher {
             return;
         }
 
-        const modifiers = DocumentUtil.getActiveModifiersAndButtons(e);
-        this.trigger('activeModifiersChanged', {modifiers});
-
-        const inputInfo = this._getMatchingInputGroup(modifiers, 'mouse');
+        const inputInfo = this._getMatchingInputGroupFromEvent(e, 'mouse');
         if (inputInfo === null) { return; }
 
         const {index, empty} = inputInfo;
@@ -512,6 +509,12 @@ class TextScanner extends EventDispatcher {
             this._preventNextContextMenu = true;
             this._preventNextMouseDown = true;
         }
+    }
+
+    _getMatchingInputGroupFromEvent(event, type) {
+        const modifiers = DocumentUtil.getActiveModifiersAndButtons(event);
+        this.trigger('activeModifiersChanged', {modifiers});
+        return this._getMatchingInputGroup(modifiers, type);
     }
 
     _getMatchingInputGroup(modifiers, type) {
