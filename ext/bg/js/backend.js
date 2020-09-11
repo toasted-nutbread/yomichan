@@ -223,7 +223,7 @@ class Backend {
 
     getFullOptions(useSchema=false) {
         const options = this._options;
-        return useSchema ? this._optionsSchemaValidator.createProxy(options, this._optionsSchema) : options;
+        return useSchema ? this._optionsUtil.createValidatingProxy(options) : options;
     }
 
     getOptions(optionsContext, useSchema=false) {
