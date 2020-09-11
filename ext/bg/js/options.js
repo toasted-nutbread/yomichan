@@ -351,7 +351,7 @@ class OptionsUtil {
             const fieldTemplates = profileOptions.anki.fieldTemplates;
             if (fieldTemplates !== null) {
                 if (addition === null) {
-                    addition = await this._readFile(additionSourceUrl);
+                    addition = await this._fetchAsset(additionSourceUrl);
                 }
                 profileOptions.anki.fieldTemplates = this._addFieldTemplatesBeforeEnd(fieldTemplates, addition);
             }
@@ -373,7 +373,7 @@ class OptionsUtil {
         return fieldTemplates;
     }
 
-    static async _readFile(url) {
+    static async _fetchAsset(url, json=false) {
         url = chrome.runtime.getURL(url);
         const response = await fetch(url, {
             method: 'GET',
@@ -383,7 +383,10 @@ class OptionsUtil {
             redirect: 'follow',
             referrerPolicy: 'no-referrer'
         });
-        return await response.text();
+        if (!response.ok) {
+            throw new Error(`Failed to fetch ${url}: ${response.status}`);
+        }
+        return await (json ? response.json() : response.text());
     }
 
     static _getStringHashCode(string) {
