@@ -45,6 +45,7 @@ class TextScanner extends EventDispatcher {
         this._selectText = false;
         this._delay = 0;
         this._touchInputEnabled = false;
+        this._pointerEventsEnabled = false;
         this._scanLength = 1;
         this._sentenceExtent = 1;
         this._layoutAwareScan = false;
@@ -106,7 +107,7 @@ class TextScanner extends EventDispatcher {
         }
     }
 
-    setOptions({inputs, deepContentScan, selectText, delay, touchInputEnabled, scanLength, sentenceExtent, layoutAwareScan}) {
+    setOptions({inputs, deepContentScan, selectText, delay, touchInputEnabled, pointerEventsEnabled, scanLength, sentenceExtent, layoutAwareScan}) {
         if (Array.isArray(inputs)) {
             this._inputs = inputs.map(({include, exclude, types}) => ({
                 include: this._getInputArray(include),
@@ -125,6 +126,9 @@ class TextScanner extends EventDispatcher {
         }
         if (typeof touchInputEnabled === 'boolean') {
             this._touchInputEnabled = touchInputEnabled;
+        }
+        if (typeof pointerEventsEnabled === 'boolean') {
+            this._pointerEventsEnabled = pointerEventsEnabled;
         }
         if (typeof scanLength === 'number') {
             this._scanLength = scanLength;
@@ -392,6 +396,10 @@ class TextScanner extends EventDispatcher {
             this._scanTimerPromise.resolve(false);
             this._scanTimerPromise = null;
         }
+    }
+
+    _arePointerEventsSupported() {
+        return (this._pointerEventsEnabled && typeof PointerEvent !== 'undefined');
     }
 
     _hookEvents() {
