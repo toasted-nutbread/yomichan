@@ -375,7 +375,7 @@ class BackupController {
         $('#settings-reset-modal').modal('hide');
 
         // Get default options
-        const optionsFull = await this._optionsUtil.getDefault();
+        const optionsFull = this._optionsUtil.getDefault();
 
         // Assign options
         await this._settingsImportSetOptionsFull(optionsFull);

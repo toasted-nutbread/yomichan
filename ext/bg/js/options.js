@@ -125,7 +125,7 @@ class OptionsUtil {
         });
     }
 
-    async getDefault() {
+    getDefault() {
         return this._schemaValidator.getValidValueOrDefault(this._optionsSchema);
     }
 
