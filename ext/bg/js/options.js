@@ -21,10 +21,6 @@ class OptionsUtil {
         this._optionsSchema = null;
     }
 
-    get optionsSchema() {
-        return this._optionsSchema;
-    }
-
     async prepare() {
         this._optionsSchema = await this._fetchAsset('/bg/data/options-schema.json', true);
     }

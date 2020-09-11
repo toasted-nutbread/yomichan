@@ -41,7 +41,6 @@ class Backend {
         this._mecab = new Mecab();
         this._clipboardMonitor = new ClipboardMonitor({getClipboard: this._onApiClipboardGet.bind(this)});
         this._options = null;
-        this._optionsSchema = null;
         this._optionsSchemaValidator = new JsonSchemaValidator();
         this._profileConditionsSchemaCache = [];
         this._profileConditionsUtil = new ProfileConditions();
@@ -189,7 +188,6 @@ class Backend {
             await this._translator.prepare();
 
             await this._optionsUtil.prepare();
-            this._optionsSchema = this._optionsUtil.optionsSchema;
             this._defaultAnkiFieldTemplates = (await this._fetchAsset('/bg/data/default-anki-field-templates.handlebars')).trim();
             this._options = await this._optionsUtil.load();
 
