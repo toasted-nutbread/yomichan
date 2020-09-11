@@ -133,6 +133,10 @@ class OptionsUtil {
         return this._schemaValidator.createProxy(options, this._optionsSchema);
     }
 
+    validate(options) {
+        return this._schemaValidator.validate(options, this._optionsSchema);
+    }
+
     // Legacy profile updating
 
     _legacyProfileUpdateGetUpdates() {

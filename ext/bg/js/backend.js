@@ -788,7 +788,8 @@ class Backend {
     }
 
     async _onApiSetAllSettings({value, source}) {
-        this._options = this._optionsSchemaValidator.getValidValueOrDefault(this._optionsSchema, value);
+        this._optionsUtil.validate(value);
+        this._options = clone(value);
         await this._onApiOptionsSave({source});
     }
 
