@@ -194,6 +194,24 @@ html:root:not([data-options-general-result-output-mode=merge]) #dict-main-group 
 .scan-input tr:last-of-type .scan-input-input-cell-inner .form-control:last-of-type {
     border-bottom-right-radius: 4px;
 }
+.scan-input-type-list {
+    display: flex;
+}
+.scan-input-type {
+    font-weight: normal;
+    margin: 0;
+}
+.scan-input-type+.scan-input-type {
+    margin-left: 1em;
+}
+.scan-input-type>input[type=checkbox] {
+    margin: 0 0.375em 0 0;
+    padding: 0;
+    vertical-align: middle;
+}
+.scan-input-type>span {
+    vertical-align: middle;
+}
 
 .generic-input-list {
     counter-reset: generic-input-id;
