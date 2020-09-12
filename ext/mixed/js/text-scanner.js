@@ -511,7 +511,7 @@ class TextScanner extends EventDispatcher {
             }
         }
 
-        await this._searchAt(x, y, {type: 'mouse', cause: 'mouse', index: inputIndex, empty: inputEmpty});
+        await this._searchAt(x, y, {type: 'mouse', cause: 'mouseMove', index: inputIndex, empty: inputEmpty});
     }
 
     async _searchAtFromTouchStart(e, x, y) {
