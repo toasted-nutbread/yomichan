@@ -96,7 +96,13 @@ class ScanInputsController {
             items: [{
                 include,
                 exclude,
-                types: {mouse: true, touch: false, pen: false}
+                types: {mouse: true, touch: false, pen: false},
+                options: {
+                    showAdvanced: false,
+                    scanOnPenHover: true,
+                    scanOnPenPress: true,
+                    scanOnPenRelease: false
+                }
             }]
         }]);
     }
