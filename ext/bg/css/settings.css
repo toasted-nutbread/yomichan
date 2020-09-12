@@ -221,24 +221,26 @@ html:root:not([data-options-general-result-output-mode=merge]) #dict-main-group 
     padding-top: 5px;
     padding-bottom: 5px;
 }
+.scan-input-toggle {
+    font-weight: normal;
+    margin: 0;
+}
+.scan-input-toggle>input[type=checkbox] {
+    margin: 0 0.375em 0 0;
+    padding: 0;
+    vertical-align: middle;
+}
+.scan-input-toggle>span {
+    vertical-align: middle;
+}
 .scan-input-type-list {
     display: flex;
     flex-flow: row wrap;
     margin-left: -1em;
 }
 .scan-input-type {
-    font-weight: normal;
-    margin: 0;
-    white-space: nowrap;
     margin-left: 1em;
-}
-.scan-input-type>input[type=checkbox] {
-    margin: 0 0.375em 0 0;
-    padding: 0;
-    vertical-align: middle;
-}
-.scan-input-type>span {
-    vertical-align: middle;
+    white-space: nowrap;
 }
 
 .generic-input-list {
