@@ -277,7 +277,7 @@ class TextScanner extends EventDispatcher {
 
     _onClick(e) {
         if (this._searchOnClick) {
-            this._searchAt(e.clientX, e.clientY, {cause: 'click', index: -1, empty: false});
+            this._searchAt(e.clientX, e.clientY, {type: 'mouse', cause: 'click', index: -1, empty: false});
         }
 
         if (this._preventNextClick) {
@@ -358,11 +358,12 @@ class TextScanner extends EventDispatcher {
             return;
         }
 
-        const inputInfo = this._getMatchingInputGroupFromEvent(e, 'touch');
+        const type = 'touch';
+        const inputInfo = this._getMatchingInputGroupFromEvent(e, type);
         if (inputInfo === null) { return; }
 
         const {index, empty} = inputInfo;
-        this._searchAt(primaryTouch.clientX, primaryTouch.clientY, {cause: 'touchMove', index, empty});
+        this._searchAt(primaryTouch.clientX, primaryTouch.clientY, {type, cause: 'touchMove', index, empty});
 
         e.preventDefault(); // Disable scroll
     }
@@ -510,19 +511,21 @@ class TextScanner extends EventDispatcher {
             }
         }
 
-        await this._searchAt(x, y, {cause: 'mouse', index: inputIndex, empty: inputEmpty});
+        await this._searchAt(x, y, {type: 'mouse', cause: 'mouse', index: inputIndex, empty: inputEmpty});
     }
 
     async _searchAtFromTouchStart(e, x, y) {
         if (this._pendingLookup) { return; }
 
-        const inputInfo = this._getMatchingInputGroupFromEvent(e, 'touch');
+        const type = 'touch';
+        const cause = 'touchStart';
+        const inputInfo = this._getMatchingInputGroupFromEvent(e, type);
         if (inputInfo === null) { return; }
 
         const {index, empty} = inputInfo;
         const textSourceCurrentPrevious = this._textSourceCurrent !== null ? this._textSourceCurrent.clone() : null;
 
-        await this._searchAt(x, y, {cause: 'touchStart', index, empty});
+        await this._searchAt(x, y, {type, cause, index, empty});
 
         if (
             this._textSourceCurrent !== null &&
