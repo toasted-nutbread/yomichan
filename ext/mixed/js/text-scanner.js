@@ -109,10 +109,16 @@ class TextScanner extends EventDispatcher {
 
     setOptions({inputs, deepContentScan, selectText, delay, touchInputEnabled, pointerEventsEnabled, scanLength, sentenceExtent, layoutAwareScan}) {
         if (Array.isArray(inputs)) {
-            this._inputs = inputs.map(({include, exclude, types}) => ({
+            this._inputs = inputs.map(({
+                include,
+                exclude,
+                types,
+                options: {scanOnPenHover, scanOnPenPress, scanOnPenRelease}
+            }) => ({
                 include: this._getInputArray(include),
                 exclude: this._getInputArray(exclude),
-                types: this._getInputTypeSet(types)
+                types: this._getInputTypeSet(types),
+                options: {scanOnPenHover, scanOnPenPress, scanOnPenRelease}
             }));
         }
         if (typeof deepContentScan === 'boolean') {
