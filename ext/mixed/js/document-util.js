@@ -313,7 +313,7 @@ class DocumentUtil {
 
     static _getActiveButtons(event, set) {
         const {buttons} = event;
-        if (typeof buttons === 'number') {
+        if (typeof buttons === 'number' && buttons > 0) {
             for (let i = 0; i < 6; ++i) {
                 const buttonFlag = (1 << i);
                 if ((buttons & buttonFlag) !== 0) {
