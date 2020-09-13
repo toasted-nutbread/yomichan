@@ -206,19 +206,19 @@ class TextScanner extends EventDispatcher {
 
     async searchLast() {
         if (this._textSourceCurrent !== null && this._inputCurrent !== null) {
-            await this._search(this._textSourceCurrent, this._inputCurrent);
+            await this._search(this._textSourceCurrent, this._searchTerms, this._searchKanji, this._inputCurrent);
             return true;
         }
         return false;
     }
 
     async search(textSource) {
-        return await this._search(textSource, {cause: 'script', index: -1, empty: false});
+        return await this._search(textSource, this._searchTerms, this._searchKanji, {cause: 'script', index: -1, empty: false});
     }
 
     // Private
 
-    async _search(textSource, input) {
+    async _search(textSource, searchTerms, searchKanji, input) {
         let definitions = null;
         let sentence = null;
         let type = null;
@@ -234,7 +234,7 @@ class TextScanner extends EventDispatcher {
             optionsContext = await this._getOptionsContext();
             searched = true;
 
-            const result = await this._findDefinitions(textSource, optionsContext);
+            const result = await this._findDefinitions(textSource, searchTerms, searchKanji, optionsContext);
             if (result !== null) {
                 ({definitions, sentence, type} = result);
                 this._inputCurrent = input;
@@ -638,15 +638,15 @@ class TextScanner extends EventDispatcher {
         return null;
     }
 
-    async _findDefinitions(textSource, optionsContext) {
+    async _findDefinitions(textSource, searchTerms, searchKanji, optionsContext) {
         if (textSource === null) {
             return null;
         }
-        if (this._searchTerms) {
+        if (searchTerms) {
             const results = await this._findTerms(textSource, optionsContext);
             if (results !== null) { return results; }
         }
-        if (this._searchKanji) {
+        if (searchKanji) {
             const results = await this._findKanji(textSource, optionsContext);
             if (results !== null) { return results; }
         }
@@ -697,7 +697,7 @@ class TextScanner extends EventDispatcher {
 
             const textSource = this._documentUtil.getRangeFromPoint(x, y, this._deepContentScan);
             try {
-                await this._search(textSource, input);
+                await this._search(textSource, this._searchTerms, this._searchKanji, input);
             } finally {
                 if (textSource !== null) {
                     textSource.cleanup();
