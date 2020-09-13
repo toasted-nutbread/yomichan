@@ -274,8 +274,7 @@ class TextScanner extends EventDispatcher {
         const inputInfo = this._getMatchingInputGroupFromEvent(e, 'mouse');
         if (inputInfo === null) { return; }
 
-        const {index, empty} = inputInfo;
-        this._searchAtFromMouseMove(e.clientX, e.clientY, index, empty);
+        this._searchAtFromMouseMove(e.clientX, e.clientY, inputInfo);
     }
 
     _onMouseDown(e) {
@@ -710,17 +709,18 @@ class TextScanner extends EventDispatcher {
         }
     }
 
-    async _searchAtFromMouseMove(x, y, inputIndex, inputEmpty) {
+    async _searchAtFromMouseMove(x, y, inputInfo) {
         if (this._pendingLookup) { return; }
 
-        if (inputEmpty) {
+        const {index, empty} = inputInfo;
+        if (empty) {
             if (!await this._scanTimerWait()) {
                 // Aborted
                 return;
             }
         }
 
-        await this._searchAt(x, y, {type: 'mouse', cause: 'mouseMove', index: inputIndex, empty: inputEmpty});
+        await this._searchAt(x, y, {type: 'mouse', cause: 'mouseMove', index, empty});
     }
 
     async _searchAtFromTouchStart(e, x, y) {
