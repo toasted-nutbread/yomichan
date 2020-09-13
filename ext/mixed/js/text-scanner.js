@@ -298,7 +298,7 @@ class TextScanner extends EventDispatcher {
 
     _onClick(e) {
         if (this._searchOnClick) {
-            this._searchAt(e.clientX, e.clientY, {type: 'mouse', cause: 'click', index: -1, empty: false});
+            this._searchAt(e.clientX, e.clientY, 'mouse', 'click', {index: -1, empty: false, input: null});
         }
 
         if (this._preventNextClick) {
@@ -383,8 +383,7 @@ class TextScanner extends EventDispatcher {
         const inputInfo = this._getMatchingInputGroupFromEvent(e, type);
         if (inputInfo === null) { return; }
 
-        const {index, empty} = inputInfo;
-        this._searchAt(primaryTouch.clientX, primaryTouch.clientY, {type, cause: 'touchMove', index, empty});
+        this._searchAt(primaryTouch.clientX, primaryTouch.clientY, type, 'touchMove', inputInfo);
 
         e.preventDefault(); // Disable scroll
     }
@@ -491,8 +490,7 @@ class TextScanner extends EventDispatcher {
         const inputInfo = this._getMatchingInputGroupFromEvent(e, 'touch');
         if (inputInfo === null) { return; }
 
-        const {index, empty} = inputInfo;
-        this._searchAt(e.clientX, e.clientY, {type: 'touch', cause: 'touchMove', index, empty});
+        this._searchAt(e.clientX, e.clientY, 'touch', 'touchMove', inputInfo);
     }
 
     _onTouchPointerUp() {
@@ -683,10 +681,13 @@ class TextScanner extends EventDispatcher {
         return {definitions, sentence, type: 'kanji'};
     }
 
-    async _searchAt(x, y, input) {
+    async _searchAt(x, y, type, cause, inputInfo) {
         if (this._pendingLookup) { return; }
 
         try {
+            const {index, empty} = inputInfo;
+            const input = {type, cause, index, empty};
+
             this._pendingLookup = true;
             this._scanTimerClear();
 
@@ -712,15 +713,14 @@ class TextScanner extends EventDispatcher {
     async _searchAtFromMouseMove(x, y, inputInfo) {
         if (this._pendingLookup) { return; }
 
-        const {index, empty} = inputInfo;
-        if (empty) {
+        if (inputInfo.empty) {
             if (!await this._scanTimerWait()) {
                 // Aborted
                 return;
             }
         }
 
-        await this._searchAt(x, y, {type: 'mouse', cause: 'mouseMove', index, empty});
+        await this._searchAt(x, y, 'mouse', 'mouseMove', inputInfo);
     }
 
     async _searchAtFromTouchStart(e, x, y) {
@@ -731,10 +731,9 @@ class TextScanner extends EventDispatcher {
         const inputInfo = this._getMatchingInputGroupFromEvent(e, type);
         if (inputInfo === null) { return; }
 
-        const {index, empty} = inputInfo;
         const textSourceCurrentPrevious = this._textSourceCurrent !== null ? this._textSourceCurrent.clone() : null;
 
-        await this._searchAt(x, y, {type, cause, index, empty});
+        await this._searchAt(x, y, type, cause, inputInfo);
 
         if (
             this._textSourceCurrent !== null &&
@@ -753,7 +752,7 @@ class TextScanner extends EventDispatcher {
         const inputInfo = this._getMatchingInputGroupFromEvent(e, type);
         if (inputInfo === null) { return; }
 
-        const {index, empty, input: {options}} = inputInfo;
+        const {input: {options}} = inputInfo;
         if (
             (!options.scanOnPenRelease && this._penPointerReleased) ||
             !(this._penPointerPressed ? options.scanOnPenPress : options.scanOnPenHover)
@@ -761,7 +760,7 @@ class TextScanner extends EventDispatcher {
             return;
         }
 
-        await this._searchAt(x, y, {type, cause, index, empty});
+        await this._searchAt(x, y, type, cause, inputInfo);
 
         if (
             prevent &&
