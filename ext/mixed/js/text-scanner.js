@@ -119,12 +119,12 @@ class TextScanner extends EventDispatcher {
                 include,
                 exclude,
                 types,
-                options: {scanOnPenHover, scanOnPenPress, scanOnPenRelease}
+                options: {scanOnPenHover, scanOnPenPress, scanOnPenRelease, searchTerms, searchKanji}
             }) => ({
                 include: this._getInputArray(include),
                 exclude: this._getInputArray(exclude),
                 types: this._getInputTypeSet(types),
-                options: {scanOnPenHover, scanOnPenPress, scanOnPenRelease}
+                options: {scanOnPenHover, scanOnPenPress, scanOnPenRelease, searchTerms, searchKanji}
             }));
         }
         if (typeof deepContentScan === 'boolean') {
