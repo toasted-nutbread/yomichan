@@ -685,7 +685,14 @@ class TextScanner extends EventDispatcher {
         if (this._pendingLookup) { return; }
 
         try {
-            const {index, empty} = inputInfo;
+            const {index, empty, input: sourceInput} = inputInfo;
+            let searchTerms = this._searchTerms;
+            let searchKanji = this._searchKanji;
+            if (sourceInput !== null) {
+                if (searchTerms && !sourceInput.options.searchTerms) { searchTerms = false; }
+                if (searchKanji && !sourceInput.options.searchKanji) { searchKanji = false; }
+            }
+
             const input = {type, cause, index, empty};
 
             this._pendingLookup = true;
@@ -697,7 +704,7 @@ class TextScanner extends EventDispatcher {
 
             const textSource = this._documentUtil.getRangeFromPoint(x, y, this._deepContentScan);
             try {
-                await this._search(textSource, this._searchTerms, this._searchKanji, input);
+                await this._search(textSource, searchTerms, searchKanji, input);
             } finally {
                 if (textSource !== null) {
                     textSource.cleanup();
