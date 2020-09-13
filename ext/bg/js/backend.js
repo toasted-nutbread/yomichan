@@ -710,6 +710,7 @@ class Backend {
     async _onApiPurgeDatabase() {
         this._translator.clearDatabaseCaches();
         await this._dictionaryDatabase.purge();
+        this._triggerDatabaseUpdated('dictionary', 'purge');
     }
 
     async _onApiGetMedia({targets}) {
@@ -752,6 +753,7 @@ class Backend {
     async _onApiDeleteDictionary({dictionaryName}, sender, onProgress) {
         this._translator.clearDatabaseCaches();
         await this._dictionaryDatabase.deleteDictionary(dictionaryName, {rate: 1000}, onProgress);
+        this._triggerDatabaseUpdated('dictionary', 'delete');
     }
 
     async _onApiModifySettings({targets, source}) {
