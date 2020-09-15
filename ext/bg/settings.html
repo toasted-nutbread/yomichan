@@ -653,7 +653,7 @@
 
                 <div class="form-group" id="dict-main-group">
                     <label for="dict-main">Main dictionary for merged mode</label>
-                    <select class="form-control" id="dict-main"></select>
+                    <select class="form-control" id="dict-main" data-setting="general.mainDictionary"></select>
                 </div>
 
                 <div class="text-danger" id="dict-purge" hidden>Dictionary data is being purged, please be patient...</div>
@@ -680,6 +680,7 @@
                     <div>
                         <button class="btn btn-primary" id="dict-file-button">Import Dictionary</button>
                         <button class="btn btn-danger" id="dict-purge-button">Purge Database</button>
+                        <button class="btn btn-default" id="dict-check-integrity">Check integrity</button>
                     </div>
                     <div hidden><input type="file" id="dict-file" accept=".zip,application/zip" multiple></div>
                 </div>
