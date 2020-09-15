@@ -51,10 +51,6 @@ class SettingsController extends EventDispatcher {
         await this._onOptionsUpdatedInternal();
     }
 
-    async save() {
-        await api.optionsSave(this._source);
-    }
-
     async getOptions() {
         const optionsContext = this.getOptionsContext();
         return await api.optionsGet(optionsContext);
