@@ -250,11 +250,11 @@ class DictionaryController {
     }
 
     async _checkIntegrity() {
-        if (this._dictionaries === null || this._checkingIntegrity) { return; }
+        if (this._dictionaries === null || this._checkingIntegrity || this._isDeleting) { return; }
 
         try {
             this._checkingIntegrity = true;
-            this._checkIntegrityButton.disabled = true;
+            this._setButtonsEnabled(false);
 
             const token = this._databaseStateToken;
             const dictionaryTitles = this._dictionaries.map(({title}) => title);
@@ -268,8 +268,8 @@ class DictionaryController {
 
             this._setCounts(counts, total);
         } finally {
+            this._setButtonsEnabled(true);
             this._checkingIntegrity = false;
-            this._checkIntegrityButton.disabled = false;
         }
     }
 
@@ -328,7 +328,7 @@ class DictionaryController {
     }
 
     async _deleteDictionary(dictionaryTitle) {
-        if (this._isDeleting) { return; }
+        if (this._isDeleting || this._checkingIntegrity) { return; }
 
         const index = this._dictionaryEntries.findIndex((entry) => entry.dictionaryTitle === dictionaryTitle);
         if (index < 0) { return; }
@@ -340,6 +340,7 @@ class DictionaryController {
         const prevention = this._settingsController.preventPageExit();
         try {
             this._isDeleting = true;
+            this._setButtonsEnabled(false);
 
             progress.hidden = false;
 
@@ -357,7 +358,15 @@ class DictionaryController {
         } finally {
             prevention.end();
             progress.hidden = true;
+            this._setButtonsEnabled(true);
             this._isDeleting = false;
+        }
+    }
+
+    _setButtonsEnabled(value) {
+        value = !value;
+        for (const node of document.querySelectorAll('.dictionary-modifying-input')) {
+            node.disabled = value;
         }
     }
 
