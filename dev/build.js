@@ -23,6 +23,10 @@ const util = require('./yomichan-util');
 const {getAllFiles, getDefaultManifestAndVariants, createManifestString} = util;
 
 
+function clone(value) {
+    return JSON.parse(JSON.stringify(value));
+}
+
 async function createZip(directory, outputFileName, sevenZipExes=[], onUpdate=null) {
     for (const exe of sevenZipExes) {
         try {
@@ -83,7 +87,7 @@ function createModifiedManifest(manifest, modifications) {
                         const {value: newValue} = modifications;
                         const value = getObjectProperties(manifest, path2, path2.length - 1);
                         const last = path2[path2.length - 1];
-                        value[last] = newValue;
+                        value[last] = clone(newValue);
                     }
                     break;
                 case 'replace':
@@ -116,7 +120,8 @@ function createModifiedManifest(manifest, modifications) {
                     {
                         const {start, deleteCount, items} = modification;
                         const value = getObjectProperties(manifest, path2, path2.length);
-                        value.splice(start, deleteCount, ...items);
+                        const itemsNew = items.map((v) => clone(v));
+                        value.splice(start, deleteCount, ...itemsNew);
                     }
                     break;
             }
