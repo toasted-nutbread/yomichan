@@ -102,6 +102,21 @@ function createModifiedManifest(manifest, modifications) {
                         delete value[last];
                     }
                     break;
+                case 'remove':
+                    {
+                        const {item} = modification;
+                        const value = getObjectProperties(manifest, path2, path2.length);
+                        const index = value.indexOf(item);
+                        if (index >= 0) { value.splice(index, 1); }
+                    }
+                    break;
+                case 'splice':
+                    {
+                        const {start, deleteCount, items} = modification;
+                        const value = getObjectProperties(manifest, path2, path2.length);
+                        value.splice(start, deleteCount, ...items);
+                    }
+                    break;
             }
         }
     }
