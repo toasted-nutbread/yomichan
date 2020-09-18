@@ -76,7 +76,7 @@ async function createJSZip(directory, outputFileName, onUpdate) {
 }
 
 function createModifiedManifest(manifest, modifications) {
-    manifest = JSON.parse(JSON.stringify(manifest));
+    manifest = clone(manifest);
 
     if (Array.isArray(modifications)) {
         for (const modification of modifications) {
