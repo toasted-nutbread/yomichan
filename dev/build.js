@@ -75,9 +75,7 @@ async function createJSZip(directory, outputFileName, onUpdate) {
     fs.writeFileSync(outputFileName, data, {encoding: null, flag: 'w'});
 }
 
-function createModifiedManifest(manifest, modifications) {
-    manifest = clone(manifest);
-
+function applyModifications(manifest, modifications) {
     if (Array.isArray(modifications)) {
         for (const modification of modifications) {
             const {action, path: path2} = modification;
@@ -138,6 +136,26 @@ function getObjectProperties(object, path2, count) {
     return object;
 }
 
+function getInheritanceChain(variant, variantMap) {
+    const visited = new Set();
+    const inheritance = [];
+    while (true) {
+        const {name, inherit} = variant;
+        if (visited.has(name)) { break; }
+
+        visited.add(name);
+        inheritance.unshift(variant);
+
+        if (typeof inherit !== 'string') { break; }
+
+        const nextVariant = variantMap.get(inherit);
+        if (typeof nextVariant === 'undefined') { break; }
+
+        variant = nextVariant;
+    }
+    return inheritance;
+}
+
 
 async function main() {
     const {manifest, variants} = getDefaultManifestAndVariants();
@@ -166,12 +184,19 @@ async function main() {
     };
 
     try {
+        const variantMap = new Map();
         for (const variant of variants) {
-            const {name, fileName, fileCopies, modifications} = variant;
+            variantMap.set(variant.name, variant);
+        }
+
+        for (const variant of variants) {
+            const {name, fileName, fileCopies} = variant;
             process.stdout.write(`Building ${name}...\n`);
 
-            let modifiedManifest = manifest;
-            modifiedManifest = createModifiedManifest(modifiedManifest, modifications);
+            let modifiedManifest = clone(manifest);
+            for (const {modifications} of getInheritanceChain(variant, variantMap)) {
+                modifiedManifest = applyModifications(modifiedManifest, modifications);
+            }
 
             const fileNameSafe = path.basename(fileName);
             const fullFileName = path.join(buildDir, fileNameSafe);
