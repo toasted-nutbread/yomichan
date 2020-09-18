@@ -84,7 +84,7 @@ function createModifiedManifest(manifest, modifications) {
             switch (action) {
                 case 'set':
                     {
-                        const {value: newValue} = modifications;
+                        const {value: newValue} = modification;
                         const value = getObjectProperties(manifest, path2, path2.length - 1);
                         const last = path2[path2.length - 1];
                         value[last] = clone(newValue);
