@@ -156,6 +156,14 @@ function getInheritanceChain(variant, variantMap) {
     return inheritance;
 }
 
+function createVariantManifest(manifest, variant, variantMap) {
+    let modifiedManifest = clone(manifest);
+    for (const {modifications} of getInheritanceChain(variant, variantMap)) {
+        modifiedManifest = applyModifications(modifiedManifest, modifications);
+    }
+    return modifiedManifest;
+}
+
 async function build(manifest, buildDir, extDir, manifestPath, variantMap, variantNames) {
     const sevenZipExes = ['7za', '7z'];
 
@@ -182,10 +190,7 @@ async function build(manifest, buildDir, extDir, manifestPath, variantMap, varia
         const {name, fileName, fileCopies} = variant;
         process.stdout.write(`Building ${name}...\n`);
 
-        let modifiedManifest = clone(manifest);
-        for (const {modifications} of getInheritanceChain(variant, variantMap)) {
-            modifiedManifest = applyModifications(modifiedManifest, modifications);
-        }
+        const modifiedManifest = createVariantManifest(manifest, variant, variantMap);
 
         const fileNameSafe = path.basename(fileName);
         const fullFileName = path.join(buildDir, fileNameSafe);
