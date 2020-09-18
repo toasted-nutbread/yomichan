@@ -80,18 +80,20 @@ function createModifiedManifest(manifest, modifications) {
             switch (action) {
                 case 'set':
                     {
+                        const {value: newValue} = modifications;
                         const value = getObjectProperties(manifest, path2, path2.length - 1);
                         const last = path2[path2.length - 1];
-                        value[last] = modification.value;
+                        value[last] = newValue;
                     }
                     break;
                 case 'replace':
                     {
+                        const {pattern, patternFlags, replacement} = modification;
                         const value = getObjectProperties(manifest, path2, path2.length - 1);
-                        const regex = new RegExp(modification.pattern, modification.patternFlags);
+                        const regex = new RegExp(pattern, patternFlags);
                         const last = path2[path2.length - 1];
                         let value2 = value[last];
-                        value2 = `${value2}`.replace(regex, modification.replacement);
+                        value2 = `${value2}`.replace(regex, replacement);
                         value[last] = value2;
                     }
                     break;
