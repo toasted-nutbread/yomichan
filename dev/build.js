@@ -156,21 +156,13 @@ function getInheritanceChain(variant, variantMap) {
     return inheritance;
 }
 
-
-async function main() {
-    const {manifest, variants} = getDefaultManifestAndVariants();
-
-    const rootDir = path.join(__dirname, '..');
-    const extDir = path.join(rootDir, 'ext');
-    const buildDir = path.join(rootDir, 'builds');
-    const manifestPath = path.join(extDir, 'manifest.json');
+async function build(manifest, buildDir, extDir, manifestPath, variantMap, variantNames) {
     const sevenZipExes = ['7za', '7z'];
 
     // Create build directory
     if (!fs.existsSync(buildDir)) {
         fs.mkdirSync(buildDir, {recursive: true});
     }
-
 
     const onUpdate = (metadata) => {
         let message = `Progress: ${metadata.percent.toFixed(2)}%`;
@@ -183,35 +175,51 @@ async function main() {
         process.stdout.write(message);
     };
 
+    for (const variantName of variantNames) {
+        const variant = variantMap.get(variantName);
+        if (typeof variant === 'undefined') { continue; }
+
+        const {name, fileName, fileCopies} = variant;
+        process.stdout.write(`Building ${name}...\n`);
+
+        let modifiedManifest = clone(manifest);
+        for (const {modifications} of getInheritanceChain(variant, variantMap)) {
+            modifiedManifest = applyModifications(modifiedManifest, modifications);
+        }
+
+        const fileNameSafe = path.basename(fileName);
+        const fullFileName = path.join(buildDir, fileNameSafe);
+        fs.writeFileSync(manifestPath, createManifestString(modifiedManifest));
+        await createZip(extDir, fullFileName, sevenZipExes, onUpdate);
+
+        if (Array.isArray(fileCopies)) {
+            for (const fileName2 of fileCopies) {
+                const fileName2Safe = path.basename(fileName2);
+                fs.copyFileSync(fullFileName, path.join(buildDir, fileName2Safe));
+            }
+        }
+
+        process.stdout.write('\n');
+    }
+}
+
+
+async function main() {
+    const {manifest, variants} = getDefaultManifestAndVariants();
+
+    const rootDir = path.join(__dirname, '..');
+    const extDir = path.join(rootDir, 'ext');
+    const buildDir = path.join(rootDir, 'builds');
+    const manifestPath = path.join(extDir, 'manifest.json');
+
+    const variantMap = new Map();
+    for (const variant of variants) {
+        variantMap.set(variant.name, variant);
+    }
+
     try {
-        const variantMap = new Map();
-        for (const variant of variants) {
-            variantMap.set(variant.name, variant);
-        }
-
-        for (const variant of variants) {
-            const {name, fileName, fileCopies} = variant;
-            process.stdout.write(`Building ${name}...\n`);
-
-            let modifiedManifest = clone(manifest);
-            for (const {modifications} of getInheritanceChain(variant, variantMap)) {
-                modifiedManifest = applyModifications(modifiedManifest, modifications);
-            }
-
-            const fileNameSafe = path.basename(fileName);
-            const fullFileName = path.join(buildDir, fileNameSafe);
-            fs.writeFileSync(manifestPath, createManifestString(modifiedManifest));
-            await createZip(extDir, fullFileName, sevenZipExes, onUpdate);
-
-            if (Array.isArray(fileCopies)) {
-                for (const fileName2 of fileCopies) {
-                    const fileName2Safe = path.basename(fileName2);
-                    fs.copyFileSync(fullFileName, path.join(buildDir, fileName2Safe));
-                }
-            }
-
-            process.stdout.write('\n');
-        }
+        const variantNames = variants.map(({name}) => name);
+        await build(manifest, buildDir, extDir, manifestPath, variantMap, variantNames);
     } finally {
         // Restore manifest
         process.stdout.write('Restoring manifest...\n');
