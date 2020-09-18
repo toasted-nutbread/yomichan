@@ -170,8 +170,10 @@ async function main() {
             const {name, fileName, fileCopies, modifications} = variant;
             process.stdout.write(`Building ${name}...\n`);
 
+            let modifiedManifest = manifest;
+            modifiedManifest = createModifiedManifest(modifiedManifest, modifications);
+
             const fileNameSafe = path.basename(fileName);
-            const modifiedManifest = createModifiedManifest(manifest, modifications);
             const fullFileName = path.join(buildDir, fileNameSafe);
             fs.writeFileSync(manifestPath, createManifestString(modifiedManifest));
             await createZip(extDir, fullFileName, sevenZipExes, onUpdate);
