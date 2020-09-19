@@ -19,7 +19,7 @@ const fs = require('fs');
 const url = require('url');
 const path = require('path');
 const assert = require('assert');
-const {JSZip, createDictionaryArchive} = require('../dev/yomichan-util');
+const {JSZip, createDictionaryArchive} = require('../dev/util');
 const {VM} = require('./yomichan-vm');
 require('fake-indexeddb/auto');
 

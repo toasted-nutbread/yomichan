@@ -19,7 +19,7 @@
 const fs = require('fs');
 const path = require('path');
 const assert = require('assert');
-const {getAllFiles} = require('../yomichan-util');
+const {getAllFiles} = require('../util');
 
 
 function countOccurences(string, pattern) {

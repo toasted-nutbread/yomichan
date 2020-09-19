@@ -17,7 +17,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const {JSZip} = require('./yomichan-util');
+const {JSZip} = require('./util');
 const {VM} = require('../test/yomichan-vm');
 
 const vm = new VM();

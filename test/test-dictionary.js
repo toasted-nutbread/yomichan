@@ -16,7 +16,7 @@
  */
 
 const path = require('path');
-const {createDictionaryArchive} = require('../dev/yomichan-util');
+const {createDictionaryArchive} = require('../dev/util');
 const dictionaryValidate = require('../dev/dictionary-validate');
 
 
