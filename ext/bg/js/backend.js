@@ -118,7 +118,6 @@ class Backend {
             ['triggerDatabaseUpdated',       {async: false, contentScript: true,  handler: this._onApiTriggerDatabaseUpdated.bind(this)}]
         ]);
         this._messageHandlersWithProgress = new Map([
-            ['deleteDictionary',        {async: true,  contentScript: false, handler: this._onApiDeleteDictionary.bind(this)}]
         ]);
 
         this._commandHandlers = new Map([
@@ -739,11 +738,6 @@ class Backend {
         }
 
         return details;
-    }
-
-    async _onApiDeleteDictionary({dictionaryName}, sender, onProgress) {
-        await this._dictionaryDatabase.deleteDictionary(dictionaryName, {rate: 1000}, onProgress);
-        this._triggerDatabaseUpdated('dictionary', 'delete');
     }
 
     async _onApiModifySettings({targets, source}) {
