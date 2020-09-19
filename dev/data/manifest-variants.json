@@ -106,18 +106,63 @@
     },
     "variants": [
         {
-            "name": "default",
-            "fileName": "yomichan.zip",
-            "fileCopies": [
-                "yomichan.xpi"
+            "name": "chrome",
+            "fileName": "yomichan-chrome.zip"
+        },
+        {
+            "name": "chrome-dev",
+            "fileName": "yomichan-chrome-dev.zip",
+            "modifications": [
+                {
+                    "action": "replace",
+                    "path": ["name"],
+                    "pattern": "^.*$",
+                    "patternFlags": "",
+                    "replacement": "$& (development build)"
+                },
+                {
+                    "action": "replace",
+                    "path": ["description"],
+                    "pattern": "^(.*)(?:\\.\\s*)?$",
+                    "patternFlags": "",
+                    "replacement": "$1. This is a development build; get the stable version here: https://tinyurl.com/yaatdjmp"
+                }
             ]
         },
         {
-            "name": "dev",
-            "fileName": "yomichan-dev.zip",
-            "fileCopies": [
-                "yomichan-dev.xpi"
-            ],
+            "name": "firefox",
+            "fileName": "yomichan-firefox.xpi",
+            "modifications": [
+                {
+                    "action": "remove",
+                    "path": ["web_accessible_resources"],
+                    "item": "bg/template-renderer.html"
+                },
+                {
+                    "action": "delete",
+                    "path": ["sandbox"]
+                },
+                {
+                    "action": "set",
+                    "path": ["content_security_policy"],
+                    "value": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+                },
+                {
+                    "action": "set",
+                    "path": ["browser_specific_settings"],
+                    "value": {
+                        "gecko": {
+                            "id": "alex@foosoft.net",
+                            "strict_min_version": "55.0"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "firefox-dev",
+            "inherit": "firefox",
+            "fileName": "yomichan-firefox-dev.xpi",
             "modifications": [
                 {
                     "action": "replace",
@@ -135,7 +180,7 @@
                 },
                 {
                     "action": "set",
-                    "path": ["applications", "gecko", "id"],
+                    "path": ["browser_specific_settings", "gecko", "id"],
                     "value": "alex.testing@foosoft.net"
                 }
             ]
