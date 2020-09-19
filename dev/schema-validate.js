@@ -16,7 +16,7 @@
  */
 
 const fs = require('fs');
-const {VM} = require('../test/yomichan-vm');
+const {VM} = require('./vm');
 
 const vm = new VM();
 vm.execute([

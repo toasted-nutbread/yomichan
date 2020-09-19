@@ -20,7 +20,7 @@ const url = require('url');
 const path = require('path');
 const assert = require('assert');
 const {JSZip, createDictionaryArchive} = require('../dev/util');
-const {VM} = require('./yomichan-vm');
+const {VM} = require('../dev/vm');
 require('fake-indexeddb/auto');
 
 const chrome = {
