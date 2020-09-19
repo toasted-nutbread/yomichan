@@ -16,7 +16,7 @@
  */
 
 const {createTestDictionaryArchive} = require('./yomichan-test');
-const dictionaryValidate = require('./dictionary-validate');
+const dictionaryValidate = require('../dev/dictionary-validate');
 
 
 async function main() {
