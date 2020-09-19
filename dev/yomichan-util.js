@@ -69,11 +69,35 @@ function createManifestString(manifest) {
     return JSON.stringify(manifest, null, 4) + '\n';
 }
 
+function createDictionaryArchive(dictionaryDirectory, dictionaryName) {
+    const fileNames = fs.readdirSync(dictionaryDirectory);
+
+    const JSZip2 = getJSZip();
+    const archive = new JSZip2();
+
+    for (const fileName of fileNames) {
+        if (/\.json$/.test(fileName)) {
+            const content = fs.readFileSync(path.join(dictionaryDirectory, fileName), {encoding: 'utf8'});
+            const json = JSON.parse(content);
+            if (fileName === 'index.json' && typeof dictionaryName === 'string') {
+                json.title = dictionaryName;
+            }
+            archive.file(fileName, JSON.stringify(json, null, 0));
+        } else {
+            const content = fs.readFileSync(path.join(dictionaryDirectory, fileName), {encoding: null});
+            archive.file(fileName, content);
+        }
+    }
+
+    return archive;
+}
+
 
 module.exports = {
     get JSZip() { return getJSZip(); },
     getAllFiles,
     getDefaultManifest,
     getDefaultManifestAndVariants,
-    createManifestString
+    createManifestString,
+    createDictionaryArchive
 };
