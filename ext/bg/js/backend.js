@@ -1591,7 +1591,7 @@ class Backend {
         try {
             const now = new Date(timestamp);
 
-            const dataUrl = await this._onApiClipboardImageGet();
+            const dataUrl = await this._clipboardReader.getImage();
             if (dataUrl === null) {
                 throw new Error('No clipboard image');
             }
