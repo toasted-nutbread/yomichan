@@ -45,7 +45,9 @@ class Backend {
             pasteTargetSelector: '#clipboard-paste-target',
             imagePasteTargetSelector: '#clipboard-image-paste-target'
         });
-        this._clipboardMonitor = new ClipboardMonitor({getClipboard: this._onApiClipboardGet.bind(this)});
+        this._clipboardMonitor = new ClipboardMonitor({
+            clipboardReader: this._clipboardReader
+        });
         this._options = null;
         this._profileConditionsSchemaValidator = new JsonSchemaValidator();
         this._profileConditionsSchemaCache = [];
