@@ -141,6 +141,50 @@ function testApi() {
                 {func: 'getOrCreate', args: [['a', 'b2', 'c']]},
                 {func: 'getOrCreate', args: [['a', 'b', 'c3']]}
             ]
+        },
+        {
+            maxCount: 10,
+            expectedCount: 1,
+            calls: [
+                {func: 'get', args: [['a1', 'b', 'c']], returnValue: void 0},
+                {func: 'has', args: [['a1', 'b', 'c']], returnValue: false},
+                {func: 'set', args: [['a1', 'b', 'c'], 32], returnValue: void 0},
+                {func: 'get', args: [['a1', 'b', 'c']], returnValue: 32},
+                {func: 'has', args: [['a1', 'b', 'c']], returnValue: true}
+            ]
+        },
+        {
+            maxCount: 10,
+            expectedCount: 2,
+            calls: [
+                {func: 'set', args: [['a1', 'b', 'c'], 32], returnValue: void 0},
+                {func: 'get', args: [['a1', 'b', 'c']], returnValue: 32},
+                {func: 'set', args: [['a1', 'b', 'c'], 64], returnValue: void 0},
+                {func: 'get', args: [['a1', 'b', 'c']], returnValue: 64},
+                {func: 'set', args: [['a2', 'b', 'c'], 96], returnValue: void 0},
+                {func: 'get', args: [['a2', 'b', 'c']], returnValue: 96}
+            ]
+        },
+        {
+            maxCount: 2,
+            expectedCount: 2,
+            calls: [
+                {func: 'has', args: [['a1', 'b', 'c']], returnValue: false},
+                {func: 'has', args: [['a2', 'b', 'c']], returnValue: false},
+                {func: 'has', args: [['a3', 'b', 'c']], returnValue: false},
+                {func: 'set', args: [['a1', 'b', 'c'], 1], returnValue: void 0},
+                {func: 'has', args: [['a1', 'b', 'c']], returnValue: true},
+                {func: 'has', args: [['a2', 'b', 'c']], returnValue: false},
+                {func: 'has', args: [['a3', 'b', 'c']], returnValue: false},
+                {func: 'set', args: [['a2', 'b', 'c'], 2], returnValue: void 0},
+                {func: 'has', args: [['a1', 'b', 'c']], returnValue: true},
+                {func: 'has', args: [['a2', 'b', 'c']], returnValue: true},
+                {func: 'has', args: [['a3', 'b', 'c']], returnValue: false},
+                {func: 'set', args: [['a3', 'b', 'c'], 3], returnValue: void 0},
+                {func: 'has', args: [['a1', 'b', 'c']], returnValue: false},
+                {func: 'has', args: [['a2', 'b', 'c']], returnValue: true},
+                {func: 'has', args: [['a3', 'b', 'c']], returnValue: true}
+            ]
         }
     ];
 
