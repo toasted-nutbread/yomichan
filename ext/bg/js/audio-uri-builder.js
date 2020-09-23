@@ -45,6 +45,26 @@ class AudioDownloader {
         return null;
     }
 
+    async downloadAudio(sources, expression, reading, details) {
+        for (const source of sources) {
+            const info = await this.getInfo(source, expression, reading, details);
+            if (info === null) { continue; }
+
+            switch (info.type) {
+                case 'url':
+                    try {
+                        const {details: {url}} = info;
+                        return await this._downloadAudioFromUrl(url);
+                    } catch (e) {
+                        // NOP
+                    }
+                    break;
+            }
+        }
+
+        throw new Error('Could not download audio');
+    }
+
     // Private
 
     _normalizeUrl(url, baseUrl, basePath) {
@@ -184,5 +204,51 @@ class AudioDownloader {
         const data = {expression, reading};
         const url = customSourceUrl.replace(/\{([^}]*)\}/g, (m0, m1) => (hasOwn(data, m1) ? `${data[m1]}` : m0));
         return {type: 'url', details: {url}};
+    }
+
+    async _downloadAudioFromUrl(url) {
+        const response = await this._requestBuilder.fetchAnonymous(url, {
+            method: 'GET',
+            mode: 'cors',
+            cache: 'default',
+            credentials: 'omit',
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer'
+        });
+
+        if (!response.ok) {
+            throw new Error(`Invalid response: ${response.status}`);
+        }
+
+        const arrayBuffer = await response.arrayBuffer();
+
+        if (!await this._isAudioBinaryValid(arrayBuffer)) {
+            throw new Error('Could not retrieve audio');
+        }
+
+        return this._arrayBufferToBase64(arrayBuffer);
+    }
+
+    async _isAudioBinaryValid(arrayBuffer) {
+        const digest = await this._arrayBufferDigest(arrayBuffer);
+        switch (digest) {
+            case 'ae6398b5a27bc8c0a771df6c907ade794be15518174773c58c7c7ddd17098906': // jpod101 invalid audio
+                return false;
+            default:
+                return true;
+        }
+    }
+
+    async _arrayBufferDigest(arrayBuffer) {
+        const hash = new Uint8Array(await crypto.subtle.digest('SHA-256', new Uint8Array(arrayBuffer)));
+        let digest = '';
+        for (const byte of hash) {
+            digest += byte.toString(16).padStart(2, '0');
+        }
+        return digest;
+    }
+
+    _arrayBufferToBase64(arrayBuffer) {
+        return btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
     }
 }
