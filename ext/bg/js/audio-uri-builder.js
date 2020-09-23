@@ -20,20 +20,34 @@
  * jp
  */
 
-class AudioUriBuilder {
+class AudioDownloader {
     constructor({requestBuilder}) {
         this._requestBuilder = requestBuilder;
-        this._getUrlHandlers = new Map([
-            ['jpod101', this._getUriJpod101.bind(this)],
-            ['jpod101-alternate', this._getUriJpod101Alternate.bind(this)],
-            ['jisho', this._getUriJisho.bind(this)],
-            ['text-to-speech', this._getUriTextToSpeech.bind(this)],
-            ['text-to-speech-reading', this._getUriTextToSpeechReading.bind(this)],
-            ['custom', this._getUriCustom.bind(this)]
+        this._getInfoHandlers = new Map([
+            ['jpod101', this._getInfoJpod101.bind(this)],
+            ['jpod101-alternate', this._getInfoJpod101Alternate.bind(this)],
+            ['jisho', this._getInfoJisho.bind(this)],
+            ['text-to-speech', this._getInfoTextToSpeech.bind(this)],
+            ['text-to-speech-reading', this._getInfoTextToSpeechReading.bind(this)],
+            ['custom', this._getInfoCustom.bind(this)]
         ]);
     }
 
-    normalizeUrl(url, baseUrl, basePath) {
+    async getInfo(source, expression, reading, details) {
+        const handler = this._getInfoHandlers.get(source);
+        if (typeof handler === 'function') {
+            try {
+                return await handler(expression, reading, details);
+            } catch (e) {
+                // NOP
+            }
+        }
+        return null;
+    }
+
+    // Private
+
+    _normalizeUrl(url, baseUrl, basePath) {
         if (url) {
             if (url[0] === '/') {
                 if (url.length >= 2 && url[1] === '/') {
@@ -51,19 +65,7 @@ class AudioUriBuilder {
         return url;
     }
 
-    async getUri(source, expression, reading, details) {
-        const handler = this._getUrlHandlers.get(source);
-        if (typeof handler === 'function') {
-            try {
-                return await handler(expression, reading, details);
-            } catch (e) {
-                // NOP
-            }
-        }
-        return null;
-    }
-
-    async _getUriJpod101(expression, reading) {
+    async _getInfoJpod101(expression, reading) {
         let kana = reading;
         let kanji = expression;
 
@@ -80,10 +82,11 @@ class AudioUriBuilder {
             params.push(`kana=${encodeURIComponent(kana)}`);
         }
 
-        return `https://assets.languagepod101.com/dictionary/japanese/audiomp3.php?${params.join('&')}`;
+        const url = `https://assets.languagepod101.com/dictionary/japanese/audiomp3.php?${params.join('&')}`;
+        return {type: 'url', details: {url}};
     }
 
-    async _getUriJpod101Alternate(expression, reading) {
+    async _getInfoJpod101Alternate(expression, reading) {
         const fetchUrl = 'https://www.japanesepod101.com/learningcenter/reference/dictionary_post';
         const data = `post=dictionary_reference&match_type=exact&search_query=${encodeURIComponent(expression)}&vulgar=true`;
         const response = await this._requestBuilder.fetchAnonymous(fetchUrl, {
@@ -109,7 +112,7 @@ class AudioUriBuilder {
                 const source = dom.getElementByTagName('source', audio);
                 if (source === null) { continue; }
 
-                const url = dom.getAttribute(source, 'src');
+                let url = dom.getAttribute(source, 'src');
                 if (url === null) { continue; }
 
                 const htmlReadings = dom.getElementsByClassName('dc-vocab_kana');
@@ -117,7 +120,8 @@ class AudioUriBuilder {
 
                 const htmlReading = dom.getTextContent(htmlReadings[0]);
                 if (htmlReading && (!reading || reading === htmlReading)) {
-                    return this.normalizeUrl(url, 'https://www.japanesepod101.com', '/learningcenter/reference/');
+                    url = this._normalizeUrl(url, 'https://www.japanesepod101.com', '/learningcenter/reference/');
+                    return {type: 'url', details: {url}};
                 }
             } catch (e) {
                 // NOP
@@ -127,7 +131,7 @@ class AudioUriBuilder {
         throw new Error('Failed to find audio URL');
     }
 
-    async _getUriJisho(expression, reading) {
+    async _getInfoJisho(expression, reading) {
         const fetchUrl = `https://jisho.org/search/${expression}`;
         const response = await this._requestBuilder.fetchAnonymous(fetchUrl, {
             method: 'GET',
@@ -145,9 +149,10 @@ class AudioUriBuilder {
             if (audio !== null) {
                 const source = dom.getElementByTagName('source', audio);
                 if (source !== null) {
-                    const url = dom.getAttribute(source, 'src');
+                    let url = dom.getAttribute(source, 'src');
                     if (url !== null) {
-                        return this.normalizeUrl(url, 'https://jisho.org', '/search/');
+                        url = this._normalizeUrl(url, 'https://jisho.org', '/search/');
+                        return {type: 'url', details: {url}};
                     }
                 }
             }
@@ -158,25 +163,26 @@ class AudioUriBuilder {
         throw new Error('Failed to find audio URL');
     }
 
-    async _getUriTextToSpeech(expression, reading, {textToSpeechVoice}) {
+    async _getInfoTextToSpeech(expression, reading, {textToSpeechVoice}) {
         if (!textToSpeechVoice) {
             throw new Error('No voice');
         }
-        return `tts:?text=${encodeURIComponent(expression)}&voice=${encodeURIComponent(textToSpeechVoice)}`;
+        return {type: 'tts', details: {text: expression, voice: textToSpeechVoice}};
     }
 
-    async _getUriTextToSpeechReading(expression, reading, {textToSpeechVoice}) {
+    async _getInfoTextToSpeechReading(expression, reading, {textToSpeechVoice}) {
         if (!textToSpeechVoice) {
             throw new Error('No voice');
         }
-        return `tts:?text=${encodeURIComponent(reading || expression)}&voice=${encodeURIComponent(textToSpeechVoice)}`;
+        return {type: 'tts', details: {text: reading || expression, voice: textToSpeechVoice}};
     }
 
-    async _getUriCustom(expression, reading, {customSourceUrl}) {
+    async _getInfoCustom(expression, reading, {customSourceUrl}) {
         if (typeof customSourceUrl !== 'string') {
             throw new Error('No custom URL defined');
         }
         const data = {expression, reading};
-        return customSourceUrl.replace(/\{([^}]*)\}/g, (m0, m1) => (hasOwn(data, m1) ? `${data[m1]}` : m0));
+        const url = customSourceUrl.replace(/\{([^}]*)\}/g, (m0, m1) => (hasOwn(data, m1) ? `${data[m1]}` : m0));
+        return {type: 'url', details: {url}};
     }
 }
