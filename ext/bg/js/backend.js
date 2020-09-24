@@ -455,7 +455,7 @@ class Backend {
         return results;
     }
 
-    async _onApiInjectAnkiNoteMedia({expression, reading, timestamp, audioDetails, screenshotDetails, clipboardImage}, sender) {
+    async _onApiInjectAnkiNoteMedia({expression, reading, timestamp, audioDetails, screenshotDetails, clipboardDetails}, sender) {
         if (isObject(screenshotDetails)) {
             const {id: tabId, windowId} = (sender && sender.tab ? sender.tab : {});
             screenshotDetails = Object.assign({}, screenshotDetails, {tabId, windowId});
@@ -467,7 +467,7 @@ class Backend {
             timestamp,
             audioDetails,
             screenshotDetails,
-            clipboardImage
+            clipboardDetails
         );
     }
 
@@ -1515,23 +1515,31 @@ class Backend {
         return await this._audioSystem.getDefinitionAudio(sources, expression, reading, details);
     }
 
-    async _injectAnkNoteMedia(ankiConnect, expression, reading, timestamp, audioDetails, screenshotDetails, clipboardImage) {
+    async _injectAnkNoteMedia(ankiConnect, expression, reading, timestamp, audioDetails, screenshotDetails, clipboardDetails) {
         const screenshotFileName = (
             screenshotDetails !== null ?
             await this._injectAnkNoteScreenshot(ankiConnect, expression, reading, timestamp, screenshotDetails) :
             null
         );
         const clipboardImageFileName = (
-            clipboardImage ?
+            clipboardDetails !== null && clipboardDetails.image ?
             await this._injectAnkNoteClipboardImage(ankiConnect, expression, reading, timestamp) :
             null
         );
+        let clipboardText = null;
+        try {
+            if (clipboardDetails !== null && clipboardDetails.text) {
+                clipboardText = await this._clipboardReader.getText();
+            }
+        } catch (e) {
+            // NOP
+        }
         const audioFileName = (
             audioDetails !== null ?
             await this._injectAnkNoteAudio(ankiConnect, expression, reading, timestamp, audioDetails) :
             null
         );
-        return {screenshotFileName, clipboardImageFileName, audioFileName};
+        return {screenshotFileName, clipboardImageFileName, clipboardText, audioFileName};
     }
 
     async _injectAnkNoteAudio(ankiConnect, expression, reading, timestamp, details) {
