@@ -45,7 +45,8 @@ class Backend {
         this._clipboardReader = new ClipboardReader({
             document: (typeof document === 'object' && document !== null ? document : null),
             pasteTargetSelector: '#clipboard-paste-target',
-            imagePasteTargetSelector: '#clipboard-image-paste-target'
+            imagePasteTargetSelector: '#clipboard-image-paste-target',
+            mediaUtility: this._mediaUtility
         });
         this._clipboardMonitor = new ClipboardMonitor({
             clipboardReader: this._clipboardReader
