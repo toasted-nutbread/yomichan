@@ -32,6 +32,7 @@
         "eslint": "^7.5.0",
         "eslint-plugin-no-unsanitized": "^3.1.2",
         "fake-indexeddb": "^3.1.1",
-        "jsdom": "^16.2.2"
+        "jsdom": "^16.2.2",
+        "web-ext": "^5.1.0"
     }
 }
