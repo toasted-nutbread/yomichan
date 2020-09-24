@@ -30,8 +30,7 @@ class AudioController {
 
     async prepare() {
         this._audioSystem = new AudioSystem({
-            audioUriBuilder: null,
-            useCache: true
+            cacheSize: 0
         });
 
         this._audioSourceContainer = document.querySelector('.audio-source-list');
