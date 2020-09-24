@@ -160,6 +160,7 @@ class Display extends EventDispatcher {
     }
 
     async prepare() {
+        this._audioSystem.prepare();
         this._updateMode();
         this._setInteractive(true);
         await this._displayGenerator.prepare();
