@@ -16,9 +16,9 @@
  */
 
 /**
- * mediaUtility is an object containing helper methods related to media processing.
+ * MediaUtility is a class containing helper methods related to media processing.
  */
-const mediaUtility = (() => {
+class MediaUtility {
     /**
      * Gets the file extension of a file path. URL search queries and hash
      * fragments are not handled.
@@ -26,7 +26,7 @@ const mediaUtility = (() => {
      * @returns The file extension, including the '.', or an empty string
      *   if there is no file extension.
      */
-    function getFileNameExtension(path) {
+    getFileNameExtension(path) {
         const match = /\.[^./\\]*$/.exec(path);
         return match !== null ? match[0] : '';
     }
@@ -37,8 +37,8 @@ const mediaUtility = (() => {
      * @returns The media type string if it can be determined from the file path,
      *   otherwise null.
      */
-    function getImageMediaTypeFromFileName(path) {
-        switch (getFileNameExtension(path).toLowerCase()) {
+    getImageMediaTypeFromFileName(path) {
+        switch (this.getFileNameExtension(path).toLowerCase()) {
             case '.apng':
                 return 'image/apng';
             case '.bmp':
@@ -67,8 +67,4 @@ const mediaUtility = (() => {
                 return null;
         }
     }
-
-    return {
-        getImageMediaTypeFromFileName
-    };
-})();
+}

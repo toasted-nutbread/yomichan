@@ -18,13 +18,14 @@
 /* global
  * JSZip
  * JsonSchemaValidator
- * mediaUtility
+ * MediaUtility
  */
 
 class DictionaryImporter {
     constructor() {
         this._schemas = new Map();
         this._jsonSchemaValidator = new JsonSchemaValidator();
+        this._mediaUtility = new MediaUtility();
     }
 
     async importDictionary(dictionaryDatabase, archiveSource, details, onProgress) {
@@ -324,7 +325,7 @@ class DictionaryImporter {
         }
 
         const content = await file.async('base64');
-        const mediaType = mediaUtility.getImageMediaTypeFromFileName(path);
+        const mediaType = this._mediaUtility.getImageMediaTypeFromFileName(path);
         if (mediaType === null) {
             throw new Error(`Could not determine media type for image at path ${JSON.stringify(path)} for ${errorSource}`);
         }
