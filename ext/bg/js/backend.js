@@ -1390,20 +1390,15 @@ class Backend {
 
             chrome.runtime.onMessage.addListener(onMessage);
 
-            chrome.tabs.sendMessage(tabId, {action: 'isReady'}, {frameId}, (response) => {
-                const error = chrome.runtime.lastError;
-                if (error) { return; }
-
-                try {
-                    const value = yomichan.getMessageResponseResult(response);
-                    if (!value) { return; }
-
-                    cleanup();
-                    resolve();
-                } catch (e) {
-                    // NOP
-                }
-            });
+            this._sendMessageTab(tabId, {action: 'isReady'}, {frameId})
+                .then(
+                    (value) => {
+                        if (!value) { return; }
+                        cleanup();
+                        resolve();
+                    },
+                    () => {} // NOP
+                );
 
             if (timeout !== null) {
                 timer = setTimeout(() => {
