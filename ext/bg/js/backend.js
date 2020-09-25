@@ -861,7 +861,7 @@ class Backend {
         const tab = tabs[0];
         await this._waitUntilTabFrameIsReady(tab.id, 0, 2000);
 
-        await this._sendMessageTab(
+        await this._sendMessageTabPromise(
             tab.id,
             {action: 'setMode', params: {mode: 'popup'}},
             {frameId: 0}
@@ -872,7 +872,7 @@ class Backend {
     }
 
     _updateSearchQuery(tabId, text, animate) {
-        return this._sendMessageTab(
+        return this._sendMessageTabPromise(
             tabId,
             {action: 'updateSearchQuery', params: {text, animate}},
             {frameId: 0}
@@ -1263,7 +1263,7 @@ class Backend {
 
     async _getTabUrl(tabId) {
         try {
-            const {url} = await this._sendMessageTab(
+            const {url} = await this._sendMessageTabPromise(
                 tabId,
                 {action: 'getUrl', params: {}},
                 {frameId: 0}
@@ -1381,7 +1381,7 @@ class Backend {
 
             chrome.runtime.onMessage.addListener(onMessage);
 
-            this._sendMessageTab(tabId, {action: 'isReady'}, {frameId})
+            this._sendMessageTabPromise(tabId, {action: 'isReady'}, {frameId})
                 .then(
                     (value) => {
                         if (!value) { return; }
@@ -1416,7 +1416,7 @@ class Backend {
         return await (json ? response.json() : response.text());
     }
 
-    _sendMessageTab(...args) {
+    _sendMessageTabPromise(...args) {
         return new Promise((resolve, reject) => {
             const callback = (response) => {
                 try {
@@ -1480,7 +1480,7 @@ class Backend {
             if (typeof tabId === 'number' && typeof ownerFrameId === 'number') {
                 const action = 'setAllVisibleOverride';
                 const params = {value: false, priority: 0, awaitFrame: true};
-                token = await this._sendMessageTab(tabId, {action, params}, {frameId: ownerFrameId});
+                token = await this._sendMessageTabPromise(tabId, {action, params}, {frameId: ownerFrameId});
             }
 
             return await new Promise((resolve, reject) => {
@@ -1498,7 +1498,7 @@ class Backend {
                 const action = 'clearAllVisibleOverride';
                 const params = {token};
                 try {
-                    await this._sendMessageTab(tabId, {action, params}, {frameId: ownerFrameId});
+                    await this._sendMessageTabPromise(tabId, {action, params}, {frameId: ownerFrameId});
                 } catch (e) {
                     // NOP
                 }
