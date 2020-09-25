@@ -879,15 +879,6 @@ class Backend {
         );
     }
 
-    _sendMessageAllTabs(action, params={}) {
-        const callback = () => this._checkLastError(chrome.runtime.lastError);
-        chrome.tabs.query({}, (tabs) => {
-            for (const tab of tabs) {
-                chrome.tabs.sendMessage(tab.id, {action, params}, callback);
-            }
-        });
-    }
-
     _applyOptions(source) {
         const options = this.getOptions({current: true});
         this._updateBadge();
@@ -1436,6 +1427,15 @@ class Backend {
             };
 
             chrome.tabs.sendMessage(...args, callback);
+        });
+    }
+
+    _sendMessageAllTabs(action, params={}) {
+        const callback = () => this._checkLastError(chrome.runtime.lastError);
+        chrome.tabs.query({}, (tabs) => {
+            for (const tab of tabs) {
+                chrome.tabs.sendMessage(tab.id, {action, params}, callback);
+            }
         });
     }
 
