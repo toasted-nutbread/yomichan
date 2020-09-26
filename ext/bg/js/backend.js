@@ -205,8 +205,7 @@ class Backend {
             this._clipboardMonitor.on('change', this._onClipboardTextChange.bind(this));
 
             this._sendMessageAllTabs('backendReady');
-            const callback = () => this._checkLastError(chrome.runtime.lastError);
-            chrome.runtime.sendMessage({action: 'backendReady'}, callback);
+            this._sendMessageIgnoreResponse({action: 'backendReady'});
         } catch (e) {
             yomichan.logError(e);
             throw e;
@@ -362,8 +361,7 @@ class Backend {
         // tab ID isn't set in background (e.g. browser_action)
         const data = {action: 'backendReady'};
         if (typeof sender.tab === 'undefined') {
-            const callback = () => this._checkLastError(chrome.runtime.lastError);
-            chrome.runtime.sendMessage(data, callback);
+            this._sendMessageIgnoreResponse(data);
             return false;
         } else {
             this._sendMessageTabIgnoreResponse(sender.tab.id, data);
@@ -1411,6 +1409,11 @@ class Backend {
             throw new Error(`Failed to fetch ${url}: ${response.status}`);
         }
         return await (json ? response.json() : response.text());
+    }
+
+    _sendMessageIgnoreResponse(...args) {
+        const callback = () => this._checkLastError(chrome.runtime.lastError);
+        chrome.runtime.sendMessage(...args, callback);
     }
 
     _sendMessageTabIgnoreResponse(...args) {
