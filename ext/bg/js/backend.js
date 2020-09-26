@@ -205,7 +205,7 @@ class Backend {
             this._clipboardMonitor.on('change', this._onClipboardTextChange.bind(this));
 
             this._sendMessageAllTabs('backendReady');
-            this._sendMessageIgnoreResponse({action: 'backendReady'});
+            this._sendMessageIgnoreResponse({action: 'backendReady', params: {}});
         } catch (e) {
             yomichan.logError(e);
             throw e;
@@ -359,7 +359,7 @@ class Backend {
 
     _onApiRequestBackendReadySignal(_params, sender) {
         // tab ID isn't set in background (e.g. browser_action)
-        const data = {action: 'backendReady'};
+        const data = {action: 'backendReady', params: {}};
         if (typeof sender.tab === 'undefined') {
             this._sendMessageIgnoreResponse(data);
             return false;
