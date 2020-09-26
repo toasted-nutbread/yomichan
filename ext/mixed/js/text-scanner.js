@@ -282,7 +282,7 @@ class TextScanner extends EventDispatcher {
             return false;
         }
 
-        if (DocumentUtil.isMouseButtonDown(e, 'primary')) {
+        if (e.button === 0) { // Primary
             this._scanTimerClear();
             this.clearSelection(false);
         }
