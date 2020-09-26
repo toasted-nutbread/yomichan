@@ -267,10 +267,6 @@ class TextScanner extends EventDispatcher {
     _onMouseMove(e) {
         this._scanTimerClear();
 
-        if (DocumentUtil.isMouseButtonDown(e, 'primary')) {
-            return;
-        }
-
         const inputInfo = this._getMatchingInputGroupFromEvent(e, 'mouse');
         if (inputInfo === null) { return; }
 
