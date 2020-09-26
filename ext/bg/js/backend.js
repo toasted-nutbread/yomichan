@@ -353,21 +353,20 @@ class Backend {
     }
 
     _onZoomChange({tabId, oldZoomFactor, newZoomFactor}) {
-        const callback = () => this._checkLastError(chrome.runtime.lastError);
-        chrome.tabs.sendMessage(tabId, {action: 'zoomChanged', params: {oldZoomFactor, newZoomFactor}}, callback);
+        this._sendMessageTabIgnoreResponse(tabId, {action: 'zoomChanged', params: {oldZoomFactor, newZoomFactor}});
     }
 
     // Message handlers
 
     _onApiRequestBackendReadySignal(_params, sender) {
         // tab ID isn't set in background (e.g. browser_action)
-        const callback = () => this._checkLastError(chrome.runtime.lastError);
         const data = {action: 'backendReady'};
         if (typeof sender.tab === 'undefined') {
+            const callback = () => this._checkLastError(chrome.runtime.lastError);
             chrome.runtime.sendMessage(data, callback);
             return false;
         } else {
-            chrome.tabs.sendMessage(sender.tab.id, data, callback);
+            this._sendMessageTabIgnoreResponse(sender.tab.id, data);
             return true;
         }
     }
@@ -508,8 +507,7 @@ class Backend {
 
         const tabId = sender.tab.id;
         const frameId = sender.frameId;
-        const callback = () => this._checkLastError(chrome.runtime.lastError);
-        chrome.tabs.sendMessage(tabId, {action, params, frameId}, {frameId: targetFrameId}, callback);
+        this._sendMessageTabIgnoreResponse(tabId, {action, params, frameId}, {frameId: targetFrameId});
         return true;
     }
 
@@ -520,8 +518,7 @@ class Backend {
 
         const tabId = sender.tab.id;
         const frameId = sender.frameId;
-        const callback = () => this._checkLastError(chrome.runtime.lastError);
-        chrome.tabs.sendMessage(tabId, {action, params, frameId}, callback);
+        this._sendMessageTabIgnoreResponse(tabId, {action, params, frameId});
         return true;
     }
 
@@ -1414,6 +1411,11 @@ class Backend {
             throw new Error(`Failed to fetch ${url}: ${response.status}`);
         }
         return await (json ? response.json() : response.text());
+    }
+
+    _sendMessageTabIgnoreResponse(...args) {
+        const callback = () => this._checkLastError(chrome.runtime.lastError);
+        chrome.tabs.sendMessage(...args, callback);
     }
 
     _sendMessageTabPromise(...args) {
