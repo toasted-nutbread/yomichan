@@ -204,7 +204,7 @@ class Backend {
 
             this._clipboardMonitor.on('change', this._onClipboardTextChange.bind(this));
 
-            this._sendMessageAllTabs('backendReady');
+            this._sendMessageAllTabsIgnoreResponse('backendReady', {});
             this._sendMessageIgnoreResponse({action: 'backendReady', params: {}});
         } catch (e) {
             yomichan.logError(e);
@@ -893,7 +893,7 @@ class Backend {
             this._clipboardMonitor.stop();
         }
 
-        this._sendMessageAllTabs('optionsUpdated', {source});
+        this._sendMessageAllTabsIgnoreResponse('optionsUpdated', {source});
     }
 
     _getProfile(optionsContext, useSchema=false) {
@@ -1421,6 +1421,15 @@ class Backend {
         chrome.tabs.sendMessage(...args, callback);
     }
 
+    _sendMessageAllTabsIgnoreResponse(action, params) {
+        const callback = () => this._checkLastError(chrome.runtime.lastError);
+        chrome.tabs.query({}, (tabs) => {
+            for (const tab of tabs) {
+                chrome.tabs.sendMessage(tab.id, {action, params}, callback);
+            }
+        });
+    }
+
     _sendMessageTabPromise(...args) {
         return new Promise((resolve, reject) => {
             const callback = (response) => {
@@ -1432,15 +1441,6 @@ class Backend {
             };
 
             chrome.tabs.sendMessage(...args, callback);
-        });
-    }
-
-    _sendMessageAllTabs(action, params={}) {
-        const callback = () => this._checkLastError(chrome.runtime.lastError);
-        chrome.tabs.query({}, (tabs) => {
-            for (const tab of tabs) {
-                chrome.tabs.sendMessage(tab.id, {action, params}, callback);
-            }
         });
     }
 
@@ -1652,7 +1652,7 @@ class Backend {
 
     _triggerDatabaseUpdated(type, cause) {
         this._translator.clearDatabaseCaches();
-        this._sendMessageAllTabs('databaseUpdated', {type, cause});
+        this._sendMessageAllTabsIgnoreResponse('databaseUpdated', {type, cause});
     }
 
     async _saveOptions(source) {
