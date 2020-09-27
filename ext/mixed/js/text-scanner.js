@@ -120,12 +120,12 @@ class TextScanner extends EventDispatcher {
                 include,
                 exclude,
                 types,
-                options: {scanOnPenHover, scanOnPenPress, scanOnPenRelease, searchTerms, searchKanji}
+                options: {scanOnTouchMove, scanOnPenHover, scanOnPenPress, scanOnPenRelease, searchTerms, searchKanji}
             }) => ({
                 include: this._getInputArray(include),
                 exclude: this._getInputArray(exclude),
                 types: this._getInputTypeSet(types),
-                options: {scanOnPenHover, scanOnPenPress, scanOnPenRelease, searchTerms, searchKanji}
+                options: {scanOnTouchMove, scanOnPenHover, scanOnPenPress, scanOnPenRelease, searchTerms, searchKanji}
             }));
         }
         if (typeof deepContentScan === 'boolean') {
@@ -392,7 +392,9 @@ class TextScanner extends EventDispatcher {
         const inputInfo = this._getMatchingInputGroupFromEvent(e, type);
         if (inputInfo === null) { return; }
 
-        this._searchAt(primaryTouch.clientX, primaryTouch.clientY, type, 'touchMove', inputInfo);
+        if (inputInfo.input.options.scanOnTouchMove) {
+            this._searchAt(primaryTouch.clientX, primaryTouch.clientY, type, 'touchMove', inputInfo);
+        }
 
         e.preventDefault(); // Disable scroll
     }
@@ -497,7 +499,7 @@ class TextScanner extends EventDispatcher {
         }
 
         const inputInfo = this._getMatchingInputGroupFromEvent(e, 'touch');
-        if (inputInfo === null) { return; }
+        if (inputInfo === null || !inputInfo.input.options.scanOnTouchMove) { return; }
 
         this._searchAt(e.clientX, e.clientY, 'touch', 'touchMove', inputInfo);
     }
