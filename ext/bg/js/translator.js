@@ -321,8 +321,8 @@ class Translator {
             rawSource: text,
             term: text,
             rules: 0,
-            definitions,
-            reasons: []
+            reasons: [],
+            definitions
         }];
     }
 
@@ -411,8 +411,8 @@ class Translator {
                 const text2Substring = text2.substring(0, i);
                 if (used.has(text2Substring)) { break; }
                 used.add(text2Substring);
-                for (const deinflection of this._deinflector.deinflect(text2Substring)) {
-                    deinflection.rawSource = sourceMap.source.substring(0, sourceMap.getSourceLength(i));
+                const rawSource = sourceMap.source.substring(0, sourceMap.getSourceLength(i));
+                for (const deinflection of this._deinflector.deinflect(text2Substring, rawSource)) {
                     deinflections.push(deinflection);
                 }
             }
