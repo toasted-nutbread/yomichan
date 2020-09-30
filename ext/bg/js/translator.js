@@ -240,7 +240,7 @@ class Translator {
             }
         }
 
-        this._sortDefinitions(definitionsMerged);
+        this._sortDefinitions(definitionsMerged, null);
         return [definitionsMerged, length];
     }
 
@@ -256,7 +256,7 @@ class Translator {
     async _findTermsSimple(text, details, options) {
         const dictionaries = this._getEnabledDictionaryMap(options);
         const [definitions, length] = await this._findTermsInternal(text, dictionaries, details, options);
-        this._sortDefinitions(definitions);
+        this._sortDefinitions(definitions, null);
         return [definitions, length];
     }
 
@@ -675,7 +675,7 @@ class Translator {
         return enabledDictionaryMap;
     }
 
-    _sortDefinitions(definitions, dictionaries=null) {
+    _sortDefinitions(definitions, dictionaries) {
         definitions.sort((v1, v2) => {
             let i;
             if (dictionaries !== null) {
@@ -784,7 +784,7 @@ class Translator {
             });
         }
 
-        this._sortDefinitions(results);
+        this._sortDefinitions(results, null);
         return results;
     }
 
