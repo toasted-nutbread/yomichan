@@ -943,13 +943,8 @@ class Translator {
     _sortTags(tags) {
         const stringComparer = this._stringComparer;
         return tags.sort((v1, v2) => {
-            const order1 = v1.order;
-            const order2 = v2.order;
-            if (order1 < order2) {
-                return -1;
-            } else if (order1 > order2) {
-                return 1;
-            }
+            const i = v1.order - v2.order;
+            if (i !== 0) { return i; }
 
             return stringComparer.compare(v1.name, v2.name);
         });
