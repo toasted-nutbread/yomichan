@@ -240,7 +240,8 @@ class Translator {
             }
         }
 
-        return [this._sortDefinitions(definitionsMerged), length];
+        this._sortDefinitions(definitionsMerged);
+        return [definitionsMerged, length];
     }
 
     async _findTermsSplit(text, details, options) {
@@ -271,7 +272,7 @@ class Translator {
             await this._findTermDeinflections(text, dictionaries, options)
         );
 
-        let definitions = [];
+        const definitions = [];
         for (const deinflection of deinflections) {
             for (const definition of deinflection.definitions) {
                 const definitionTags = await this._expandTags(definition.definitionTags, definition.dictionary);
@@ -300,7 +301,7 @@ class Translator {
         }
 
         this._removeDuplicateDefinitions(definitions);
-        definitions = this._sortDefinitions(definitions, dictionaries);
+        this._sortDefinitions(definitions, dictionaries);
 
         let length = 0;
         for (const definition of definitions) {
@@ -675,7 +676,7 @@ class Translator {
     }
 
     _sortDefinitions(definitions, dictionaries=null) {
-        return definitions.sort((v1, v2) => {
+        definitions.sort((v1, v2) => {
             let i;
             if (dictionaries !== null) {
                 const dictionaryInfo1 = dictionaries.get(v1.dictionary);
@@ -783,7 +784,8 @@ class Translator {
             });
         }
 
-        return this._sortDefinitions(results);
+        this._sortDefinitions(results);
+        return results;
     }
 
     _mergeBySequence(definitions, mainDictionary) {
