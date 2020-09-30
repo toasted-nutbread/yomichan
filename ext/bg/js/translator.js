@@ -299,7 +299,7 @@ class Translator {
             }
         }
 
-        definitions = this._removeDuplicateDefinitions(definitions);
+        this._removeDuplicateDefinitions(definitions);
         definitions = this._sortDefinitions(definitions, dictionaries);
 
         let length = 0;
@@ -701,15 +701,25 @@ class Translator {
 
     _removeDuplicateDefinitions(definitions) {
         const definitionGroups = new Map();
-        for (const definition of definitions) {
-            const id = definition.id;
-            const definitionExisting = definitionGroups.get(id);
-            if (typeof definitionExisting === 'undefined' || definition.expression.length > definitionExisting.expression.length) {
-                definitionGroups.set(id, definition);
+        for (let i = 0, ii = definitions.length; i < ii; ++i) {
+            const definition = definitions[i];
+            const {id} = definition;
+            const existing = definitionGroups.get(id);
+            if (typeof existing === 'undefined') {
+                definitionGroups.set(id, [i, definition]);
+                continue;
             }
-        }
 
-        return [...definitionGroups.values()];
+            let removeIndex = i;
+            if (definition.expression.length > existing[1].expression.length) {
+                definitionGroups.set(id, [i, definition]);
+                removeIndex = existing[0];
+            }
+
+            definitions.splice(removeIndex, 1);
+            --i;
+            --ii;
+        }
     }
 
     _compressDefinitionTags(definitions) {
