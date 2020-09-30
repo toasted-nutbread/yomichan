@@ -26,6 +26,7 @@ class Translator {
         this._database = database;
         this._deinflector = null;
         this._tagCache = new Map();
+        this._stringComparer = new Intl.Collator('en-US'); // Invariant locale
     }
 
     async prepare() {
@@ -676,6 +677,7 @@ class Translator {
     }
 
     _sortDefinitions(definitions, dictionaries) {
+        const stringComparer = this._stringComparer;
         definitions.sort((v1, v2) => {
             let i;
             if (dictionaries !== null) {
@@ -696,7 +698,12 @@ class Translator {
             i = v2.score - v1.score;
             if (i !== 0) { return i; }
 
-            return v2.expression.toString().localeCompare(v1.expression.toString());
+            const expression1 = v1.expression;
+            const expression2 = v2.expression;
+            i = expression2.length - expression1.length;
+            if (i !== 0) { return i; }
+
+            return stringComparer.compare(expression1, expression2);
         });
     }
 
@@ -934,6 +941,7 @@ class Translator {
     }
 
     _sortTags(tags) {
+        const stringComparer = this._stringComparer;
         return tags.sort((v1, v2) => {
             const order1 = v1.order;
             const order2 = v2.order;
@@ -943,15 +951,7 @@ class Translator {
                 return 1;
             }
 
-            const name1 = v1.name;
-            const name2 = v2.name;
-            if (name1 < name2) {
-                return -1;
-            } else if (name1 > name2) {
-                return 1;
-            }
-
-            return 0;
+            return stringComparer.compare(v1.name, v2.name);
         });
     }
 }
