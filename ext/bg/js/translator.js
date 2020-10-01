@@ -278,31 +278,30 @@ class Translator {
 
         const definitions = [];
         for (const {databaseDefinitions, source, rawSource, reasons} of deinflections) {
-            for (const definition of databaseDefinitions) {
-                const definitionTags = await this._expandTags(definition.definitionTags, definition.dictionary);
-                definitionTags.push(this._createDictionaryTag(definition.dictionary));
-                const termTags = await this._expandTags(definition.termTags, definition.dictionary);
+            for (const {expression, reading, definitionTags, termTags, glossary, score, dictionary, id, sequence} of databaseDefinitions) {
+                const termTagsExpanded = await this._expandTags(termTags, dictionary);
+                const definitionTagsExpanded = await this._expandTags(definitionTags, dictionary);
+                definitionTagsExpanded.push(this._createDictionaryTag(dictionary));
 
-                const {expression, reading} = definition;
+                this._sortTags(definitionTagsExpanded);
+                this._sortTags(termTagsExpanded);
+
                 const furiganaSegments = jp.distributeFurigana(expression, reading);
-
-                this._sortTags(definitionTags);
-                this._sortTags(termTags);
 
                 definitions.push({
                     source,
                     rawSource,
                     reasons,
-                    score: definition.score,
-                    id: definition.id,
-                    dictionary: definition.dictionary,
+                    score,
+                    id,
+                    dictionary,
                     expression,
                     reading,
                     furiganaSegments,
-                    glossary: definition.glossary,
-                    definitionTags,
-                    termTags,
-                    sequence: definition.sequence
+                    glossary,
+                    definitionTags: definitionTagsExpanded,
+                    termTags: termTagsExpanded,
+                    sequence
                 });
             }
         }
