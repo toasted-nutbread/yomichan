@@ -214,6 +214,7 @@ class Translator {
 
         const definitionsGrouped = this._groupTerms(definitions, dictionaries);
         await this._buildTermMeta(definitionsGrouped, dictionaries);
+        this._sortDefinitions(definitionsGrouped, null);
 
         if (options.general.compactTags) {
             for (const definition of definitionsGrouped) {
@@ -267,6 +268,7 @@ class Translator {
         }
 
         await this._buildTermMeta(definitionsMerged, dictionaries);
+        this._sortDefinitions(definitionsMerged, null);
 
         if (options.general.compactTags) {
             for (const definition of definitionsMerged) {
@@ -274,16 +276,14 @@ class Translator {
             }
         }
 
-        this._sortDefinitions(definitionsMerged, null);
         return [definitionsMerged, length];
     }
 
     async _findTermsSplit(text, details, options) {
         const dictionaries = this._getEnabledDictionaryMap(options);
         const [definitions, length] = await this._findTermsInternal(text, dictionaries, details, options);
-
         await this._buildTermMeta(definitions, dictionaries);
-
+        this._sortDefinitions(definitions, dictionaries);
         return [definitions, length];
     }
 
@@ -317,8 +317,6 @@ class Translator {
         }
 
         this._removeDuplicateDefinitions(definitions);
-        this._sortDefinitions(definitions, dictionaries);
-
         return [definitions, maxLength];
     }
 
@@ -774,7 +772,6 @@ class Translator {
             });
         }
 
-        this._sortDefinitions(results, null);
         return results;
     }
 
