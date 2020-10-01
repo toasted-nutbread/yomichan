@@ -507,8 +507,8 @@ class Translator {
         const tagMetaList = await this._getTagMetaList(names, title);
         return tagMetaList.map((meta, index) => {
             const name = names[index];
-            const tag = this._sanitizeTag(Object.assign({}, meta !== null ? meta : {}, {name}));
-            return this._sanitizeTag(tag);
+            const {category, notes, order, score, dictionary} = (meta !== null ? meta : {});
+            return this._createTag(name, category, notes, order, score, dictionary, null);
         });
     }
 
@@ -522,15 +522,16 @@ class Translator {
             const meta = tagMetaList[i];
             if (meta === null) { continue; }
 
-            const category = meta.category;
+            const {category, notes, order, score, dictionary} = meta;
             let group = statsGroups.get(category);
             if (typeof group === 'undefined') {
                 group = [];
                 statsGroups.set(category, group);
             }
 
-            const stat = Object.assign({}, meta, {name, value: items[name]});
-            group.push(this._sanitizeTag(stat));
+            const value = items[name];
+            const stat = this._createTag(name, category, notes, order, score, dictionary, value);
+            group.push(stat);
         }
 
         const stats = {};
@@ -928,16 +929,19 @@ class Translator {
     }
 
     _createDictionaryTag(name) {
-        return this._sanitizeTag({name, category: 'dictionary', order: 100});
+        return this._createTag(name, 'dictionary', '', 100, 0, name, null);
     }
 
-    _sanitizeTag(tag) {
-        tag.name = tag.name || 'untitled';
-        tag.category = tag.category || 'default';
-        tag.notes = tag.notes || '';
-        tag.order = tag.order || 0;
-        tag.score = tag.score || 0;
-        return tag;
+    _createTag(name, category, notes, order, score, dictionary, value) {
+        return {
+            name,
+            category: (typeof category === 'string' && category.length > 0 ? category : 'default'),
+            notes: (typeof notes === 'string' ? notes : ''),
+            order: (typeof order === 'number' ? order : 0),
+            score: (typeof score === 'number' ? score : 0),
+            dictionary: (typeof dictionary === 'string' ? dictionary : null),
+            value
+        };
     }
 
     _sortTags(tags) {
