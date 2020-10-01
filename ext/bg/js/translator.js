@@ -93,7 +93,33 @@ class Translator {
     // Private
 
     async _getSequencedDefinitions(definitions, mainDictionary) {
-        const [definitionsBySequence, defaultDefinitions] = this._mergeBySequence(definitions, mainDictionary);
+        const definitionsBySequence = new Map();
+        const defaultDefinitions = [];
+        for (const definition of definitions) {
+            const {sequence, dictionary} = definition;
+            if (mainDictionary === dictionary && sequence >= 0) {
+                const {score} = definition;
+                let sequencedDefinition = definitionsBySequence.get(sequence);
+                if (typeof sequencedDefinition === 'undefined') {
+                    const {reasons, source} = definition;
+                    sequencedDefinition = {
+                        reasons,
+                        score,
+                        expression: new Set(),
+                        reading: new Set(),
+                        expressions: new Map(),
+                        source,
+                        dictionary,
+                        definitions: []
+                    };
+                    definitionsBySequence.set(sequence, sequencedDefinition);
+                } else {
+                    sequencedDefinition.score = Math.max(sequencedDefinition.score, score);
+                }
+            } else {
+                defaultDefinitions.push(definition);
+            }
+        }
 
         const sequenceList = [];
         const sequencedDefinitions = [];
@@ -770,38 +796,6 @@ class Translator {
 
         this._sortDefinitions(results, null);
         return results;
-    }
-
-    _mergeBySequence(definitions, mainDictionary) {
-        const sequencedDefinitions = new Map();
-        const nonSequencedDefinitions = [];
-        for (const definition of definitions) {
-            const {sequence, dictionary} = definition;
-            if (mainDictionary === dictionary && sequence >= 0) {
-                const {score} = definition;
-                let sequencedDefinition = sequencedDefinitions.get(sequence);
-                if (typeof sequencedDefinition === 'undefined') {
-                    const {reasons, source} = definition;
-                    sequencedDefinition = {
-                        reasons,
-                        score,
-                        expression: new Set(),
-                        reading: new Set(),
-                        expressions: new Map(),
-                        source,
-                        dictionary,
-                        definitions: []
-                    };
-                    sequencedDefinitions.set(sequence, sequencedDefinition);
-                } else {
-                    sequencedDefinition.score = Math.max(sequencedDefinition.score, score);
-                }
-            } else {
-                nonSequencedDefinitions.push(definition);
-            }
-        }
-
-        return [sequencedDefinitions, nonSequencedDefinitions];
     }
 
     _mergeByGlossary(result, definitions, appendTo=null, mergedIndices=null) {
