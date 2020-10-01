@@ -309,6 +309,7 @@ class Translator {
         let maxLength = 0;
         const definitions = [];
         for (const {databaseDefinitions, source, rawSource, reasons} of deinflections) {
+            maxLength = Math.max(maxLength, rawSource.length);
             for (const {expression, reading, definitionTags, termTags, glossary, score, dictionary, id, sequence} of databaseDefinitions) {
                 const termTagsExpanded = await this._expandTags(termTags, dictionary);
                 const definitionTagsExpanded = await this._expandTags(definitionTags, dictionary);
@@ -334,8 +335,6 @@ class Translator {
                     termTags: termTagsExpanded,
                     sequence
                 });
-
-                maxLength = Math.max(maxLength, rawSource.length);
             }
         }
 
