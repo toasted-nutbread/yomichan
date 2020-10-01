@@ -682,37 +682,6 @@ class Translator {
         return enabledDictionaryMap;
     }
 
-    _sortDefinitions(definitions, dictionaries) {
-        const stringComparer = this._stringComparer;
-        definitions.sort((v1, v2) => {
-            let i;
-            if (dictionaries !== null) {
-                const dictionaryInfo1 = dictionaries.get(v1.dictionary);
-                const dictionaryInfo2 = dictionaries.get(v2.dictionary);
-                const priority1 = typeof dictionaryInfo1 !== 'undefined' ? dictionaryInfo1.priority : 0;
-                const priority2 = typeof dictionaryInfo2 !== 'undefined' ? dictionaryInfo2.priority : 0;
-                i = priority2 - priority1;
-                if (i !== 0) { return i; }
-            }
-
-            i = v2.source.length - v1.source.length;
-            if (i !== 0) { return i; }
-
-            i = v1.reasons.length - v2.reasons.length;
-            if (i !== 0) { return i; }
-
-            i = v2.score - v1.score;
-            if (i !== 0) { return i; }
-
-            const expression1 = v1.expression;
-            const expression2 = v2.expression;
-            i = expression2.length - expression1.length;
-            if (i !== 0) { return i; }
-
-            return stringComparer.compare(expression1, expression2);
-        });
-    }
-
     _removeDuplicateDefinitions(definitions) {
         const definitionGroups = new Map();
         for (let i = 0, ii = definitions.length; i < ii; ++i) {
@@ -967,6 +936,37 @@ class Translator {
             if (i !== 0) { return i; }
 
             return stringComparer.compare(v1.name, v2.name);
+        });
+    }
+
+    _sortDefinitions(definitions, dictionaries) {
+        const stringComparer = this._stringComparer;
+        definitions.sort((v1, v2) => {
+            let i;
+            if (dictionaries !== null) {
+                const dictionaryInfo1 = dictionaries.get(v1.dictionary);
+                const dictionaryInfo2 = dictionaries.get(v2.dictionary);
+                const priority1 = typeof dictionaryInfo1 !== 'undefined' ? dictionaryInfo1.priority : 0;
+                const priority2 = typeof dictionaryInfo2 !== 'undefined' ? dictionaryInfo2.priority : 0;
+                i = priority2 - priority1;
+                if (i !== 0) { return i; }
+            }
+
+            i = v2.source.length - v1.source.length;
+            if (i !== 0) { return i; }
+
+            i = v1.reasons.length - v2.reasons.length;
+            if (i !== 0) { return i; }
+
+            i = v2.score - v1.score;
+            if (i !== 0) { return i; }
+
+            const expression1 = v1.expression;
+            const expression2 = v2.expression;
+            i = expression2.length - expression1.length;
+            if (i !== 0) { return i; }
+
+            return stringComparer.compare(expression1, expression2);
         });
     }
 }
