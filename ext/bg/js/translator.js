@@ -102,8 +102,9 @@ class Translator {
             sequencedDefinitions.push({definitions: value, rawDefinitions: []});
         }
 
-        for (const definition of await this._database.findTermsBySequenceBulk(sequenceList, mainDictionary)) {
-            sequencedDefinitions[definition.index].rawDefinitions.push(definition);
+        const databaseDefinitions = await this._database.findTermsBySequenceBulk(sequenceList, mainDictionary);
+        for (const databaseDefinition of databaseDefinitions) {
+            sequencedDefinitions[databaseDefinition.index].rawDefinitions.push(databaseDefinition);
         }
 
         return {sequencedDefinitions, defaultDefinitions};
