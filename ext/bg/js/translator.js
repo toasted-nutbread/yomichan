@@ -65,7 +65,7 @@ class Translator {
             return definitions;
         }
 
-        this._sortKanji(definitions);
+        this._sortDatabaseDefinitionsByIndex(definitions);
 
         for (const definition of definitions) {
             const tags = await this._expandTags(definition.tags, definition.dictionary);
@@ -126,7 +126,7 @@ class Translator {
             definition.termTags = termTags;
         }
 
-        this._sortDefinitionsByIndex(definitions);
+        this._sortDatabaseDefinitionsByIndex(definitions);
         return definitions;
     }
 
@@ -970,14 +970,9 @@ class Translator {
         });
     }
 
-    _sortDefinitionsByIndex(definitions) {
+    _sortDatabaseDefinitionsByIndex(definitions) {
         if (definitions.length <= 1) { return; }
         definitions.sort((a, b) => a.index - b.index);
-    }
-
-    _sortKanji(kanjiDefinitions) {
-        if (kanjiDefinitions.length <= 1) { return; }
-        kanjiDefinitions.sort((a, b) => a.index - b.index);
     }
 
     _sortKanjiStats(stats) {
