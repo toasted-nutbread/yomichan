@@ -775,23 +775,25 @@ class Translator {
         const sequencedDefinitions = new Map();
         const nonSequencedDefinitions = [];
         for (const definition of definitions) {
-            const sequence = definition.sequence;
-            if (mainDictionary === definition.dictionary && sequence >= 0) {
+            const {sequence, dictionary} = definition;
+            if (mainDictionary === dictionary && sequence >= 0) {
+                const {score} = definition;
                 let sequencedDefinition = sequencedDefinitions.get(sequence);
                 if (typeof sequencedDefinition === 'undefined') {
+                    const {reasons, source} = definition;
                     sequencedDefinition = {
-                        reasons: definition.reasons,
-                        score: definition.score,
+                        reasons,
+                        score,
                         expression: new Set(),
                         reading: new Set(),
                         expressions: new Map(),
-                        source: definition.source,
-                        dictionary: definition.dictionary,
+                        source,
+                        dictionary,
                         definitions: []
                     };
                     sequencedDefinitions.set(sequence, sequencedDefinition);
                 } else {
-                    sequencedDefinition.score = Math.max(sequencedDefinition.score, definition.score);
+                    sequencedDefinition.score = Math.max(sequencedDefinition.score, score);
                 }
             } else {
                 nonSequencedDefinitions.push(definition);
