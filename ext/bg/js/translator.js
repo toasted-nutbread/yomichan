@@ -931,6 +931,7 @@ class Translator {
     }
 
     _sortTags(tags) {
+        if (tags.length <= 1) { return; }
         const stringComparer = this._stringComparer;
         tags.sort((v1, v2) => {
             const i = v1.order - v2.order;
@@ -941,6 +942,7 @@ class Translator {
     }
 
     _sortDefinitions(definitions, dictionaries) {
+        if (definitions.length <= 1) { return; }
         const stringComparer = this._stringComparer;
         definitions.sort((v1, v2) => {
             let i;
@@ -972,10 +974,12 @@ class Translator {
     }
 
     _sortKanji(kanjiDefinitions) {
+        if (kanjiDefinitions.length <= 1) { return; }
         kanjiDefinitions.sort((a, b) => a.index - b.index);
     }
 
     _sortKanjiStats(stats) {
+        if (stats.length <= 1) { return; }
         const stringComparer = this._stringComparer;
         stats.sort((v1, v2) => {
             const i = v1.order - v2.order;
