@@ -28,7 +28,7 @@ class Deinflector {
             term: source,
             rules: 0,
             reasons: [],
-            definitions: []
+            databaseDefinitions: []
         }];
         for (let i = 0; i < results.length; ++i) {
             const {rules, term, reasons} = results[i];
@@ -48,7 +48,7 @@ class Deinflector {
                         term: term.substring(0, term.length - kanaIn.length) + kanaOut,
                         rules: rulesOut,
                         reasons: [reason, ...reasons],
-                        definitions: []
+                        databaseDefinitions: []
                     });
                 }
             }

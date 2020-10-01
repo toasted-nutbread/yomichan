@@ -60,13 +60,13 @@ class Translator {
             kanjiUnique.add(c);
         }
 
-        const dbDefinitions = await this._database.findKanjiBulk([...kanjiUnique], dictionaries);
-        if (dbDefinitions.length === 0) { return []; }
+        const databaseDefinitions = await this._database.findKanjiBulk([...kanjiUnique], dictionaries);
+        if (databaseDefinitions.length === 0) { return []; }
 
-        this._sortDatabaseDefinitionsByIndex(dbDefinitions);
+        this._sortDatabaseDefinitionsByIndex(databaseDefinitions);
 
         const definitions = [];
-        for (const {index, character, onyomi, kunyomi, tags, glossary, stats, dictionary} of dbDefinitions) {
+        for (const {index, character, onyomi, kunyomi, tags, glossary, stats, dictionary} of databaseDefinitions) {
             const expandedStats = await this._expandStats(stats, dictionary);
             const expandedTags = await this._expandTags(tags, dictionary);
             expandedTags.push(this._createDictionaryTag(dictionary));
@@ -278,7 +278,7 @@ class Translator {
 
         const definitions = [];
         for (const deinflection of deinflections) {
-            for (const definition of deinflection.definitions) {
+            for (const definition of deinflection.databaseDefinitions) {
                 const definitionTags = await this._expandTags(definition.definitionTags, definition.dictionary);
                 definitionTags.push(this._createDictionaryTag(definition.dictionary));
                 const termTags = await this._expandTags(definition.termTags, definition.dictionary);
@@ -319,8 +319,8 @@ class Translator {
     }
 
     async _findTermWildcard(text, dictionaries, wildcard) {
-        const definitions = await this._database.findTermsBulk([text], dictionaries, wildcard);
-        if (definitions.length === 0) {
+        const databaseDefinitions = await this._database.findTermsBulk([text], dictionaries, wildcard);
+        if (databaseDefinitions.length === 0) {
             return [];
         }
 
@@ -330,7 +330,7 @@ class Translator {
             term: text,
             rules: 0,
             reasons: [],
-            definitions
+            databaseDefinitions
         }];
     }
 
@@ -356,19 +356,19 @@ class Translator {
             deinflectionArray.push(deinflection);
         }
 
-        const definitions = await this._database.findTermsBulk(uniqueDeinflectionTerms, dictionaries, null);
+        const databaseDefinitions = await this._database.findTermsBulk(uniqueDeinflectionTerms, dictionaries, null);
 
-        for (const definition of definitions) {
-            const definitionRules = Deinflector.rulesToRuleFlags(definition.rules);
-            for (const deinflection of uniqueDeinflectionArrays[definition.index]) {
+        for (const databaseDefinition of databaseDefinitions) {
+            const definitionRules = Deinflector.rulesToRuleFlags(databaseDefinition.rules);
+            for (const deinflection of uniqueDeinflectionArrays[databaseDefinition.index]) {
                 const deinflectionRules = deinflection.rules;
                 if (deinflectionRules === 0 || (definitionRules & deinflectionRules) !== 0) {
-                    deinflection.definitions.push(definition);
+                    deinflection.databaseDefinitions.push(databaseDefinition);
                 }
             }
         }
 
-        return deinflections.filter((e) => e.definitions.length > 0);
+        return deinflections.filter((e) => e.databaseDefinitions.length > 0);
     }
 
     _getAllDeinflections(text, options) {
