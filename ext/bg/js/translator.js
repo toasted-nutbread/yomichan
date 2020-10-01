@@ -65,9 +65,7 @@ class Translator {
             return definitions;
         }
 
-        if (definitions.length > 1) {
-            definitions.sort((a, b) => a.index - b.index);
-        }
+        this._sortKanji(definitions);
 
         for (const definition of definitions) {
             const tags = await this._expandTags(definition.tags, definition.dictionary);
@@ -971,6 +969,10 @@ class Translator {
 
             return stringComparer.compare(expression1, expression2);
         });
+    }
+
+    _sortKanji(kanjiDefinitions) {
+        kanjiDefinitions.sort((a, b) => a.index - b.index);
     }
 
     _sortKanjiStats(stats) {
