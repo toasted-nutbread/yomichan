@@ -540,9 +540,8 @@ class Translator {
         }
 
         const stats = {};
-        const sortCompare = (a, b) => a.notes - b.notes;
         for (const [category, group] of statsGroups.entries()) {
-            group.sort(sortCompare);
+            this._sortKanjiStats(group);
             stats[category] = group;
         }
         return stats;
@@ -967,6 +966,16 @@ class Translator {
             if (i !== 0) { return i; }
 
             return stringComparer.compare(expression1, expression2);
+        });
+    }
+
+    _sortKanjiStats(stats) {
+        const stringComparer = this._stringComparer;
+        stats.sort((v1, v2) => {
+            const i = v1.order - v2.order;
+            if (i !== 0) { return i; }
+
+            return stringComparer.compare(v1.notes, v2.notes);
         });
     }
 }
