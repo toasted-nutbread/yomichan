@@ -511,7 +511,7 @@ class Translator {
             if (meta === null) { continue; }
             const name = names[i];
             const {category, notes, order, score, dictionary} = meta;
-            const tag = this._createTag(name, category, notes, order, score, dictionary, null);
+            const tag = this._createTag(name, category, notes, order, score, dictionary);
             results.push(tag);
         }
         return results;
@@ -535,7 +535,7 @@ class Translator {
             }
 
             const value = items[name];
-            const stat = this._createTag(name, category, notes, order, score, dictionary, value);
+            const stat = this._createKanjiStat(name, category, notes, order, score, dictionary, value);
             group.push(stat);
         }
 
@@ -934,10 +934,21 @@ class Translator {
     }
 
     _createDictionaryTag(name) {
-        return this._createTag(name, 'dictionary', '', 100, 0, name, null);
+        return this._createTag(name, 'dictionary', '', 100, 0, name);
     }
 
-    _createTag(name, category, notes, order, score, dictionary, value) {
+    _createTag(name, category, notes, order, score, dictionary) {
+        return {
+            name,
+            category: (typeof category === 'string' && category.length > 0 ? category : 'default'),
+            notes: (typeof notes === 'string' ? notes : ''),
+            order: (typeof order === 'number' ? order : 0),
+            score: (typeof score === 'number' ? score : 0),
+            dictionary: (typeof dictionary === 'string' ? dictionary : null)
+        };
+    }
+
+    _createKanjiStat(name, category, notes, order, score, dictionary, value) {
         return {
             name,
             category: (typeof category === 'string' && category.length > 0 ? category : 'default'),
