@@ -276,6 +276,7 @@ class Translator {
             await this._findTermDeinflections(text, dictionaries, options)
         );
 
+        let maxLength = 0;
         const definitions = [];
         for (const {databaseDefinitions, source, rawSource, reasons} of deinflections) {
             for (const {expression, reading, definitionTags, termTags, glossary, score, dictionary, id, sequence} of databaseDefinitions) {
@@ -303,18 +304,15 @@ class Translator {
                     termTags: termTagsExpanded,
                     sequence
                 });
+
+                maxLength = Math.max(maxLength, rawSource.length);
             }
         }
 
         this._removeDuplicateDefinitions(definitions);
         this._sortDefinitions(definitions, dictionaries);
 
-        let length = 0;
-        for (const definition of definitions) {
-            length = Math.max(length, definition.rawSource.length);
-        }
-
-        return [definitions, length];
+        return [definitions, maxLength];
     }
 
     async _findTermWildcard(text, dictionaries, wildcard) {
