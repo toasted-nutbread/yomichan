@@ -60,22 +60,29 @@ class Translator {
             kanjiUnique.add(c);
         }
 
-        const definitions = await this._database.findKanjiBulk([...kanjiUnique], dictionaries);
-        if (definitions.length === 0) {
-            return definitions;
-        }
+        const dbDefinitions = await this._database.findKanjiBulk([...kanjiUnique], dictionaries);
+        if (dbDefinitions.length === 0) { return []; }
 
-        this._sortDatabaseDefinitionsByIndex(definitions);
+        this._sortDatabaseDefinitionsByIndex(dbDefinitions);
 
-        for (const definition of definitions) {
-            const tags = await this._expandTags(definition.tags, definition.dictionary);
-            tags.push(this._createDictionaryTag(definition.dictionary));
-            this._sortTags(tags);
+        const definitions = [];
+        for (const {index, character, onyomi, kunyomi, tags, glossary, stats, dictionary} of dbDefinitions) {
+            const expandedStats = await this._expandStats(stats, dictionary);
+            const expandedTags = await this._expandTags(tags, dictionary);
+            expandedTags.push(this._createDictionaryTag(dictionary));
+            this._sortTags(expandedTags);
 
-            const stats = await this._expandStats(definition.stats, definition.dictionary);
-
-            definition.tags = tags;
-            definition.stats = stats;
+            definitions.push({
+                index,
+                character,
+                onyomi,
+                kunyomi,
+                tags: expandedTags,
+                glossary,
+                stats: expandedStats,
+                dictionary,
+                frequencies: []
+            });
         }
 
         await this._buildKanjiMeta(definitions, dictionaries);
@@ -487,9 +494,8 @@ class Translator {
 
     async _buildKanjiMeta(definitions, dictionaries) {
         const kanjiList = [];
-        for (const definition of definitions) {
-            kanjiList.push(definition.character);
-            definition.frequencies = [];
+        for (const {character} of definitions) {
+            kanjiList.push(character);
         }
 
         const metas = await this._database.findKanjiMetaBulk(kanjiList, dictionaries);
