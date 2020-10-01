@@ -277,8 +277,8 @@ class Translator {
         );
 
         const definitions = [];
-        for (const deinflection of deinflections) {
-            for (const definition of deinflection.databaseDefinitions) {
+        for (const {databaseDefinitions, source, rawSource, reasons} of deinflections) {
+            for (const definition of databaseDefinitions) {
                 const definitionTags = await this._expandTags(definition.definitionTags, definition.dictionary);
                 definitionTags.push(this._createDictionaryTag(definition.dictionary));
                 const termTags = await this._expandTags(definition.termTags, definition.dictionary);
@@ -290,9 +290,9 @@ class Translator {
                 this._sortTags(termTags);
 
                 definitions.push({
-                    source: deinflection.source,
-                    rawSource: deinflection.rawSource,
-                    reasons: deinflection.reasons,
+                    source,
+                    rawSource,
+                    reasons,
                     score: definition.score,
                     id: definition.id,
                     dictionary: definition.dictionary,
