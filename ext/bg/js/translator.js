@@ -505,11 +505,16 @@ class Translator {
 
     async _expandTags(names, title) {
         const tagMetaList = await this._getTagMetaList(names, title);
-        return tagMetaList.map((meta, index) => {
-            const name = names[index];
-            const {category, notes, order, score, dictionary} = (meta !== null ? meta : {});
-            return this._createTag(name, category, notes, order, score, dictionary, null);
-        });
+        const results = [];
+        for (let i = 0, ii = tagMetaList.length; i < ii; ++i) {
+            const meta = tagMetaList[i];
+            if (meta === null) { continue; }
+            const name = names[i];
+            const {category, notes, order, score, dictionary} = meta;
+            const tag = this._createTag(name, category, notes, order, score, dictionary, null);
+            results.push(tag);
+        }
+        return results;
     }
 
     async _expandStats(items, title) {
