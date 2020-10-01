@@ -125,12 +125,15 @@ class Translator {
         const sequencedDefinitions = [];
         for (const [key, value] of definitionsBySequence.entries()) {
             sequenceList.push(key);
-            sequencedDefinitions.push({definitions: value, rawDefinitions: []});
+            sequencedDefinitions.push({
+                definitions: value,
+                databaseDefinitions: []
+            });
         }
 
         const databaseDefinitions = await this._database.findTermsBySequenceBulk(sequenceList, mainDictionary);
         for (const databaseDefinition of databaseDefinitions) {
-            sequencedDefinitions[databaseDefinition.index].rawDefinitions.push(databaseDefinition);
+            sequencedDefinitions[databaseDefinition.index].databaseDefinitions.push(databaseDefinition);
         }
 
         return {sequencedDefinitions, defaultDefinitions};
@@ -166,7 +169,7 @@ class Translator {
 
     async _getMergedDefinition(text, dictionaries, sequencedDefinition, defaultDefinitions, secondarySearchDictionaries, mergedByTermIndices) {
         const result = sequencedDefinition.definitions;
-        const rawDefinitionsBySequence = sequencedDefinition.rawDefinitions;
+        const rawDefinitionsBySequence = sequencedDefinition.databaseDefinitions;
 
         for (const definition of rawDefinitionsBySequence) {
             const definitionTags = await this._expandTags(definition.definitionTags, definition.dictionary);
