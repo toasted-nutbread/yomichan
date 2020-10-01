@@ -603,17 +603,6 @@ class Translator {
         return {reading, pitches, dictionary};
     }
 
-    _createExpression(expression, reading, termTags=null, termFrequency=null) {
-        const furiganaSegments = jp.distributeFurigana(expression, reading);
-        return {
-            expression,
-            reading,
-            furiganaSegments,
-            termTags,
-            termFrequency
-        };
-    }
-
     _scoreToTermFrequency(score) {
         if (score > 0) {
             return 'popular';
@@ -929,6 +918,17 @@ class Translator {
             definitionTags: definitionTagsExpanded,
             termTags: termTagsExpanded,
             sequence
+        };
+    }
+
+    _createExpression(expression, reading, termTags=null, termFrequency=null) {
+        const furiganaSegments = jp.distributeFurigana(expression, reading);
+        return {
+            expression,
+            reading,
+            furiganaSegments,
+            termTags,
+            termFrequency
         };
     }
 
