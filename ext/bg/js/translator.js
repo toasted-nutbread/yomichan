@@ -164,7 +164,8 @@ class Translator {
             for (const [reading, termTagsMap] of readingMap.entries()) {
                 const termTags = [...termTagsMap.values()];
                 const score = termTags.map((tag) => tag.score).reduce((p, v) => p + v, 0);
-                expressions.push(this._createExpression(expression, reading, this._sortTags(termTags), this._scoreToTermFrequency(score)));
+                this._sortTags(termTags);
+                expressions.push(this._createExpression(expression, reading, termTags, this._scoreToTermFrequency(score)));
             }
         }
 
@@ -283,6 +284,9 @@ class Translator {
                 const {expression, reading} = definition;
                 const furiganaSegments = jp.distributeFurigana(expression, reading);
 
+                this._sortTags(definitionTags);
+                this._sortTags(termTags);
+
                 definitions.push({
                     source: deinflection.source,
                     rawSource: deinflection.rawSource,
@@ -294,8 +298,8 @@ class Translator {
                     reading,
                     furiganaSegments,
                     glossary: definition.glossary,
-                    definitionTags: this._sortTags(definitionTags),
-                    termTags: this._sortTags(termTags),
+                    definitionTags,
+                    termTags,
                     sequence: definition.sequence
                 });
             }
@@ -930,7 +934,7 @@ class Translator {
 
     _sortTags(tags) {
         const stringComparer = this._stringComparer;
-        return tags.sort((v1, v2) => {
+        tags.sort((v1, v2) => {
             const i = v1.order - v2.order;
             if (i !== 0) { return i; }
 
