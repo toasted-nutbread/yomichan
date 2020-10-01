@@ -126,10 +126,7 @@ class Translator {
             definition.termTags = termTags;
         }
 
-        if (definitions.length > 1) {
-            definitions.sort((a, b) => a.index - b.index);
-        }
-
+        this._sortDefinitionsByIndex(definitions);
         return definitions;
     }
 
@@ -971,6 +968,11 @@ class Translator {
 
             return stringComparer.compare(expression1, expression2);
         });
+    }
+
+    _sortDefinitionsByIndex(definitions) {
+        if (definitions.length <= 1) { return; }
+        definitions.sort((a, b) => a.index - b.index);
     }
 
     _sortKanji(kanjiDefinitions) {
