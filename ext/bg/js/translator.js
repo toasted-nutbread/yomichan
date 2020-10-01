@@ -146,9 +146,9 @@ class Translator {
 
         const expressionList = [];
         const readingList = [];
-        for (const expression of expressionsMap.keys()) {
+        for (const [expression, readingMap] of expressionsMap.entries()) {
             if (expression === text) { continue; }
-            for (const reading of expressionsMap.get(expression).keys()) {
+            for (const reading of readingMap.keys()) {
                 expressionList.push(expression);
                 readingList.push(reading);
             }
