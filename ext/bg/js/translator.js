@@ -154,16 +154,16 @@ class Translator {
             }
         }
 
-        const definitions = await this._database.findTermsExactBulk(expressionList, readingList, secondarySearchDictionaries);
-        for (const definition of definitions) {
-            const definitionTags = await this._expandTags(definition.definitionTags, definition.dictionary);
-            definitionTags.push(this._createDictionaryTag(definition.dictionary));
-            definition.definitionTags = definitionTags;
-            const termTags = await this._expandTags(definition.termTags, definition.dictionary);
-            definition.termTags = termTags;
+        const databaseDefinitions = await this._database.findTermsExactBulk(expressionList, readingList, secondarySearchDictionaries);
+        this._sortDatabaseDefinitionsByIndex(databaseDefinitions);
+
+        const definitions = [];
+        for (const databaseDefinition of databaseDefinitions) {
+            const source = expressionList[databaseDefinition.index];
+            const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, source, []);
+            definitions.push(definition);
         }
 
-        this._sortDatabaseDefinitionsByIndex(definitions);
         return definitions;
     }
 
@@ -310,31 +310,9 @@ class Translator {
         const definitions = [];
         for (const {databaseDefinitions, source, rawSource, reasons} of deinflections) {
             maxLength = Math.max(maxLength, rawSource.length);
-            for (const {expression, reading, definitionTags, termTags, glossary, score, dictionary, id, sequence} of databaseDefinitions) {
-                const termTagsExpanded = await this._expandTags(termTags, dictionary);
-                const definitionTagsExpanded = await this._expandTags(definitionTags, dictionary);
-                definitionTagsExpanded.push(this._createDictionaryTag(dictionary));
-
-                this._sortTags(definitionTagsExpanded);
-                this._sortTags(termTagsExpanded);
-
-                const furiganaSegments = jp.distributeFurigana(expression, reading);
-
-                definitions.push({
-                    source,
-                    rawSource,
-                    reasons,
-                    score,
-                    id,
-                    dictionary,
-                    expression,
-                    reading,
-                    furiganaSegments,
-                    glossary,
-                    definitionTags: definitionTagsExpanded,
-                    termTags: termTagsExpanded,
-                    sequence
-                });
+            for (const databaseDefinition of databaseDefinitions) {
+                const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, reasons);
+                definitions.push(definition);
             }
         }
 
@@ -926,6 +904,34 @@ class Translator {
             score: (typeof score === 'number' ? score : 0),
             dictionary: (typeof dictionary === 'string' ? dictionary : null),
             value
+        };
+    }
+
+    async _createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, reasons) {
+        const {expression, reading, definitionTags, termTags, glossary, score, dictionary, id, sequence} = databaseDefinition;
+        const termTagsExpanded = await this._expandTags(termTags, dictionary);
+        const definitionTagsExpanded = await this._expandTags(definitionTags, dictionary);
+        definitionTagsExpanded.push(this._createDictionaryTag(dictionary));
+
+        this._sortTags(definitionTagsExpanded);
+        this._sortTags(termTagsExpanded);
+
+        const furiganaSegments = jp.distributeFurigana(expression, reading);
+
+        return {
+            source,
+            rawSource,
+            reasons,
+            score,
+            id,
+            dictionary,
+            expression,
+            reading,
+            furiganaSegments,
+            glossary,
+            definitionTags: definitionTagsExpanded,
+            termTags: termTagsExpanded,
+            sequence
         };
     }
 
