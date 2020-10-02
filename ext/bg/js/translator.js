@@ -772,7 +772,8 @@ class Translator {
         const resultReadingSet = result.reading;
         const resultSource = result.source;
 
-        for (const [index, definition] of definitions.entries()) {
+        for (let i = 0, ii = definitions.length; i < ii; ++i) {
+            const definition = definitions[i];
             const {expression, reading} = definition;
 
             if (mergedIndices !== null) {
@@ -781,7 +782,7 @@ class Translator {
                     typeof expressionMap !== 'undefined' &&
                     typeof expressionMap.get(reading) !== 'undefined'
                 ) {
-                    mergedIndices.add(index);
+                    mergedIndices.add(i);
                 } else {
                     continue;
                 }
