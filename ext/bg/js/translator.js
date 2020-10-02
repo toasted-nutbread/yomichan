@@ -182,7 +182,7 @@ class Translator {
         const definitionsByGloss = this._mergeByGlossary(result, databaseDefinitions);
         const secondarySearchResults = await this._getMergedSecondarySearchResults(text, result.expressions, secondarySearchDictionaries);
 
-        this._mergeByGlossary(result, defaultDefinitions.concat(secondarySearchResults), definitionsByGloss, mergedByTermIndices);
+        this._mergeByGlossary(result, [defaultDefinitions, ...secondarySearchResults], definitionsByGloss, mergedByTermIndices);
 
         for (const definition of definitionsByGloss.values()) {
             this._sortTags(definition.definitionTags);
@@ -793,7 +793,7 @@ class Translator {
                 }
             }
 
-            const gloss = JSON.stringify(definition.glossary.concat(definition.dictionary));
+            const gloss = JSON.stringify([definition.dictionary, ...definition.glossary]);
             let glossDefinition = definitionsByGlossary.get(gloss);
             if (typeof glossDefinition === 'undefined') {
                 glossDefinition = {
