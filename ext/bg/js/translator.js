@@ -93,42 +93,33 @@ class Translator {
     // Private
 
     async _getSequencedDefinitions(definitions, mainDictionary) {
-        const definitionsBySequence = new Map();
-        const defaultDefinitions = [];
+        const sequenceList = [];
+        const sequencedDefinitionMap = new Map();
+        const sequencedDefinitions = [];
+        const unsequencedDefinitions = [];
         for (const definition of definitions) {
             const {sequence, dictionary} = definition;
             if (mainDictionary === dictionary && sequence >= 0) {
                 const {score} = definition;
-                let sequencedDefinition = definitionsBySequence.get(sequence);
+                let sequencedDefinition = sequencedDefinitionMap.get(sequence);
                 if (typeof sequencedDefinition === 'undefined') {
                     const {reasons, source} = definition;
                     sequencedDefinition = {
                         reasons,
                         score,
-                        expression: new Set(),
-                        reading: new Set(),
-                        expressions: new Map(),
                         source,
                         dictionary,
-                        definitions: []
+                        databaseDefinitions: []
                     };
-                    definitionsBySequence.set(sequence, sequencedDefinition);
+                    sequencedDefinitionMap.set(sequence, sequencedDefinition);
+                    sequencedDefinitions.push(sequencedDefinition);
+                    sequenceList.push(sequence);
                 } else {
                     sequencedDefinition.score = Math.max(sequencedDefinition.score, score);
                 }
             } else {
-                defaultDefinitions.push(definition);
+                unsequencedDefinitions.push(definition);
             }
-        }
-
-        const sequenceList = [];
-        const sequencedDefinitions = [];
-        for (const [key, value] of definitionsBySequence.entries()) {
-            sequenceList.push(key);
-            sequencedDefinitions.push({
-                definitions: value,
-                databaseDefinitions: []
-            });
         }
 
         const databaseDefinitions = await this._database.findTermsBySequenceBulk(sequenceList, mainDictionary);
@@ -136,7 +127,7 @@ class Translator {
             sequencedDefinitions[databaseDefinition.index].databaseDefinitions.push(databaseDefinition);
         }
 
-        return {sequencedDefinitions, defaultDefinitions};
+        return {sequencedDefinitions, unsequencedDefinitions};
     }
 
     async _getMergedSecondarySearchResults(text, expressionsMap, secondarySearchDictionaries) {
@@ -168,10 +159,19 @@ class Translator {
     }
 
     async _getMergedDefinition(text, dictionaries, sequencedDefinition, defaultDefinitions, secondarySearchDictionaries, mergedByTermIndices) {
-        const result = sequencedDefinition.definitions;
-        const rawDefinitionsBySequence = sequencedDefinition.databaseDefinitions;
+        const {reasons, score, source, dictionary, databaseDefinitions} = sequencedDefinition;
+        const result = {
+            reasons,
+            score,
+            expression: new Set(),
+            reading: new Set(),
+            expressions: new Map(),
+            source,
+            dictionary,
+            definitions: []
+        };
 
-        for (const definition of rawDefinitionsBySequence) {
+        for (const definition of databaseDefinitions) {
             const definitionTags = await this._expandTags(definition.definitionTags, definition.dictionary);
             definitionTags.push(this._createDictionaryTag(definition.dictionary));
             definition.definitionTags = definitionTags;
@@ -179,7 +179,7 @@ class Translator {
             definition.termTags = termTags;
         }
 
-        const definitionsByGloss = this._mergeByGlossary(result, rawDefinitionsBySequence);
+        const definitionsByGloss = this._mergeByGlossary(result, databaseDefinitions);
         const secondarySearchResults = await this._getMergedSecondarySearchResults(text, result.expressions, secondarySearchDictionaries);
 
         this._mergeByGlossary(result, defaultDefinitions.concat(secondarySearchResults), definitionsByGloss, mergedByTermIndices);
@@ -195,9 +195,9 @@ class Translator {
         for (const [expression, readingMap] of result.expressions.entries()) {
             for (const [reading, termTagsMap] of readingMap.entries()) {
                 const termTags = [...termTagsMap.values()];
-                const score = termTags.map((tag) => tag.score).reduce((p, v) => p + v, 0);
+                const score2 = termTags.map((tag) => tag.score).reduce((p, v) => p + v, 0);
                 this._sortTags(termTags);
-                expressions.push(this._createExpression(expression, reading, termTags, this._scoreToTermFrequency(score)));
+                expressions.push(this._createExpression(expression, reading, termTags, this._scoreToTermFrequency(score2)));
             }
         }
 
@@ -234,7 +234,7 @@ class Translator {
         }
 
         const [definitions, length] = await this._findTermsInternal(text, dictionaries, details, options);
-        const {sequencedDefinitions, defaultDefinitions} = await this._getSequencedDefinitions(definitions, options.general.mainDictionary);
+        const {sequencedDefinitions, unsequencedDefinitions} = await this._getSequencedDefinitions(definitions, options.general.mainDictionary);
         const definitionsMerged = [];
         const mergedByTermIndices = new Set();
 
@@ -243,14 +243,14 @@ class Translator {
                 text,
                 dictionaries,
                 sequencedDefinition,
-                defaultDefinitions,
+                unsequencedDefinitions,
                 secondarySearchDictionaries,
                 mergedByTermIndices
             );
             definitionsMerged.push(result);
         }
 
-        const strayDefinitions = defaultDefinitions.filter((definition, index) => !mergedByTermIndices.has(index));
+        const strayDefinitions = unsequencedDefinitions.filter((definition, index) => !mergedByTermIndices.has(index));
         for (const groupedDefinition of this._groupTerms(strayDefinitions, dictionaries)) {
             // from dictTermsMergeBySequence
             const {reasons, score, expression, reading, source, dictionary} = groupedDefinition;
