@@ -185,6 +185,7 @@ class Translator {
         this._mergeByGlossary(result, [defaultDefinitions, ...secondarySearchResults], definitionsByGloss, mergedByTermIndices);
 
         for (const definition of definitionsByGloss.values()) {
+            this._setDefinitionDisambiguations(definition, result.expression, result.reading);
             this._sortTags(definition.definitionTags);
             result.definitions.push(definition);
         }
@@ -805,7 +806,8 @@ class Translator {
                     reasons: [],
                     score: definition.score,
                     id: definition.id,
-                    dictionary: definition.dictionary
+                    dictionary: definition.dictionary,
+                    only: []
                 };
                 definitionsByGlossary.set(gloss, glossDefinition);
             }
@@ -856,20 +858,17 @@ class Translator {
             }
         }
 
-        for (const definition of definitionsByGlossary.values()) {
-            const only = [];
-            const expressionSet = definition.expression;
-            const readingSet = definition.reading;
-            if (!areSetsEqual(expressionSet, resultExpressionSet)) {
-                only.push(...getSetIntersection(expressionSet, resultExpressionSet));
-            }
-            if (!areSetsEqual(readingSet, resultReadingSet)) {
-                only.push(...getSetIntersection(readingSet, resultReadingSet));
-            }
-            definition.only = only;
-        }
-
         return definitionsByGlossary;
+    }
+
+    _setDefinitionDisambiguations(definition, totalExpressionSet, totalReadingSet) {
+        const {only, expression: expressionSet, reading: readingSet} = definition;
+        if (!areSetsEqual(expressionSet, totalExpressionSet)) {
+            only.push(...getSetIntersection(expressionSet, totalExpressionSet));
+        }
+        if (!areSetsEqual(readingSet, totalReadingSet)) {
+            only.push(...getSetIntersection(readingSet, totalReadingSet));
+        }
     }
 
     _createDictionaryTag(name) {
