@@ -196,9 +196,9 @@ class Translator {
         for (const [expression, readingMap] of result.expressions.entries()) {
             for (const [reading, termTagsMap] of readingMap.entries()) {
                 const termTags = [...termTagsMap.values()];
-                const score2 = termTags.map((tag) => tag.score).reduce((p, v) => p + v, 0);
                 this._sortTags(termTags);
-                expressions.push(this._createExpression(expression, reading, termTags, this._scoreToTermFrequency(score2)));
+                const termFrequency = this._scoreToTermFrequency(this._getTermTagsScoreSum(termTags));
+                expressions.push(this._createExpression(expression, reading, termTags, termFrequency));
             }
         }
 
@@ -206,6 +206,12 @@ class Translator {
         result.expression = Array.from(result.expression);
         result.reading = Array.from(result.reading);
 
+        return result;
+    }
+
+    _getTermTagsScoreSum(termTags) {
+        let result = 0;
+        for (const {score} of termTags) { result += score; }
         return result;
     }
 
