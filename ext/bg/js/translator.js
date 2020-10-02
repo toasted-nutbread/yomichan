@@ -227,11 +227,7 @@ class Translator {
 
     async _findTermsMerged(text, details, options) {
         const dictionaries = this._getEnabledDictionaryMap(options);
-        const secondarySearchDictionaries = new Map();
-        for (const [title, dictionary] of dictionaries.entries()) {
-            if (!dictionary.allowSecondarySearches) { continue; }
-            secondarySearchDictionaries.set(title, dictionary);
-        }
+        const secondarySearchDictionaries = this._getSecondarySearchDictionaryMap(dictionaries);
 
         const [definitions, length] = await this._findTermsInternal(text, dictionaries, details, options);
         const {sequencedDefinitions, unsequencedDefinitions} = await this._getSequencedDefinitions(definitions, options.general.mainDictionary);
@@ -675,6 +671,15 @@ class Translator {
             enabledDictionaryMap.set(title, {priority, allowSecondarySearches});
         }
         return enabledDictionaryMap;
+    }
+
+    _getSecondarySearchDictionaryMap(enabledDictionaryMap) {
+        const secondarySearchDictionaries = new Map();
+        for (const [title, dictionary] of enabledDictionaryMap.entries()) {
+            if (!dictionary.allowSecondarySearches) { continue; }
+            secondarySearchDictionaries.set(title, dictionary);
+        }
+        return secondarySearchDictionaries;
     }
 
     _removeDuplicateDefinitions(definitions) {
