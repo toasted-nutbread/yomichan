@@ -505,10 +505,6 @@ class Translator {
                 termsUniqueMap.set(expression, termList);
             }
             termList.push(term);
-
-            // New data
-            term.frequencies = [];
-            term.pitches = [];
         }
 
         const metas = await this._database.findTermMetaBulk(expressionsUnique, dictionaries);
