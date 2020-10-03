@@ -66,14 +66,13 @@ class Translator {
         this._sortDatabaseDefinitionsByIndex(databaseDefinitions);
 
         const definitions = [];
-        for (const {index, character, onyomi, kunyomi, tags, glossary, stats, dictionary} of databaseDefinitions) {
+        for (const {character, onyomi, kunyomi, tags, glossary, stats, dictionary} of databaseDefinitions) {
             const expandedStats = await this._expandStats(stats, dictionary);
             const expandedTags = await this._expandTags(tags, dictionary);
             expandedTags.push(this._createDictionaryTag(dictionary));
             this._sortTags(expandedTags);
 
             definitions.push({
-                index,
                 character,
                 onyomi,
                 kunyomi,
