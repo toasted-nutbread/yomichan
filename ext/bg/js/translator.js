@@ -196,7 +196,8 @@ class Translator {
             const definitionTags = this._getUniqueTags(definitions2);
             this._sortTags(definitionTags);
 
-            const {id, glossary, dictionary: dictionary2, score: score2} = definitions2[0];
+            const {id, glossary, dictionary: dictionary2} = definitions2[0];
+            const score2 = this._getMaxDefinitionScore(definitions2);
             const subDefinition = {
                 expression: [...expressions],
                 reading: [...readings],
@@ -820,6 +821,7 @@ class Translator {
         for (const groupDefinitions of groups.values()) {
             const firstDef = groupDefinitions[0];
             this._sortDefinitions(groupDefinitions, dictionaries);
+            const score = this._getMaxDefinitionScore(groupDefinitions);
             results.push({
                 definitions: groupDefinitions,
                 expression: firstDef.expression,
@@ -827,7 +829,7 @@ class Translator {
                 furiganaSegments: firstDef.furiganaSegments,
                 reasons: firstDef.reasons,
                 termTags: firstDef.termTags,
-                score: groupDefinitions.reduce((p, v) => v.score > p ? v.score : p, Number.MIN_SAFE_INTEGER),
+                score,
                 source: firstDef.source
             });
         }
@@ -876,6 +878,14 @@ class Translator {
                 termTagsMap.set(name, this._createTagClone(tag));
             }
         }
+    }
+
+    _getMaxDefinitionScore(definitions) {
+        let maxScore = Number.MIN_SAFE_INTEGER;
+        for (const {score} of definitions) {
+            if (score > maxScore) { maxScore = score; }
+        }
+        return maxScore;
     }
 
     _createDictionaryTag(name) {
