@@ -158,7 +158,7 @@ class Translator {
         return definitions;
     }
 
-    async _getMergedDefinition(text, dictionaries, sequencedDefinition, defaultDefinitions, secondarySearchDictionaries, mergedByTermIndices) {
+    async _getMergedDefinition(text, dictionaries, sequencedDefinition, unsequencedDefinitions, secondarySearchDictionaries, mergedByTermIndices) {
         const {reasons, score, source, dictionary, databaseDefinitions} = sequencedDefinition;
         const result = {
             reasons,
@@ -180,9 +180,10 @@ class Translator {
         }
 
         const definitionsByGloss = this._mergeByGlossary(result, databaseDefinitions);
-        const secondarySearchResults = await this._getMergedSecondarySearchResults(text, result.expressions, secondarySearchDictionaries);
+        let secondaryDefinitions = await this._getMergedSecondarySearchResults(text, result.expressions, secondarySearchDictionaries);
+        secondaryDefinitions = [unsequencedDefinitions, ...secondaryDefinitions];
 
-        this._mergeByGlossary(result, [defaultDefinitions, ...secondarySearchResults], definitionsByGloss, mergedByTermIndices);
+        this._mergeByGlossary(result, secondaryDefinitions, definitionsByGloss, mergedByTermIndices);
 
         for (const definition of definitionsByGloss.values()) {
             this._setDefinitionDisambiguations(definition, result.expression, result.reading);
@@ -779,17 +780,17 @@ class Translator {
     _mergeByGlossary(result, definitions, appendTo=null, mergedIndices=null) {
         const definitionsByGlossary = appendTo !== null ? appendTo : new Map();
 
-        const resultExpressionsMap = result.expressions;
-        const resultExpressionSet = result.expression;
-        const resultReadingSet = result.reading;
-        const resultSource = result.source;
+        const definitionDetailsMap = result.expressions;
+        const totalExpressionSet = result.expression;
+        const totalReadingSet = result.reading;
+        const source = result.source;
 
         for (let i = 0, ii = definitions.length; i < ii; ++i) {
             const definition = definitions[i];
             const {expression, reading} = definition;
 
             if (mergedIndices !== null) {
-                const expressionMap = resultExpressionsMap.get(expression);
+                const expressionMap = definitionDetailsMap.get(expression);
                 if (
                     typeof expressionMap !== 'undefined' &&
                     typeof expressionMap.get(reading) !== 'undefined'
@@ -808,7 +809,7 @@ class Translator {
                     reading: new Set(),
                     definitionTags: [],
                     glossary: definition.glossary,
-                    source: resultSource,
+                    source,
                     reasons: [],
                     score: definition.score,
                     id: definition.id,
@@ -821,8 +822,8 @@ class Translator {
             glossDefinition.expression.add(expression);
             glossDefinition.reading.add(reading);
 
-            resultExpressionSet.add(expression);
-            resultReadingSet.add(reading);
+            totalExpressionSet.add(expression);
+            totalReadingSet.add(reading);
 
             for (const tag of definition.definitionTags) {
                 if (!glossDefinition.definitionTags.find((existingTag) => existingTag.name === tag.name)) {
@@ -844,10 +845,10 @@ class Translator {
                         ...
                     ]);
                 */
-                let readingMap = resultExpressionsMap.get(expression);
+                let readingMap = definitionDetailsMap.get(expression);
                 if (typeof readingMap === 'undefined') {
                     readingMap = new Map();
-                    resultExpressionsMap.set(expression, readingMap);
+                    definitionDetailsMap.set(expression, readingMap);
                 }
 
                 let termTagsMap = readingMap.get(reading);
