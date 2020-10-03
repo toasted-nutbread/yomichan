@@ -174,14 +174,15 @@ class Translator {
             definitions: []
         };
 
-        const definitionsByGloss = this._mergeByGlossary(result, databaseDefinitions);
+        const definitionsByGlossary = new Map();
+        this._mergeByGlossary(result, definitions, definitionsByGlossary);
         this._addDefinitionDetails(definitions, result.expressions);
         let secondaryDefinitions = await this._getMergedSecondarySearchResults(text, result.expressions, secondarySearchDictionaries);
         secondaryDefinitions = [unsequencedDefinitions, ...secondaryDefinitions];
 
-        this._mergeByGlossary(result, secondaryDefinitions, definitionsByGloss, mergedByTermIndices);
+        this._mergeByGlossary(result, secondaryDefinitions, definitionsByGlossary, mergedByTermIndices);
 
-        for (const definition of definitionsByGloss.values()) {
+        for (const definition of definitionsByGlossary.values()) {
             this._setDefinitionDisambiguations(definition, result.expression, result.reading);
             this._sortTags(definition.definitionTags);
             result.definitions.push(definition);
@@ -773,9 +774,7 @@ class Translator {
         return results;
     }
 
-    _mergeByGlossary(result, definitions, appendTo=null, mergedIndices=null) {
-        const definitionsByGlossary = appendTo !== null ? appendTo : new Map();
-
+    _mergeByGlossary(result, definitions, definitionsByGlossary, mergedIndices=null) {
         const definitionDetailsMap = result.expressions;
         const totalExpressionSet = result.expression;
         const totalReadingSet = result.reading;
@@ -827,8 +826,6 @@ class Translator {
                 }
             }
         }
-
-        return definitionsByGlossary;
     }
 
     _setDefinitionDisambiguations(definition, totalExpressionSet, totalReadingSet) {
