@@ -933,19 +933,22 @@ class Translator {
 
         return {
             type: 'single',
+            id,
             source,
             rawSource,
             reasons,
             score,
-            id,
+            sequence,
             dictionary,
             expression,
             reading,
+            // expressions
             furiganaSegments,
             glossary,
             definitionTags: definitionTagsExpanded,
-            termTags: termTagsExpanded,
-            sequence
+            termTags: termTagsExpanded
+            // definitions
+            // only
         };
     }
 
@@ -954,30 +957,44 @@ class Translator {
         const score = this._getMaxDefinitionScore(definitions);
         return {
             type: 'grouped',
-            definitions,
+            // id
+            source,
+            rawSource,
+            reasons: [...reasons],
+            score,
+            // sequence
+            // dictionary
             expression,
             reading,
-            furiganaSegments,
-            reasons: [...reasons],
+            // expressions
+            furiganaSegments, // TODO : Clone
+            // glossary
+            // definitionTags
             termTags: this._createTagCloneArray(termTags),
-            score,
-            source,
-            rawSource
+            definitions
+            // only
         };
     }
 
     _createMergedTermDefinition(source, rawSource, definitions, expressions, readings, expressionDetailsList, reasons, dictionary, score) {
         return {
             type: 'merged',
+            // id
+            source,
+            rawSource,
             reasons,
             score,
+            // sequence
+            dictionary,
             expression: expressions,
             reading: readings,
             expressions: expressionDetailsList,
-            source,
-            rawSource,
-            dictionary,
+            // furiganaSegments
+            // glossary
+            // definitionTags
+            // termTags
             definitions
+            // only
         };
     }
 
@@ -997,15 +1014,20 @@ class Translator {
         const score = this._getMaxDefinitionScore(definitions);
         return {
             type: 'mergedByGlossary',
-            expression: [...expressions],
-            reading: [...readings],
-            definitionTags,
-            glossary: [...glossary],
+            // id
             source,
             rawSource,
             reasons: [],
             score,
+            // sequence
             dictionary,
+            expression: [...expressions],
+            reading: [...readings],
+            // expressions
+            // furiganaSegments
+            glossary: [...glossary],
+            definitionTags,
+            // termTags
             definitions,
             only
         };
