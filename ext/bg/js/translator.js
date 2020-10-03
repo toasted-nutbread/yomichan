@@ -951,8 +951,10 @@ class Translator {
             furiganaSegments,
             glossary,
             definitionTags: definitionTagsExpanded,
-            termTags: termTagsExpanded
+            termTags: termTagsExpanded,
             // definitions
+            frequencies: [],
+            pitches: []
             // only
         };
     }
@@ -976,7 +978,9 @@ class Translator {
             // glossary
             // definitionTags
             termTags: this._createTagCloneArray(termTags),
-            definitions
+            definitions,
+            frequencies: [],
+            pitches: []
             // only
         };
     }
@@ -998,7 +1002,9 @@ class Translator {
             // glossary
             // definitionTags
             // termTags
-            definitions
+            definitions,
+            frequencies: [],
+            pitches: []
             // only
         };
     }
@@ -1034,6 +1040,8 @@ class Translator {
             definitionTags,
             // termTags
             definitions,
+            frequencies: [],
+            pitches: [],
             only
         };
     }
@@ -1046,7 +1054,9 @@ class Translator {
             reading,
             furiganaSegments,
             termTags,
-            termFrequency
+            termFrequency,
+            frequencies: [],
+            pitches: []
         };
     }
 
