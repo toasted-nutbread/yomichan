@@ -855,10 +855,10 @@ class Translator {
                 readingMap.set(reading, termTagsMap);
             }
 
-            for (const {name, category, notes, order, score, dictionary} of termTags) {
+            for (const tag of termTags) {
+                const {name} = tag;
                 if (termTagsMap.has(name)) { continue; }
-                const tag = this._createTag(name, category, notes, order, score, dictionary);
-                termTagsMap.set(name, tag);
+                termTagsMap.set(name, this._createTagClone(tag));
             }
         }
     }
@@ -876,6 +876,11 @@ class Translator {
             score: (typeof score === 'number' ? score : 0),
             dictionary: (typeof dictionary === 'string' ? dictionary : null)
         };
+    }
+
+    _createTagClone(tag) {
+        const {name, category, notes, order, score, dictionary} = tag;
+        return this._createTag(name, category, notes, order, score, dictionary);
     }
 
     _createKanjiStat(name, category, notes, order, score, dictionary, value) {
