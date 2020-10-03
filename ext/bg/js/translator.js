@@ -252,17 +252,17 @@ class Translator {
         const dictionaries = this._getEnabledDictionaryMap(options);
         const [definitions, length] = await this._findTermsInternal(text, dictionaries, details, options);
 
-        const definitionsGrouped = this._groupTerms(definitions, dictionaries);
-        await this._buildTermMeta(definitionsGrouped, dictionaries);
-        this._sortDefinitions(definitionsGrouped, null);
+        const groupedDefinitions = this._groupTerms(definitions, dictionaries);
+        await this._buildTermMeta(groupedDefinitions, dictionaries);
+        this._sortDefinitions(groupedDefinitions, null);
 
         if (options.general.compactTags) {
-            for (const definition of definitionsGrouped) {
+            for (const definition of groupedDefinitions) {
                 this._compressDefinitionTags(definition.definitions);
             }
         }
 
-        return [definitionsGrouped, length];
+        return [groupedDefinitions, length];
     }
 
     async _findTermsMerged(text, details, options) {
