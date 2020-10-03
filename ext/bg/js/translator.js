@@ -208,16 +208,17 @@ class Translator {
             }
         }
 
-        return {
-            reasons,
-            score,
-            expression: [...allExpressions],
-            reading: [...allReadings],
-            expressions: expressionDetailsList,
+        return this._createMergedTermDefinition(
             source,
+            rawSource,
+            subDefinitions,
+            [...allExpressions],
+            [...allReadings],
+            expressionDetailsList,
+            reasons,
             dictionary,
-            definitions: subDefinitions
-        };
+            score
+        );
     }
 
     _removeUsedDefinitions(definitions, definitionDetailsMap, usedDefinitions) {
@@ -925,6 +926,20 @@ class Translator {
             definitionTags: definitionTagsExpanded,
             termTags: termTagsExpanded,
             sequence
+        };
+    }
+
+    _createMergedTermDefinition(source, rawSource, definitions, expressions, readings, expressionDetailsList, reasons, dictionary, score) {
+        return {
+            reasons,
+            score,
+            expression: expressions,
+            reading: readings,
+            expressions: expressionDetailsList,
+            source,
+            rawSource,
+            dictionary,
+            definitions
         };
     }
 
