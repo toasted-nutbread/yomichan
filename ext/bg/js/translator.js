@@ -169,7 +169,7 @@ class Translator {
         const subDefinitions = [];
         const subDefinitionsMap = new Map();
 
-        this._mergeByGlossary(definitions, totalExpressionSet, totalReadingSet, subDefinitionsMap);
+        this._mergeByGlossary(definitions, subDefinitionsMap);
         this._addDefinitionDetails(definitions, definitionDetailsMap);
 
         let secondaryDefinitions = await this._getMergedSecondarySearchResults(text, definitionDetailsMap, secondarySearchDictionaries);
@@ -177,7 +177,12 @@ class Translator {
 
         this._removeUsedDefinitions(secondaryDefinitions, definitionDetailsMap, usedDefinitions);
 
-        this._mergeByGlossary(secondaryDefinitions, totalExpressionSet, totalReadingSet, subDefinitionsMap);
+        this._mergeByGlossary(secondaryDefinitions, subDefinitionsMap);
+
+        for (const {expressions, readings} of subDefinitionsMap.values()) {
+            for (const expression of expressions) { totalExpressionSet.add(expression); }
+            for (const reading of readings) { totalReadingSet.add(reading); }
+        }
 
         for (const {expressions, readings, definitionTags, definition} of subDefinitionsMap.values()) {
             const only = [];
@@ -815,7 +820,7 @@ class Translator {
         return results;
     }
 
-    _mergeByGlossary(definitions, totalExpressionSet, totalReadingSet, definitionsByGlossary) {
+    _mergeByGlossary(definitions, definitionsByGlossary) {
         for (const definition of definitions) {
             const {expression, reading, dictionary, glossary, definitionTags} = definition;
 
@@ -833,9 +838,6 @@ class Translator {
 
             glossDefinition.expressions.add(expression);
             glossDefinition.readings.add(reading);
-
-            totalExpressionSet.add(expression);
-            totalReadingSet.add(reading);
 
             for (const tag of definitionTags) {
                 const {name} = tag;
