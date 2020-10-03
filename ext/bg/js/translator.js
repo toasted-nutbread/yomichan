@@ -759,8 +759,8 @@ class Translator {
         let lastPartOfSpeech = '';
 
         for (const definition of definitions) {
-            const dictionary = JSON.stringify(definition.definitionTags.filter((tag) => tag.category === 'dictionary').map((tag) => tag.name).sort());
-            const partOfSpeech = JSON.stringify(definition.definitionTags.filter((tag) => tag.category === 'partOfSpeech').map((tag) => tag.name).sort());
+            const dictionary = this._createMapKey(definition.definitionTags.filter((tag) => tag.category === 'dictionary').map((tag) => tag.name).sort());
+            const partOfSpeech = this._createMapKey(definition.definitionTags.filter((tag) => tag.category === 'partOfSpeech').map((tag) => tag.name).sort());
 
             const filterOutCategories = [];
 
@@ -784,16 +784,11 @@ class Translator {
     _groupTerms(definitions, dictionaries) {
         const groups = new Map();
         for (const definition of definitions) {
-            const key = [definition.source, definition.expression, ...definition.reasons];
-            if (definition.reading) {
-                key.push(definition.reading);
-            }
-
-            const keyString = key.toString();
-            let groupDefinitions = groups.get(keyString);
+            const key = this._createMapKey([definition.source, definition.expression, definition.reading, ...definition.reasons]);
+            let groupDefinitions = groups.get(key);
             if (typeof groupDefinitions === 'undefined') {
                 groupDefinitions = [];
-                groups.set(keyString, groupDefinitions);
+                groups.set(key, groupDefinitions);
             }
 
             groupDefinitions.push(definition);
@@ -824,15 +819,15 @@ class Translator {
         for (const definition of definitions) {
             const {expression, reading, dictionary, glossary} = definition;
 
-            const gloss = JSON.stringify([dictionary, ...glossary]);
-            let glossDefinition = definitionsByGlossary.get(gloss);
+            const key = this._createMapKey([dictionary, ...glossary]);
+            let glossDefinition = definitionsByGlossary.get(key);
             if (typeof glossDefinition === 'undefined') {
                 glossDefinition = {
                     expressions: new Set(),
                     readings: new Set(),
                     definitions: []
                 };
-                definitionsByGlossary.set(gloss, glossDefinition);
+                definitionsByGlossary.set(key, glossDefinition);
             }
 
             glossDefinition.expressions.add(expression);
@@ -869,6 +864,10 @@ class Translator {
             if (score > maxScore) { maxScore = score; }
         }
         return maxScore;
+    }
+
+    _createMapKey(array) {
+        return JSON.stringify(array);
     }
 
     _createDictionaryTag(name) {
