@@ -169,7 +169,7 @@ class Translator {
         const subDefinitions = [];
         const subDefinitionsMap = new Map();
 
-        this._mergeByGlossary(definitions, source, totalExpressionSet, totalReadingSet, subDefinitionsMap);
+        this._mergeByGlossary(definitions, totalExpressionSet, totalReadingSet, subDefinitionsMap);
         this._addDefinitionDetails(definitions, definitionDetailsMap);
 
         let secondaryDefinitions = await this._getMergedSecondarySearchResults(text, definitionDetailsMap, secondarySearchDictionaries);
@@ -177,12 +177,33 @@ class Translator {
 
         this._removeUsedDefinitions(secondaryDefinitions, definitionDetailsMap, usedDefinitions);
 
-        this._mergeByGlossary(secondaryDefinitions, source, totalExpressionSet, totalReadingSet, subDefinitionsMap);
+        this._mergeByGlossary(secondaryDefinitions, totalExpressionSet, totalReadingSet, subDefinitionsMap);
 
-        for (const definition of subDefinitionsMap.values()) {
-            this._setDefinitionDisambiguations(definition, totalExpressionSet, totalReadingSet);
-            this._sortTags(definition.definitionTags);
-            subDefinitions.push(definition);
+        for (const {expressions, readings, definitionTags, definition} of subDefinitionsMap.values()) {
+            const only = [];
+            if (!areSetsEqual(expressions, totalExpressionSet)) {
+                only.push(...getSetIntersection(expressions, totalExpressionSet));
+            }
+            if (!areSetsEqual(readings, totalReadingSet)) {
+                only.push(...getSetIntersection(readings, totalReadingSet));
+            }
+
+            const {id, glossary, dictionary: dictionary2, score: score2} = definition;
+            const subDefinition = {
+                expression: [...expressions],
+                reading: [...readings],
+                definitionTags: [...definitionTags.values()],
+                glossary,
+                source,
+                reasons: [],
+                score: score2,
+                id,
+                dictionary: dictionary2,
+                only
+            };
+
+            this._sortTags(subDefinition.definitionTags);
+            subDefinitions.push(subDefinition);
         }
 
         this._sortDefinitions(subDefinitions, dictionaries);
@@ -794,50 +815,33 @@ class Translator {
         return results;
     }
 
-    _mergeByGlossary(definitions, source, totalExpressionSet, totalReadingSet, definitionsByGlossary) {
+    _mergeByGlossary(definitions, totalExpressionSet, totalReadingSet, definitionsByGlossary) {
         for (const definition of definitions) {
             const {expression, reading, dictionary, glossary, definitionTags} = definition;
 
             const gloss = JSON.stringify([dictionary, ...glossary]);
             let glossDefinition = definitionsByGlossary.get(gloss);
             if (typeof glossDefinition === 'undefined') {
-                const {score, id} = definition;
                 glossDefinition = {
-                    expression: new Set(),
-                    reading: new Set(),
-                    definitionTags: [],
-                    glossary,
-                    source,
-                    reasons: [],
-                    score,
-                    id,
-                    dictionary,
-                    only: []
+                    expressions: new Set(),
+                    readings: new Set(),
+                    definitionTags: new Map(),
+                    definition
                 };
                 definitionsByGlossary.set(gloss, glossDefinition);
             }
 
-            glossDefinition.expression.add(expression);
-            glossDefinition.reading.add(reading);
+            glossDefinition.expressions.add(expression);
+            glossDefinition.readings.add(reading);
 
             totalExpressionSet.add(expression);
             totalReadingSet.add(reading);
 
             for (const tag of definitionTags) {
-                if (!glossDefinition.definitionTags.find((existingTag) => existingTag.name === tag.name)) {
-                    glossDefinition.definitionTags.push(tag);
-                }
+                const {name} = tag;
+                if (glossDefinition.definitionTags.has(name)) { continue; }
+                glossDefinition.definitionTags.set(name, this._createTagClone(tag));
             }
-        }
-    }
-
-    _setDefinitionDisambiguations(definition, totalExpressionSet, totalReadingSet) {
-        const {only, expression: expressionSet, reading: readingSet} = definition;
-        if (!areSetsEqual(expressionSet, totalExpressionSet)) {
-            only.push(...getSetIntersection(expressionSet, totalExpressionSet));
-        }
-        if (!areSetsEqual(readingSet, totalReadingSet)) {
-            only.push(...getSetIntersection(readingSet, totalReadingSet));
         }
     }
 
