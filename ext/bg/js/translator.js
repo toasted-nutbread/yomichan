@@ -175,14 +175,15 @@ class Translator {
         };
 
         const definitionsByGlossary = new Map();
-        this._mergeByGlossary(result, definitions, definitionsByGlossary);
+        this._mergeByGlossary(definitions, source, result.expression, result.reading, definitionsByGlossary);
         this._addDefinitionDetails(definitions, result.expressions);
+
         let secondaryDefinitions = await this._getMergedSecondarySearchResults(text, result.expressions, secondarySearchDictionaries);
         secondaryDefinitions = [unsequencedDefinitions, ...secondaryDefinitions];
 
         this._removeUsedDefinitions(secondaryDefinitions, result.expressions, usedDefinitions);
 
-        this._mergeByGlossary(result, secondaryDefinitions, definitionsByGlossary);
+        this._mergeByGlossary(secondaryDefinitions, source, result.expression, result.reading, definitionsByGlossary);
 
         for (const definition of definitionsByGlossary.values()) {
             this._setDefinitionDisambiguations(definition, result.expression, result.reading);
@@ -794,11 +795,7 @@ class Translator {
         return results;
     }
 
-    _mergeByGlossary(result, definitions, definitionsByGlossary) {
-        const totalExpressionSet = result.expression;
-        const totalReadingSet = result.reading;
-        const source = result.source;
-
+    _mergeByGlossary(definitions, source, totalExpressionSet, totalReadingSet, definitionsByGlossary) {
         for (let i = 0, ii = definitions.length; i < ii; ++i) {
             const definition = definitions[i];
             const {expression, reading} = definition;
