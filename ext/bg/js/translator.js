@@ -161,7 +161,7 @@ class Translator {
     }
 
     async _getMergedDefinition(dictionaries, sequencedDefinition, unsequencedDefinitions, secondarySearchDictionaries, usedDefinitions) {
-        const {reasons, score, source, dictionary, definitions} = sequencedDefinition;
+        const {reasons, score, source, rawSource, dictionary, definitions} = sequencedDefinition;
         const definitionDetailsMap = new Map();
         const subDefinitions = [];
         const subDefinitionsMap = new Map();
@@ -186,6 +186,7 @@ class Translator {
         for (const {expressions, readings, definitions: definitions2} of subDefinitionsMap.values()) {
             const subDefinition = this._createMergedGlossaryTermDefinition(
                 source,
+                rawSource,
                 definitions2,
                 expressions,
                 readings,
@@ -927,7 +928,7 @@ class Translator {
         };
     }
 
-    _createMergedGlossaryTermDefinition(source, definitions, expressions, readings, allExpressions, allReadings) {
+    _createMergedGlossaryTermDefinition(source, rawSource, definitions, expressions, readings, allExpressions, allReadings) {
         const only = [];
         if (!areSetsEqual(expressions, allExpressions)) {
             only.push(...getSetIntersection(expressions, allExpressions));
@@ -939,17 +940,17 @@ class Translator {
         const definitionTags = this._getUniqueDefinitionTags(definitions);
         this._sortTags(definitionTags);
 
-        const {id, glossary, dictionary: dictionary} = definitions[0];
+        const {glossary, dictionary} = definitions[0];
         const score = this._getMaxDefinitionScore(definitions);
         return {
             expression: [...expressions],
             reading: [...readings],
             definitionTags,
-            glossary,
+            glossary: [...glossary],
             source,
+            rawSource,
             reasons: [],
             score,
-            id,
             dictionary,
             definitions,
             only
