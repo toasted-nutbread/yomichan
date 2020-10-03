@@ -298,12 +298,13 @@ class Translator {
         for (const groupedDefinition of this._groupTerms(strayDefinitions, dictionaries)) {
             // from dictTermsMergeBySequence
             const {reasons, score, expression, reading, source, dictionary} = groupedDefinition;
+            const expressionDetails = this._createExpressionDetails(expression, reading);
             const compatibilityDefinition = {
                 reasons,
                 score,
                 expression: [expression],
                 reading: [reading],
-                expressions: [this._createExpressionDetails(groupedDefinition.expression, groupedDefinition.reading)],
+                expressions: [expressionDetails],
                 source,
                 dictionary,
                 definitions: groupedDefinition.definitions
