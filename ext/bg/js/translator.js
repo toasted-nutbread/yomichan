@@ -103,11 +103,12 @@ class Translator {
                 const {score} = definition;
                 let sequencedDefinition = sequencedDefinitionMap.get(sequence);
                 if (typeof sequencedDefinition === 'undefined') {
-                    const {reasons, source} = definition;
+                    const {reasons, source, rawSource} = definition;
                     sequencedDefinition = {
                         reasons,
                         score,
                         source,
+                        rawSource,
                         dictionary,
                         databaseDefinitions: []
                     };
@@ -159,7 +160,7 @@ class Translator {
     }
 
     async _getMergedDefinition(text, dictionaries, sequencedDefinition, unsequencedDefinitions, secondarySearchDictionaries, mergedByTermIndices) {
-        const {reasons, score, source, dictionary, databaseDefinitions} = sequencedDefinition;
+        const {reasons, score, source, rawSource, dictionary, databaseDefinitions} = sequencedDefinition;
         const result = {
             reasons,
             score,
@@ -171,16 +172,14 @@ class Translator {
             definitions: []
         };
 
-        for (const definition of databaseDefinitions) {
-            const definitionTags = await this._expandTags(definition.definitionTags, definition.dictionary);
-            definitionTags.push(this._createDictionaryTag(definition.dictionary));
-            definition.definitionTags = definitionTags;
-            const termTags = await this._expandTags(definition.termTags, definition.dictionary);
-            definition.termTags = termTags;
+        const definitions = [];
+        for (const databaseDefinition of databaseDefinitions) {
+            const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, reasons);
+            definitions.push(definition);
         }
 
         const definitionsByGloss = this._mergeByGlossary(result, databaseDefinitions);
-        this._addDefinitionDetails(databaseDefinitions, result.expressions);
+        this._addDefinitionDetails(definitions, result.expressions);
         let secondaryDefinitions = await this._getMergedSecondarySearchResults(text, result.expressions, secondarySearchDictionaries);
         secondaryDefinitions = [unsequencedDefinitions, ...secondaryDefinitions];
 
