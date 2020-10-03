@@ -476,10 +476,14 @@ class Translator {
     async _buildTermMeta(definitions, dictionaries) {
         const terms = [];
         for (const definition of definitions) {
-            if (definition.expressions) {
-                terms.push(...definition.expressions);
-            } else {
-                terms.push(definition);
+            switch (definition.type) {
+                case 'term':
+                case 'termGrouped':
+                    terms.push(definition);
+                    break;
+                case 'termMerged':
+                    terms.push(...definition.expressions);
+                    break;
             }
         }
 
