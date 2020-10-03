@@ -184,7 +184,7 @@ class Translator {
             for (const reading of readings) { totalReadingSet.add(reading); }
         }
 
-        for (const {expressions, readings, definitionTags, definitions: definitions2} of subDefinitionsMap.values()) {
+        for (const {expressions, readings, definitions: definitions2} of subDefinitionsMap.values()) {
             const only = [];
             if (!areSetsEqual(expressions, totalExpressionSet)) {
                 only.push(...getSetIntersection(expressions, totalExpressionSet));
@@ -193,11 +193,14 @@ class Translator {
                 only.push(...getSetIntersection(readings, totalReadingSet));
             }
 
+            const definitionTags = this._getUniqueTags(definitions2);
+            this._sortTags(definitionTags);
+
             const {id, glossary, dictionary: dictionary2, score: score2} = definitions2[0];
             const subDefinition = {
                 expression: [...expressions],
                 reading: [...readings],
-                definitionTags: [...definitionTags.values()],
+                definitionTags,
                 glossary,
                 source,
                 reasons: [],
@@ -208,7 +211,6 @@ class Translator {
                 only
             };
 
-            this._sortTags(subDefinition.definitionTags);
             subDefinitions.push(subDefinition);
         }
 
@@ -252,6 +254,18 @@ class Translator {
                 --ii;
             }
         }
+    }
+
+    _getUniqueTags(definitions) {
+        const definitionTagsMap = new Map();
+        for (const {definitionTags} of definitions) {
+            for (const tag of definitionTags) {
+                const {name} = tag;
+                if (definitionTagsMap.has(name)) { continue; }
+                definitionTagsMap.set(name, this._createTagClone(tag));
+            }
+        }
+        return [...definitionTagsMap.values()];
     }
 
     _getTermTagsScoreSum(termTags) {
@@ -823,7 +837,7 @@ class Translator {
 
     _mergeByGlossary(definitions, definitionsByGlossary) {
         for (const definition of definitions) {
-            const {expression, reading, dictionary, glossary, definitionTags} = definition;
+            const {expression, reading, dictionary, glossary} = definition;
 
             const gloss = JSON.stringify([dictionary, ...glossary]);
             let glossDefinition = definitionsByGlossary.get(gloss);
@@ -831,7 +845,6 @@ class Translator {
                 glossDefinition = {
                     expressions: new Set(),
                     readings: new Set(),
-                    definitionTags: new Map(),
                     definitions: []
                 };
                 definitionsByGlossary.set(gloss, glossDefinition);
@@ -840,12 +853,6 @@ class Translator {
             glossDefinition.expressions.add(expression);
             glossDefinition.readings.add(reading);
             glossDefinition.definitions.push(definition);
-
-            for (const tag of definitionTags) {
-                const {name} = tag;
-                if (glossDefinition.definitionTags.has(name)) { continue; }
-                glossDefinition.definitionTags.set(name, this._createTagClone(tag));
-            }
         }
     }
 
