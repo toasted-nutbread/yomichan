@@ -133,7 +133,7 @@ class Translator {
         return {sequencedDefinitions, unsequencedDefinitions};
     }
 
-    async _getMergedSecondarySearchResults(text, expressionsMap, secondarySearchDictionaries) {
+    async _getMergedSecondarySearchResults(expressionsMap, secondarySearchDictionaries) {
         if (secondarySearchDictionaries.size === 0) {
             return [];
         }
@@ -141,7 +141,6 @@ class Translator {
         const expressionList = [];
         const readingList = [];
         for (const [expression, readingMap] of expressionsMap.entries()) {
-            if (expression === text) { continue; }
             for (const reading of readingMap.keys()) {
                 expressionList.push(expression);
                 readingList.push(reading);
@@ -161,7 +160,7 @@ class Translator {
         return definitions;
     }
 
-    async _getMergedDefinition(text, dictionaries, sequencedDefinition, unsequencedDefinitions, secondarySearchDictionaries, usedDefinitions) {
+    async _getMergedDefinition(dictionaries, sequencedDefinition, unsequencedDefinitions, secondarySearchDictionaries, usedDefinitions) {
         const {reasons, score, source, dictionary, definitions} = sequencedDefinition;
         const definitionDetailsMap = new Map();
         const subDefinitions = [];
@@ -170,7 +169,7 @@ class Translator {
         this._mergeByGlossary(definitions, subDefinitionsMap);
         this._addDefinitionDetails(definitions, definitionDetailsMap);
 
-        let secondaryDefinitions = await this._getMergedSecondarySearchResults(text, definitionDetailsMap, secondarySearchDictionaries);
+        let secondaryDefinitions = await this._getMergedSecondarySearchResults(definitionDetailsMap, secondarySearchDictionaries);
         secondaryDefinitions = [unsequencedDefinitions, ...secondaryDefinitions];
 
         this._removeUsedDefinitions(secondaryDefinitions, definitionDetailsMap, usedDefinitions);
@@ -284,7 +283,6 @@ class Translator {
 
         for (const sequencedDefinition of sequencedDefinitions) {
             const result = await this._getMergedDefinition(
-                text,
                 dictionaries,
                 sequencedDefinition,
                 unsequencedDefinitions,
