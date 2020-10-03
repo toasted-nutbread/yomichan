@@ -344,6 +344,7 @@ class Translator {
         let maxLength = 0;
         const definitions = [];
         for (const {databaseDefinitions, source, rawSource, reasons} of deinflections) {
+            if (databaseDefinitions.length === 0) { continue; }
             maxLength = Math.max(maxLength, rawSource.length);
             for (const databaseDefinition of databaseDefinitions) {
                 const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, reasons);
@@ -405,7 +406,7 @@ class Translator {
             }
         }
 
-        return deinflections.filter((e) => e.databaseDefinitions.length > 0);
+        return deinflections;
     }
 
     _getAllDeinflections(text, options) {
