@@ -817,20 +817,9 @@ class Translator {
 
         const results = [];
         for (const groupDefinitions of groups.values()) {
-            const firstDef = groupDefinitions[0];
             this._sortDefinitions(groupDefinitions, dictionaries);
-            const score = this._getMaxDefinitionScore(groupDefinitions);
-            results.push({
-                definitions: groupDefinitions,
-                expression: firstDef.expression,
-                reading: firstDef.reading,
-                furiganaSegments: firstDef.furiganaSegments,
-                reasons: firstDef.reasons,
-                termTags: firstDef.termTags,
-                score,
-                source: firstDef.source,
-                rawSource: firstDef.rawSource
-            });
+            const definition = this._createGroupedTermDefinition(groupDefinitions);
+            results.push(definition);
         }
 
         return results;
@@ -911,6 +900,14 @@ class Translator {
         return this._createTag(name, category, notes, order, score, dictionary);
     }
 
+    _createTagCloneArray(tags) {
+        const results = [];
+        for (const tag of tags) {
+            results.push(this._createTagClone(tag));
+        }
+        return results;
+    }
+
     _createKanjiStat(name, category, notes, order, score, dictionary, value) {
         return {
             name,
@@ -948,6 +945,22 @@ class Translator {
             definitionTags: definitionTagsExpanded,
             termTags: termTagsExpanded,
             sequence
+        };
+    }
+
+    _createGroupedTermDefinition(definitions) {
+        const {expression, reading, furiganaSegments, reasons, termTags, source, rawSource} = definitions[0];
+        const score = this._getMaxDefinitionScore(definitions);
+        return {
+            definitions,
+            expression,
+            reading,
+            furiganaSegments,
+            reasons: [...reasons],
+            termTags: this._createTagCloneArray(termTags),
+            score,
+            source,
+            rawSource
         };
     }
 
