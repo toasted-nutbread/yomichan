@@ -758,8 +758,8 @@ class Translator {
         let lastPartOfSpeech = '';
 
         for (const definition of definitions) {
-            const dictionary = this._createMapKey(definition.definitionTags.filter((tag) => tag.category === 'dictionary').map((tag) => tag.name).sort());
-            const partOfSpeech = this._createMapKey(definition.definitionTags.filter((tag) => tag.category === 'partOfSpeech').map((tag) => tag.name).sort());
+            const dictionary = this._createMapKey(this._getTagNamesWithCategory(definition.definitionTags, 'dictionary'));
+            const partOfSpeech = this._createMapKey(this._getTagNamesWithCategory(definition.definitionTags, 'partOfSpeech'));
 
             const filterOutCategories = [];
 
@@ -778,6 +778,16 @@ class Translator {
 
             definition.definitionTags = definition.definitionTags.filter((tag) => !filterOutCategories.includes(tag.category));
         }
+    }
+
+    _getTagNamesWithCategory(tags, category) {
+        const results = [];
+        for (const tag of tags) {
+            if (tag.category !== category) { continue; }
+            results.push(tag.name);
+        }
+        results.sort();
+        return results;
     }
 
     _groupTerms(definitions, dictionaries) {
