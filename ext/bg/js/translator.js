@@ -164,6 +164,7 @@ class Translator {
         secondaryDefinitions = [unsequencedDefinitions, ...secondaryDefinitions];
 
         this._removeUsedDefinitions(secondaryDefinitions, definitionDetailsMap, usedDefinitions);
+        this._removeDuplicateDefinitions(secondaryDefinitions);
 
         this._mergeByGlossary(secondaryDefinitions, subDefinitionsMap);
 
