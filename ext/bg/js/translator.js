@@ -160,7 +160,7 @@ class Translator {
         return definitions;
     }
 
-    async _getMergedDefinition(dictionaries, sequencedDefinition, unsequencedDefinitions, secondarySearchDictionaries, usedDefinitions) {
+    async _getMergedDefinition(sequencedDefinition, unsequencedDefinitions, dictionaries, secondarySearchDictionaries, usedDefinitions) {
         const {reasons, score, source, rawSource, dictionary, definitions} = sequencedDefinition;
         const definitionDetailsMap = new Map();
         const subDefinitions = [];
@@ -284,9 +284,9 @@ class Translator {
 
         for (const sequencedDefinition of sequencedDefinitions) {
             const result = await this._getMergedDefinition(
-                dictionaries,
                 sequencedDefinition,
                 unsequencedDefinitions,
+                dictionaries,
                 secondarySearchDictionaries,
                 usedDefinitions
             );
