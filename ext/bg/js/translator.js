@@ -163,38 +163,32 @@ class Translator {
 
     async _getMergedDefinition(text, dictionaries, sequencedDefinition, unsequencedDefinitions, secondarySearchDictionaries, usedDefinitions) {
         const {reasons, score, source, dictionary, definitions} = sequencedDefinition;
-        const result = {
-            reasons,
-            score,
-            expression: new Set(),
-            reading: new Set(),
-            expressions: new Map(),
-            source,
-            dictionary,
-            definitions: []
-        };
+        const totalExpressionSet = new Set();
+        const totalReadingSet = new Set();
+        const definitionDetailsMap = new Map();
+        const subDefinitions = [];
+        const subDefinitionsMap = new Map();
 
-        const definitionsByGlossary = new Map();
-        this._mergeByGlossary(definitions, source, result.expression, result.reading, definitionsByGlossary);
-        this._addDefinitionDetails(definitions, result.expressions);
+        this._mergeByGlossary(definitions, source, totalExpressionSet, totalReadingSet, subDefinitionsMap);
+        this._addDefinitionDetails(definitions, definitionDetailsMap);
 
-        let secondaryDefinitions = await this._getMergedSecondarySearchResults(text, result.expressions, secondarySearchDictionaries);
+        let secondaryDefinitions = await this._getMergedSecondarySearchResults(text, definitionDetailsMap, secondarySearchDictionaries);
         secondaryDefinitions = [unsequencedDefinitions, ...secondaryDefinitions];
 
-        this._removeUsedDefinitions(secondaryDefinitions, result.expressions, usedDefinitions);
+        this._removeUsedDefinitions(secondaryDefinitions, definitionDetailsMap, usedDefinitions);
 
-        this._mergeByGlossary(secondaryDefinitions, source, result.expression, result.reading, definitionsByGlossary);
+        this._mergeByGlossary(secondaryDefinitions, source, totalExpressionSet, totalReadingSet, subDefinitionsMap);
 
-        for (const definition of definitionsByGlossary.values()) {
-            this._setDefinitionDisambiguations(definition, result.expression, result.reading);
+        for (const definition of subDefinitionsMap.values()) {
+            this._setDefinitionDisambiguations(definition, totalExpressionSet, totalReadingSet);
             this._sortTags(definition.definitionTags);
-            result.definitions.push(definition);
+            subDefinitions.push(definition);
         }
 
-        this._sortDefinitions(result.definitions, dictionaries);
+        this._sortDefinitions(subDefinitions, dictionaries);
 
         const expressions = [];
-        for (const [expression, readingMap] of result.expressions.entries()) {
+        for (const [expression, readingMap] of definitionDetailsMap.entries()) {
             for (const [reading, termTagsMap] of readingMap.entries()) {
                 const termTags = [...termTagsMap.values()];
                 this._sortTags(termTags);
@@ -203,11 +197,16 @@ class Translator {
             }
         }
 
-        result.expressions = expressions;
-        result.expression = Array.from(result.expression);
-        result.reading = Array.from(result.reading);
-
-        return result;
+        return {
+            reasons,
+            score,
+            expression: [...totalExpressionSet],
+            reading: [...totalReadingSet],
+            expressions,
+            source,
+            dictionary,
+            definitions: subDefinitions
+        };
     }
 
     _removeUsedDefinitions(definitions, definitionDetailsMap, usedDefinitions) {
