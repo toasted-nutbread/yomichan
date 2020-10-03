@@ -184,7 +184,7 @@ class Translator {
             for (const reading of readings) { totalReadingSet.add(reading); }
         }
 
-        for (const {expressions, readings, definitionTags, definition} of subDefinitionsMap.values()) {
+        for (const {expressions, readings, definitionTags, definitions: definitions2} of subDefinitionsMap.values()) {
             const only = [];
             if (!areSetsEqual(expressions, totalExpressionSet)) {
                 only.push(...getSetIntersection(expressions, totalExpressionSet));
@@ -193,7 +193,7 @@ class Translator {
                 only.push(...getSetIntersection(readings, totalReadingSet));
             }
 
-            const {id, glossary, dictionary: dictionary2, score: score2} = definition;
+            const {id, glossary, dictionary: dictionary2, score: score2} = definitions2[0];
             const subDefinition = {
                 expression: [...expressions],
                 reading: [...readings],
@@ -204,6 +204,7 @@ class Translator {
                 score: score2,
                 id,
                 dictionary: dictionary2,
+                definitions: definitions2,
                 only
             };
 
@@ -831,13 +832,14 @@ class Translator {
                     expressions: new Set(),
                     readings: new Set(),
                     definitionTags: new Map(),
-                    definition
+                    definitions: []
                 };
                 definitionsByGlossary.set(gloss, glossDefinition);
             }
 
             glossDefinition.expressions.add(expression);
             glossDefinition.readings.add(reading);
+            glossDefinition.definitions.push(definition);
 
             for (const tag of definitionTags) {
                 const {name} = tag;
