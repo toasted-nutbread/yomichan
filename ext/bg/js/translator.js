@@ -812,7 +812,8 @@ class Translator {
                 reasons: firstDef.reasons,
                 termTags: firstDef.termTags,
                 score,
-                source: firstDef.source
+                source: firstDef.source,
+                rawSource: firstDef.rawSource
             });
         }
 
