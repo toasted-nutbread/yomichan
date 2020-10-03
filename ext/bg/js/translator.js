@@ -110,7 +110,7 @@ class Translator {
                         source,
                         rawSource,
                         dictionary,
-                        databaseDefinitions: []
+                        definitions: []
                     };
                     sequencedDefinitionMap.set(sequence, sequencedDefinition);
                     sequencedDefinitions.push(sequencedDefinition);
@@ -125,7 +125,9 @@ class Translator {
 
         const databaseDefinitions = await this._database.findTermsBySequenceBulk(sequenceList, mainDictionary);
         for (const databaseDefinition of databaseDefinitions) {
-            sequencedDefinitions[databaseDefinition.index].databaseDefinitions.push(databaseDefinition);
+            const {definitions: definitions2, source, rawSource, reasons} = sequencedDefinitions[databaseDefinition.index];
+            const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, reasons);
+            definitions2.push(definition);
         }
 
         return {sequencedDefinitions, unsequencedDefinitions};
@@ -160,7 +162,7 @@ class Translator {
     }
 
     async _getMergedDefinition(text, dictionaries, sequencedDefinition, unsequencedDefinitions, secondarySearchDictionaries, mergedByTermIndices) {
-        const {reasons, score, source, rawSource, dictionary, databaseDefinitions} = sequencedDefinition;
+        const {reasons, score, source, dictionary, definitions} = sequencedDefinition;
         const result = {
             reasons,
             score,
@@ -171,12 +173,6 @@ class Translator {
             dictionary,
             definitions: []
         };
-
-        const definitions = [];
-        for (const databaseDefinition of databaseDefinitions) {
-            const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, reasons);
-            definitions.push(definition);
-        }
 
         const definitionsByGloss = this._mergeByGlossary(result, databaseDefinitions);
         this._addDefinitionDetails(definitions, result.expressions);
