@@ -193,7 +193,7 @@ class Translator {
                 only.push(...getSetIntersection(readings, totalReadingSet));
             }
 
-            const definitionTags = this._getUniqueTags(definitions2);
+            const definitionTags = this._getUniqueDefinitionTags(definitions2);
             this._sortTags(definitionTags);
 
             const {id, glossary, dictionary: dictionary2} = definitions2[0];
@@ -257,7 +257,7 @@ class Translator {
         }
     }
 
-    _getUniqueTags(definitions) {
+    _getUniqueDefinitionTags(definitions) {
         const definitionTagsMap = new Map();
         for (const {definitionTags} of definitions) {
             for (const tag of definitionTags) {
