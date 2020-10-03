@@ -756,27 +756,29 @@ class Translator {
     _compressDefinitionTags(definitions) {
         let lastDictionary = '';
         let lastPartOfSpeech = '';
+        const removeCategoriesSet = new Set();
 
-        for (const definition of definitions) {
-            const dictionary = this._createMapKey(this._getTagNamesWithCategory(definition.definitionTags, 'dictionary'));
-            const partOfSpeech = this._createMapKey(this._getTagNamesWithCategory(definition.definitionTags, 'partOfSpeech'));
-
-            const filterOutCategories = [];
+        for (const {definitionTags} of definitions) {
+            const dictionary = this._createMapKey(this._getTagNamesWithCategory(definitionTags, 'dictionary'));
+            const partOfSpeech = this._createMapKey(this._getTagNamesWithCategory(definitionTags, 'partOfSpeech'));
 
             if (lastDictionary === dictionary) {
-                filterOutCategories.push('dictionary');
+                removeCategoriesSet.add('dictionary');
             } else {
                 lastDictionary = dictionary;
                 lastPartOfSpeech = '';
             }
 
             if (lastPartOfSpeech === partOfSpeech) {
-                filterOutCategories.push('partOfSpeech');
+                removeCategoriesSet.add('partOfSpeech');
             } else {
                 lastPartOfSpeech = partOfSpeech;
             }
 
-            definition.definitionTags = definition.definitionTags.filter((tag) => !filterOutCategories.includes(tag.category));
+            if (removeCategoriesSet.size > 0) {
+                this._removeTagsWithCategory(definitionTags, removeCategoriesSet);
+                removeCategoriesSet.clear();
+            }
         }
     }
 
@@ -788,6 +790,16 @@ class Translator {
         }
         results.sort();
         return results;
+    }
+
+    _removeTagsWithCategory(tags, removeCategoriesSet) {
+        for (let i = 0, ii = tags.length; i < ii; ++i) {
+            const {category} = tags[i];
+            if (!removeCategoriesSet.has(category)) { continue; }
+            tags.splice(i, 1);
+            --i;
+            --ii;
+        }
     }
 
     _groupTerms(definitions, dictionaries) {
