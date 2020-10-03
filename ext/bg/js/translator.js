@@ -72,16 +72,8 @@ class Translator {
             expandedTags.push(this._createDictionaryTag(dictionary));
             this._sortTags(expandedTags);
 
-            definitions.push({
-                character,
-                onyomi,
-                kunyomi,
-                tags: expandedTags,
-                glossary,
-                stats: expandedStats,
-                dictionary,
-                frequencies: []
-            });
+            const definition = this._createKanjiDefinition(character, dictionary, onyomi, kunyomi, glossary, expandedTags, expandedStats);
+            definitions.push(definition);
         }
 
         await this._buildKanjiMeta(definitions, dictionaries);
@@ -916,6 +908,20 @@ class Translator {
             score: (typeof score === 'number' ? score : 0),
             dictionary: (typeof dictionary === 'string' ? dictionary : null),
             value
+        };
+    }
+
+    _createKanjiDefinition(character, dictionary, onyomi, kunyomi, glossary, tags, stats) {
+        return {
+            type: 'kanji',
+            character,
+            dictionary,
+            onyomi,
+            kunyomi,
+            glossary,
+            tags,
+            stats,
+            frequencies: []
         };
     }
 
