@@ -294,21 +294,21 @@ class Translator {
             definitionsMerged.push(result);
         }
 
-        const strayDefinitions = unsequencedDefinitions.filter((definition) => !usedDefinitions.has(definition));
-        for (const groupedDefinition of this._groupTerms(strayDefinitions, dictionaries)) {
-            // from dictTermsMergeBySequence
-            const {reasons, score, expression, reading, source, dictionary} = groupedDefinition;
+        const unusedDefinitions = unsequencedDefinitions.filter((definition) => !usedDefinitions.has(definition));
+        for (const groupedDefinition of this._groupTerms(unusedDefinitions, dictionaries)) {
+            const {reasons, score, expression, reading, source, rawSource, dictionary} = groupedDefinition;
             const expressionDetails = this._createExpressionDetails(expression, reading);
-            const compatibilityDefinition = {
-                reasons,
-                score,
-                expression: [expression],
-                reading: [reading],
-                expressions: [expressionDetails],
+            const compatibilityDefinition = this._createMergedTermDefinition(
                 source,
+                rawSource,
+                definitions,
+                [expression],
+                [reading],
+                [expressionDetails],
+                reasons,
                 dictionary,
-                definitions: groupedDefinition.definitions
-            };
+                score
+            );
             definitionsMerged.push(compatibilityDefinition);
         }
 
