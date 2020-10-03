@@ -796,23 +796,23 @@ class Translator {
     }
 
     _mergeByGlossary(definitions, source, totalExpressionSet, totalReadingSet, definitionsByGlossary) {
-        for (let i = 0, ii = definitions.length; i < ii; ++i) {
-            const definition = definitions[i];
-            const {expression, reading} = definition;
+        for (const definition of definitions) {
+            const {expression, reading, dictionary, glossary, definitionTags} = definition;
 
-            const gloss = JSON.stringify([definition.dictionary, ...definition.glossary]);
+            const gloss = JSON.stringify([dictionary, ...glossary]);
             let glossDefinition = definitionsByGlossary.get(gloss);
             if (typeof glossDefinition === 'undefined') {
+                const {score, id} = definition;
                 glossDefinition = {
                     expression: new Set(),
                     reading: new Set(),
                     definitionTags: [],
-                    glossary: definition.glossary,
+                    glossary,
                     source,
                     reasons: [],
-                    score: definition.score,
-                    id: definition.id,
-                    dictionary: definition.dictionary,
+                    score,
+                    id,
+                    dictionary,
                     only: []
                 };
                 definitionsByGlossary.set(gloss, glossDefinition);
@@ -824,7 +824,7 @@ class Translator {
             totalExpressionSet.add(expression);
             totalReadingSet.add(reading);
 
-            for (const tag of definition.definitionTags) {
+            for (const tag of definitionTags) {
                 if (!glossDefinition.definitionTags.find((existingTag) => existingTag.name === tag.name)) {
                     glossDefinition.definitionTags.push(tag);
                 }
