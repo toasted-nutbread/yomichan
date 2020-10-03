@@ -203,8 +203,7 @@ class Translator {
             for (const [reading, termTagsMap] of readingMap.entries()) {
                 const termTags = [...termTagsMap.values()];
                 this._sortTags(termTags);
-                const termFrequency = this._scoreToTermFrequency(this._getTermTagsScoreSum(termTags));
-                expressionDetailsList.push(this._createExpressionDetails(expression, reading, termTags, termFrequency));
+                expressionDetailsList.push(this._createExpressionDetails(expression, reading, termTags));
             }
         }
 
@@ -296,8 +295,8 @@ class Translator {
 
         const unusedDefinitions = unsequencedDefinitions.filter((definition) => !usedDefinitions.has(definition));
         for (const groupedDefinition of this._groupTerms(unusedDefinitions, dictionaries)) {
-            const {reasons, score, expression, reading, source, rawSource, dictionary} = groupedDefinition;
-            const expressionDetails = this._createExpressionDetails(expression, reading);
+            const {reasons, score, expression, reading, source, rawSource, dictionary, termTags} = groupedDefinition;
+            const expressionDetails = this._createExpressionDetails(expression, reading, termTags);
             const compatibilityDefinition = this._createMergedTermDefinition(
                 source,
                 rawSource,
@@ -973,7 +972,8 @@ class Translator {
         };
     }
 
-    _createExpressionDetails(expression, reading, termTags=null, termFrequency=null) {
+    _createExpressionDetails(expression, reading, termTags) {
+        const termFrequency = this._scoreToTermFrequency(this._getTermTagsScoreSum(termTags));
         const furiganaSegments = jp.distributeFurigana(expression, reading);
         return {
             expression,
