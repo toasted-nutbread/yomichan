@@ -161,7 +161,7 @@ class Translator {
         return definitions;
     }
 
-    async _getMergedDefinition(text, dictionaries, sequencedDefinition, unsequencedDefinitions, secondarySearchDictionaries, mergedByTermIndices) {
+    async _getMergedDefinition(text, dictionaries, sequencedDefinition, unsequencedDefinitions, secondarySearchDictionaries, usedDefinitions) {
         const {reasons, score, source, dictionary, definitions} = sequencedDefinition;
         const result = {
             reasons,
@@ -180,7 +180,9 @@ class Translator {
         let secondaryDefinitions = await this._getMergedSecondarySearchResults(text, result.expressions, secondarySearchDictionaries);
         secondaryDefinitions = [unsequencedDefinitions, ...secondaryDefinitions];
 
-        this._mergeByGlossary(result, secondaryDefinitions, definitionsByGlossary, mergedByTermIndices);
+        this._removeUsedDefinitions(secondaryDefinitions, result.expressions, usedDefinitions);
+
+        this._mergeByGlossary(result, secondaryDefinitions, definitionsByGlossary);
 
         for (const definition of definitionsByGlossary.values()) {
             this._setDefinitionDisambiguations(definition, result.expression, result.reading);
@@ -205,6 +207,24 @@ class Translator {
         result.reading = Array.from(result.reading);
 
         return result;
+    }
+
+    _removeUsedDefinitions(definitions, definitionDetailsMap, usedDefinitions) {
+        for (let i = 0, ii = definitions.length; i < ii; ++i) {
+            const definition = definitions[i];
+            const {expression, reading} = definition;
+            const expressionMap = definitionDetailsMap.get(expression);
+            if (
+                typeof expressionMap !== 'undefined' &&
+                typeof expressionMap.get(reading) !== 'undefined'
+            ) {
+                usedDefinitions.add(definition);
+            } else {
+                definitions.splice(i, 1);
+                --i;
+                --ii;
+            }
+        }
     }
 
     _getTermTagsScoreSum(termTags) {
@@ -237,7 +257,7 @@ class Translator {
         const [definitions, length] = await this._findTermsInternal(text, dictionaries, details, options);
         const {sequencedDefinitions, unsequencedDefinitions} = await this._getSequencedDefinitions(definitions, options.general.mainDictionary);
         const definitionsMerged = [];
-        const mergedByTermIndices = new Set();
+        const usedDefinitions = new Set();
 
         for (const sequencedDefinition of sequencedDefinitions) {
             const result = await this._getMergedDefinition(
@@ -246,12 +266,12 @@ class Translator {
                 sequencedDefinition,
                 unsequencedDefinitions,
                 secondarySearchDictionaries,
-                mergedByTermIndices
+                usedDefinitions
             );
             definitionsMerged.push(result);
         }
 
-        const strayDefinitions = unsequencedDefinitions.filter((definition, index) => !mergedByTermIndices.has(index));
+        const strayDefinitions = unsequencedDefinitions.filter((definition) => !usedDefinitions.has(definition));
         for (const groupedDefinition of this._groupTerms(strayDefinitions, dictionaries)) {
             // from dictTermsMergeBySequence
             const {reasons, score, expression, reading, source, dictionary} = groupedDefinition;
@@ -774,8 +794,7 @@ class Translator {
         return results;
     }
 
-    _mergeByGlossary(result, definitions, definitionsByGlossary, mergedIndices=null) {
-        const definitionDetailsMap = result.expressions;
+    _mergeByGlossary(result, definitions, definitionsByGlossary) {
         const totalExpressionSet = result.expression;
         const totalReadingSet = result.reading;
         const source = result.source;
@@ -783,18 +802,6 @@ class Translator {
         for (let i = 0, ii = definitions.length; i < ii; ++i) {
             const definition = definitions[i];
             const {expression, reading} = definition;
-
-            if (mergedIndices !== null) {
-                const expressionMap = definitionDetailsMap.get(expression);
-                if (
-                    typeof expressionMap !== 'undefined' &&
-                    typeof expressionMap.get(reading) !== 'undefined'
-                ) {
-                    mergedIndices.add(i);
-                } else {
-                    continue;
-                }
-            }
 
             const gloss = JSON.stringify([definition.dictionary, ...definition.glossary]);
             let glossDefinition = definitionsByGlossary.get(gloss);
