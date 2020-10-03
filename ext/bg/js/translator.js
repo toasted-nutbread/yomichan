@@ -180,6 +180,7 @@ class Translator {
         }
 
         const definitionsByGloss = this._mergeByGlossary(result, databaseDefinitions);
+        this._addDefinitionDetails(databaseDefinitions, result.expressions);
         let secondaryDefinitions = await this._getMergedSecondarySearchResults(text, result.expressions, secondarySearchDictionaries);
         secondaryDefinitions = [unsequencedDefinitions, ...secondaryDefinitions];
 
@@ -830,39 +831,6 @@ class Translator {
                     glossDefinition.definitionTags.push(tag);
                 }
             }
-
-            if (appendTo === null) {
-                /*
-                    Data layout:
-                    resultExpressionsMap = new Map([
-                        [expression, new Map([
-                            [reading, new Map([
-                                [tagName, tagInfo],
-                                ...
-                            ])],
-                            ...
-                        ])],
-                        ...
-                    ]);
-                */
-                let readingMap = definitionDetailsMap.get(expression);
-                if (typeof readingMap === 'undefined') {
-                    readingMap = new Map();
-                    definitionDetailsMap.set(expression, readingMap);
-                }
-
-                let termTagsMap = readingMap.get(reading);
-                if (typeof termTagsMap === 'undefined') {
-                    termTagsMap = new Map();
-                    readingMap.set(reading, termTagsMap);
-                }
-
-                for (const tag of definition.termTags) {
-                    if (!termTagsMap.has(tag.name)) {
-                        termTagsMap.set(tag.name, tag);
-                    }
-                }
-            }
         }
 
         return definitionsByGlossary;
@@ -875,6 +843,28 @@ class Translator {
         }
         if (!areSetsEqual(readingSet, totalReadingSet)) {
             only.push(...getSetIntersection(readingSet, totalReadingSet));
+        }
+    }
+
+    _addDefinitionDetails(definitions, definitionDetailsMap) {
+        for (const {expression, reading, termTags} of definitions) {
+            let readingMap = definitionDetailsMap.get(expression);
+            if (typeof readingMap === 'undefined') {
+                readingMap = new Map();
+                definitionDetailsMap.set(expression, readingMap);
+            }
+
+            let termTagsMap = readingMap.get(reading);
+            if (typeof termTagsMap === 'undefined') {
+                termTagsMap = new Map();
+                readingMap.set(reading, termTagsMap);
+            }
+
+            for (const {name, category, notes, order, score, dictionary} of termTags) {
+                if (termTagsMap.has(name)) { continue; }
+                const tag = this._createTag(name, category, notes, order, score, dictionary);
+                termTagsMap.set(name, tag);
+            }
         }
     }
 
