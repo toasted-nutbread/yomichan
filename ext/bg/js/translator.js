@@ -163,8 +163,6 @@ class Translator {
 
     async _getMergedDefinition(text, dictionaries, sequencedDefinition, unsequencedDefinitions, secondarySearchDictionaries, usedDefinitions) {
         const {reasons, score, source, dictionary, definitions} = sequencedDefinition;
-        const totalExpressionSet = new Set();
-        const totalReadingSet = new Set();
         const definitionDetailsMap = new Map();
         const subDefinitions = [];
         const subDefinitionsMap = new Map();
@@ -179,18 +177,20 @@ class Translator {
 
         this._mergeByGlossary(secondaryDefinitions, subDefinitionsMap);
 
+        const allExpressions = new Set();
+        const allReadings = new Set();
         for (const {expressions, readings} of subDefinitionsMap.values()) {
-            for (const expression of expressions) { totalExpressionSet.add(expression); }
-            for (const reading of readings) { totalReadingSet.add(reading); }
+            for (const expression of expressions) { allExpressions.add(expression); }
+            for (const reading of readings) { allReadings.add(reading); }
         }
 
         for (const {expressions, readings, definitions: definitions2} of subDefinitionsMap.values()) {
             const only = [];
-            if (!areSetsEqual(expressions, totalExpressionSet)) {
-                only.push(...getSetIntersection(expressions, totalExpressionSet));
+            if (!areSetsEqual(expressions, allExpressions)) {
+                only.push(...getSetIntersection(expressions, allExpressions));
             }
-            if (!areSetsEqual(readings, totalReadingSet)) {
-                only.push(...getSetIntersection(readings, totalReadingSet));
+            if (!areSetsEqual(readings, allReadings)) {
+                only.push(...getSetIntersection(readings, allReadings));
             }
 
             const definitionTags = this._getUniqueDefinitionTags(definitions2);
@@ -230,8 +230,8 @@ class Translator {
         return {
             reasons,
             score,
-            expression: [...totalExpressionSet],
-            reading: [...totalReadingSet],
+            expression: [...allExpressions],
+            reading: [...allReadings],
             expressions,
             source,
             dictionary,
