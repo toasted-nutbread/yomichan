@@ -937,7 +937,7 @@ class Translator {
         const furiganaSegments = jp.distributeFurigana(expression, reading);
 
         return {
-            type: 'single',
+            type: 'term',
             id,
             source,
             rawSource,
@@ -961,7 +961,7 @@ class Translator {
         const {expression, reading, furiganaSegments, reasons, termTags, source, rawSource} = definitions[0];
         const score = this._getMaxDefinitionScore(definitions);
         return {
-            type: 'grouped',
+            type: 'termGrouped',
             // id
             source,
             rawSource,
@@ -983,7 +983,7 @@ class Translator {
 
     _createMergedTermDefinition(source, rawSource, definitions, expressions, readings, expressionDetailsList, reasons, dictionary, score) {
         return {
-            type: 'merged',
+            type: 'termMerged',
             // id
             source,
             rawSource,
@@ -1018,7 +1018,7 @@ class Translator {
         const {glossary, dictionary} = definitions[0];
         const score = this._getMaxDefinitionScore(definitions);
         return {
-            type: 'mergedByGlossary',
+            type: 'termMergedByGlossary',
             // id
             source,
             rawSource,
