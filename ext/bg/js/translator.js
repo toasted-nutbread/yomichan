@@ -495,9 +495,8 @@ class Translator {
         const expressionsUnique = [];
         const termsUnique = [];
         const termsUniqueMap = new Map();
-        for (let i = 0, ii = terms.length; i < ii; ++i) {
-            const term = terms[i];
-            const expression = term.expression;
+        for (const term of terms) {
+            const {expression} = term;
             let termList = termsUniqueMap.get(expression);
             if (typeof termList === 'undefined') {
                 termList = [];
