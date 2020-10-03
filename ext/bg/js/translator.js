@@ -185,33 +185,14 @@ class Translator {
         }
 
         for (const {expressions, readings, definitions: definitions2} of subDefinitionsMap.values()) {
-            const only = [];
-            if (!areSetsEqual(expressions, allExpressions)) {
-                only.push(...getSetIntersection(expressions, allExpressions));
-            }
-            if (!areSetsEqual(readings, allReadings)) {
-                only.push(...getSetIntersection(readings, allReadings));
-            }
-
-            const definitionTags = this._getUniqueDefinitionTags(definitions2);
-            this._sortTags(definitionTags);
-
-            const {id, glossary, dictionary: dictionary2} = definitions2[0];
-            const score2 = this._getMaxDefinitionScore(definitions2);
-            const subDefinition = {
-                expression: [...expressions],
-                reading: [...readings],
-                definitionTags,
-                glossary,
+            const subDefinition = this._createMergedGlossaryTermDefinition(
                 source,
-                reasons: [],
-                score: score2,
-                id,
-                dictionary: dictionary2,
-                definitions: definitions2,
-                only
-            };
-
+                definitions2,
+                expressions,
+                readings,
+                allExpressions,
+                allReadings
+            );
             subDefinitions.push(subDefinition);
         }
 
@@ -945,6 +926,35 @@ class Translator {
             definitionTags: definitionTagsExpanded,
             termTags: termTagsExpanded,
             sequence
+        };
+    }
+
+    _createMergedGlossaryTermDefinition(source, definitions, expressions, readings, allExpressions, allReadings) {
+        const only = [];
+        if (!areSetsEqual(expressions, allExpressions)) {
+            only.push(...getSetIntersection(expressions, allExpressions));
+        }
+        if (!areSetsEqual(readings, allReadings)) {
+            only.push(...getSetIntersection(readings, allReadings));
+        }
+
+        const definitionTags = this._getUniqueDefinitionTags(definitions);
+        this._sortTags(definitionTags);
+
+        const {id, glossary, dictionary: dictionary} = definitions[0];
+        const score = this._getMaxDefinitionScore(definitions);
+        return {
+            expression: [...expressions],
+            reading: [...readings],
+            definitionTags,
+            glossary,
+            source,
+            reasons: [],
+            score,
+            id,
+            dictionary,
+            definitions,
+            only
         };
     }
 
