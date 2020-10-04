@@ -250,14 +250,7 @@ class Translator {
 
         this._sortDefinitions(glossaryDefinitions, true);
 
-        const expressionDetailsList = [];
-        for (const [expression, readingMap] of termInfoMap.entries()) {
-            for (const [reading, {termTagsMap, sourceTerm, furiganaSegments}] of readingMap.entries()) {
-                const termTags = [...termTagsMap.values()];
-                this._sortTags(termTags);
-                expressionDetailsList.push(this._createExpressionDetails(sourceTerm, expression, reading, furiganaSegments, termTags));
-            }
-        }
+        const expressionDetailsList = this._createExpressionDetailsListFromTermInfoMap(termInfoMap);
 
         return this._createMergedTermDefinition(
             source,
@@ -1110,6 +1103,18 @@ class Translator {
             pitches: [],
             only
         };
+    }
+
+    _createExpressionDetailsListFromTermInfoMap(termInfoMap) {
+        const expressionDetailsList = [];
+        for (const [expression, readingMap] of termInfoMap.entries()) {
+            for (const [reading, {termTagsMap, sourceTerm, furiganaSegments}] of readingMap.entries()) {
+                const termTags = [...termTagsMap.values()];
+                this._sortTags(termTags);
+                expressionDetailsList.push(this._createExpressionDetails(sourceTerm, expression, reading, furiganaSegments, termTags));
+            }
+        }
+        return expressionDetailsList;
     }
 
     _createExpressionDetails(sourceTerm, expression, reading, furiganaSegments, termTags) {
