@@ -126,8 +126,8 @@ class Translator {
         return {sequencedDefinitions, unsequencedDefinitions};
     }
 
-    async _getMergedSecondarySearchResults(expressionsMap, secondarySearchDictionaries) {
-        if (secondarySearchDictionaries.size === 0) {
+    async _getMergedSecondarySearchResults(expressionsMap, secondarySearchDictionaryMap) {
+        if (secondarySearchDictionaryMap.size === 0) {
             return [];
         }
 
@@ -140,20 +140,20 @@ class Translator {
             }
         }
 
-        const databaseDefinitions = await this._database.findTermsExactBulk(expressionList, readingList, secondarySearchDictionaries);
+        const databaseDefinitions = await this._database.findTermsExactBulk(expressionList, readingList, secondarySearchDictionaryMap);
         this._sortDatabaseDefinitionsByIndex(databaseDefinitions);
 
         const definitions = [];
         for (const databaseDefinition of databaseDefinitions) {
             const source = expressionList[databaseDefinition.index];
-            const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, source, [], secondarySearchDictionaries);
+            const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, source, [], secondarySearchDictionaryMap);
             definitions.push(definition);
         }
 
         return definitions;
     }
 
-    async _getMergedDefinition(sequencedDefinition, unsequencedDefinitions, secondarySearchDictionaries, usedDefinitions) {
+    async _getMergedDefinition(sequencedDefinition, unsequencedDefinitions, secondarySearchDictionaryMap, usedDefinitions) {
         const {reasons, score, source, rawSource, dictionary, definitions} = sequencedDefinition;
         const definitionDetailsMap = new Map();
         const glossaryDefinitions = [];
@@ -162,7 +162,7 @@ class Translator {
         this._mergeByGlossary(definitions, glossaryDefinitionGroupMap);
         this._addDefinitionDetails(definitions, definitionDetailsMap);
 
-        let secondaryDefinitions = await this._getMergedSecondarySearchResults(definitionDetailsMap, secondarySearchDictionaries);
+        let secondaryDefinitions = await this._getMergedSecondarySearchResults(definitionDetailsMap, secondarySearchDictionaryMap);
         secondaryDefinitions = [unsequencedDefinitions, ...secondaryDefinitions];
 
         this._removeUsedDefinitions(secondaryDefinitions, definitionDetailsMap, usedDefinitions);
@@ -269,7 +269,7 @@ class Translator {
 
     async _findTermsMerged(text, details, options) {
         const dictionaries = this._getEnabledDictionaryMap(options);
-        const secondarySearchDictionaries = this._getSecondarySearchDictionaryMap(dictionaries);
+        const secondarySearchDictionaryMap = this._getSecondarySearchDictionaryMap(dictionaries);
 
         const [definitions, length] = await this._findTermsInternal(text, dictionaries, details, options);
         const {sequencedDefinitions, unsequencedDefinitions} = await this._getSequencedDefinitions(definitions, options.general.mainDictionary, dictionaries);
@@ -280,7 +280,7 @@ class Translator {
             const result = await this._getMergedDefinition(
                 sequencedDefinition,
                 unsequencedDefinitions,
-                secondarySearchDictionaries,
+                secondarySearchDictionaryMap,
                 usedDefinitions
             );
             definitionsMerged.push(result);
@@ -715,12 +715,12 @@ class Translator {
     }
 
     _getSecondarySearchDictionaryMap(enabledDictionaryMap) {
-        const secondarySearchDictionaries = new Map();
+        const secondarySearchDictionaryMap = new Map();
         for (const [title, dictionary] of enabledDictionaryMap.entries()) {
             if (!dictionary.allowSecondarySearches) { continue; }
-            secondarySearchDictionaries.set(title, dictionary);
+            secondarySearchDictionaryMap.set(title, dictionary);
         }
-        return secondarySearchDictionaries;
+        return secondarySearchDictionaryMap;
     }
 
     _getDictionaryPriority(dictionary, enabledDictionaryMap) {
