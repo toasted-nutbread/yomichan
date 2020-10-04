@@ -148,25 +148,17 @@ class Translator {
         for (const definition of definitions) {
             const {sequence, dictionary} = definition;
             if (mainDictionary === dictionary && sequence >= 0) {
-                const {score} = definition;
                 let sequencedDefinition = sequencedDefinitionMap.get(sequence);
                 if (typeof sequencedDefinition === 'undefined') {
-                    const {reasons, source, rawSource, sourceTerm} = definition;
                     sequencedDefinition = {
-                        reasons,
-                        score,
-                        source,
-                        rawSource,
-                        sourceTerm,
-                        dictionary,
-                        definitions: []
+                        sourceDefinitions: [],
+                        relatedDefinitions: []
                     };
                     sequencedDefinitionMap.set(sequence, sequencedDefinition);
                     sequencedDefinitions.push(sequencedDefinition);
                     sequenceList.push(sequence);
-                } else {
-                    sequencedDefinition.score = Math.max(sequencedDefinition.score, score);
                 }
+                sequencedDefinition.sourceDefinitions.push(definition);
             } else {
                 unsequencedDefinitions.push(definition);
             }
@@ -175,10 +167,10 @@ class Translator {
         if (sequenceList.length > 0) {
             const databaseDefinitions = await this._database.findTermsBySequenceBulk(sequenceList, mainDictionary);
             for (const databaseDefinition of databaseDefinitions) {
-                const {definitions: definitions2} = sequencedDefinitions[databaseDefinition.index];
+                const {relatedDefinitions} = sequencedDefinitions[databaseDefinition.index];
                 const {expression} = databaseDefinition;
                 const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, expression, expression, expression, [], enabledDictionaryMap);
-                definitions2.push(definition);
+                relatedDefinitions.push(definition);
             }
         }
 
@@ -212,17 +204,18 @@ class Translator {
         return definitions;
     }
 
-    async _getMergedDefinition(sequencedDefinition, unsequencedDefinitions, secondarySearchDictionaryMap, usedDefinitions) {
-        const {reasons, score, source, rawSource, dictionary, definitions} = sequencedDefinition;
+    async _getMergedDefinition(sourceDefinitions, relatedDefinitions, unsequencedDefinitions, secondarySearchDictionaryMap, usedDefinitions) {
+        const {reasons, source, rawSource, dictionary} = sourceDefinitions[0];
+        const score = this._getMaxDefinitionScore(sourceDefinitions);
         const termInfoMap = new Map();
         const glossaryDefinitions = [];
         const glossaryDefinitionGroupMap = new Map();
 
-        this._mergeByGlossary(definitions, glossaryDefinitionGroupMap);
-        this._addUniqueTermInfos(definitions, termInfoMap);
+        this._mergeByGlossary(relatedDefinitions, glossaryDefinitionGroupMap);
+        this._addUniqueTermInfos(relatedDefinitions, termInfoMap);
 
         let secondaryDefinitions = await this._getMergedSecondarySearchResults(termInfoMap, secondarySearchDictionaryMap);
-        secondaryDefinitions = [unsequencedDefinitions, ...secondaryDefinitions];
+        secondaryDefinitions = [unsequencedDefinitions, ...secondaryDefinitions]; // TODO : is unsequencedDefinitions necessary
 
         this._removeUsedDefinitions(secondaryDefinitions, termInfoMap, usedDefinitions);
         this._removeDuplicateDefinitions(secondaryDefinitions);
@@ -328,9 +321,10 @@ class Translator {
         const definitionsMerged = [];
         const usedDefinitions = new Set();
 
-        for (const sequencedDefinition of sequencedDefinitions) {
+        for (const {sourceDefinitions, relatedDefinitions} of sequencedDefinitions) {
             const result = await this._getMergedDefinition(
-                sequencedDefinition,
+                sourceDefinitions,
+                relatedDefinitions,
                 unsequencedDefinitions,
                 secondarySearchDictionaryMap,
                 usedDefinitions
