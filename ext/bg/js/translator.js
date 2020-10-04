@@ -1074,6 +1074,10 @@ class Translator {
             only.push(...getSetIntersection(readings, allReadings));
         }
 
+        const termInfoMap = new Map();
+        this._addUniqueTermInfos(definitions, termInfoMap);
+        const expressionDetailsList = this._createExpressionDetailsListFromTermInfoMap(termInfoMap);
+
         const definitionTags = this._getUniqueDefinitionTags(definitions);
         this._sortTags(definitionTags);
 
@@ -1093,7 +1097,7 @@ class Translator {
             dictionaryPriority,
             expression: [...expressions],
             reading: [...readings],
-            // expressions
+            expressions: expressionDetailsList,
             // furiganaSegments
             glossary: [...glossary],
             definitionTags,
