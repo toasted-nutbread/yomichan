@@ -734,26 +734,6 @@ class Translator {
         }
     }
 
-    _getTagNamesWithCategory(tags, category) {
-        const results = [];
-        for (const tag of tags) {
-            if (tag.category !== category) { continue; }
-            results.push(tag.name);
-        }
-        results.sort();
-        return results;
-    }
-
-    _removeTagsWithCategory(tags, removeCategoriesSet) {
-        for (let i = 0, ii = tags.length; i < ii; ++i) {
-            const {category} = tags[i];
-            if (!removeCategoriesSet.has(category)) { continue; }
-            tags.splice(i, 1);
-            --i;
-            --ii;
-        }
-    }
-
     _groupTerms(definitions) {
         const groups = new Map();
         for (const definition of definitions) {
@@ -869,6 +849,26 @@ class Translator {
     _getDictionaryPriority(dictionary, enabledDictionaryMap) {
         const info = enabledDictionaryMap.get(dictionary);
         return typeof info !== 'undefined' ? info.priority : 0;
+    }
+
+    _getTagNamesWithCategory(tags, category) {
+        const results = [];
+        for (const tag of tags) {
+            if (tag.category !== category) { continue; }
+            results.push(tag.name);
+        }
+        results.sort();
+        return results;
+    }
+
+    _removeTagsWithCategory(tags, removeCategoriesSet) {
+        for (let i = 0, ii = tags.length; i < ii; ++i) {
+            const {category} = tags[i];
+            if (!removeCategoriesSet.has(category)) { continue; }
+            tags.splice(i, 1);
+            --i;
+            --ii;
+        }
     }
 
     *_getArrayVariants(arrayVariants) {
