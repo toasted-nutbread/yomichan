@@ -222,7 +222,7 @@ class Translator {
         return [definitionsMerged, length];
     }
 
-    // Find terms/kanji internal implementation
+    // Find terms internal implementation
 
     async _findTermsInternal(text, enabledDictionaryMap, options) {
         const {alphanumeric, wildcard} = options;
@@ -632,6 +632,8 @@ class Translator {
             }
         }
     }
+
+    // Metadata building
 
     async _buildTermMeta(definitions, enabledDictionaryMap) {
         const terms = [];
