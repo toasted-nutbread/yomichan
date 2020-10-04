@@ -252,10 +252,10 @@ class Translator {
 
         const expressionDetailsList = [];
         for (const [expression, readingMap] of termInfoMap.entries()) {
-            for (const [reading, {termTagsMap, sourceTerm}] of readingMap.entries()) {
+            for (const [reading, {termTagsMap, sourceTerm, furiganaSegments}] of readingMap.entries()) {
                 const termTags = [...termTagsMap.values()];
                 this._sortTags(termTags);
-                expressionDetailsList.push(this._createExpressionDetails(sourceTerm, expression, reading, termTags));
+                expressionDetailsList.push(this._createExpressionDetails(sourceTerm, expression, reading, furiganaSegments, termTags));
             }
         }
 
@@ -346,8 +346,8 @@ class Translator {
 
         const unusedDefinitions = unsequencedDefinitions.filter((definition) => !usedDefinitions.has(definition));
         for (const groupedDefinition of this._groupTerms(unusedDefinitions, enabledDictionaryMap)) {
-            const {reasons, score, expression, reading, source, rawSource, sourceTerm, dictionary, termTags} = groupedDefinition;
-            const expressionDetails = this._createExpressionDetails(sourceTerm, expression, reading, termTags);
+            const {reasons, score, expression, reading, source, rawSource, sourceTerm, dictionary, furiganaSegments, termTags} = groupedDefinition;
+            const expressionDetails = this._createExpressionDetails(sourceTerm, expression, reading, furiganaSegments, termTags);
             const compatibilityDefinition = this._createMergedTermDefinition(
                 source,
                 rawSource,
@@ -879,7 +879,7 @@ class Translator {
     }
 
     _addUniqueTermInfos(definitions, termInfoMap) {
-        for (const {expression, reading, sourceTerm, termTags} of definitions) {
+        for (const {expression, reading, sourceTerm, furiganaSegments, termTags} of definitions) {
             let readingMap = termInfoMap.get(expression);
             if (typeof readingMap === 'undefined') {
                 readingMap = new Map();
@@ -890,6 +890,7 @@ class Translator {
             if (typeof termInfo === 'undefined') {
                 termInfo = {
                     sourceTerm,
+                    furiganaSegments,
                     termTagsMap: new Map()
                 };
                 readingMap.set(reading, termInfo);
@@ -1111,14 +1112,13 @@ class Translator {
         };
     }
 
-    _createExpressionDetails(sourceTerm, expression, reading, termTags) {
+    _createExpressionDetails(sourceTerm, expression, reading, furiganaSegments, termTags) {
         const termFrequency = this._scoreToTermFrequency(this._getTermTagsScoreSum(termTags));
-        const furiganaSegments = jp.distributeFurigana(expression, reading);
         return {
             sourceTerm,
             expression,
             reading,
-            furiganaSegments,
+            furiganaSegments, // Contains duplicate data
             termTags,
             termFrequency,
             frequencies: [],
