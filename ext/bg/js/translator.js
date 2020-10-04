@@ -154,10 +154,10 @@ class Translator {
     async _getMergedDefinition(sequencedDefinition, unsequencedDefinitions, dictionaries, secondarySearchDictionaries, usedDefinitions) {
         const {reasons, score, source, rawSource, dictionary, definitions} = sequencedDefinition;
         const definitionDetailsMap = new Map();
-        const subDefinitions = [];
-        const subDefinitionsMap = new Map();
+        const glossaryDefinitions = [];
+        const glossaryDefinitionGroupMap = new Map();
 
-        this._mergeByGlossary(definitions, subDefinitionsMap);
+        this._mergeByGlossary(definitions, glossaryDefinitionGroupMap);
         this._addDefinitionDetails(definitions, definitionDetailsMap);
 
         let secondaryDefinitions = await this._getMergedSecondarySearchResults(definitionDetailsMap, secondarySearchDictionaries);
@@ -166,17 +166,17 @@ class Translator {
         this._removeUsedDefinitions(secondaryDefinitions, definitionDetailsMap, usedDefinitions);
         this._removeDuplicateDefinitions(secondaryDefinitions);
 
-        this._mergeByGlossary(secondaryDefinitions, subDefinitionsMap);
+        this._mergeByGlossary(secondaryDefinitions, glossaryDefinitionGroupMap);
 
         const allExpressions = new Set();
         const allReadings = new Set();
-        for (const {expressions, readings} of subDefinitionsMap.values()) {
+        for (const {expressions, readings} of glossaryDefinitionGroupMap.values()) {
             for (const expression of expressions) { allExpressions.add(expression); }
             for (const reading of readings) { allReadings.add(reading); }
         }
 
-        for (const {expressions, readings, definitions: definitions2} of subDefinitionsMap.values()) {
-            const subDefinition = this._createMergedGlossaryTermDefinition(
+        for (const {expressions, readings, definitions: definitions2} of glossaryDefinitionGroupMap.values()) {
+            const glossaryDefinition = this._createMergedGlossaryTermDefinition(
                 source,
                 rawSource,
                 definitions2,
@@ -185,10 +185,10 @@ class Translator {
                 allExpressions,
                 allReadings
             );
-            subDefinitions.push(subDefinition);
+            glossaryDefinitions.push(glossaryDefinition);
         }
 
-        this._sortDefinitions(subDefinitions, dictionaries);
+        this._sortDefinitions(glossaryDefinitions, dictionaries);
 
         const expressionDetailsList = [];
         for (const [expression, readingMap] of definitionDetailsMap.entries()) {
@@ -202,7 +202,7 @@ class Translator {
         return this._createMergedTermDefinition(
             source,
             rawSource,
-            subDefinitions,
+            glossaryDefinitions,
             [...allExpressions],
             [...allReadings],
             expressionDetailsList,
@@ -817,24 +817,24 @@ class Translator {
         return results;
     }
 
-    _mergeByGlossary(definitions, definitionsByGlossary) {
+    _mergeByGlossary(definitions, glossaryDefinitionGroupMap) {
         for (const definition of definitions) {
             const {expression, reading, dictionary, glossary} = definition;
 
             const key = this._createMapKey([dictionary, ...glossary]);
-            let glossDefinition = definitionsByGlossary.get(key);
-            if (typeof glossDefinition === 'undefined') {
-                glossDefinition = {
+            let group = glossaryDefinitionGroupMap.get(key);
+            if (typeof group === 'undefined') {
+                group = {
                     expressions: new Set(),
                     readings: new Set(),
                     definitions: []
                 };
-                definitionsByGlossary.set(key, glossDefinition);
+                glossaryDefinitionGroupMap.set(key, group);
             }
 
-            glossDefinition.expressions.add(expression);
-            glossDefinition.readings.add(reading);
-            glossDefinition.definitions.push(definition);
+            group.expressions.add(expression);
+            group.readings.add(reading);
+            group.definitions.push(definition);
         }
     }
 
