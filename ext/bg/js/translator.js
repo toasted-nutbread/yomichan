@@ -680,56 +680,6 @@ class Translator {
         return {reading, pitches, dictionary};
     }
 
-    _scoreToTermFrequency(score) {
-        if (score > 0) {
-            return 'popular';
-        } else if (score < 0) {
-            return 'rare';
-        } else {
-            return 'normal';
-        }
-    }
-
-    _getNameBase(name) {
-        const pos = name.indexOf(':');
-        return (pos >= 0 ? name.substring(0, pos) : name);
-    }
-
-    *_getArrayVariants(arrayVariants) {
-        const ii = arrayVariants.length;
-
-        let total = 1;
-        for (let i = 0; i < ii; ++i) {
-            total *= arrayVariants[i].length;
-        }
-
-        for (let a = 0; a < total; ++a) {
-            const variant = [];
-            let index = a;
-            for (let i = 0; i < ii; ++i) {
-                const entryVariants = arrayVariants[i];
-                variant.push(entryVariants[index % entryVariants.length]);
-                index = Math.floor(index / entryVariants.length);
-            }
-            yield variant;
-        }
-    }
-
-    _getSearchableText(text, allowAlphanumericCharacters) {
-        if (allowAlphanumericCharacters) {
-            return text;
-        }
-
-        let newText = '';
-        for (const c of text) {
-            if (!jp.isCodePointJapanese(c.codePointAt(0))) {
-                break;
-            }
-            newText += c;
-        }
-        return newText;
-    }
-
     _getSecondarySearchDictionaryMap(enabledDictionaryMap) {
         const secondarySearchDictionaryMap = new Map();
         for (const [title, dictionary] of enabledDictionaryMap.entries()) {
@@ -884,6 +834,56 @@ class Translator {
                 if (termTagsMap.has(name)) { continue; }
                 termTagsMap.set(name, this._cloneTag(tag));
             }
+        }
+    }
+
+    _scoreToTermFrequency(score) {
+        if (score > 0) {
+            return 'popular';
+        } else if (score < 0) {
+            return 'rare';
+        } else {
+            return 'normal';
+        }
+    }
+
+    _getNameBase(name) {
+        const pos = name.indexOf(':');
+        return (pos >= 0 ? name.substring(0, pos) : name);
+    }
+
+    _getSearchableText(text, allowAlphanumericCharacters) {
+        if (allowAlphanumericCharacters) {
+            return text;
+        }
+
+        let newText = '';
+        for (const c of text) {
+            if (!jp.isCodePointJapanese(c.codePointAt(0))) {
+                break;
+            }
+            newText += c;
+        }
+        return newText;
+    }
+
+    *_getArrayVariants(arrayVariants) {
+        const ii = arrayVariants.length;
+
+        let total = 1;
+        for (let i = 0; i < ii; ++i) {
+            total *= arrayVariants[i].length;
+        }
+
+        for (let a = 0; a < total; ++a) {
+            const variant = [];
+            let index = a;
+            for (let i = 0; i < ii; ++i) {
+                const entryVariants = arrayVariants[i];
+                variant.push(entryVariants[index % entryVariants.length]);
+                index = Math.floor(index / entryVariants.length);
+            }
+            yield variant;
         }
     }
 
