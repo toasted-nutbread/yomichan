@@ -861,11 +861,12 @@ class Translator {
     }
 
     _getMaxDefinitionScore(definitions) {
-        let maxScore = Number.MIN_SAFE_INTEGER;
+        let result = Number.MIN_SAFE_INTEGER;
         for (const {score} of definitions) {
-            if (score > maxScore) { maxScore = score; }
+            if (score > result) { result = score; }
         }
-        return maxScore;
+        return result;
+    }
     }
 
     _cloneTag(tag) {
