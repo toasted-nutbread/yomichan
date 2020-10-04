@@ -188,7 +188,7 @@ class Translator {
             glossaryDefinitions.push(glossaryDefinition);
         }
 
-        this._sortDefinitions(glossaryDefinitions, dictionaries);
+        this._sortDefinitions(glossaryDefinitions, true);
 
         const expressionDetailsList = [];
         for (const [expression, readingMap] of definitionDetailsMap.entries()) {
@@ -254,7 +254,7 @@ class Translator {
 
         const groupedDefinitions = this._groupTerms(definitions, dictionaries);
         await this._buildTermMeta(groupedDefinitions, dictionaries);
-        this._sortDefinitions(groupedDefinitions, null);
+        this._sortDefinitions(groupedDefinitions, false);
 
         if (options.general.compactTags) {
             for (const definition of groupedDefinitions) {
@@ -304,7 +304,7 @@ class Translator {
         }
 
         await this._buildTermMeta(definitionsMerged, dictionaries);
-        this._sortDefinitions(definitionsMerged, null);
+        this._sortDefinitions(definitionsMerged, false);
 
         if (options.general.compactTags) {
             for (const definition of definitionsMerged) {
@@ -319,14 +319,14 @@ class Translator {
         const dictionaries = this._getEnabledDictionaryMap(options);
         const [definitions, length] = await this._findTermsInternal(text, dictionaries, details, options);
         await this._buildTermMeta(definitions, dictionaries);
-        this._sortDefinitions(definitions, dictionaries);
+        this._sortDefinitions(definitions, true);
         return [definitions, length];
     }
 
     async _findTermsSimple(text, details, options) {
         const dictionaries = this._getEnabledDictionaryMap(options);
         const [definitions, length] = await this._findTermsInternal(text, dictionaries, details, options);
-        this._sortDefinitions(definitions, null);
+        this._sortDefinitions(definitions, false);
         return [definitions, length];
     }
 
@@ -799,7 +799,7 @@ class Translator {
         }
     }
 
-    _groupTerms(definitions, dictionaries) {
+    _groupTerms(definitions) {
         const groups = new Map();
         for (const definition of definitions) {
             const key = this._createMapKey([definition.source, definition.expression, definition.reading, ...definition.reasons]);
@@ -814,7 +814,7 @@ class Translator {
 
         const results = [];
         for (const groupDefinitions of groups.values()) {
-            this._sortDefinitions(groupDefinitions, dictionaries);
+            this._sortDefinitions(groupDefinitions, true);
             const definition = this._createGroupedTermDefinition(groupDefinitions);
             results.push(definition);
         }
@@ -1093,12 +1093,12 @@ class Translator {
         });
     }
 
-    _sortDefinitions(definitions, dictionaries) {
+    _sortDefinitions(definitions, useDictionaryPriority) {
         if (definitions.length <= 1) { return; }
         const stringComparer = this._stringComparer;
         definitions.sort((v1, v2) => {
             let i;
-            if (dictionaries !== null) {
+            if (useDictionaryPriority) {
                 i = v2.dictionaryPriority - v1.dictionaryPriority;
                 if (i !== 0) { return i; }
             }
