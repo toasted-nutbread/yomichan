@@ -334,7 +334,7 @@ class Translator {
     }
 
     async _findTermsInternal(text, enabledDictionaryMap, details, options) {
-        text = this._getSearchableText(text, options);
+        text = this._getSearchableText(text, options.scanning.alphanumeric);
         if (text.length === 0) {
             return [[], 0];
         }
@@ -677,19 +677,19 @@ class Translator {
         }
     }
 
-    _getSearchableText(text, options) {
-        if (!options.scanning.alphanumeric) {
-            let newText = '';
-            for (const c of text) {
-                if (!jp.isCodePointJapanese(c.codePointAt(0))) {
-                    break;
-                }
-                newText += c;
-            }
-            text = newText;
+    _getSearchableText(text, allowAlphanumericCharacters) {
+        if (allowAlphanumericCharacters) {
+            return text;
         }
 
-        return text;
+        let newText = '';
+        for (const c of text) {
+            if (!jp.isCodePointJapanese(c.codePointAt(0))) {
+                break;
+            }
+            newText += c;
+        }
+        return newText;
     }
 
     async _fetchJsonAsset(url) {
