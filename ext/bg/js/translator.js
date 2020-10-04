@@ -38,10 +38,10 @@ class Translator {
 
     /**
      * Initializes the instance for use. The public API should not be used until
-     * this function has been called and await'd.
+     * this function has been called.
      * @param deinflectionReasons The raw deinflections reasons data that the Deinflector uses.
      */
-    async prepare(deinflectionReasons) {
+    prepare(deinflectionReasons) {
         this._deinflector = new Deinflector(deinflectionReasons);
     }
 
