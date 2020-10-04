@@ -39,15 +39,16 @@ class Translator {
     }
 
     async findTerms(mode, text, details, options) {
+        const findTermsOptions = this._getFindTermsOptions(details, options);
         switch (mode) {
             case 'group':
-                return await this._findTermsGrouped(text, details, options);
+                return await this._findTermsGrouped(text, findTermsOptions);
             case 'merge':
-                return await this._findTermsMerged(text, details, options);
+                return await this._findTermsMerged(text, findTermsOptions);
             case 'split':
-                return await this._findTermsSplit(text, details, options);
+                return await this._findTermsSplit(text, findTermsOptions);
             case 'simple':
-                return await this._findTermsSimple(text, details, options);
+                return await this._findTermsSimple(text, findTermsOptions);
             default:
                 return [[], 0];
         }
@@ -82,6 +83,36 @@ class Translator {
     }
 
     // Private
+
+    _getFindTermsOptions(details, options) {
+        const {wildcard} = details;
+        const enabledDictionaryMap = this._getEnabledDictionaryMap(options);
+        const {
+            general: {compactTags, mainDictionary},
+            scanning: {alphanumeric},
+            translation: {
+                convertHalfWidthCharacters,
+                convertNumericCharacters,
+                convertAlphabeticCharacters,
+                convertHiraganaToKatakana,
+                convertKatakanaToHiragana,
+                collapseEmphaticSequences
+            }
+        } = options;
+        return {
+            wildcard,
+            compactTags,
+            mainDictionary,
+            alphanumeric,
+            convertHalfWidthCharacters,
+            convertNumericCharacters,
+            convertAlphabeticCharacters,
+            convertHiraganaToKatakana,
+            convertKatakanaToHiragana,
+            collapseEmphaticSequences,
+            enabledDictionaryMap
+        };
+    }
 
     async _getSequencedDefinitions(definitions, mainDictionary, enabledDictionaryMap) {
         const sequenceList = [];
@@ -250,10 +281,9 @@ class Translator {
         return result;
     }
 
-    async _findTermsGrouped(text, details, options) {
-        const {general: {compactTags}} = options;
-        const enabledDictionaryMap = this._getEnabledDictionaryMap(options);
-        const [definitions, length] = await this._findTermsInternal(text, enabledDictionaryMap, details, options);
+    async _findTermsGrouped(text, findTermsOptions) {
+        const {compactTags, enabledDictionaryMap} = findTermsOptions;
+        const [definitions, length] = await this._findTermsInternal(text, enabledDictionaryMap, findTermsOptions);
 
         const groupedDefinitions = this._groupTerms(definitions, enabledDictionaryMap);
         await this._buildTermMeta(groupedDefinitions, enabledDictionaryMap);
@@ -268,12 +298,11 @@ class Translator {
         return [groupedDefinitions, length];
     }
 
-    async _findTermsMerged(text, details, options) {
-        const {general: {compactTags, mainDictionary}} = options;
-        const enabledDictionaryMap = this._getEnabledDictionaryMap(options);
+    async _findTermsMerged(text, findTermsOptions) {
+        const {compactTags, mainDictionary, enabledDictionaryMap} = findTermsOptions;
         const secondarySearchDictionaryMap = this._getSecondarySearchDictionaryMap(enabledDictionaryMap);
 
-        const [definitions, length] = await this._findTermsInternal(text, enabledDictionaryMap, details, options);
+        const [definitions, length] = await this._findTermsInternal(text, enabledDictionaryMap, findTermsOptions);
         const {sequencedDefinitions, unsequencedDefinitions} = await this._getSequencedDefinitions(definitions, mainDictionary, enabledDictionaryMap);
         const definitionsMerged = [];
         const usedDefinitions = new Set();
@@ -318,31 +347,32 @@ class Translator {
         return [definitionsMerged, length];
     }
 
-    async _findTermsSplit(text, details, options) {
-        const enabledDictionaryMap = this._getEnabledDictionaryMap(options);
-        const [definitions, length] = await this._findTermsInternal(text, enabledDictionaryMap, details, options);
+    async _findTermsSplit(text, findTermsOptions) {
+        const {enabledDictionaryMap} = findTermsOptions;
+        const [definitions, length] = await this._findTermsInternal(text, enabledDictionaryMap, findTermsOptions);
         await this._buildTermMeta(definitions, enabledDictionaryMap);
         this._sortDefinitions(definitions, true);
         return [definitions, length];
     }
 
-    async _findTermsSimple(text, details, options) {
-        const enabledDictionaryMap = this._getEnabledDictionaryMap(options);
-        const [definitions, length] = await this._findTermsInternal(text, enabledDictionaryMap, details, options);
+    async _findTermsSimple(text, findTermsOptions) {
+        const {enabledDictionaryMap} = findTermsOptions;
+        const [definitions, length] = await this._findTermsInternal(text, enabledDictionaryMap, findTermsOptions);
         this._sortDefinitions(definitions, false);
         return [definitions, length];
     }
 
-    async _findTermsInternal(text, enabledDictionaryMap, details, options) {
-        text = this._getSearchableText(text, options.scanning.alphanumeric);
+    async _findTermsInternal(text, enabledDictionaryMap, findTermsOptions) {
+        const {alphanumeric, wildcard} = findTermsOptions;
+        text = this._getSearchableText(text, alphanumeric);
         if (text.length === 0) {
             return [[], 0];
         }
 
         const deinflections = (
-            details.wildcard ?
-            await this._findTermWildcard(text, enabledDictionaryMap, details.wildcard) :
-            await this._findTermDeinflections(text, enabledDictionaryMap, options)
+            wildcard ?
+            await this._findTermWildcard(text, enabledDictionaryMap, wildcard) :
+            await this._findTermDeinflections(text, enabledDictionaryMap, findTermsOptions)
         );
 
         let maxLength = 0;
@@ -376,8 +406,8 @@ class Translator {
         }];
     }
 
-    async _findTermDeinflections(text, enabledDictionaryMap, options) {
-        const deinflections = this._getAllDeinflections(text, options);
+    async _findTermDeinflections(text, enabledDictionaryMap, findTermsOptions) {
+        const deinflections = this._getAllDeinflections(text, findTermsOptions);
 
         if (deinflections.length === 0) {
             return [];
@@ -413,10 +443,9 @@ class Translator {
         return deinflections;
     }
 
-    _getAllDeinflections(text, options) {
-        const translationOptions = options.translation;
+    _getAllDeinflections(text, findTermsOptions) {
         const collapseEmphaticOptions = [[false, false]];
-        switch (translationOptions.collapseEmphaticSequences) {
+        switch (findTermsOptions.collapseEmphaticSequences) {
             case 'true':
                 collapseEmphaticOptions.push([true, false]);
                 break;
@@ -425,11 +454,11 @@ class Translator {
                 break;
         }
         const textOptionVariantArray = [
-            this._getTextOptionEntryVariants(translationOptions.convertHalfWidthCharacters),
-            this._getTextOptionEntryVariants(translationOptions.convertNumericCharacters),
-            this._getTextOptionEntryVariants(translationOptions.convertAlphabeticCharacters),
-            this._getTextOptionEntryVariants(translationOptions.convertHiraganaToKatakana),
-            this._getTextOptionEntryVariants(translationOptions.convertKatakanaToHiragana),
+            this._getTextOptionEntryVariants(findTermsOptions.convertHalfWidthCharacters),
+            this._getTextOptionEntryVariants(findTermsOptions.convertNumericCharacters),
+            this._getTextOptionEntryVariants(findTermsOptions.convertAlphabeticCharacters),
+            this._getTextOptionEntryVariants(findTermsOptions.convertHiraganaToKatakana),
+            this._getTextOptionEntryVariants(findTermsOptions.convertKatakanaToHiragana),
             collapseEmphaticOptions
         ];
 
