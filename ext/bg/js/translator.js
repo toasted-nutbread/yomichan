@@ -510,14 +510,6 @@ class Translator {
         return deinflections;
     }
 
-    _getTextOptionEntryVariants(value) {
-        switch (value) {
-            case 'true': return [true];
-            case 'variant': return [false, true];
-            default: return [false];
-        }
-    }
-
     async _buildTermMeta(definitions, enabledDictionaryMap) {
         const terms = [];
         for (const definition of definitions) {
@@ -835,6 +827,14 @@ class Translator {
             newText += c;
         }
         return newText;
+    }
+
+    _getTextOptionEntryVariants(value) {
+        switch (value) {
+            case 'true': return [true];
+            case 'variant': return [false, true];
+            default: return [false];
+        }
     }
 
     _getSecondarySearchDictionaryMap(enabledDictionaryMap) {
