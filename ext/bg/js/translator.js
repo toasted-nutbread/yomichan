@@ -38,8 +38,7 @@ class Translator {
         this._tagCache.clear();
     }
 
-    async findTerms(mode, text, details, options) {
-        const findTermsOptions = this._getFindTermsOptions(details, options);
+    async findTerms(mode, text, findTermsOptions) {
         switch (mode) {
             case 'group':
                 return await this._findTermsGrouped(text, findTermsOptions);
@@ -55,7 +54,7 @@ class Translator {
     }
 
     async findKanji(text, options) {
-        const enabledDictionaryMap = this._getEnabledDictionaryMap(options);
+        const {enabledDictionaryMap} = options;
         const kanjiUnique = new Set();
         for (const c of text) {
             kanjiUnique.add(c);
@@ -83,36 +82,6 @@ class Translator {
     }
 
     // Private
-
-    _getFindTermsOptions(details, options) {
-        const {wildcard} = details;
-        const enabledDictionaryMap = this._getEnabledDictionaryMap(options);
-        const {
-            general: {compactTags, mainDictionary},
-            scanning: {alphanumeric},
-            translation: {
-                convertHalfWidthCharacters,
-                convertNumericCharacters,
-                convertAlphabeticCharacters,
-                convertHiraganaToKatakana,
-                convertKatakanaToHiragana,
-                collapseEmphaticSequences
-            }
-        } = options;
-        return {
-            wildcard,
-            compactTags,
-            mainDictionary,
-            alphanumeric,
-            convertHalfWidthCharacters,
-            convertNumericCharacters,
-            convertAlphabeticCharacters,
-            convertHiraganaToKatakana,
-            convertKatakanaToHiragana,
-            collapseEmphaticSequences,
-            enabledDictionaryMap
-        };
-    }
 
     async _getSequencedDefinitions(definitions, mainDictionary, enabledDictionaryMap) {
         const sequenceList = [];
@@ -734,15 +703,6 @@ class Translator {
             throw new Error(`Failed to fetch ${url}: ${response.status}`);
         }
         return await response.json();
-    }
-
-    _getEnabledDictionaryMap(options) {
-        const enabledDictionaryMap = new Map();
-        for (const [title, {enabled, priority, allowSecondarySearches}] of Object.entries(options.dictionaries)) {
-            if (!enabled) { continue; }
-            enabledDictionaryMap.set(title, {priority, allowSecondarySearches});
-        }
-        return enabledDictionaryMap;
     }
 
     _getSecondarySearchDictionaryMap(enabledDictionaryMap) {

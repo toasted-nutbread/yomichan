@@ -376,7 +376,8 @@ class Backend {
 
     async _onApiKanjiFind({text, optionsContext}) {
         const options = this.getOptions(optionsContext);
-        const definitions = await this._translator.findKanji(text, options);
+        const findKanjiOptions = this._getTranslatorFindKanjiOptions(options);
+        const definitions = await this._translator.findKanji(text, findKanjiOptions);
         definitions.splice(options.general.maxResults);
         return definitions;
     }
@@ -384,7 +385,8 @@ class Backend {
     async _onApiTermsFind({text, details, optionsContext}) {
         const options = this.getOptions(optionsContext);
         const mode = options.general.resultOutputMode;
-        const [definitions, length] = await this._translator.findTerms(mode, text, details, options);
+        const findTermsOptions = this._getTranslatorFindTermsOptions(details, options);
+        const [definitions, length] = await this._translator.findTerms(mode, text, findTermsOptions);
         definitions.splice(options.general.maxResults);
         return {length, definitions};
     }
@@ -948,14 +950,14 @@ class Backend {
     }
 
     async _textParseScanning(text, options) {
+        const findTermsOptions = this._getTranslatorFindTermsOptions({wildcard: null}, options);
         const results = [];
         while (text.length > 0) {
             const term = [];
             const [definitions, sourceLength] = await this._translator.findTerms(
                 'simple',
                 text.substring(0, options.scanning.length),
-                {},
-                options
+                findTermsOptions
             );
             if (definitions.length > 0 && sourceLength > 0) {
                 const {expression, reading} = definitions[0];
@@ -1659,5 +1661,49 @@ class Backend {
         const options = this.getFullOptions();
         await this._optionsUtil.save(options);
         this._applyOptions(source);
+    }
+
+    _getTranslatorFindTermsOptions(details, options) {
+        const {wildcard} = details;
+        const enabledDictionaryMap = this._getTranslatorEnabledDictionaryMap(options);
+        const {
+            general: {compactTags, mainDictionary},
+            scanning: {alphanumeric},
+            translation: {
+                convertHalfWidthCharacters,
+                convertNumericCharacters,
+                convertAlphabeticCharacters,
+                convertHiraganaToKatakana,
+                convertKatakanaToHiragana,
+                collapseEmphaticSequences
+            }
+        } = options;
+        return {
+            wildcard,
+            compactTags,
+            mainDictionary,
+            alphanumeric,
+            convertHalfWidthCharacters,
+            convertNumericCharacters,
+            convertAlphabeticCharacters,
+            convertHiraganaToKatakana,
+            convertKatakanaToHiragana,
+            collapseEmphaticSequences,
+            enabledDictionaryMap
+        };
+    }
+
+    _getTranslatorFindKanjiOptions(options) {
+        const enabledDictionaryMap = this._getTranslatorEnabledDictionaryMap(options);
+        return {enabledDictionaryMap};
+    }
+
+    _getTranslatorEnabledDictionaryMap(options) {
+        const enabledDictionaryMap = new Map();
+        for (const [title, {enabled, priority, allowSecondarySearches}] of Object.entries(options.dictionaries)) {
+            if (!enabled) { continue; }
+            enabledDictionaryMap.set(title, {priority, allowSecondarySearches});
+        }
+        return enabledDictionaryMap;
     }
 }
