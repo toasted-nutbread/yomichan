@@ -215,7 +215,7 @@ class Translator {
         this._addUniqueTermInfos(relatedDefinitions, termInfoMap);
 
         let secondaryDefinitions = await this._getMergedSecondarySearchResults(termInfoMap, secondarySearchDictionaryMap);
-        secondaryDefinitions = [unsequencedDefinitions, ...secondaryDefinitions]; // TODO : is unsequencedDefinitions necessary
+        secondaryDefinitions = [unsequencedDefinitions, ...secondaryDefinitions];
 
         this._removeUsedDefinitions(secondaryDefinitions, termInfoMap, usedDefinitions);
         this._removeDuplicateDefinitions(secondaryDefinitions);
