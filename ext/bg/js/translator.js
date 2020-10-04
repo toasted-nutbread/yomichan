@@ -114,11 +114,13 @@ class Translator {
             }
         }
 
-        const databaseDefinitions = await this._database.findTermsBySequenceBulk(sequenceList, mainDictionary);
-        for (const databaseDefinition of databaseDefinitions) {
-            const {definitions: definitions2, source, rawSource, reasons} = sequencedDefinitions[databaseDefinition.index];
-            const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, reasons, dictionaries);
-            definitions2.push(definition);
+        if (sequenceList.length > 0) {
+            const databaseDefinitions = await this._database.findTermsBySequenceBulk(sequenceList, mainDictionary);
+            for (const databaseDefinition of databaseDefinitions) {
+                const {definitions: definitions2, source, rawSource, reasons} = sequencedDefinitions[databaseDefinition.index];
+                const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, reasons, dictionaries);
+                definitions2.push(definition);
+            }
         }
 
         return {sequencedDefinitions, unsequencedDefinitions};
