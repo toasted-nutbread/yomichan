@@ -138,7 +138,91 @@ class Translator {
         return definitions;
     }
 
-    // Private
+    // Find terms core functions
+
+    async _findTermsSimple(text, options) {
+        const {enabledDictionaryMap} = options;
+        const [definitions, length] = await this._findTermsInternal(text, enabledDictionaryMap, options);
+        this._sortDefinitions(definitions, false);
+        return [definitions, length];
+    }
+
+    async _findTermsSplit(text, options) {
+        const {enabledDictionaryMap} = options;
+        const [definitions, length] = await this._findTermsInternal(text, enabledDictionaryMap, options);
+        await this._buildTermMeta(definitions, enabledDictionaryMap);
+        this._sortDefinitions(definitions, true);
+        return [definitions, length];
+    }
+
+    async _findTermsGrouped(text, options) {
+        const {compactTags, enabledDictionaryMap} = options;
+        const [definitions, length] = await this._findTermsInternal(text, enabledDictionaryMap, options);
+
+        const groupedDefinitions = this._groupTerms(definitions, enabledDictionaryMap);
+        await this._buildTermMeta(groupedDefinitions, enabledDictionaryMap);
+        this._sortDefinitions(groupedDefinitions, false);
+
+        if (compactTags) {
+            for (const definition of groupedDefinitions) {
+                this._compressDefinitionTags(definition.definitions);
+            }
+        }
+
+        return [groupedDefinitions, length];
+    }
+
+    async _findTermsMerged(text, options) {
+        const {compactTags, mainDictionary, enabledDictionaryMap} = options;
+        const secondarySearchDictionaryMap = this._getSecondarySearchDictionaryMap(enabledDictionaryMap);
+
+        const [definitions, length] = await this._findTermsInternal(text, enabledDictionaryMap, options);
+        const {sequencedDefinitions, unsequencedDefinitions} = await this._getSequencedDefinitions(definitions, mainDictionary, enabledDictionaryMap);
+        const definitionsMerged = [];
+        const usedDefinitions = new Set();
+
+        for (const {sourceDefinitions, relatedDefinitions} of sequencedDefinitions) {
+            const result = await this._getMergedDefinition(
+                sourceDefinitions,
+                relatedDefinitions,
+                unsequencedDefinitions,
+                secondarySearchDictionaryMap,
+                usedDefinitions
+            );
+            definitionsMerged.push(result);
+        }
+
+        const unusedDefinitions = unsequencedDefinitions.filter((definition) => !usedDefinitions.has(definition));
+        for (const groupedDefinition of this._groupTerms(unusedDefinitions, enabledDictionaryMap)) {
+            const {reasons, score, expression, reading, source, rawSource, sourceTerm, dictionary, furiganaSegments, termTags} = groupedDefinition;
+            const termDetailsList = [this._createTermDetails(sourceTerm, expression, reading, furiganaSegments, termTags)];
+            const compatibilityDefinition = this._createMergedTermDefinition(
+                source,
+                rawSource,
+                definitions,
+                [expression],
+                [reading],
+                termDetailsList,
+                reasons,
+                dictionary,
+                score
+            );
+            definitionsMerged.push(compatibilityDefinition);
+        }
+
+        await this._buildTermMeta(definitionsMerged, enabledDictionaryMap);
+        this._sortDefinitions(definitionsMerged, false);
+
+        if (compactTags) {
+            for (const definition of definitionsMerged) {
+                this._compressDefinitionTags(definition.definitions);
+            }
+        }
+
+        return [definitionsMerged, length];
+    }
+
+    // Find terms/kanji internal implementation
 
     async _getSequencedDefinitions(definitions, mainDictionary, enabledDictionaryMap) {
         const sequenceList = [];
@@ -287,88 +371,6 @@ class Translator {
             }
         }
         return [...definitionTagsMap.values()];
-    }
-
-    async _findTermsGrouped(text, options) {
-        const {compactTags, enabledDictionaryMap} = options;
-        const [definitions, length] = await this._findTermsInternal(text, enabledDictionaryMap, options);
-
-        const groupedDefinitions = this._groupTerms(definitions, enabledDictionaryMap);
-        await this._buildTermMeta(groupedDefinitions, enabledDictionaryMap);
-        this._sortDefinitions(groupedDefinitions, false);
-
-        if (compactTags) {
-            for (const definition of groupedDefinitions) {
-                this._compressDefinitionTags(definition.definitions);
-            }
-        }
-
-        return [groupedDefinitions, length];
-    }
-
-    async _findTermsMerged(text, options) {
-        const {compactTags, mainDictionary, enabledDictionaryMap} = options;
-        const secondarySearchDictionaryMap = this._getSecondarySearchDictionaryMap(enabledDictionaryMap);
-
-        const [definitions, length] = await this._findTermsInternal(text, enabledDictionaryMap, options);
-        const {sequencedDefinitions, unsequencedDefinitions} = await this._getSequencedDefinitions(definitions, mainDictionary, enabledDictionaryMap);
-        const definitionsMerged = [];
-        const usedDefinitions = new Set();
-
-        for (const {sourceDefinitions, relatedDefinitions} of sequencedDefinitions) {
-            const result = await this._getMergedDefinition(
-                sourceDefinitions,
-                relatedDefinitions,
-                unsequencedDefinitions,
-                secondarySearchDictionaryMap,
-                usedDefinitions
-            );
-            definitionsMerged.push(result);
-        }
-
-        const unusedDefinitions = unsequencedDefinitions.filter((definition) => !usedDefinitions.has(definition));
-        for (const groupedDefinition of this._groupTerms(unusedDefinitions, enabledDictionaryMap)) {
-            const {reasons, score, expression, reading, source, rawSource, sourceTerm, dictionary, furiganaSegments, termTags} = groupedDefinition;
-            const termDetailsList = [this._createTermDetails(sourceTerm, expression, reading, furiganaSegments, termTags)];
-            const compatibilityDefinition = this._createMergedTermDefinition(
-                source,
-                rawSource,
-                definitions,
-                [expression],
-                [reading],
-                termDetailsList,
-                reasons,
-                dictionary,
-                score
-            );
-            definitionsMerged.push(compatibilityDefinition);
-        }
-
-        await this._buildTermMeta(definitionsMerged, enabledDictionaryMap);
-        this._sortDefinitions(definitionsMerged, false);
-
-        if (compactTags) {
-            for (const definition of definitionsMerged) {
-                this._compressDefinitionTags(definition.definitions);
-            }
-        }
-
-        return [definitionsMerged, length];
-    }
-
-    async _findTermsSplit(text, options) {
-        const {enabledDictionaryMap} = options;
-        const [definitions, length] = await this._findTermsInternal(text, enabledDictionaryMap, options);
-        await this._buildTermMeta(definitions, enabledDictionaryMap);
-        this._sortDefinitions(definitions, true);
-        return [definitions, length];
-    }
-
-    async _findTermsSimple(text, options) {
-        const {enabledDictionaryMap} = options;
-        const [definitions, length] = await this._findTermsInternal(text, enabledDictionaryMap, options);
-        this._sortDefinitions(definitions, false);
-        return [definitions, length];
     }
 
     async _findTermsInternal(text, enabledDictionaryMap, options) {
