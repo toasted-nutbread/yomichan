@@ -868,6 +868,19 @@ class Translator {
         return maxScore;
     }
 
+    _createTagClone(tag) {
+        const {name, category, notes, order, score, dictionary} = tag;
+        return this._createTag(name, category, notes, order, score, dictionary);
+    }
+
+    _createTagCloneArray(tags) {
+        const results = [];
+        for (const tag of tags) {
+            results.push(this._createTagClone(tag));
+        }
+        return results;
+    }
+
     _createMapKey(array) {
         return JSON.stringify(array);
     }
@@ -885,19 +898,6 @@ class Translator {
             score: (typeof score === 'number' ? score : 0),
             dictionary: (typeof dictionary === 'string' ? dictionary : null)
         };
-    }
-
-    _createTagClone(tag) {
-        const {name, category, notes, order, score, dictionary} = tag;
-        return this._createTag(name, category, notes, order, score, dictionary);
-    }
-
-    _createTagCloneArray(tags) {
-        const results = [];
-        for (const tag of tags) {
-            results.push(this._createTagClone(tag));
-        }
-        return results;
     }
 
     _createKanjiStat(name, category, notes, order, score, dictionary, value) {
