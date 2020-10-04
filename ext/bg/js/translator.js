@@ -250,7 +250,7 @@ class Translator {
 
         this._sortDefinitions(glossaryDefinitions, true);
 
-        const expressionDetailsList = this._createExpressionDetailsListFromTermInfoMap(termInfoMap);
+        const termDetailsList = this._createTermDetailsListFromTermInfoMap(termInfoMap);
 
         return this._createMergedTermDefinition(
             source,
@@ -258,7 +258,7 @@ class Translator {
             glossaryDefinitions,
             [...allExpressions],
             [...allReadings],
-            expressionDetailsList,
+            termDetailsList,
             reasons,
             dictionary,
             score
@@ -340,14 +340,14 @@ class Translator {
         const unusedDefinitions = unsequencedDefinitions.filter((definition) => !usedDefinitions.has(definition));
         for (const groupedDefinition of this._groupTerms(unusedDefinitions, enabledDictionaryMap)) {
             const {reasons, score, expression, reading, source, rawSource, sourceTerm, dictionary, furiganaSegments, termTags} = groupedDefinition;
-            const expressionDetails = this._createExpressionDetails(sourceTerm, expression, reading, furiganaSegments, termTags);
+            const termDetailsList = [this._createTermDetails(sourceTerm, expression, reading, furiganaSegments, termTags)];
             const compatibilityDefinition = this._createMergedTermDefinition(
                 source,
                 rawSource,
                 definitions,
                 [expression],
                 [reading],
-                [expressionDetails],
+                termDetailsList,
                 reasons,
                 dictionary,
                 score
@@ -983,7 +983,7 @@ class Translator {
         this._sortTags(termTagsExpanded);
 
         const furiganaSegments = jp.distributeFurigana(expression, reading);
-        const expressionDetailsList = [this._createExpressionDetails(sourceTerm, expression, reading, furiganaSegments, termTags)];
+        const termDetailsList = [this._createTermDetails(sourceTerm, expression, reading, furiganaSegments, termTags)];
 
         return {
             type: 'term',
@@ -998,7 +998,7 @@ class Translator {
             dictionaryPriority,
             expression,
             reading,
-            expressions: expressionDetailsList,
+            expressions: termDetailsList,
             furiganaSegments,
             glossary,
             definitionTags: definitionTagsExpanded,
@@ -1014,7 +1014,7 @@ class Translator {
         const {expression, reading, furiganaSegments, reasons, termTags, source, rawSource, sourceTerm} = definitions[0];
         const score = this._getMaxDefinitionScore(definitions);
         const dictionaryPriority = this._getMaxDictionaryPriority(definitions);
-        const expressionDetailsList = [this._createExpressionDetails(sourceTerm, expression, reading, furiganaSegments, termTags)];
+        const termDetailsList = [this._createTermDetails(sourceTerm, expression, reading, furiganaSegments, termTags)];
         return {
             type: 'termGrouped',
             // id
@@ -1028,7 +1028,7 @@ class Translator {
             dictionaryPriority,
             expression,
             reading,
-            expressions: expressionDetailsList,
+            expressions: termDetailsList,
             furiganaSegments, // Contains duplicate data
             // glossary
             // definitionTags
@@ -1040,7 +1040,7 @@ class Translator {
         };
     }
 
-    _createMergedTermDefinition(source, rawSource, definitions, expressions, readings, expressionDetailsList, reasons, dictionary, score) {
+    _createMergedTermDefinition(source, rawSource, definitions, expressions, readings, termDetailsList, reasons, dictionary, score) {
         const dictionaryPriority = this._getMaxDictionaryPriority(definitions);
         return {
             type: 'termMerged',
@@ -1055,7 +1055,7 @@ class Translator {
             dictionaryPriority,
             expression: expressions,
             reading: readings,
-            expressions: expressionDetailsList,
+            expressions: termDetailsList,
             // furiganaSegments
             // glossary
             // definitionTags
@@ -1078,7 +1078,7 @@ class Translator {
 
         const termInfoMap = new Map();
         this._addUniqueTermInfos(definitions, termInfoMap);
-        const expressionDetailsList = this._createExpressionDetailsListFromTermInfoMap(termInfoMap);
+        const termDetailsList = this._createTermDetailsListFromTermInfoMap(termInfoMap);
 
         const definitionTags = this._getUniqueDefinitionTags(definitions);
         this._sortTags(definitionTags);
@@ -1099,7 +1099,7 @@ class Translator {
             dictionaryPriority,
             expression: [...expressions],
             reading: [...readings],
-            expressions: expressionDetailsList,
+            expressions: termDetailsList,
             // furiganaSegments
             glossary: [...glossary],
             definitionTags,
@@ -1111,19 +1111,19 @@ class Translator {
         };
     }
 
-    _createExpressionDetailsListFromTermInfoMap(termInfoMap) {
-        const expressionDetailsList = [];
+    _createTermDetailsListFromTermInfoMap(termInfoMap) {
+        const termDetailsList = [];
         for (const [expression, readingMap] of termInfoMap.entries()) {
             for (const [reading, {termTagsMap, sourceTerm, furiganaSegments}] of readingMap.entries()) {
                 const termTags = [...termTagsMap.values()];
                 this._sortTags(termTags);
-                expressionDetailsList.push(this._createExpressionDetails(sourceTerm, expression, reading, furiganaSegments, termTags));
+                termDetailsList.push(this._createTermDetails(sourceTerm, expression, reading, furiganaSegments, termTags));
             }
         }
-        return expressionDetailsList;
+        return termDetailsList;
     }
 
-    _createExpressionDetails(sourceTerm, expression, reading, furiganaSegments, termTags) {
+    _createTermDetails(sourceTerm, expression, reading, furiganaSegments, termTags) {
         const termFrequency = this._scoreToTermFrequency(this._getTermTagsScoreSum(termTags));
         return {
             sourceTerm,
