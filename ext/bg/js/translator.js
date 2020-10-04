@@ -38,16 +38,16 @@ class Translator {
         this._tagCache.clear();
     }
 
-    async findTerms(mode, text, findTermsOptions) {
+    async findTerms(mode, text, options) {
         switch (mode) {
             case 'group':
-                return await this._findTermsGrouped(text, findTermsOptions);
+                return await this._findTermsGrouped(text, options);
             case 'merge':
-                return await this._findTermsMerged(text, findTermsOptions);
+                return await this._findTermsMerged(text, options);
             case 'split':
-                return await this._findTermsSplit(text, findTermsOptions);
+                return await this._findTermsSplit(text, options);
             case 'simple':
-                return await this._findTermsSimple(text, findTermsOptions);
+                return await this._findTermsSimple(text, options);
             default:
                 return [[], 0];
         }
@@ -250,9 +250,9 @@ class Translator {
         return result;
     }
 
-    async _findTermsGrouped(text, findTermsOptions) {
-        const {compactTags, enabledDictionaryMap} = findTermsOptions;
-        const [definitions, length] = await this._findTermsInternal(text, enabledDictionaryMap, findTermsOptions);
+    async _findTermsGrouped(text, options) {
+        const {compactTags, enabledDictionaryMap} = options;
+        const [definitions, length] = await this._findTermsInternal(text, enabledDictionaryMap, options);
 
         const groupedDefinitions = this._groupTerms(definitions, enabledDictionaryMap);
         await this._buildTermMeta(groupedDefinitions, enabledDictionaryMap);
@@ -267,11 +267,11 @@ class Translator {
         return [groupedDefinitions, length];
     }
 
-    async _findTermsMerged(text, findTermsOptions) {
-        const {compactTags, mainDictionary, enabledDictionaryMap} = findTermsOptions;
+    async _findTermsMerged(text, options) {
+        const {compactTags, mainDictionary, enabledDictionaryMap} = options;
         const secondarySearchDictionaryMap = this._getSecondarySearchDictionaryMap(enabledDictionaryMap);
 
-        const [definitions, length] = await this._findTermsInternal(text, enabledDictionaryMap, findTermsOptions);
+        const [definitions, length] = await this._findTermsInternal(text, enabledDictionaryMap, options);
         const {sequencedDefinitions, unsequencedDefinitions} = await this._getSequencedDefinitions(definitions, mainDictionary, enabledDictionaryMap);
         const definitionsMerged = [];
         const usedDefinitions = new Set();
@@ -316,23 +316,23 @@ class Translator {
         return [definitionsMerged, length];
     }
 
-    async _findTermsSplit(text, findTermsOptions) {
-        const {enabledDictionaryMap} = findTermsOptions;
-        const [definitions, length] = await this._findTermsInternal(text, enabledDictionaryMap, findTermsOptions);
+    async _findTermsSplit(text, options) {
+        const {enabledDictionaryMap} = options;
+        const [definitions, length] = await this._findTermsInternal(text, enabledDictionaryMap, options);
         await this._buildTermMeta(definitions, enabledDictionaryMap);
         this._sortDefinitions(definitions, true);
         return [definitions, length];
     }
 
-    async _findTermsSimple(text, findTermsOptions) {
-        const {enabledDictionaryMap} = findTermsOptions;
-        const [definitions, length] = await this._findTermsInternal(text, enabledDictionaryMap, findTermsOptions);
+    async _findTermsSimple(text, options) {
+        const {enabledDictionaryMap} = options;
+        const [definitions, length] = await this._findTermsInternal(text, enabledDictionaryMap, options);
         this._sortDefinitions(definitions, false);
         return [definitions, length];
     }
 
-    async _findTermsInternal(text, enabledDictionaryMap, findTermsOptions) {
-        const {alphanumeric, wildcard} = findTermsOptions;
+    async _findTermsInternal(text, enabledDictionaryMap, options) {
+        const {alphanumeric, wildcard} = options;
         text = this._getSearchableText(text, alphanumeric);
         if (text.length === 0) {
             return [[], 0];
@@ -341,7 +341,7 @@ class Translator {
         const deinflections = (
             wildcard ?
             await this._findTermWildcard(text, enabledDictionaryMap, wildcard) :
-            await this._findTermDeinflections(text, enabledDictionaryMap, findTermsOptions)
+            await this._findTermDeinflections(text, enabledDictionaryMap, options)
         );
 
         let maxLength = 0;
@@ -375,8 +375,8 @@ class Translator {
         }];
     }
 
-    async _findTermDeinflections(text, enabledDictionaryMap, findTermsOptions) {
-        const deinflections = this._getAllDeinflections(text, findTermsOptions);
+    async _findTermDeinflections(text, enabledDictionaryMap, options) {
+        const deinflections = this._getAllDeinflections(text, options);
 
         if (deinflections.length === 0) {
             return [];
@@ -412,9 +412,9 @@ class Translator {
         return deinflections;
     }
 
-    _getAllDeinflections(text, findTermsOptions) {
+    _getAllDeinflections(text, options) {
         const collapseEmphaticOptions = [[false, false]];
-        switch (findTermsOptions.collapseEmphaticSequences) {
+        switch (options.collapseEmphaticSequences) {
             case 'true':
                 collapseEmphaticOptions.push([true, false]);
                 break;
@@ -423,11 +423,11 @@ class Translator {
                 break;
         }
         const textOptionVariantArray = [
-            this._getTextOptionEntryVariants(findTermsOptions.convertHalfWidthCharacters),
-            this._getTextOptionEntryVariants(findTermsOptions.convertNumericCharacters),
-            this._getTextOptionEntryVariants(findTermsOptions.convertAlphabeticCharacters),
-            this._getTextOptionEntryVariants(findTermsOptions.convertHiraganaToKatakana),
-            this._getTextOptionEntryVariants(findTermsOptions.convertKatakanaToHiragana),
+            this._getTextOptionEntryVariants(options.convertHalfWidthCharacters),
+            this._getTextOptionEntryVariants(options.convertNumericCharacters),
+            this._getTextOptionEntryVariants(options.convertAlphabeticCharacters),
+            this._getTextOptionEntryVariants(options.convertHiraganaToKatakana),
+            this._getTextOptionEntryVariants(options.convertKatakanaToHiragana),
             collapseEmphaticOptions
         ];
 
