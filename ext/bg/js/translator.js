@@ -975,7 +975,7 @@ class Translator {
             expression,
             reading,
             // expressions
-            furiganaSegments, // TODO : Clone
+            furiganaSegments, // Contains duplicate data
             // glossary
             // definitionTags
             termTags: this._createTagCloneArray(termTags),
@@ -1040,7 +1040,7 @@ class Translator {
             glossary: [...glossary],
             definitionTags,
             // termTags
-            definitions,
+            definitions, // Contains duplicate data
             frequencies: [],
             pitches: [],
             only
