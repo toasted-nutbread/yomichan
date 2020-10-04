@@ -1099,11 +1099,7 @@ class Translator {
         definitions.sort((v1, v2) => {
             let i;
             if (dictionaries !== null) {
-                const dictionaryInfo1 = dictionaries.get(v1.dictionary);
-                const dictionaryInfo2 = dictionaries.get(v2.dictionary);
-                const priority1 = typeof dictionaryInfo1 !== 'undefined' ? dictionaryInfo1.priority : 0;
-                const priority2 = typeof dictionaryInfo2 !== 'undefined' ? dictionaryInfo2.priority : 0;
-                i = priority2 - priority1;
+                i = v2.dictionaryPriority - v1.dictionaryPriority;
                 if (i !== 0) { return i; }
             }
 
