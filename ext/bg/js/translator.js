@@ -1096,14 +1096,8 @@ class Translator {
     _sortDefinitions(definitions, useDictionaryPriority) {
         if (definitions.length <= 1) { return; }
         const stringComparer = this._stringComparer;
-        definitions.sort((v1, v2) => {
-            let i;
-            if (useDictionaryPriority) {
-                i = v2.dictionaryPriority - v1.dictionaryPriority;
-                if (i !== 0) { return i; }
-            }
-
-            i = v2.source.length - v1.source.length;
+        const compareFunction1 = (v1, v2) => {
+            let i = v2.source.length - v1.source.length;
             if (i !== 0) { return i; }
 
             i = v1.reasons.length - v2.reasons.length;
@@ -1118,7 +1112,12 @@ class Translator {
             if (i !== 0) { return i; }
 
             return stringComparer.compare(expression1, expression2);
-        });
+        };
+        const compareFunction2 = (v1, v2) => {
+            const i = v2.dictionaryPriority - v1.dictionaryPriority;
+            return (i !== 0) ? i : compareFunction1(v1, v2);
+        };
+        definitions.sort(useDictionaryPriority ? compareFunction2 : compareFunction1);
     }
 
     _sortDatabaseDefinitionsByIndex(definitions) {
