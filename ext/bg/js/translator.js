@@ -682,20 +682,6 @@ class Translator {
         return {reading, pitches, dictionary};
     }
 
-    _getSecondarySearchDictionaryMap(enabledDictionaryMap) {
-        const secondarySearchDictionaryMap = new Map();
-        for (const [title, dictionary] of enabledDictionaryMap.entries()) {
-            if (!dictionary.allowSecondarySearches) { continue; }
-            secondarySearchDictionaryMap.set(title, dictionary);
-        }
-        return secondarySearchDictionaryMap;
-    }
-
-    _getDictionaryPriority(dictionary, enabledDictionaryMap) {
-        const info = enabledDictionaryMap.get(dictionary);
-        return typeof info !== 'undefined' ? info.priority : 0;
-    }
-
     _removeDuplicateDefinitions(definitions) {
         const definitionGroups = new Map();
         for (let i = 0, ii = definitions.length; i < ii; ++i) {
@@ -869,6 +855,20 @@ class Translator {
             newText += c;
         }
         return newText;
+    }
+
+    _getSecondarySearchDictionaryMap(enabledDictionaryMap) {
+        const secondarySearchDictionaryMap = new Map();
+        for (const [title, dictionary] of enabledDictionaryMap.entries()) {
+            if (!dictionary.allowSecondarySearches) { continue; }
+            secondarySearchDictionaryMap.set(title, dictionary);
+        }
+        return secondarySearchDictionaryMap;
+    }
+
+    _getDictionaryPriority(dictionary, enabledDictionaryMap) {
+        const info = enabledDictionaryMap.get(dictionary);
+        return typeof info !== 'undefined' ? info.priority : 0;
     }
 
     *_getArrayVariants(arrayVariants) {
