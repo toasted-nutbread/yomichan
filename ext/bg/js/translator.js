@@ -774,7 +774,7 @@ class Translator {
             }
 
             let removeIndex = i;
-            if (definition.expression.length > existing[1].expression.length) {
+            if (definition.source.length > existing[1].source.length) {
                 definitionGroups.set(id, [i, definition]);
                 removeIndex = existing[0];
             }
