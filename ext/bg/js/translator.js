@@ -1045,7 +1045,7 @@ class Translator {
             // glossary
             // definitionTags
             termTags: this._cloneTags(termTags),
-            definitions,
+            definitions, // type: 'term'
             frequencies: [],
             pitches: []
             // only
@@ -1071,7 +1071,7 @@ class Translator {
             // glossary
             // definitionTags
             // termTags
-            definitions,
+            definitions, // type: 'termMergedByGlossary'
             frequencies: [],
             pitches: []
             // only
@@ -1110,7 +1110,7 @@ class Translator {
             glossary: [...glossary],
             definitionTags,
             // termTags
-            definitions, // Contains duplicate data
+            definitions, // type: 'term'; contains duplicate data
             frequencies: [],
             pitches: [],
             only
