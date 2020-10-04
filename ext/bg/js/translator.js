@@ -983,6 +983,7 @@ class Translator {
         this._sortTags(termTagsExpanded);
 
         const furiganaSegments = jp.distributeFurigana(expression, reading);
+        const expressionDetailsList = [this._createExpressionDetails(sourceTerm, expression, reading, furiganaSegments, termTags)];
 
         return {
             type: 'term',
@@ -997,7 +998,7 @@ class Translator {
             dictionaryPriority,
             expression,
             reading,
-            // expressions
+            expressions: expressionDetailsList,
             furiganaSegments,
             glossary,
             definitionTags: definitionTagsExpanded,
@@ -1013,6 +1014,7 @@ class Translator {
         const {expression, reading, furiganaSegments, reasons, termTags, source, rawSource, sourceTerm} = definitions[0];
         const score = this._getMaxDefinitionScore(definitions);
         const dictionaryPriority = this._getMaxDictionaryPriority(definitions);
+        const expressionDetailsList = [this._createExpressionDetails(sourceTerm, expression, reading, furiganaSegments, termTags)];
         return {
             type: 'termGrouped',
             // id
@@ -1026,7 +1028,7 @@ class Translator {
             dictionaryPriority,
             expression,
             reading,
-            // expressions
+            expressions: expressionDetailsList,
             furiganaSegments, // Contains duplicate data
             // glossary
             // definitionTags
