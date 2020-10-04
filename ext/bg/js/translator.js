@@ -837,6 +837,8 @@ class Translator {
         }
     }
 
+    // Simple helpers
+
     _scoreToTermFrequency(score) {
         if (score > 0) {
             return 'popular';
@@ -887,6 +889,8 @@ class Translator {
         }
     }
 
+    // Reduction functions
+
     _getTermTagsScoreSum(termTags) {
         let result = 0;
         for (const {score} of termTags) {
@@ -918,6 +922,8 @@ class Translator {
         }
         return result;
     }
+
+    // Common data creation and cloning functions
 
     _cloneTag(tag) {
         const {name, category, notes, order, score, dictionary} = tag;
@@ -1150,6 +1156,8 @@ class Translator {
             pitches: []
         };
     }
+
+    // Sorting functions
 
     _sortTags(tags) {
         if (tags.length <= 1) { return; }
