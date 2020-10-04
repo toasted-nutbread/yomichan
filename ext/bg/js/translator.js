@@ -224,6 +224,143 @@ class Translator {
 
     // Find terms/kanji internal implementation
 
+    async _findTermsInternal(text, enabledDictionaryMap, options) {
+        const {alphanumeric, wildcard} = options;
+        text = this._getSearchableText(text, alphanumeric);
+        if (text.length === 0) {
+            return [[], 0];
+        }
+
+        const deinflections = (
+            wildcard ?
+            await this._findTermWildcard(text, enabledDictionaryMap, wildcard) :
+            await this._findTermDeinflections(text, enabledDictionaryMap, options)
+        );
+
+        let maxLength = 0;
+        const definitions = [];
+        for (const {databaseDefinitions, source, rawSource, term, reasons} of deinflections) {
+            if (databaseDefinitions.length === 0) { continue; }
+            maxLength = Math.max(maxLength, rawSource.length);
+            for (const databaseDefinition of databaseDefinitions) {
+                const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, term, reasons, enabledDictionaryMap);
+                definitions.push(definition);
+            }
+        }
+
+        this._removeDuplicateDefinitions(definitions);
+        return [definitions, maxLength];
+    }
+
+    async _findTermWildcard(text, enabledDictionaryMap, wildcard) {
+        const databaseDefinitions = await this._database.findTermsBulk([text], enabledDictionaryMap, wildcard);
+        if (databaseDefinitions.length === 0) {
+            return [];
+        }
+
+        return [{
+            source: text,
+            rawSource: text,
+            term: text,
+            rules: 0,
+            reasons: [],
+            databaseDefinitions
+        }];
+    }
+
+    async _findTermDeinflections(text, enabledDictionaryMap, options) {
+        const deinflections = this._getAllDeinflections(text, options);
+
+        if (deinflections.length === 0) {
+            return [];
+        }
+
+        const uniqueDeinflectionTerms = [];
+        const uniqueDeinflectionArrays = [];
+        const uniqueDeinflectionsMap = new Map();
+        for (const deinflection of deinflections) {
+            const term = deinflection.term;
+            let deinflectionArray = uniqueDeinflectionsMap.get(term);
+            if (typeof deinflectionArray === 'undefined') {
+                deinflectionArray = [];
+                uniqueDeinflectionTerms.push(term);
+                uniqueDeinflectionArrays.push(deinflectionArray);
+                uniqueDeinflectionsMap.set(term, deinflectionArray);
+            }
+            deinflectionArray.push(deinflection);
+        }
+
+        const databaseDefinitions = await this._database.findTermsBulk(uniqueDeinflectionTerms, enabledDictionaryMap, null);
+
+        for (const databaseDefinition of databaseDefinitions) {
+            const definitionRules = Deinflector.rulesToRuleFlags(databaseDefinition.rules);
+            for (const deinflection of uniqueDeinflectionArrays[databaseDefinition.index]) {
+                const deinflectionRules = deinflection.rules;
+                if (deinflectionRules === 0 || (definitionRules & deinflectionRules) !== 0) {
+                    deinflection.databaseDefinitions.push(databaseDefinition);
+                }
+            }
+        }
+
+        return deinflections;
+    }
+
+    _getAllDeinflections(text, options) {
+        const collapseEmphaticOptions = [[false, false]];
+        switch (options.collapseEmphaticSequences) {
+            case 'true':
+                collapseEmphaticOptions.push([true, false]);
+                break;
+            case 'full':
+                collapseEmphaticOptions.push([true, false], [true, true]);
+                break;
+        }
+        const textOptionVariantArray = [
+            this._getTextOptionEntryVariants(options.convertHalfWidthCharacters),
+            this._getTextOptionEntryVariants(options.convertNumericCharacters),
+            this._getTextOptionEntryVariants(options.convertAlphabeticCharacters),
+            this._getTextOptionEntryVariants(options.convertHiraganaToKatakana),
+            this._getTextOptionEntryVariants(options.convertKatakanaToHiragana),
+            collapseEmphaticOptions
+        ];
+
+        const deinflections = [];
+        const used = new Set();
+        for (const [halfWidth, numeric, alphabetic, katakana, hiragana, [collapseEmphatic, collapseEmphaticFull]] of this._getArrayVariants(textOptionVariantArray)) {
+            let text2 = text;
+            const sourceMap = new TextSourceMap(text2);
+            if (halfWidth) {
+                text2 = jp.convertHalfWidthKanaToFullWidth(text2, sourceMap);
+            }
+            if (numeric) {
+                text2 = jp.convertNumericToFullWidth(text2);
+            }
+            if (alphabetic) {
+                text2 = jp.convertAlphabeticToKana(text2, sourceMap);
+            }
+            if (katakana) {
+                text2 = jp.convertHiraganaToKatakana(text2);
+            }
+            if (hiragana) {
+                text2 = jp.convertKatakanaToHiragana(text2);
+            }
+            if (collapseEmphatic) {
+                text2 = jp.collapseEmphaticSequences(text2, collapseEmphaticFull, sourceMap);
+            }
+
+            for (let i = text2.length; i > 0; --i) {
+                const text2Substring = text2.substring(0, i);
+                if (used.has(text2Substring)) { break; }
+                used.add(text2Substring);
+                const rawSource = sourceMap.source.substring(0, sourceMap.getSourceLength(i));
+                for (const deinflection of this._deinflector.deinflect(text2Substring, rawSource)) {
+                    deinflections.push(deinflection);
+                }
+            }
+        }
+        return deinflections;
+    }
+
     async _getSequencedDefinitions(definitions, mainDictionary, enabledDictionaryMap) {
         const sequenceList = [];
         const sequencedDefinitionMap = new Map();
@@ -371,143 +508,6 @@ class Translator {
             }
         }
         return [...definitionTagsMap.values()];
-    }
-
-    async _findTermsInternal(text, enabledDictionaryMap, options) {
-        const {alphanumeric, wildcard} = options;
-        text = this._getSearchableText(text, alphanumeric);
-        if (text.length === 0) {
-            return [[], 0];
-        }
-
-        const deinflections = (
-            wildcard ?
-            await this._findTermWildcard(text, enabledDictionaryMap, wildcard) :
-            await this._findTermDeinflections(text, enabledDictionaryMap, options)
-        );
-
-        let maxLength = 0;
-        const definitions = [];
-        for (const {databaseDefinitions, source, rawSource, term, reasons} of deinflections) {
-            if (databaseDefinitions.length === 0) { continue; }
-            maxLength = Math.max(maxLength, rawSource.length);
-            for (const databaseDefinition of databaseDefinitions) {
-                const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, term, reasons, enabledDictionaryMap);
-                definitions.push(definition);
-            }
-        }
-
-        this._removeDuplicateDefinitions(definitions);
-        return [definitions, maxLength];
-    }
-
-    async _findTermWildcard(text, enabledDictionaryMap, wildcard) {
-        const databaseDefinitions = await this._database.findTermsBulk([text], enabledDictionaryMap, wildcard);
-        if (databaseDefinitions.length === 0) {
-            return [];
-        }
-
-        return [{
-            source: text,
-            rawSource: text,
-            term: text,
-            rules: 0,
-            reasons: [],
-            databaseDefinitions
-        }];
-    }
-
-    async _findTermDeinflections(text, enabledDictionaryMap, options) {
-        const deinflections = this._getAllDeinflections(text, options);
-
-        if (deinflections.length === 0) {
-            return [];
-        }
-
-        const uniqueDeinflectionTerms = [];
-        const uniqueDeinflectionArrays = [];
-        const uniqueDeinflectionsMap = new Map();
-        for (const deinflection of deinflections) {
-            const term = deinflection.term;
-            let deinflectionArray = uniqueDeinflectionsMap.get(term);
-            if (typeof deinflectionArray === 'undefined') {
-                deinflectionArray = [];
-                uniqueDeinflectionTerms.push(term);
-                uniqueDeinflectionArrays.push(deinflectionArray);
-                uniqueDeinflectionsMap.set(term, deinflectionArray);
-            }
-            deinflectionArray.push(deinflection);
-        }
-
-        const databaseDefinitions = await this._database.findTermsBulk(uniqueDeinflectionTerms, enabledDictionaryMap, null);
-
-        for (const databaseDefinition of databaseDefinitions) {
-            const definitionRules = Deinflector.rulesToRuleFlags(databaseDefinition.rules);
-            for (const deinflection of uniqueDeinflectionArrays[databaseDefinition.index]) {
-                const deinflectionRules = deinflection.rules;
-                if (deinflectionRules === 0 || (definitionRules & deinflectionRules) !== 0) {
-                    deinflection.databaseDefinitions.push(databaseDefinition);
-                }
-            }
-        }
-
-        return deinflections;
-    }
-
-    _getAllDeinflections(text, options) {
-        const collapseEmphaticOptions = [[false, false]];
-        switch (options.collapseEmphaticSequences) {
-            case 'true':
-                collapseEmphaticOptions.push([true, false]);
-                break;
-            case 'full':
-                collapseEmphaticOptions.push([true, false], [true, true]);
-                break;
-        }
-        const textOptionVariantArray = [
-            this._getTextOptionEntryVariants(options.convertHalfWidthCharacters),
-            this._getTextOptionEntryVariants(options.convertNumericCharacters),
-            this._getTextOptionEntryVariants(options.convertAlphabeticCharacters),
-            this._getTextOptionEntryVariants(options.convertHiraganaToKatakana),
-            this._getTextOptionEntryVariants(options.convertKatakanaToHiragana),
-            collapseEmphaticOptions
-        ];
-
-        const deinflections = [];
-        const used = new Set();
-        for (const [halfWidth, numeric, alphabetic, katakana, hiragana, [collapseEmphatic, collapseEmphaticFull]] of this._getArrayVariants(textOptionVariantArray)) {
-            let text2 = text;
-            const sourceMap = new TextSourceMap(text2);
-            if (halfWidth) {
-                text2 = jp.convertHalfWidthKanaToFullWidth(text2, sourceMap);
-            }
-            if (numeric) {
-                text2 = jp.convertNumericToFullWidth(text2);
-            }
-            if (alphabetic) {
-                text2 = jp.convertAlphabeticToKana(text2, sourceMap);
-            }
-            if (katakana) {
-                text2 = jp.convertHiraganaToKatakana(text2);
-            }
-            if (hiragana) {
-                text2 = jp.convertKatakanaToHiragana(text2);
-            }
-            if (collapseEmphatic) {
-                text2 = jp.collapseEmphaticSequences(text2, collapseEmphaticFull, sourceMap);
-            }
-
-            for (let i = text2.length; i > 0; --i) {
-                const text2Substring = text2.substring(0, i);
-                if (used.has(text2Substring)) { break; }
-                used.add(text2Substring);
-                const rawSource = sourceMap.source.substring(0, sourceMap.getSourceLength(i));
-                for (const deinflection of this._deinflector.deinflect(text2Substring, rawSource)) {
-                    deinflections.push(deinflection);
-                }
-            }
-        }
-        return deinflections;
     }
 
     async _buildTermMeta(definitions, enabledDictionaryMap) {
