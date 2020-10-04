@@ -83,7 +83,7 @@ class Translator {
 
     // Private
 
-    async _getSequencedDefinitions(definitions, mainDictionary) {
+    async _getSequencedDefinitions(definitions, mainDictionary, dictionaries) {
         const sequenceList = [];
         const sequencedDefinitionMap = new Map();
         const sequencedDefinitions = [];
@@ -117,7 +117,7 @@ class Translator {
         const databaseDefinitions = await this._database.findTermsBySequenceBulk(sequenceList, mainDictionary);
         for (const databaseDefinition of databaseDefinitions) {
             const {definitions: definitions2, source, rawSource, reasons} = sequencedDefinitions[databaseDefinition.index];
-            const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, reasons);
+            const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, reasons, dictionaries);
             definitions2.push(definition);
         }
 
@@ -144,7 +144,7 @@ class Translator {
         const definitions = [];
         for (const databaseDefinition of databaseDefinitions) {
             const source = expressionList[databaseDefinition.index];
-            const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, source, []);
+            const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, source, [], secondarySearchDictionaries);
             definitions.push(definition);
         }
 
@@ -270,7 +270,7 @@ class Translator {
         const secondarySearchDictionaries = this._getSecondarySearchDictionaryMap(dictionaries);
 
         const [definitions, length] = await this._findTermsInternal(text, dictionaries, details, options);
-        const {sequencedDefinitions, unsequencedDefinitions} = await this._getSequencedDefinitions(definitions, options.general.mainDictionary);
+        const {sequencedDefinitions, unsequencedDefinitions} = await this._getSequencedDefinitions(definitions, options.general.mainDictionary, dictionaries);
         const definitionsMerged = [];
         const usedDefinitions = new Set();
 
@@ -348,7 +348,7 @@ class Translator {
             if (databaseDefinitions.length === 0) { continue; }
             maxLength = Math.max(maxLength, rawSource.length);
             for (const databaseDefinition of databaseDefinitions) {
-                const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, reasons);
+                const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, reasons, dictionaries);
                 definitions.push(definition);
             }
         }
@@ -722,6 +722,11 @@ class Translator {
         return secondarySearchDictionaries;
     }
 
+    _getDictionaryPriority(dictionary, enabledDictionaryMap) {
+        const info = enabledDictionaryMap.get(dictionary);
+        return typeof info !== 'undefined' ? info.priority : 0;
+    }
+
     _removeDuplicateDefinitions(definitions) {
         const definitionGroups = new Map();
         for (let i = 0, ii = definitions.length; i < ii; ++i) {
@@ -867,6 +872,13 @@ class Translator {
         }
         return result;
     }
+
+    _getMaxDictionaryPriority(definitions) {
+        let result = Number.MIN_SAFE_INTEGER;
+        for (const {dictionaryPriority} of definitions) {
+            if (dictionaryPriority > result) { result = dictionaryPriority; }
+        }
+        return result;
     }
 
     _cloneTag(tag) {
@@ -927,8 +939,9 @@ class Translator {
         };
     }
 
-    async _createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, reasons) {
+    async _createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, reasons, dictionaries) {
         const {expression, reading, definitionTags, termTags, glossary, score, dictionary, id, sequence} = databaseDefinition;
+        const dictionaryPriority = this._getDictionaryPriority(dictionary, dictionaries);
         const termTagsExpanded = await this._expandTags(termTags, dictionary);
         const definitionTagsExpanded = await this._expandTags(definitionTags, dictionary);
         definitionTagsExpanded.push(this._createDictionaryTag(dictionary));
@@ -947,6 +960,7 @@ class Translator {
             score,
             sequence,
             dictionary,
+            dictionaryPriority,
             expression,
             reading,
             // expressions
@@ -964,6 +978,7 @@ class Translator {
     _createGroupedTermDefinition(definitions) {
         const {expression, reading, furiganaSegments, reasons, termTags, source, rawSource} = definitions[0];
         const score = this._getMaxDefinitionScore(definitions);
+        const dictionaryPriority = this._getMaxDictionaryPriority(definitions);
         return {
             type: 'termGrouped',
             // id
@@ -973,6 +988,7 @@ class Translator {
             score,
             // sequence
             // dictionary
+            dictionaryPriority,
             expression,
             reading,
             // expressions
@@ -988,6 +1004,7 @@ class Translator {
     }
 
     _createMergedTermDefinition(source, rawSource, definitions, expressions, readings, expressionDetailsList, reasons, dictionary, score) {
+        const dictionaryPriority = this._getMaxDictionaryPriority(definitions);
         return {
             type: 'termMerged',
             // id
@@ -997,6 +1014,7 @@ class Translator {
             score,
             // sequence
             dictionary,
+            dictionaryPriority,
             expression: expressions,
             reading: readings,
             expressions: expressionDetailsList,
@@ -1025,6 +1043,7 @@ class Translator {
 
         const {glossary, dictionary} = definitions[0];
         const score = this._getMaxDefinitionScore(definitions);
+        const dictionaryPriority = this._getMaxDictionaryPriority(definitions);
         return {
             type: 'termMergedByGlossary',
             // id
@@ -1034,6 +1053,7 @@ class Translator {
             score,
             // sequence
             dictionary,
+            dictionaryPriority,
             expression: [...expressions],
             reading: [...readings],
             // expressions
