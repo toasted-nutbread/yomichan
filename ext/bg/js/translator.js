@@ -251,6 +251,7 @@ class Translator {
     }
 
     async _findTermsGrouped(text, details, options) {
+        const {general: {compactTags}} = options;
         const enabledDictionaryMap = this._getEnabledDictionaryMap(options);
         const [definitions, length] = await this._findTermsInternal(text, enabledDictionaryMap, details, options);
 
@@ -258,7 +259,7 @@ class Translator {
         await this._buildTermMeta(groupedDefinitions, enabledDictionaryMap);
         this._sortDefinitions(groupedDefinitions, false);
 
-        if (options.general.compactTags) {
+        if (compactTags) {
             for (const definition of groupedDefinitions) {
                 this._compressDefinitionTags(definition.definitions);
             }
@@ -268,11 +269,12 @@ class Translator {
     }
 
     async _findTermsMerged(text, details, options) {
+        const {general: {compactTags, mainDictionary}} = options;
         const enabledDictionaryMap = this._getEnabledDictionaryMap(options);
         const secondarySearchDictionaryMap = this._getSecondarySearchDictionaryMap(enabledDictionaryMap);
 
         const [definitions, length] = await this._findTermsInternal(text, enabledDictionaryMap, details, options);
-        const {sequencedDefinitions, unsequencedDefinitions} = await this._getSequencedDefinitions(definitions, options.general.mainDictionary, enabledDictionaryMap);
+        const {sequencedDefinitions, unsequencedDefinitions} = await this._getSequencedDefinitions(definitions, mainDictionary, enabledDictionaryMap);
         const definitionsMerged = [];
         const usedDefinitions = new Set();
 
@@ -307,7 +309,7 @@ class Translator {
         await this._buildTermMeta(definitionsMerged, enabledDictionaryMap);
         this._sortDefinitions(definitionsMerged, false);
 
-        if (options.general.compactTags) {
+        if (compactTags) {
             for (const definition of definitionsMerged) {
                 this._compressDefinitionTags(definition.definitions);
             }
