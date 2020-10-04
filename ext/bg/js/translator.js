@@ -236,7 +236,7 @@ class Translator {
             for (const tag of definitionTags) {
                 const {name} = tag;
                 if (definitionTagsMap.has(name)) { continue; }
-                definitionTagsMap.set(name, this._createTagClone(tag));
+                definitionTagsMap.set(name, this._cloneTag(tag));
             }
         }
         return [...definitionTagsMap.values()];
@@ -855,7 +855,7 @@ class Translator {
             for (const tag of termTags) {
                 const {name} = tag;
                 if (termTagsMap.has(name)) { continue; }
-                termTagsMap.set(name, this._createTagClone(tag));
+                termTagsMap.set(name, this._cloneTag(tag));
             }
         }
     }
@@ -868,15 +868,15 @@ class Translator {
         return maxScore;
     }
 
-    _createTagClone(tag) {
+    _cloneTag(tag) {
         const {name, category, notes, order, score, dictionary} = tag;
         return this._createTag(name, category, notes, order, score, dictionary);
     }
 
-    _createTagCloneArray(tags) {
+    _cloneTags(tags) {
         const results = [];
         for (const tag of tags) {
-            results.push(this._createTagClone(tag));
+            results.push(this._cloneTag(tag));
         }
         return results;
     }
@@ -978,7 +978,7 @@ class Translator {
             furiganaSegments, // Contains duplicate data
             // glossary
             // definitionTags
-            termTags: this._createTagCloneArray(termTags),
+            termTags: this._cloneTags(termTags),
             definitions,
             frequencies: [],
             pitches: []
