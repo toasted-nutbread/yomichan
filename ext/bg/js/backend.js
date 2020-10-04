@@ -376,18 +376,19 @@ class Backend {
 
     async _onApiKanjiFind({text, optionsContext}) {
         const options = this.getOptions(optionsContext);
+        const {general: {maxResults}} = options;
         const findKanjiOptions = this._getTranslatorFindKanjiOptions(options);
         const definitions = await this._translator.findKanji(text, findKanjiOptions);
-        definitions.splice(options.general.maxResults);
+        definitions.splice(maxResults);
         return definitions;
     }
 
     async _onApiTermsFind({text, details, optionsContext}) {
         const options = this.getOptions(optionsContext);
-        const mode = options.general.resultOutputMode;
+        const {general: {resultOutputMode: mode, maxResults}} = options;
         const findTermsOptions = this._getTranslatorFindTermsOptions(details, options);
         const [definitions, length] = await this._translator.findTerms(mode, text, findTermsOptions);
-        definitions.splice(options.general.maxResults);
+        definitions.splice(maxResults);
         return {length, definitions};
     }
 
@@ -950,25 +951,26 @@ class Backend {
     }
 
     async _textParseScanning(text, options) {
+        const {scanning: {length: scanningLength}, parsing: {readingMode}} = options;
         const findTermsOptions = this._getTranslatorFindTermsOptions({wildcard: null}, options);
         const results = [];
         while (text.length > 0) {
             const term = [];
             const [definitions, sourceLength] = await this._translator.findTerms(
                 'simple',
-                text.substring(0, options.scanning.length),
+                text.substring(0, scanningLength),
                 findTermsOptions
             );
             if (definitions.length > 0 && sourceLength > 0) {
                 const {expression, reading} = definitions[0];
                 const source = text.substring(0, sourceLength);
                 for (const {text: text2, furigana} of jp.distributeFuriganaInflected(expression, reading, source)) {
-                    const reading2 = jp.convertReading(text2, furigana, options.parsing.readingMode);
+                    const reading2 = jp.convertReading(text2, furigana, readingMode);
                     term.push({text: text2, reading: reading2});
                 }
                 text = text.substring(source.length);
             } else {
-                const reading = jp.convertReading(text[0], '', options.parsing.readingMode);
+                const reading = jp.convertReading(text[0], '', readingMode);
                 term.push({text: text[0], reading});
                 text = text.substring(1);
             }
@@ -978,6 +980,7 @@ class Backend {
     }
 
     async _textParseMecab(text, options) {
+        const {parsing: {readingMode}} = options;
         const results = [];
         const rawResults = await this._mecab.parseText(text);
         for (const [mecabName, parsedLines] of Object.entries(rawResults)) {
@@ -990,7 +993,7 @@ class Backend {
                         jp.convertKatakanaToHiragana(reading),
                         source
                     )) {
-                        const reading2 = jp.convertReading(text2, furigana, options.parsing.readingMode);
+                        const reading2 = jp.convertReading(text2, furigana, readingMode);
                         term.push({text: text2, reading: reading2});
                     }
                     result.push(term);
