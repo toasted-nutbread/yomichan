@@ -175,8 +175,9 @@ class Translator {
         if (sequenceList.length > 0) {
             const databaseDefinitions = await this._database.findTermsBySequenceBulk(sequenceList, mainDictionary);
             for (const databaseDefinition of databaseDefinitions) {
-                const {definitions: definitions2, source, rawSource, sourceTerm, reasons} = sequencedDefinitions[databaseDefinition.index];
-                const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, sourceTerm, reasons, enabledDictionaryMap);
+                const {definitions: definitions2} = sequencedDefinitions[databaseDefinition.index];
+                const {expression} = databaseDefinition;
+                const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, expression, expression, expression, [], enabledDictionaryMap);
                 definitions2.push(definition);
             }
         }
