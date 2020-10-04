@@ -289,18 +289,6 @@ class Translator {
         return [...definitionTagsMap.values()];
     }
 
-    _getTermTagsScoreSum(termTags) {
-        let result = 0;
-        for (const {score} of termTags) { result += score; }
-        return result;
-    }
-
-    _getSourceTermMatchCountSum(definitions) {
-        let result = 0;
-        for (const {sourceTermExactMatchCount} of definitions) { result += sourceTermExactMatchCount; }
-        return result;
-    }
-
     async _findTermsGrouped(text, options) {
         const {compactTags, enabledDictionaryMap} = options;
         const [definitions, length] = await this._findTermsInternal(text, enabledDictionaryMap, options);
@@ -897,6 +885,22 @@ class Translator {
                 termTagsMap.set(name, this._cloneTag(tag));
             }
         }
+    }
+
+    _getTermTagsScoreSum(termTags) {
+        let result = 0;
+        for (const {score} of termTags) {
+            result += score;
+        }
+        return result;
+    }
+
+    _getSourceTermMatchCountSum(definitions) {
+        let result = 0;
+        for (const {sourceTermExactMatchCount} of definitions) {
+            result += sourceTermExactMatchCount;
+        }
+        return result;
     }
 
     _getMaxDefinitionScore(definitions) {
