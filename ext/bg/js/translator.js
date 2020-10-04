@@ -879,7 +879,7 @@ class Translator {
     }
 
     _addUniqueTermInfos(definitions, termInfoMap) {
-        for (const {expression, reading, termTags} of definitions) {
+        for (const {expression, reading, sourceTerm, termTags} of definitions) {
             let readingMap = termInfoMap.get(expression);
             if (typeof readingMap === 'undefined') {
                 readingMap = new Map();
@@ -889,6 +889,7 @@ class Translator {
             let termInfo = readingMap.get(reading);
             if (typeof termInfo === 'undefined') {
                 termInfo = {
+                    sourceTerm,
                     termTagsMap: new Map()
                 };
                 readingMap.set(reading, termInfo);
