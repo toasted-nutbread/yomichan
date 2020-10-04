@@ -151,12 +151,13 @@ class Translator {
                 const {score} = definition;
                 let sequencedDefinition = sequencedDefinitionMap.get(sequence);
                 if (typeof sequencedDefinition === 'undefined') {
-                    const {reasons, source, rawSource} = definition;
+                    const {reasons, source, rawSource, sourceTerm} = definition;
                     sequencedDefinition = {
                         reasons,
                         score,
                         source,
                         rawSource,
+                        sourceTerm,
                         dictionary,
                         definitions: []
                     };
@@ -174,8 +175,8 @@ class Translator {
         if (sequenceList.length > 0) {
             const databaseDefinitions = await this._database.findTermsBySequenceBulk(sequenceList, mainDictionary);
             for (const databaseDefinition of databaseDefinitions) {
-                const {definitions: definitions2, source, rawSource, reasons} = sequencedDefinitions[databaseDefinition.index];
-                const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, reasons, enabledDictionaryMap);
+                const {definitions: definitions2, source, rawSource, sourceTerm, reasons} = sequencedDefinitions[databaseDefinition.index];
+                const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, sourceTerm, reasons, enabledDictionaryMap);
                 definitions2.push(definition);
             }
         }
@@ -203,7 +204,7 @@ class Translator {
         const definitions = [];
         for (const databaseDefinition of databaseDefinitions) {
             const source = expressionList[databaseDefinition.index];
-            const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, source, [], secondarySearchDictionaryMap);
+            const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, source, source, [], secondarySearchDictionaryMap);
             definitions.push(definition);
         }
 
@@ -403,11 +404,11 @@ class Translator {
 
         let maxLength = 0;
         const definitions = [];
-        for (const {databaseDefinitions, source, rawSource, reasons} of deinflections) {
+        for (const {databaseDefinitions, source, rawSource, term, reasons} of deinflections) {
             if (databaseDefinitions.length === 0) { continue; }
             maxLength = Math.max(maxLength, rawSource.length);
             for (const databaseDefinition of databaseDefinitions) {
-                const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, reasons, enabledDictionaryMap);
+                const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, term, reasons, enabledDictionaryMap);
                 definitions.push(definition);
             }
         }
@@ -973,7 +974,7 @@ class Translator {
         };
     }
 
-    async _createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, reasons, enabledDictionaryMap) {
+    async _createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, sourceTerm, reasons, enabledDictionaryMap) {
         const {expression, reading, definitionTags, termTags, glossary, score, dictionary, id, sequence} = databaseDefinition;
         const dictionaryPriority = this._getDictionaryPriority(dictionary, enabledDictionaryMap);
         const termTagsExpanded = await this._expandTags(termTags, dictionary);
@@ -990,6 +991,7 @@ class Translator {
             id,
             source,
             rawSource,
+            sourceTerm,
             reasons,
             score,
             sequence,
@@ -1010,7 +1012,7 @@ class Translator {
     }
 
     _createGroupedTermDefinition(definitions) {
-        const {expression, reading, furiganaSegments, reasons, termTags, source, rawSource} = definitions[0];
+        const {expression, reading, furiganaSegments, reasons, termTags, source, rawSource, sourceTerm} = definitions[0];
         const score = this._getMaxDefinitionScore(definitions);
         const dictionaryPriority = this._getMaxDictionaryPriority(definitions);
         return {
@@ -1018,6 +1020,7 @@ class Translator {
             // id
             source,
             rawSource,
+            sourceTerm,
             reasons: [...reasons],
             score,
             // sequence
@@ -1044,6 +1047,7 @@ class Translator {
             // id
             source,
             rawSource,
+            // sourceTerm
             reasons,
             score,
             // sequence
@@ -1083,6 +1087,7 @@ class Translator {
             // id
             source,
             rawSource,
+            // sourceTerm
             reasons: [],
             score,
             // sequence
