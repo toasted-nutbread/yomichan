@@ -21,7 +21,14 @@
  * jp
  */
 
+/**
+ * Class which finds term and kanji definitions for text.
+ */
 class Translator {
+    /**
+     * Creates a new Translator instance.
+     * @param database An instance of DictionaryDatabase.
+     */
     constructor(database) {
         this._database = database;
         this._deinflector = null;
@@ -29,15 +36,49 @@ class Translator {
         this._stringComparer = new Intl.Collator('en-US'); // Invariant locale
     }
 
+    /**
+     * Initializes the instance for use. The public API should not be used until
+     * this function has been called and await'd.
+     */
     async prepare() {
         const reasons = await this._fetchJsonAsset('/bg/lang/deinflect.json');
         this._deinflector = new Deinflector(reasons);
     }
 
+    /**
+     * Clears the database tag cache. This should be executed if the database is changed.
+     */
     clearDatabaseCaches() {
         this._tagCache.clear();
     }
 
+    /**
+     * Finds term definitions for the given text.
+     * @param mode The mode to use for finding terms, which determines the format of the resulting array.
+     * @param text The text to find terms for.
+     * @param options An object using the following structure:
+     *   {
+     *     wildcard: (null or string),
+     *     compactTags: (boolean),
+     *     mainDictionary: (string),
+     *     alphanumeric: (boolean),
+     *     convertHalfWidthCharacters: (boolean),
+     *     convertNumericCharacters: (boolean),
+     *     convertAlphabeticCharacters: (boolean),
+     *     convertHiraganaToKatakana: (boolean),
+     *     convertKatakanaToHiragana: (boolean),
+     *     collapseEmphaticSequences: (boolean),
+     *     enabledDictionaryMap: (Map of [
+     *       (string),
+     *       {
+     *         priority: (number),
+     *         allowSecondarySearches: (boolean)
+     *       }
+     *     ])
+     *   }
+     * @returns An array of [definitions, textLength]. The structure of each definition depends on the
+     *   mode parameter, see the _create?TermDefinition?() functions for structure details.
+     */
     async findTerms(mode, text, options) {
         switch (mode) {
             case 'group':
@@ -53,6 +94,22 @@ class Translator {
         }
     }
 
+    /**
+     * Finds kanji definitions for the given text.
+     * @param text The text to find kanji definitions for. This string can be of any length,
+     *   but is typically just one character, which is a single kanji. If the string is multiple
+     *   characters long, each character will be searched in the database.
+     * @param options An object using the following structure:
+     *   {
+     *     enabledDictionaryMap: (Map of [
+     *       (string),
+     *       {
+     *         priority: (number)
+     *       }
+     *     ])
+     *   }
+     * @returns An array of definitions. See the _createKanjiDefinition() function for structure details.
+     */
     async findKanji(text, options) {
         const {enabledDictionaryMap} = options;
         const kanjiUnique = new Set();
