@@ -54,13 +54,13 @@ class Translator {
     }
 
     async findKanji(text, options) {
-        const dictionaries = this._getEnabledDictionaryMap(options);
+        const enabledDictionaryMap = this._getEnabledDictionaryMap(options);
         const kanjiUnique = new Set();
         for (const c of text) {
             kanjiUnique.add(c);
         }
 
-        const databaseDefinitions = await this._database.findKanjiBulk([...kanjiUnique], dictionaries);
+        const databaseDefinitions = await this._database.findKanjiBulk([...kanjiUnique], enabledDictionaryMap);
         if (databaseDefinitions.length === 0) { return []; }
 
         this._sortDatabaseDefinitionsByIndex(databaseDefinitions);
@@ -76,14 +76,14 @@ class Translator {
             definitions.push(definition);
         }
 
-        await this._buildKanjiMeta(definitions, dictionaries);
+        await this._buildKanjiMeta(definitions, enabledDictionaryMap);
 
         return definitions;
     }
 
     // Private
 
-    async _getSequencedDefinitions(definitions, mainDictionary, dictionaries) {
+    async _getSequencedDefinitions(definitions, mainDictionary, enabledDictionaryMap) {
         const sequenceList = [];
         const sequencedDefinitionMap = new Map();
         const sequencedDefinitions = [];
@@ -118,7 +118,7 @@ class Translator {
             const databaseDefinitions = await this._database.findTermsBySequenceBulk(sequenceList, mainDictionary);
             for (const databaseDefinition of databaseDefinitions) {
                 const {definitions: definitions2, source, rawSource, reasons} = sequencedDefinitions[databaseDefinition.index];
-                const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, reasons, dictionaries);
+                const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, reasons, enabledDictionaryMap);
                 definitions2.push(definition);
             }
         }
@@ -251,11 +251,11 @@ class Translator {
     }
 
     async _findTermsGrouped(text, details, options) {
-        const dictionaries = this._getEnabledDictionaryMap(options);
-        const [definitions, length] = await this._findTermsInternal(text, dictionaries, details, options);
+        const enabledDictionaryMap = this._getEnabledDictionaryMap(options);
+        const [definitions, length] = await this._findTermsInternal(text, enabledDictionaryMap, details, options);
 
-        const groupedDefinitions = this._groupTerms(definitions, dictionaries);
-        await this._buildTermMeta(groupedDefinitions, dictionaries);
+        const groupedDefinitions = this._groupTerms(definitions, enabledDictionaryMap);
+        await this._buildTermMeta(groupedDefinitions, enabledDictionaryMap);
         this._sortDefinitions(groupedDefinitions, false);
 
         if (options.general.compactTags) {
@@ -268,11 +268,11 @@ class Translator {
     }
 
     async _findTermsMerged(text, details, options) {
-        const dictionaries = this._getEnabledDictionaryMap(options);
-        const secondarySearchDictionaryMap = this._getSecondarySearchDictionaryMap(dictionaries);
+        const enabledDictionaryMap = this._getEnabledDictionaryMap(options);
+        const secondarySearchDictionaryMap = this._getSecondarySearchDictionaryMap(enabledDictionaryMap);
 
-        const [definitions, length] = await this._findTermsInternal(text, dictionaries, details, options);
-        const {sequencedDefinitions, unsequencedDefinitions} = await this._getSequencedDefinitions(definitions, options.general.mainDictionary, dictionaries);
+        const [definitions, length] = await this._findTermsInternal(text, enabledDictionaryMap, details, options);
+        const {sequencedDefinitions, unsequencedDefinitions} = await this._getSequencedDefinitions(definitions, options.general.mainDictionary, enabledDictionaryMap);
         const definitionsMerged = [];
         const usedDefinitions = new Set();
 
@@ -287,7 +287,7 @@ class Translator {
         }
 
         const unusedDefinitions = unsequencedDefinitions.filter((definition) => !usedDefinitions.has(definition));
-        for (const groupedDefinition of this._groupTerms(unusedDefinitions, dictionaries)) {
+        for (const groupedDefinition of this._groupTerms(unusedDefinitions, enabledDictionaryMap)) {
             const {reasons, score, expression, reading, source, rawSource, dictionary, termTags} = groupedDefinition;
             const expressionDetails = this._createExpressionDetails(expression, reading, termTags);
             const compatibilityDefinition = this._createMergedTermDefinition(
@@ -304,7 +304,7 @@ class Translator {
             definitionsMerged.push(compatibilityDefinition);
         }
 
-        await this._buildTermMeta(definitionsMerged, dictionaries);
+        await this._buildTermMeta(definitionsMerged, enabledDictionaryMap);
         this._sortDefinitions(definitionsMerged, false);
 
         if (options.general.compactTags) {
@@ -317,21 +317,21 @@ class Translator {
     }
 
     async _findTermsSplit(text, details, options) {
-        const dictionaries = this._getEnabledDictionaryMap(options);
-        const [definitions, length] = await this._findTermsInternal(text, dictionaries, details, options);
-        await this._buildTermMeta(definitions, dictionaries);
+        const enabledDictionaryMap = this._getEnabledDictionaryMap(options);
+        const [definitions, length] = await this._findTermsInternal(text, enabledDictionaryMap, details, options);
+        await this._buildTermMeta(definitions, enabledDictionaryMap);
         this._sortDefinitions(definitions, true);
         return [definitions, length];
     }
 
     async _findTermsSimple(text, details, options) {
-        const dictionaries = this._getEnabledDictionaryMap(options);
-        const [definitions, length] = await this._findTermsInternal(text, dictionaries, details, options);
+        const enabledDictionaryMap = this._getEnabledDictionaryMap(options);
+        const [definitions, length] = await this._findTermsInternal(text, enabledDictionaryMap, details, options);
         this._sortDefinitions(definitions, false);
         return [definitions, length];
     }
 
-    async _findTermsInternal(text, dictionaries, details, options) {
+    async _findTermsInternal(text, enabledDictionaryMap, details, options) {
         text = this._getSearchableText(text, options);
         if (text.length === 0) {
             return [[], 0];
@@ -339,8 +339,8 @@ class Translator {
 
         const deinflections = (
             details.wildcard ?
-            await this._findTermWildcard(text, dictionaries, details.wildcard) :
-            await this._findTermDeinflections(text, dictionaries, options)
+            await this._findTermWildcard(text, enabledDictionaryMap, details.wildcard) :
+            await this._findTermDeinflections(text, enabledDictionaryMap, options)
         );
 
         let maxLength = 0;
@@ -349,7 +349,7 @@ class Translator {
             if (databaseDefinitions.length === 0) { continue; }
             maxLength = Math.max(maxLength, rawSource.length);
             for (const databaseDefinition of databaseDefinitions) {
-                const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, reasons, dictionaries);
+                const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, reasons, enabledDictionaryMap);
                 definitions.push(definition);
             }
         }
@@ -358,8 +358,8 @@ class Translator {
         return [definitions, maxLength];
     }
 
-    async _findTermWildcard(text, dictionaries, wildcard) {
-        const databaseDefinitions = await this._database.findTermsBulk([text], dictionaries, wildcard);
+    async _findTermWildcard(text, enabledDictionaryMap, wildcard) {
+        const databaseDefinitions = await this._database.findTermsBulk([text], enabledDictionaryMap, wildcard);
         if (databaseDefinitions.length === 0) {
             return [];
         }
@@ -374,7 +374,7 @@ class Translator {
         }];
     }
 
-    async _findTermDeinflections(text, dictionaries, options) {
+    async _findTermDeinflections(text, enabledDictionaryMap, options) {
         const deinflections = this._getAllDeinflections(text, options);
 
         if (deinflections.length === 0) {
@@ -396,7 +396,7 @@ class Translator {
             deinflectionArray.push(deinflection);
         }
 
-        const databaseDefinitions = await this._database.findTermsBulk(uniqueDeinflectionTerms, dictionaries, null);
+        const databaseDefinitions = await this._database.findTermsBulk(uniqueDeinflectionTerms, enabledDictionaryMap, null);
 
         for (const databaseDefinition of databaseDefinitions) {
             const definitionRules = Deinflector.rulesToRuleFlags(databaseDefinition.rules);
@@ -476,7 +476,7 @@ class Translator {
         }
     }
 
-    async _buildTermMeta(definitions, dictionaries) {
+    async _buildTermMeta(definitions, enabledDictionaryMap) {
         const terms = [];
         for (const definition of definitions) {
             switch (definition.type) {
@@ -510,7 +510,7 @@ class Translator {
             termList.push(term);
         }
 
-        const metas = await this._database.findTermMetaBulk(expressionsUnique, dictionaries);
+        const metas = await this._database.findTermMetaBulk(expressionsUnique, enabledDictionaryMap);
         for (const {expression, mode, data, dictionary, index} of metas) {
             switch (mode) {
                 case 'freq':
@@ -531,13 +531,13 @@ class Translator {
         }
     }
 
-    async _buildKanjiMeta(definitions, dictionaries) {
+    async _buildKanjiMeta(definitions, enabledDictionaryMap) {
         const kanjiList = [];
         for (const {character} of definitions) {
             kanjiList.push(character);
         }
 
-        const metas = await this._database.findKanjiMetaBulk(kanjiList, dictionaries);
+        const metas = await this._database.findKanjiMetaBulk(kanjiList, enabledDictionaryMap);
         for (const {character, mode, data, dictionary, index} of metas) {
             switch (mode) {
                 case 'freq':
@@ -940,9 +940,9 @@ class Translator {
         };
     }
 
-    async _createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, reasons, dictionaries) {
+    async _createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, reasons, enabledDictionaryMap) {
         const {expression, reading, definitionTags, termTags, glossary, score, dictionary, id, sequence} = databaseDefinition;
-        const dictionaryPriority = this._getDictionaryPriority(dictionary, dictionaries);
+        const dictionaryPriority = this._getDictionaryPriority(dictionary, enabledDictionaryMap);
         const termTagsExpanded = await this._expandTags(termTags, dictionary);
         const definitionTagsExpanded = await this._expandTags(definitionTags, dictionary);
         definitionTagsExpanded.push(this._createDictionaryTag(dictionary));
