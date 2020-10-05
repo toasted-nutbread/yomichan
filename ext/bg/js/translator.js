@@ -395,8 +395,8 @@ class Translator {
                 const {id} = databaseDefinition;
                 if (relatedDefinitionIds.has(id)) { continue; }
 
-                const {expression} = databaseDefinition;
-                const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, expression, expression, expression, [], enabledDictionaryMap);
+                const {source, rawSource, sourceTerm} = relatedDefinitions[0];
+                const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, sourceTerm, [], enabledDictionaryMap);
                 relatedDefinitions.push(definition);
             }
         }
