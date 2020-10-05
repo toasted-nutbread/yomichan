@@ -1425,8 +1425,18 @@ class Display extends EventDispatcher {
     }
 
     _getDefinitionPrimaryExpressionAndReading(definition) {
-        const definitionExpressions = definition.expressions;
-        const {expression, reading} = Array.isArray(definitionExpressions) ? definitionExpressions[0] : definition;
+        const termDetailsList = definition.expressions;
+        let bestIndex = -1;
+        for (let i = 0, ii = termDetailsList.length; i < ii; ++i) {
+            const {sourceTerm, expression, reading} = termDetailsList[i];
+            if (expression === sourceTerm) {
+                bestIndex = i;
+                break;
+            } else if (reading === sourceTerm && bestIndex < 0) {
+                bestIndex = i;
+            }
+        }
+        const {expression, reading} = termDetailsList[Math.max(0, bestIndex)];
         return {expression, reading};
     }
 }
