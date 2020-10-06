@@ -460,11 +460,11 @@ class Translator {
             for (const reading of readings) { allReadings.add(reading); }
         }
 
-        for (const {expressions, readings, definitions: definitions2} of glossaryDefinitionGroupMap.values()) {
+        for (const {expressions, readings, definitions} of glossaryDefinitionGroupMap.values()) {
             const glossaryDefinition = this._createMergedGlossaryTermDefinition(
                 source,
                 rawSource,
-                definitions2,
+                definitions,
                 expressions,
                 readings,
                 allExpressions,
