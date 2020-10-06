@@ -1089,7 +1089,7 @@ class Translator {
             // glossary
             // definitionTags
             // termTags
-            definitions, // type: 'termMergedByGlossary'
+            definitions, // type: 'termMergedByGlossary', 'term'
             frequencies: [],
             pitches: [],
             // only
