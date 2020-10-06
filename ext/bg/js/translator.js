@@ -898,6 +898,16 @@ class Translator {
         }
     }
 
+    _getUniqueDictionaryNames(definitions) {
+        const uniqueDictionaryNames = new Set();
+        for (const {dictionaryNames} of definitions) {
+            for (const dictionaryName of dictionaryNames) {
+                uniqueDictionaryNames.add(dictionaryName);
+            }
+        }
+        return [...uniqueDictionaryNames];
+    }
+
     *_getArrayVariants(arrayVariants) {
         const ii = arrayVariants.length;
 
@@ -1037,6 +1047,7 @@ class Translator {
             sequence,
             dictionary,
             dictionaryPriority,
+            dictionaryNames: [dictionary],
             expression,
             reading,
             expressions: termDetailsList,
@@ -1056,6 +1067,7 @@ class Translator {
         const {expression, reading, furiganaSegments, reasons, termTags, source, rawSource, sourceTerm} = definitions[0];
         const score = this._getMaxDefinitionScore(definitions);
         const dictionaryPriority = this._getMaxDictionaryPriority(definitions);
+        const dictionaryNames = this._getUniqueDictionaryNames(definitions);
         const termDetailsList = [this._createTermDetails(sourceTerm, expression, reading, furiganaSegments, termTags)];
         const sourceTermExactMatchCount = (sourceTerm === expression ? 1 : 0);
         return {
@@ -1069,6 +1081,7 @@ class Translator {
             // sequence
             // dictionary
             dictionaryPriority,
+            dictionaryNames,
             expression,
             reading,
             expressions: termDetailsList,
@@ -1087,6 +1100,7 @@ class Translator {
     _createMergedTermDefinition(source, rawSource, definitions, expressions, readings, termDetailsList, reasons, dictionary, score) {
         const dictionaryPriority = this._getMaxDictionaryPriority(definitions);
         const sourceTermExactMatchCount = this._getSourceTermMatchCountSum(definitions);
+        const dictionaryNames = this._getUniqueDictionaryNames(definitions);
         return {
             type: 'termMerged',
             // id
@@ -1098,6 +1112,7 @@ class Translator {
             // sequence
             dictionary,
             dictionaryPriority,
+            dictionaryNames,
             expression: expressions,
             reading: readings,
             expressions: termDetailsList,
@@ -1123,6 +1138,7 @@ class Translator {
         }
 
         const sourceTermExactMatchCount = this._getSourceTermMatchCountSum(definitions);
+        const dictionaryNames = this._getUniqueDictionaryNames(definitions);
 
         const termInfoMap = new Map();
         this._addUniqueTermInfos(definitions, termInfoMap);
@@ -1145,6 +1161,7 @@ class Translator {
             // sequence
             dictionary,
             dictionaryPriority,
+            dictionaryNames,
             expression: [...expressions],
             reading: [...readings],
             expressions: termDetailsList,
