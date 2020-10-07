@@ -736,8 +736,8 @@ class Translator {
         for (let i = 0, ii = tagMetaList.length; i < ii; ++i) {
             const meta = tagMetaList[i];
             const name = names[i];
-            const {category, notes, order, score, dictionary: dictionary2} = (meta !== null ? meta : {dictionary: dictionary});
-            const tag = this._createTag(name, category, notes, order, score, dictionary2);
+            const {category, notes, order, score} = (meta !== null ? meta : {});
+            const tag = this._createTag(name, category, notes, order, score, dictionary);
             results.push(tag);
         }
         return results;
@@ -753,7 +753,7 @@ class Translator {
             const meta = tagMetaList[i];
             if (meta === null) { continue; }
 
-            const {category, notes, order, score, dictionary: dictionary2} = meta;
+            const {category, notes, order, score} = meta;
             let group = statsGroups.get(category);
             if (typeof group === 'undefined') {
                 group = [];
@@ -761,7 +761,7 @@ class Translator {
             }
 
             const value = items[name];
-            const stat = this._createKanjiStat(name, category, notes, order, score, dictionary2, value);
+            const stat = this._createKanjiStat(name, category, notes, order, score, dictionary, value);
             group.push(stat);
         }
 
