@@ -194,7 +194,7 @@ class Translator {
 
         const unusedDefinitions = unsequencedDefinitions.filter((definition) => !usedDefinitions.has(definition));
         for (const groupedDefinition of this._groupTerms(unusedDefinitions, enabledDictionaryMap)) {
-            const {reasons, score, expression, reading, source, rawSource, sourceTerm, dictionary, furiganaSegments, termTags, definitions: definitions2} = groupedDefinition;
+            const {reasons, score, expression, reading, source, rawSource, sourceTerm, furiganaSegments, termTags, definitions: definitions2} = groupedDefinition;
             const termDetailsList = [this._createTermDetails(sourceTerm, expression, reading, furiganaSegments, termTags)];
             const compatibilityDefinition = this._createMergedTermDefinition(
                 source,
@@ -204,7 +204,6 @@ class Translator {
                 [reading],
                 termDetailsList,
                 reasons,
-                dictionary,
                 score
             );
             definitionsMerged.push(compatibilityDefinition);
@@ -436,7 +435,7 @@ class Translator {
     }
 
     async _getMergedDefinition(sourceDefinitions, relatedDefinitions, unsequencedDefinitions, secondarySearchDictionaryMap, usedDefinitions) {
-        const {reasons, source, rawSource, dictionary} = sourceDefinitions[0];
+        const {reasons, source, rawSource} = sourceDefinitions[0];
         const score = this._getMaxDefinitionScore(sourceDefinitions);
         const termInfoMap = new Map();
         const glossaryDefinitions = [];
@@ -485,7 +484,6 @@ class Translator {
             [...allReadings],
             termDetailsList,
             reasons,
-            dictionary,
             score
         );
     }
@@ -1079,7 +1077,7 @@ class Translator {
             reasons: [...reasons],
             score,
             // sequence
-            // dictionary
+            dictionary: dictionaryNames[0],
             dictionaryPriority,
             dictionaryNames,
             expression,
@@ -1097,7 +1095,7 @@ class Translator {
         };
     }
 
-    _createMergedTermDefinition(source, rawSource, definitions, expressions, readings, termDetailsList, reasons, dictionary, score) {
+    _createMergedTermDefinition(source, rawSource, definitions, expressions, readings, termDetailsList, reasons, score) {
         const dictionaryPriority = this._getMaxDictionaryPriority(definitions);
         const sourceTermExactMatchCount = this._getSourceTermMatchCountSum(definitions);
         const dictionaryNames = this._getUniqueDictionaryNames(definitions);
@@ -1110,7 +1108,7 @@ class Translator {
             reasons,
             score,
             // sequence
-            dictionary,
+            dictionary: dictionaryNames[0],
             dictionaryPriority,
             dictionaryNames,
             expression: expressions,
@@ -1147,7 +1145,7 @@ class Translator {
         const definitionTags = this._getUniqueDefinitionTags(definitions);
         this._sortTags(definitionTags);
 
-        const {glossary, dictionary} = definitions[0];
+        const {glossary} = definitions[0];
         const score = this._getMaxDefinitionScore(definitions);
         const dictionaryPriority = this._getMaxDictionaryPriority(definitions);
         return {
@@ -1159,7 +1157,7 @@ class Translator {
             reasons: [],
             score,
             // sequence
-            dictionary,
+            dictionary: dictionaryNames[0],
             dictionaryPriority,
             dictionaryNames,
             expression: [...expressions],
