@@ -730,22 +730,22 @@ class Translator {
         }
     }
 
-    async _expandTags(names, title) {
-        const tagMetaList = await this._getTagMetaList(names, title);
+    async _expandTags(names, dictionary) {
+        const tagMetaList = await this._getTagMetaList(names, dictionary);
         const results = [];
         for (let i = 0, ii = tagMetaList.length; i < ii; ++i) {
             const meta = tagMetaList[i];
             const name = names[i];
-            const {category, notes, order, score, dictionary} = (meta !== null ? meta : {dictionary: title});
-            const tag = this._createTag(name, category, notes, order, score, dictionary);
+            const {category, notes, order, score, dictionary: dictionary2} = (meta !== null ? meta : {dictionary: dictionary});
+            const tag = this._createTag(name, category, notes, order, score, dictionary2);
             results.push(tag);
         }
         return results;
     }
 
-    async _expandStats(items, title) {
+    async _expandStats(items, dictionary) {
         const names = Object.keys(items);
-        const tagMetaList = await this._getTagMetaList(names, title);
+        const tagMetaList = await this._getTagMetaList(names, dictionary);
 
         const statsGroups = new Map();
         for (let i = 0; i < names.length; ++i) {
@@ -753,7 +753,7 @@ class Translator {
             const meta = tagMetaList[i];
             if (meta === null) { continue; }
 
-            const {category, notes, order, score, dictionary} = meta;
+            const {category, notes, order, score, dictionary: dictionary2} = meta;
             let group = statsGroups.get(category);
             if (typeof group === 'undefined') {
                 group = [];
@@ -761,7 +761,7 @@ class Translator {
             }
 
             const value = items[name];
-            const stat = this._createKanjiStat(name, category, notes, order, score, dictionary, value);
+            const stat = this._createKanjiStat(name, category, notes, order, score, dictionary2, value);
             group.push(stat);
         }
 
@@ -773,12 +773,12 @@ class Translator {
         return stats;
     }
 
-    async _getTagMetaList(names, title) {
+    async _getTagMetaList(names, dictionary) {
         const tagMetaList = [];
-        let cache = this._tagCache.get(title);
+        let cache = this._tagCache.get(dictionary);
         if (typeof cache === 'undefined') {
             cache = new Map();
-            this._tagCache.set(title, cache);
+            this._tagCache.set(dictionary, cache);
         }
 
         for (const name of names) {
@@ -786,7 +786,7 @@ class Translator {
 
             let tagMeta = cache.get(base);
             if (typeof tagMeta === 'undefined') {
-                tagMeta = await this._database.findTagForTitle(base, title);
+                tagMeta = await this._database.findTagForTitle(base, dictionary);
                 cache.set(base, tagMeta);
             }
 
@@ -864,9 +864,9 @@ class Translator {
 
     _getSecondarySearchDictionaryMap(enabledDictionaryMap) {
         const secondarySearchDictionaryMap = new Map();
-        for (const [title, dictionary] of enabledDictionaryMap.entries()) {
-            if (!dictionary.allowSecondarySearches) { continue; }
-            secondarySearchDictionaryMap.set(title, dictionary);
+        for (const [dictionary, details] of enabledDictionaryMap.entries()) {
+            if (!details.allowSecondarySearches) { continue; }
+            secondarySearchDictionaryMap.set(dictionary, details);
         }
         return secondarySearchDictionaryMap;
     }
