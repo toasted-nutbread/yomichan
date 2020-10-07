@@ -815,7 +815,7 @@ class Translator {
 
         const pitches = [];
         for (let {position, tags} of data.pitches) {
-            tags = Array.isArray(tags) ? await this._getTagMetaList(tags, dictionary) : [];
+            tags = Array.isArray(tags) ? await this._expandTags(tags, dictionary) : [];
             pitches.push({position, tags});
         }
 
