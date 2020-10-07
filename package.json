@@ -33,6 +33,7 @@
         "sourceDir": "ext"
     },
     "devDependencies": {
+        "browserify": "^16.5.2",
         "eslint": "^7.10.0",
         "eslint-plugin-no-unsanitized": "^3.1.4",
         "fake-indexeddb": "^3.1.2",
