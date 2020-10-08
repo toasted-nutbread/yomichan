@@ -16,11 +16,15 @@
  */
 
 class HtmlTemplateCollection {
-    constructor(html) {
+    constructor(source) {
         this._templates = new Map();
 
-        const doc = new DOMParser().parseFromString(html, 'text/html');
-        for (const template of doc.querySelectorAll('template')) {
+        const sourceNode = (
+            typeof source === 'string' ?
+            new DOMParser().parseFromString(source, 'text/html') :
+            source
+        );
+        for (const template of sourceNode.querySelectorAll('template')) {
             this._setTemplate(template);
         }
     }
