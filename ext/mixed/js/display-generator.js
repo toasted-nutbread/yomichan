@@ -17,7 +17,7 @@
 
 /* global
  * DictionaryDataUtil
- * TemplateHandler
+ * HtmlTemplateCollection
  * api
  * jp
  */
@@ -31,7 +31,7 @@ class DisplayGenerator {
 
     async prepare() {
         const html = await api.getDisplayTemplatesHtml();
-        this._templateHandler = new TemplateHandler(html);
+        this._templateHandler = new HtmlTemplateCollection(html);
     }
 
     createTermEntry(details) {

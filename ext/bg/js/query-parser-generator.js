@@ -16,7 +16,7 @@
  */
 
 /* global
- * TemplateHandler
+ * HtmlTemplateCollection
  * api
  */
 
@@ -27,7 +27,7 @@ class QueryParserGenerator {
 
     async prepare() {
         const html = await api.getQueryParserTemplatesHtml();
-        this._templateHandler = new TemplateHandler(html);
+        this._templateHandler = new HtmlTemplateCollection(html);
     }
 
     createParseResult(terms, preview=false) {

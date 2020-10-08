@@ -15,8 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-class TemplateHandler {
+class HtmlTemplateCollection {
     constructor(html) {
         this._templates = new Map();
 
