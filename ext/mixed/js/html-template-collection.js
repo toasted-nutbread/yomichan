@@ -24,17 +24,13 @@ class HtmlTemplateCollection {
             new DOMParser().parseFromString(source, 'text/html') :
             source
         );
-        for (const template of sourceNode.querySelectorAll('template')) {
-            this._setTemplate(template);
-        }
-    }
 
-    _setTemplate(template) {
-        const idMatch = template.id.match(/^([a-z-]+)-template$/);
-        if (!idMatch) {
-            throw new Error(`Invalid template ID: ${template.id}`);
+        const pattern = /^([\w\W]+)-template$/;
+        for (const template of sourceNode.querySelectorAll('template')) {
+            const match = pattern.exec(template.id);
+            if (match === null) { continue; }
+            this._templates.set(match[1], template);
         }
-        this._templates.set(idMatch[1], template);
     }
 
     instantiate(name) {
