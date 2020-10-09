@@ -17,7 +17,7 @@
 
 /* global
  * GenericSettingController
- * Modal
+ * ModalController
  * SettingsController
  * api
  */
@@ -34,6 +34,9 @@ async function setupGenericSettingsController(genericSettingController) {
     const optionsFull = await api.optionsGetFull();
 
     const preparePromises = [];
+
+    const modalController = new ModalController();
+    modalController.prepare();
 
     const settingsController = new SettingsController(optionsFull.profileCurrent);
     settingsController.prepare();
@@ -83,13 +86,6 @@ async function setupGenericSettingsController(genericSettingController) {
         }, false);
     }
 })();
-
-for (const node of document.querySelectorAll('.test')) {
-    node.addEventListener('click', () => {
-        const m = new Modal(document.querySelector('.modal-container'));
-        m.setVisible(!m.isVisible());
-    });
-}
 
 document.querySelector('#show-preview-checkbox').addEventListener('change', (e) => {
     document.querySelector('.preview-frame-container').classList.toggle('preview-frame-container-visible', e.checked);
