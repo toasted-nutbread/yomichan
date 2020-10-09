@@ -74,16 +74,20 @@
     --separator-color2: #eeeeee;
     --outline-item-background-color: rgba(13, 13, 13, 0.0);
     --outline-item-background-color-hover: rgba(13, 13, 13, 0.15);
+    --button-text-color: #ffffff;
     --button-border-color: var(--separator-color1);
     --accent-color: #1a73e8;
-    --accent-color-light: #8db9f4;
-    --accent-color-lighter: #a0b0cc;
+    --accent-color-light: #4a91ed;
+    --accent-color-lighter: #8db9f4;
+    --accent-color-lightest: #a7c9f6;
     --accent-color-dark: #1060c0;
     --accent-color-transparent0: rgba(28, 116, 233, 0);
     --accent-color-transparent5: rgba(28, 116, 233, 0.05);
     --accent-color-transparent25: rgba(28, 116, 233, 0.25);
     --danger-color: #c83c28;
-    --danger-color-lighter: #ccaaaa;
+    --danger-color-light: #dd6755;
+    --danger-color-lighter: #e68d7f;
+    --danger-color-lightest: #eeb3aa;
     --danger-color-transparent0: rgba(200, 60, 40, 0);
     --danger-color-transparent5: rgba(200, 60, 40, 0.05);
     --danger-color-transparent25: rgba(200, 60, 40, 0.25);
@@ -672,7 +676,7 @@ select.settings-item-group-item-input {
     opacity: 1;
 }
 .toggle>input[type=checkbox]:checked~.toggle-track {
-    background-color: var(--accent-color-light);
+    background-color: var(--accent-color-lighter);
 }
 .toggle>input[type=checkbox]:checked~.toggle-knob {
     transform: translateX(1em);
@@ -814,51 +818,99 @@ input[type=text] {
 
 
 /* Material design button */
-button.low-emphasis {
-    border: var(--thin-border-size) solid var(--button-border-color);
+button {
+    border: var(--thin-border-size) solid transparent;
     border-radius: 0.3em;
     padding: 0.5em 1em;
     font-weight: bold;
     font-size: inherit;
     font-family: inherit;
-    background-color: transparent;
     cursor: pointer;
-    color: var(--accent-color);
-    background-color: var(--accent-color-transparent0);
+    background-color: transparent;
     box-shadow: var(--button-shadow-params) var(--shadow-color-off);
     transition: background-color 0.125s ease-in, box-shadow 0.125s ease-in, border-color 0.125s ease-in;
 }
-button.low-emphasis:focus {
+button:hover {
+    box-shadow: var(--button-shadow-params) var(--shadow-color-light);
+    transition: background-color 0.125s ease-out, box-shadow 0.125s ease-out, border-color 0.125s ease-out;
+}
+button:focus {
     outline: none;
+}
+button:active {
+    box-shadow: var(--button-shadow-params) var(--shadow-color);
+}
+
+/* Standard button */
+button {
+    color: var(--button-text-color);
+    border-color: var(--accent-color);
+    background-color: var(--accent-color);
+}
+button:hover {
+    background-color: var(--accent-color-light);
+    border-color: var(--accent-color-light);
+}
+button:focus {
+    background-color: var(--accent-color-light);
+}
+button:active {
+    border-color: var(--accent-color-lighter);
+    background-color: var(--accent-color-lighter);
+}
+
+/* Standard danger button */
+button.danger {
+    color: var(--button-text-color);
+    border-color: var(--danger-color);
+    background-color: var(--danger-color);
+}
+button.danger:hover {
+    background-color: var(--danger-color-light);
+    border-color: var(--danger-color-light);
+}
+button.danger:focus {
+    background-color: var(--danger-color-light);
+}
+button.danger:active {
+    border-color: var(--danger-color-lighter);
+    background-color: var(--danger-color-lighter);
+}
+
+/* Low emphasis button */
+button.low-emphasis {
+    color: var(--accent-color);
+    border-color: var(--button-border-color);
+    background-color: var(--accent-color-transparent0);
 }
 button.low-emphasis:hover {
     background-color: var(--accent-color-transparent5);
-    border-color: var(--accent-color-lighter);
-    box-shadow: var(--button-shadow-params) var(--shadow-color-light);
-    transition: background-color 0.125s ease-out, box-shadow 0.125s ease-out, border-color 0.125s ease-out;
+    border-color: var(--accent-color-light);
+}
+button.low-emphasis:focus {
+    border-color: var(--accent-color);
 }
 button.low-emphasis:active {
     border-color: var(--accent-color);
     background-color: var(--accent-color-transparent25);
-    box-shadow: var(--button-shadow-params) var(--shadow-color);
 }
-button.low-emphasis:focus {
-    border-color: var(--accent-color);
-}
+
+/* Low emphasis danger button */
 button.low-emphasis.danger {
     color: var(--danger-color);
+    border-color: var(--button-border-color);
     background-color: var(--danger-color-transparent0);
 }
 button.low-emphasis.danger:hover {
-    border-color: var(--danger-color-lighter);
+    border-color: var(--danger-color-light);
     background-color: var(--danger-color-transparent5);
+}
+button.low-emphasis.danger:focus {
+    border-color: var(--danger-color);
 }
 button.low-emphasis.danger:active {
     border-color: var(--danger-color);
     background-color: var(--danger-color-transparent25);
-}
-button.low-emphasis.danger:focus {
-    border-color: var(--danger-color);
 }
 
 
