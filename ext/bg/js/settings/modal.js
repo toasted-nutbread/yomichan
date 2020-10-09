@@ -29,6 +29,14 @@ class Modal extends EventDispatcher {
         return this._node;
     }
 
+    isVisible() {
+        if (this._useJqueryModal()) {
+            return !!(this._getWrappedNode().data('bs.modal') || {}).isShown;
+        } else {
+            return this._node.classList.contains(this._visibleClassName);
+        }
+    }
+
     setVisible(value) {
         value = !!value;
         if (this._useJqueryModal()) {
