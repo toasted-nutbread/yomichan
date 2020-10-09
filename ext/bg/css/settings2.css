@@ -96,6 +96,10 @@
     --toggle-knob-color: var(--background-color-light);
     --selectable-indicator-color: rgba(160, 160, 160, 0.25);
     --content-dimmer-color: rgba(0, 0, 0, 0.1);
+
+    --modal-padding-horizontal: 1em;
+    --modal-padding-vertical: 0.625em;
+    --modal-button-spacing: 0.625em;
 }
 :root[data-loaded=true] {
     --animation-duration: 0.125s;
@@ -948,10 +952,48 @@ button.low-emphasis.danger:active {
     border-radius: 0.5em;
     transform: translate(0, var(--modal-transition-offset));
     transition: transform 0s linear 0.25s;
+    box-shadow: var(--shadow-vertical);
+    display: flex;
+    flex-flow: column nowrap;
+    overflow: hidden;
 }
 .modal-container.modal-container-open>.modal-content {
     transform: translate(0, 0);
     transition: transform 0.25s ease-out;
+}
+.modal-header {
+    flex: 0 0 auto;
+    padding: var(--modal-padding-vertical) var(--modal-padding-horizontal);
+}
+.modal-title {
+    font-size: 1.125em;
+}
+.modal-footer {
+    flex: 0 0 auto;
+    padding: var(--modal-padding-vertical) var(--modal-padding-horizontal);
+    margin-right: calc(var(--modal-button-spacing) * -1);
+    display: flex;
+    flex-flow: row wrap;
+    align-items: flex-end;
+    justify-items: flex-end;
+    justify-content: flex-end;
+}
+.modal-footer>* {
+    margin-right: var(--modal-button-spacing);
+}
+.modal-body {
+    flex: 1 1 auto;
+    overflow: auto;
+    padding: var(--modal-padding-vertical) 0;
+}
+.modal-body .settings-item+.settings-item {
+    border-top: none
+}
+.modal-body .settings-item-left {
+    padding-left: var(--modal-padding-horizontal);
+}
+.modal-body .settings-item-right {
+    padding-right: var(--modal-padding-horizontal);
 }
 
 
