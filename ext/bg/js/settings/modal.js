@@ -86,7 +86,7 @@ class Modal extends EventDispatcher {
         const visible = this._node.classList.contains(this._visibleClassName);
         if (this._visible === visible) { return; }
         this._visible = visible;
-        this.trigger('visibilityChanged', {visible: false});
+        this.trigger('visibilityChanged', {visible});
     }
 
     _useJqueryModal() {
