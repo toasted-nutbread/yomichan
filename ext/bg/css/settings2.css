@@ -876,7 +876,7 @@ button.low-emphasis.danger:focus {
     overscroll-behavior: contain;
     background-color: var(--dim-background-color);
     outline: none;
-    z-index: 1;
+    z-index: 100;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.25s ease-in, visibility 0s linear 0.25s;
