@@ -17,6 +17,7 @@
 
 /* global
  * GenericSettingController
+ * Modal
  * SettingsController
  * api
  */
@@ -85,8 +86,8 @@ async function setupGenericSettingsController(genericSettingController) {
 
 for (const node of document.querySelectorAll('.test')) {
     node.addEventListener('click', () => {
-        document.querySelector('.modal-container').classList.toggle('modal-container-open');
-        document.querySelector('.modal-container').focus();
+        const m = new Modal(document.querySelector('.modal-container'));
+        m.setVisible(!m.isVisible());
     });
 }
 
