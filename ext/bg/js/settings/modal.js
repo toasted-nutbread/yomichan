@@ -30,10 +30,14 @@ class Modal extends EventDispatcher {
     }
 
     setVisible(value) {
+        value = !!value;
         if (this._useJqueryModal()) {
             this._getWrappedNode().modal(value ? 'show' : 'hide');
         } else {
-            this._node.classList.toggle(this._visibleClassName, value);
+            const {classList} = this._node;
+            if (classList.contains(this._visibleClassName) === value) { return; }
+            classList.toggle(this._visibleClassName, value);
+            if (value) { this._node.focus(); }
         }
     }
 
