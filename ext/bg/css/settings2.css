@@ -1198,6 +1198,33 @@ body.preview-sidebar-visible .fab-container-item.fab-container-item-popup-previe
 }
 
 
+/* Environment-specific display */
+:root[data-browser=edge] [data-show-for-browser]:not([data-show-for-browser~=edge]),
+:root[data-browser=edge-legacy] [data-show-for-browser]:not([data-show-for-browser~=edge-legacy]),
+:root[data-browser=chrome] [data-show-for-browser]:not([data-show-for-browser~=chrome]),
+:root[data-browser=firefox] [data-show-for-browser]:not([data-show-for-browser~=firefox]),
+:root[data-browser=firefox-mobile] [data-show-for-browser]:not([data-show-for-browser~=firefox-mobile]),
+:root[data-os=mac] [data-show-for-os]:not([data-show-for-os~=mac]),
+:root[data-os=win] [data-show-for-os]:not([data-show-for-os~=win]),
+:root[data-os=android] [data-show-for-os]:not([data-show-for-os~=android]),
+:root[data-os=cros] [data-show-for-os]:not([data-show-for-os~=cros]),
+:root[data-os=linux] [data-show-for-os]:not([data-show-for-os~=linux]),
+:root[data-os=openbsd] [data-show-for-os]:not([data-show-for-os~=openbsd]),
+:root[data-browser=edge] [data-hide-for-browser~=edge],
+:root[data-browser=edge-legacy] [data-hide-for-browser~=edge-legacy],
+:root[data-browser=chrome] [data-hide-for-browser~=chrome],
+:root[data-browser=firefox] [data-hide-for-browser~=firefox],
+:root[data-browser=firefox-mobile] [data-hide-for-browser~=firefox-mobile],
+:root[data-os=mac] [data-hide-for-os~=mac],
+:root[data-os=win] [data-hide-for-os~=win],
+:root[data-os=android] [data-hide-for-os~=android],
+:root[data-os=cros] [data-hide-for-os~=cros],
+:root[data-os=linux] [data-hide-for-os~=linux],
+:root[data-os=openbsd] [data-hide-for-os~=openbsd] {
+    display: none;
+}
+
+
 /* Media-specific styles */
 @media (max-width: 800px), (hover: none) and (max-width: 1100px) {
     .fab-container {

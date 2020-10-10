@@ -24,6 +24,12 @@
  * api
  */
 
+async function setupEnvironmentInfo() {
+    const {browser, platform} = await api.getEnvironmentInfo();
+    document.documentElement.dataset.browser = browser;
+    document.documentElement.dataset.os = platform.os;
+}
+
 async function setupGenericSettingsController(genericSettingController) {
     await genericSettingController.prepare();
     await genericSettingController.refresh();
@@ -35,6 +41,8 @@ async function setupGenericSettingsController(genericSettingController) {
 
         api.forwardLogsToBackend();
         await yomichan.prepare();
+
+        setupEnvironmentInfo();
 
         const optionsFull = await api.optionsGetFull();
 
