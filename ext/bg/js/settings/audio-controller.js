@@ -28,11 +28,13 @@ class AudioController {
         this._audioSourceContainer = null;
         this._audioSourceAddButton = null;
         this._audioSourceEntries = [];
+        this._ttsVoiceTestTextInput = null;
     }
 
     async prepare() {
         this._audioSystem.prepare();
 
+        this._ttsVoiceTestTextInput = document.querySelector('#text-to-speech-voice-test-text');
         this._audioSourceContainer = document.querySelector('#audio-source-list');
         this._audioSourceAddButton = document.querySelector('#audio-source-add');
         this._audioSourceContainer.textContent = '';
@@ -64,15 +66,15 @@ class AudioController {
         }
     }
 
-    _onTestTextToSpeech(e) {
+    _onTestTextToSpeech() {
         try {
-            const text = e.currentTarget.dataset.speechText || '';
+            const text = this._ttsVoiceTestTextInput.value || '';
             const voiceUri = document.querySelector('[data-setting="audio.textToSpeechVoice"]').value;
 
             const audio = this._audioSystem.createTextToSpeechAudio(text, voiceUri);
             audio.volume = 1.0;
             audio.play();
-        } catch (error) {
+        } catch (e) {
             // NOP
         }
     }
