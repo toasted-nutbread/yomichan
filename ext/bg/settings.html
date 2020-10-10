@@ -840,17 +840,19 @@
 
                 <p></p>
 
-                <div data-show-for-browser="firefox-mobile"><div class="alert alert-warning storage-persist-fail-warning" hidden>
-                    <p>It may not be possible to enable Persistent Storage on Firefox for Android.</p>
-                </div></div>
+                <div id="storage-persist-fail-warning" hidden>
+                    <div data-show-for-browser="firefox-mobile"><div class="alert alert-warning">
+                        <p>It may not be possible to enable Persistent Storage on Firefox for Android.</p>
+                    </div></div>
 
-                <div data-show-for-browser="chrome"><div class="alert alert-warning storage-persist-fail-warning" hidden>
-                    <p>
-                        It may not be possible to enable Persistent Storage on Chrome-based browsers.
-                        However, the Yomichan extension has permission for unlimited storage which should
-                        prevent Chrome from deleting data.<sup><a href="https://bugs.chromium.org/p/chromium/issues/detail?id=680392#c15" target="_blank" rel="noopener">[1]</a></sup>
-                    </p>
-                </div></div>
+                    <div data-show-for-browser="chrome"><div class="alert alert-warning">
+                        <p>
+                            It may not be possible to enable Persistent Storage on Chrome-based browsers.
+                            However, the Yomichan extension has permission for unlimited storage which should
+                            prevent Chrome from deleting data.<sup><a href="https://bugs.chromium.org/p/chromium/issues/detail?id=680392#c15" target="_blank" rel="noopener">[1]</a></sup>
+                        </p>
+                    </div></div>
+                </div>
             </div>
 
             <div>

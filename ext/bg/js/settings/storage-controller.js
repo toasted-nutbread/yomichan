@@ -108,7 +108,7 @@ class StorageController {
             this._persistentStorageCheckbox.checked = true;
             this.updateStats();
         } else {
-            const node = document.querySelector('.storage-persist-fail-warning');
+            const node = document.querySelector('#storage-persist-fail-warning');
             if (node !== null) { node.hidden = false; }
         }
     }
