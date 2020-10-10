@@ -44,7 +44,7 @@ class AudioController {
         }
         this._updateTextToSpeechVoices();
 
-        document.querySelector('#text-to-speech-voice-test').addEventListener('click', this._testTextToSpeech.bind(this), false);
+        document.querySelector('#text-to-speech-voice-test').addEventListener('click', this._onTestTextToSpeech.bind(this), false);
 
         this._settingsController.on('optionsChanged', this._onOptionsChanged.bind(this));
 
@@ -61,6 +61,19 @@ class AudioController {
 
         for (const audioSource of options.audio.sources) {
             this._createAudioSourceEntry(audioSource);
+        }
+    }
+
+    _onTestTextToSpeech(e) {
+        try {
+            const text = e.currentTarget.dataset.speechText || '';
+            const voiceUri = document.querySelector('#text-to-speech-voice').value;
+
+            const audio = this._audioSystem.createTextToSpeechAudio(text, voiceUri);
+            audio.volume = 1.0;
+            audio.play();
+        } catch (error) {
+            // NOP
         }
     }
 
@@ -117,19 +130,6 @@ class AudioController {
             languageTag.startsWith('ja-') ||
             languageTag.startsWith('jpn-')
         );
-    }
-
-    _testTextToSpeech() {
-        try {
-            const text = document.querySelector('#text-to-speech-voice-test').dataset.speechText || '';
-            const voiceUri = document.querySelector('#text-to-speech-voice').value;
-
-            const audio = this._audioSystem.createTextToSpeechAudio(text, voiceUri);
-            audio.volume = 1.0;
-            audio.play();
-        } catch (e) {
-            // NOP
-        }
     }
 
     _getUnusedAudioSource() {
