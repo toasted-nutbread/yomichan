@@ -20,9 +20,11 @@ class StorageController {
         this._mostRecentStorageEstimate = null;
         this._storageEstimateFailed = false;
         this._isUpdating = false;
+        this._persistentStorageCheckbox = false;
     }
 
     prepare() {
+        this._persistentStorageCheckbox = document.querySelector('#storage-persist-button-checkbox');
         this._preparePersistentStorage();
         this.updateStats();
         document.querySelector('#storage-refresh').addEventListener('click', this.updateStats.bind(this), false);
@@ -68,33 +70,37 @@ class StorageController {
 
         const info = document.querySelector('#storage-persist-info');
         const button = document.querySelector('#storage-persist-button');
-        const checkbox = document.querySelector('#storage-persist-button-checkbox');
+        const checkbox = this._persistentStorageCheckbox;
 
         info.hidden = false;
         button.hidden = false;
 
-        let persisted = await this._isStoragePeristent();
-        checkbox.checked = persisted;
+        checkbox.checked = await this._isStoragePeristent();
 
-        button.addEventListener('click', async () => {
-            if (persisted) {
-                return;
-            }
-            let result = false;
-            try {
-                result = await navigator.storage.persist();
-            } catch (e) {
-                // NOP
-            }
+        button.addEventListener('click', this._onPersistStorageButtonClick.bind(this), false);
+    }
 
-            if (result) {
-                persisted = true;
-                checkbox.checked = true;
-                this.updateStats();
-            } else {
-                document.querySelector('.storage-persist-fail-warning').hidden = false;
-            }
-        }, false);
+    _onPersistStorageButtonClick() {
+        this._attemptPersistStorage();
+    }
+
+    async _attemptPersistStorage() {
+        if (await this._isStoragePeristent()) { return; }
+
+        let result = false;
+        try {
+            result = await navigator.storage.persist();
+        } catch (e) {
+            // NOP
+        }
+
+        if (result) {
+            this._persistentStorageCheckbox.checked = true;
+            this.updateStats();
+        } else {
+            const node = document.querySelector('.storage-persist-fail-warning');
+            if (node !== null) { node.hidden = false; }
+        }
     }
 
     async _storageEstimate() {
