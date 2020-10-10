@@ -64,9 +64,9 @@ class StorageController {
                 }
                 this._storageUseFiniteNode.hidden = !finite;
                 this._storageUseInfiniteNode.hidden = finite;
-                this._storageUseUndefinedNode.hidden = true;
             }
 
+            if (this._storageUseUndefinedNode !== null) { this._storageUseUndefinedNode.hidden = !valid; }
             if (this._storageUseNode !== null) { this._storageUseNode.hidden = !valid; }
             if (this._storageErrorNode !== null) { this._storageErrorNode.hidden = valid; }
 
