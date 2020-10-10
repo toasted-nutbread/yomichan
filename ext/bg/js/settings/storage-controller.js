@@ -42,12 +42,15 @@ class StorageController {
                     document.querySelector('#storage-usage').textContent = this._bytesToLabeledString(estimate.usage);
                     document.querySelector('#storage-quota').textContent = this._bytesToLabeledString(estimate.quota);
                 }
-                document.querySelector('#storage-use-finite').classList.toggle('storage-hidden', !finite);
-                document.querySelector('#storage-use-infinite').classList.toggle('storage-hidden', finite);
+                document.querySelector('#storage-use-finite').hidden = !finite;
+                document.querySelector('#storage-use-infinite').hidden = finite;
+                document.querySelector('#storage-use-undefined').hidden = true;
             }
 
-            document.querySelector('#storage-use').classList.toggle('storage-hidden', !valid);
-            document.querySelector('#storage-error').classList.toggle('storage-hidden', valid);
+            const useContainer = document.querySelector('#storage-use');
+            const errorContainer = document.querySelector('#storage-error');
+            if (useContainer) { useContainer.hidden = !valid; }
+            if (errorContainer) { errorContainer.hidden = valid; }
 
             return valid;
         } finally {
@@ -67,8 +70,8 @@ class StorageController {
         const button = document.querySelector('#storage-persist-button');
         const checkbox = document.querySelector('#storage-persist-button-checkbox');
 
-        info.classList.remove('storage-hidden');
-        button.classList.remove('storage-hidden');
+        info.hidden = false;
+        button.hidden = false;
 
         let persisted = await this._isStoragePeristent();
         checkbox.checked = persisted;
@@ -89,7 +92,7 @@ class StorageController {
                 checkbox.checked = true;
                 this.updateStats();
             } else {
-                document.querySelector('.storage-persist-fail-warning').classList.remove('storage-hidden');
+                document.querySelector('.storage-persist-fail-warning').hidden = false;
             }
         }, false);
     }
