@@ -41,6 +41,11 @@ class SettingsDisplayController {
             node.addEventListener('click', onModalAction, false);
         }
 
+        const onSelectOnClickElementClick = this._onSelectOnClickElementClick.bind(this);
+        for (const node of document.querySelectorAll('[data-select-on-click]')) {
+            node.addEventListener('click', onSelectOnClickElementClick, false);
+        }
+
         this._contentNode.addEventListener('scroll', this._onScroll.bind(this), {passive: true});
         document.querySelector('#show-preview-checkbox').addEventListener('change', this._onShowPreviewCheckboxChange.bind(this), false);
 
@@ -132,6 +137,22 @@ class SettingsDisplayController {
         }
 
         e.preventDefault();
+    }
+
+    _onSelectOnClickElementClick(e) {
+        if (e.button !== 0) { return; }
+
+        const node = e.currentTarget;
+        const range = document.createRange();
+        range.selectNode(node);
+
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
     }
 
     _updateScrollTarget() {
