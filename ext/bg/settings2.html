@@ -426,7 +426,7 @@
             </div>
         </div></div>
         -->
-        <div class="settings-item settings-item-button"><div class="settings-item-inner">
+        <div class="settings-item settings-item-button" data-modal-action="show,audio-sources"><div class="settings-item-inner">
             <div class="settings-item-left">
                 <div class="settings-item-label">Audio playback sources</div>
             </div>
@@ -963,22 +963,110 @@
     </div>
 </div>
 
-<!--
-TODO
-<a href="#" class="test" data-modal-action="show,test-modal">test</a>
 
-<div id="test-modal" class="modal-container" tabindex="-1" role="dialog"><div class="modal-content">
-    <div class="modal-header"><div class="modal-title">Title</div></div>
+<!-- Audio sources modal -->
+<div id="audio-sources" class="modal-container" tabindex="-1" role="dialog"><div class="modal-content">
+    <div class="modal-header"><div class="modal-title">Audio Sources</div></div>
     <div class="modal-body">
-        Body
+        <div class="settings-item">
+            <div class="settings-item-inner">
+                <div class="settings-item-left">
+                    <div class="settings-item-label">
+                        Text-to-speech voice
+                        <a class="more-toggle more-only" data-parent-distance="4">(?)</a>
+                    </div>
+                </div>
+                <div class="settings-item-right">
+                    <select data-setting="audio.textToSpeechVoice" id="text-to-speech-voice"></select>
+                </div>
+            </div>
+            <div class="settings-item-children more" hidden>
+                <p>
+                    Change which voice is used for text-to-speech audio playback.<br>
+                </p>
+                <div class="horizontal-flex">
+                    <input type="text" value="よみちゃん" id="text-to-speech-voice-test-text">
+                    <button id="text-to-speech-voice-test">Test</button>
+                    <a class="more-toggle" data-parent-distance="3">Hide&hellip;</a>
+                </div>
+            </div>
+        </div>
+        <div class="settings-item">
+            <div class="settings-item-inner">
+                <div class="settings-item-left">
+                    <div class="settings-item-label">
+                        Custom audio source
+                        <a class="more-toggle more-only" data-parent-distance="4">(?)</a>
+                    </div>
+                </div>
+                <div class="settings-item-right">
+                    <input type="text" spellcheck="false" autocomplete="off" data-setting="audio.customSourceUrl" placeholder="None">
+                </div>
+            </div>
+            <div class="settings-item-children more" hidden>
+                <p>
+                    URL format used for fetching audio clips in "Custom" mode.
+                    The replacement tags <code>{expression}</code> and <code>{reading}</code> can be used to specify which
+                    expression and reading is being looked up.<br>
+                    Example: <a>http://localhost/audio.mp3?expression={expression}&reading={reading}</a>
+                </p>
+                <p>
+                    <a class="more-toggle" data-parent-distance="3">Less&hellip;</a>
+                </p>
+            </div>
+        </div>
+        <div class="settings-item">
+            <div class="settings-item-inner">
+                <div class="settings-item-left">
+                    <div class="settings-item-label">
+                        Audio sources
+                        <a class="more-toggle more-only" data-parent-distance="4">(?)</a>
+                    </div>
+                </div>
+                <div class="settings-item-right">
+                    <button id="audio-source-add" class="low-emphasis">Add</button>
+                </div>
+            </div>
+            <div class="settings-item-children more" hidden>
+                <p>
+                    When searching for audio, the sources are checked in order until the first
+                    valid source is found. This allows for selecting a fallback source if the
+                    first choice is not available.
+                </p>
+                <p>
+                    <a class="more-toggle" data-parent-distance="3">Less&hellip;</a>
+                </p>
+            </div>
+            <div class="settings-item-children">
+                <div id="audio-source-list" class="generic-list"></div>
+                <div id="audio-source-list-empty">
+                    No audio sources enabled
+                </div>
+            </div>
+        </div>
     </div>
     <div class="modal-footer">
-        <button class="low-emphasis" data-modal-action="hide">Cancel</button>
-        <button data-modal-action="hide">Okay</button>
+        <button data-modal-action="hide">Close</button>
     </div>
 </div></div>
--->
 
+
+<!-- Templates -->
+<template id="audio-source-template"><div class="audio-source horizontal-flex">
+    <div class="generic-list-index-prefix"></div>
+    <select class="audio-source-select">
+        <option value="jpod101">JapanesePod101</option>
+        <option value="jpod101-alternate">JapanesePod101 (Alternate)</option>
+        <option value="jisho">Jisho.org</option>
+        <option value="text-to-speech">Text-to-speech</option>
+        <option value="text-to-speech-reading">Text-to-speech (Kana reading)</option>
+        <option value="custom">Custom</option>
+    </select>
+    <div class="horizontal-flex-fill"><button class="danger audio-source-remove" title="Remove">Remove</button></div>
+</div></template>
+
+
+<!-- Scripts -->
 <script src="/mixed/lib/jszip.min.js"></script>
 <script src="/mixed/lib/wanakana.min.js"></script>
 

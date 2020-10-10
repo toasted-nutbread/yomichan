@@ -37,6 +37,7 @@
     --settings-group-inner-horizontal-padding: 1.5em;
     --settings-group-inner-horizontal-padding-half: calc(var(--settings-group-inner-horizontal-padding) * 0.5);
     --settings-group-inner-horizontal-padding-half-wrappable: var(--settings-group-inner-horizontal-padding-half);
+    --settings-group-inner-horizontal-padding-fourth: calc(var(--settings-group-inner-horizontal-padding) * 0.25);
     --settings-group-border-radius: 0.3em;
     --settings-group-right-max-height: 40px;
     --settings-group-wrap: nowrap;
@@ -1014,8 +1015,16 @@ button.low-emphasis.danger:active {
 }
 .modal-body .settings-item-left {
     padding-left: var(--modal-padding-horizontal);
+    padding-top: var(--settings-group-inner-horizontal-padding-fourth);
+    padding-bottom: var(--settings-group-inner-horizontal-padding-fourth);
 }
 .modal-body .settings-item-right {
+    padding-right: var(--modal-padding-horizontal);
+    padding-top: var(--settings-group-inner-horizontal-padding-fourth);
+    padding-bottom: var(--settings-group-inner-horizontal-padding-fourth);
+}
+.modal-body .settings-item-children {
+    padding-left: var(--modal-padding-horizontal);
     padding-right: var(--modal-padding-horizontal);
 }
 
@@ -1145,6 +1154,47 @@ body.preview-sidebar-visible .fab-container {
 body.sidebar-visible .fab-container-item.fab-container-item-popup-preview,
 body.preview-sidebar-visible .fab-container-item.fab-container-item-popup-preview {
     display: block;
+}
+
+
+/* Specialized settings styles */
+#audio-source-list>div+div {
+    margin-top: 0.375em;
+}
+#audio-source-list .generic-list-index-prefix {
+    width: 2em;
+    text-align: center;
+}
+#audio-source-list-empty {
+    display: none;
+}
+#audio-source-list:empty+#audio-source-list-empty {
+    display: block;
+}
+
+
+/* Miscellaneous styles */
+.horizontal-flex {
+    display: flex;
+    flex-flow: row wrap;
+    margin-left: -0.375em;
+    align-items: center;
+    align-content: flex-start;
+    justify-content: flex-start;
+}
+.horizontal-flex>* {
+    margin-left: 0.375em;
+}
+.horizontal-flex-fill {
+    flex-grow: 1;
+}
+
+.generic-list {
+    counter-reset: generic-list-index;
+}
+.generic-list-index-prefix::after {
+    counter-increment: generic-list-index;
+    content: counter(generic-list-index);
 }
 
 

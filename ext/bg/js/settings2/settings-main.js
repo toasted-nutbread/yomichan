@@ -16,6 +16,7 @@
  */
 
 /* global
+ * AudioController
  * GenericSettingController
  * ModalController
  * SettingsController
@@ -47,6 +48,9 @@ async function setupGenericSettingsController(genericSettingController) {
 
         const genericSettingController = new GenericSettingController(settingsController);
         preparePromises.push(setupGenericSettingsController(genericSettingController));
+
+        const audioController = new AudioController(settingsController);
+        audioController.prepare();
 
         await Promise.all(preparePromises);
 
