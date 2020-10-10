@@ -67,7 +67,11 @@ class AudioController {
     _updateTextToSpeechVoices() {
         const voices = (
             typeof speechSynthesis !== 'undefined' ?
-            [...speechSynthesis.getVoices()].map((voice, index) => ({voice, index})) :
+            [...speechSynthesis.getVoices()].map((voice, index) => ({
+                voice,
+                isJapanese: this._languageTagIsJapanese(voice.lang),
+                index
+            })) :
             []
         );
         voices.sort(this._textToSpeechVoiceCompare.bind(this));
@@ -92,20 +96,16 @@ class AudioController {
     }
 
     _textToSpeechVoiceCompare(a, b) {
-        const aIsJapanese = this._languageTagIsJapanese(a.voice.lang);
-        const bIsJapanese = this._languageTagIsJapanese(b.voice.lang);
-        if (aIsJapanese) {
-            if (!bIsJapanese) { return -1; }
+        if (a.isJapanese) {
+            if (!b.isJapanese) { return -1; }
         } else {
-            if (bIsJapanese) { return 1; }
+            if (b.isJapanese) { return 1; }
         }
 
-        const aIsDefault = a.voice.default;
-        const bIsDefault = b.voice.default;
-        if (aIsDefault) {
-            if (!bIsDefault) { return -1; }
+        if (a.voice.default) {
+            if (!b.voice.default) { return -1; }
         } else {
-            if (bIsDefault) { return 1; }
+            if (b.voice.default) { return 1; }
         }
 
         return a.index - b.index;
