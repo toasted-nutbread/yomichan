@@ -16,9 +16,10 @@
  */
 
 class SettingsDisplayController {
-    constructor() {
+    constructor(modalController) {
         this._contentNode = null;
         this._previewFrameContainer = null;
+        this._modalController = modalController;
     }
 
     prepare() {
@@ -33,9 +34,15 @@ class SettingsDisplayController {
             node.addEventListener('click', this._onMoreToggleClick.bind(this), false);
         }
 
+        const onModalAction = this._onModalAction.bind(this);
+        for (const node of document.querySelectorAll('[data-modal-action]')) {
+            node.addEventListener('click', onModalAction, false);
+        }
+
         this._contentNode.addEventListener('scroll', this._onScroll.bind(this), {passive: true});
         document.querySelector('#show-preview-checkbox').addEventListener('change', this._onShowPreviewCheckboxChange.bind(this), false);
 
+        window.addEventListener('keydown', this._onKeyDown.bind(this), false);
         window.addEventListener('popstate', this._onPopState.bind(this), false);
         this._updateScrollTarget();
     }
@@ -86,6 +93,45 @@ class SettingsDisplayController {
         this._updateScrollTarget();
     }
 
+    _onKeyDown(e) {
+        switch (e.code) {
+            case 'Escape':
+                this._closeTopModal();
+                e.preventDefault();
+                break;
+        }
+    }
+
+    _onModalAction(e) {
+        const node = e.currentTarget;
+        const {modalAction} = node.dataset;
+        if (typeof modalAction !== 'string') { return; }
+
+        let [action, target] = modalAction.split(',');
+        if (typeof target === 'undefined') {
+            const currentModal = node.closest('.modal-container');
+            if (currentModal === null) { return; }
+            target = currentModal.id;
+        }
+
+        const modal = this._modalController.getModal(target);
+        if (typeof modal === 'undefined') { return; }
+
+        switch (action) {
+            case 'show':
+                modal.setVisible(true);
+                break;
+            case 'hide':
+                modal.setVisible(false);
+                break;
+            case 'toggle':
+                modal.setVisible(!modal.isVisible());
+                break;
+        }
+
+        e.preventDefault();
+    }
+
     _updateScrollTarget() {
         const hash = window.location.hash;
         if (!hash.startsWith('#!')) { return; }
@@ -110,5 +156,11 @@ class SettingsDisplayController {
             if (link === null) { break; }
         }
         return link;
+    }
+
+    _closeTopModal() {
+        const modal = this._modalController.getTopVisibleModal();
+        if (modal === null) { return; }
+        modal.setVisible(false);
     }
 }
