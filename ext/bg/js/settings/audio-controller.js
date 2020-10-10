@@ -33,8 +33,8 @@ class AudioController {
     async prepare() {
         this._audioSystem.prepare();
 
-        this._audioSourceContainer = document.querySelector('.audio-source-list');
-        this._audioSourceAddButton = document.querySelector('.audio-source-add');
+        this._audioSourceContainer = document.querySelector('#audio-source-list');
+        this._audioSourceAddButton = document.querySelector('#audio-source-add');
         this._audioSourceContainer.textContent = '';
 
         this._audioSourceAddButton.addEventListener('click', this._onAddAudioSource.bind(this), false);
