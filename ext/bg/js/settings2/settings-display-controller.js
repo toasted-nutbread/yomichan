@@ -17,14 +17,16 @@
 
 class SettingsDisplayController {
     constructor(modalController) {
+        this._modalController = modalController;
         this._contentNode = null;
         this._previewFrameContainer = null;
-        this._modalController = modalController;
+        this._topLink = null;
     }
 
     prepare() {
         this._contentNode = document.querySelector('.content');
         this._previewFrameContainer = document.querySelector('.preview-frame-container');
+        this._topLink = document.querySelector('.sidebar-top-link');
 
         const onFabButtonClick = this._onFabButtonClick.bind(this);
         for (const fabButton of document.querySelectorAll('.fab-button')) {
@@ -47,6 +49,7 @@ class SettingsDisplayController {
         }
 
         this._contentNode.addEventListener('scroll', this._onScroll.bind(this), {passive: true});
+        this._topLink.addEventListener('click', this._onTopLinkClick.bind(this), false);
         document.querySelector('#show-preview-checkbox').addEventListener('change', this._onShowPreviewCheckboxChange.bind(this), false);
 
         window.addEventListener('keydown', this._onKeyDown.bind(this), false);
@@ -58,7 +61,7 @@ class SettingsDisplayController {
 
     _onScroll(e) {
         const content = e.currentTarget;
-        const topLink = document.querySelector('.sidebar-top-link');
+        const topLink = this._topLink;
         const scrollTop = content.scrollTop;
         topLink.hidden = (scrollTop < 100);
     }
@@ -149,6 +152,21 @@ class SettingsDisplayController {
         const selection = window.getSelection();
         selection.removeAllRanges();
         selection.addRange(range);
+
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+    }
+
+    _onTopLinkClick(e) {
+        if (window.location.hash.length > 0) {
+            const {pathname, search} = window.location;
+            const url = `${pathname}${search}`;
+            history.pushState(null, '', url);
+        }
+
+        const content = this._contentNode;
+        content.scrollTop = 0;
 
         e.preventDefault();
         e.stopPropagation();
