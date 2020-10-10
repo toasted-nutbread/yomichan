@@ -26,12 +26,14 @@ class SettingsDisplayController {
         this._contentNode = document.querySelector('.content');
         this._previewFrameContainer = document.querySelector('.preview-frame-container');
 
+        const onFabButtonClick = this._onFabButtonClick.bind(this);
         for (const fabButton of document.querySelectorAll('.fab-button')) {
-            fabButton.addEventListener('click', this._onFabButtonClick.bind(this), false);
+            fabButton.addEventListener('click', onFabButtonClick, false);
         }
 
+        const onMoreToggleClick = this._onMoreToggleClick.bind(this);
         for (const node of document.querySelectorAll('.more-toggle')) {
-            node.addEventListener('click', this._onMoreToggleClick.bind(this), false);
+            node.addEventListener('click', onMoreToggleClick, false);
         }
 
         const onModalAction = this._onModalAction.bind(this);
