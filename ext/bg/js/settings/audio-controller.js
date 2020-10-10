@@ -39,7 +39,12 @@ class AudioController {
 
         this._audioSourceAddButton.addEventListener('click', this._onAddAudioSource.bind(this), false);
 
-        this._prepareTextToSpeech();
+        if (typeof speechSynthesis !== 'undefined') {
+            speechSynthesis.addEventListener('voiceschanged', this._updateTextToSpeechVoices.bind(this), false);
+        }
+        this._updateTextToSpeechVoices();
+
+        document.querySelector('#text-to-speech-voice-test').addEventListener('click', this._testTextToSpeech.bind(this), false);
 
         this._settingsController.on('optionsChanged', this._onOptionsChanged.bind(this));
 
@@ -59,17 +64,12 @@ class AudioController {
         }
     }
 
-    _prepareTextToSpeech() {
-        if (typeof speechSynthesis === 'undefined') { return; }
-
-        speechSynthesis.addEventListener('voiceschanged', this._updateTextToSpeechVoices.bind(this), false);
-        this._updateTextToSpeechVoices();
-
-        document.querySelector('#text-to-speech-voice-test').addEventListener('click', this._testTextToSpeech.bind(this), false);
-    }
-
     _updateTextToSpeechVoices() {
-        const voices = Array.prototype.map.call(speechSynthesis.getVoices(), (voice, index) => ({voice, index}));
+        const voices = (
+            typeof speechSynthesis !== 'undefined' ?
+            [...speechSynthesis.getVoices()].map((voice, index) => ({voice, index})) :
+            []
+        );
         voices.sort(this._textToSpeechVoiceCompare.bind(this));
 
         document.querySelector('#text-to-speech-voice-container').hidden = (voices.length === 0);
