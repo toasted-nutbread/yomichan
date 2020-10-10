@@ -67,7 +67,7 @@ class AudioController {
     _onTestTextToSpeech(e) {
         try {
             const text = e.currentTarget.dataset.speechText || '';
-            const voiceUri = document.querySelector('#text-to-speech-voice').value;
+            const voiceUri = document.querySelector('[data-setting="audio.textToSpeechVoice"]').value;
 
             const audio = this._audioSystem.createTextToSpeechAudio(text, voiceUri);
             audio.volume = 1.0;
