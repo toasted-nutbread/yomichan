@@ -72,8 +72,8 @@ class StorageController {
         const info = document.querySelector('#storage-persist-info');
         if (info !== null) { info.hidden = false; }
 
-        const checkbox = this._persistentStorageCheckbox;
-        checkbox.checked = await this._isStoragePeristent();
+        const isStoragePeristent = await this._isStoragePeristent();
+        this._updateCheckbox(isStoragePeristent);
 
         const button = document.querySelector('#storage-persist-button');
         if (button !== null) {
@@ -101,15 +101,16 @@ class StorageController {
     async _attemptPersistStorage() {
         if (await this._isStoragePeristent()) { return; }
 
-        let result = false;
+        let isStoragePeristent = false;
         try {
-            result = await navigator.storage.persist();
+            isStoragePeristent = await navigator.storage.persist();
         } catch (e) {
             // NOP
         }
 
-        if (result) {
-            this._persistentStorageCheckbox.checked = true;
+        this._updateCheckbox(isStoragePeristent);
+
+        if (isStoragePeristent) {
             this.updateStats();
         } else {
             const node = document.querySelector('#storage-persist-fail-warning');
@@ -150,5 +151,11 @@ class StorageController {
             // NOP
         }
         return false;
+    }
+
+    _updateCheckbox(isStoragePeristent) {
+        const checkbox = this._persistentStorageCheckbox;
+        checkbox.checked = isStoragePeristent;
+        checkbox.readOnly = isStoragePeristent;
     }
 }
