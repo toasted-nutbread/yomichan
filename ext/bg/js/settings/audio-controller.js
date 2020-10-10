@@ -89,23 +89,24 @@ class AudioController {
         );
         voices.sort(this._textToSpeechVoiceCompare.bind(this));
 
-        const fragment = document.createDocumentFragment();
+        for (const select of document.querySelectorAll('[data-setting="audio.textToSpeechVoice"]')) {
+            const fragment = document.createDocumentFragment();
 
-        let option = document.createElement('option');
-        option.value = '';
-        option.textContent = 'None';
-        fragment.appendChild(option);
-
-        for (const {voice} of voices) {
-            option = document.createElement('option');
-            option.value = voice.voiceURI;
-            option.textContent = `${voice.name} (${voice.lang})`;
+            let option = document.createElement('option');
+            option.value = '';
+            option.textContent = 'None';
             fragment.appendChild(option);
-        }
 
-        const select = document.querySelector('#text-to-speech-voice');
-        select.textContent = '';
-        select.appendChild(fragment);
+            for (const {voice} of voices) {
+                option = document.createElement('option');
+                option.value = voice.voiceURI;
+                option.textContent = `${voice.name} (${voice.lang})`;
+                fragment.appendChild(option);
+            }
+
+            select.textContent = '';
+            select.appendChild(fragment);
+        }
     }
 
     _textToSpeechVoiceCompare(a, b) {
