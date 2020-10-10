@@ -21,10 +21,25 @@ class StorageController {
         this._storageEstimateFailed = false;
         this._isUpdating = false;
         this._persistentStorageCheckbox = false;
+        this._storageUsageNode = null;
+        this._storageQuotaNode = null;
+        this._storageUseFiniteNode = null;
+        this._storageUseInfiniteNode = null;
+        this._storageUseUndefinedNode = null;
+        this._storageUseNode = null;
+        this._storageErrorNode = null;
     }
 
     prepare() {
         this._persistentStorageCheckbox = document.querySelector('#storage-persistent-checkbox');
+        this._storageUsageNode = document.querySelector('#storage-usage');
+        this._storageQuotaNode = document.querySelector('#storage-quota');
+        this._storageUseFiniteNode = document.querySelector('#storage-use-finite');
+        this._storageUseInfiniteNode = document.querySelector('#storage-use-infinite');
+        this._storageUseUndefinedNode = document.querySelector('#storage-use-undefined');
+        this._storageUseNode = document.querySelector('#storage-use');
+        this._storageErrorNode = document.querySelector('#storage-error');
+
         this._preparePersistentStorage();
         this.updateStats();
         this._persistentStorageCheckbox.addEventListener('change', this._onPersistentStorageCheckboxChange.bind(this), false);
@@ -44,18 +59,16 @@ class StorageController {
                 // Firefox reports usage as 0 when persistent storage is enabled.
                 const finite = (estimate.usage > 0 || !(await this._isStoragePeristent()));
                 if (finite) {
-                    document.querySelector('#storage-usage').textContent = this._bytesToLabeledString(estimate.usage);
-                    document.querySelector('#storage-quota').textContent = this._bytesToLabeledString(estimate.quota);
+                    this._storageUsageNode.textContent = this._bytesToLabeledString(estimate.usage);
+                    this._storageQuotaNode.textContent = this._bytesToLabeledString(estimate.quota);
                 }
-                document.querySelector('#storage-use-finite').hidden = !finite;
-                document.querySelector('#storage-use-infinite').hidden = finite;
-                document.querySelector('#storage-use-undefined').hidden = true;
+                this._storageUseFiniteNode.hidden = !finite;
+                this._storageUseInfiniteNode.hidden = finite;
+                this._storageUseUndefinedNode.hidden = true;
             }
 
-            const useContainer = document.querySelector('#storage-use');
-            const errorContainer = document.querySelector('#storage-error');
-            if (useContainer) { useContainer.hidden = !valid; }
-            if (errorContainer) { errorContainer.hidden = valid; }
+            if (this._storageUseNode !== null) { this._storageUseNode.hidden = !valid; }
+            if (this._storageErrorNode !== null) { this._storageErrorNode.hidden = valid; }
 
             return valid;
         } finally {
