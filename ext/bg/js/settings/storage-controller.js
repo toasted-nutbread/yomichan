@@ -32,6 +32,8 @@ class StorageController {
     }
 
     async updateStats() {
+        if (this._isUpdating) { return; }
+
         try {
             this._isUpdating = true;
 
