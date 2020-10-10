@@ -955,12 +955,12 @@ button.low-emphasis.danger:active {
     z-index: 100;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.25s ease-in, visibility 0s linear 0.25s;
+    transition: opacity var(--animation-duration2) ease-in, visibility 0s linear var(--animation-duration2);
 }
 .modal-container.modal-container-open {
     opacity: 1;
     visibility: visible;
-    transition: opacity 0.25s ease-out, visibility 0s linear;
+    transition: opacity var(--animation-duration2) ease-out, visibility 0s linear;
 }
 .modal-content {
     max-width: 100%;
@@ -971,7 +971,7 @@ button.low-emphasis.danger:active {
     flex: 0 1 auto;
     border-radius: 0.5em;
     transform: translate(0, var(--modal-transition-offset));
-    transition: transform 0s linear 0.25s;
+    transition: transform 0s linear var(--animation-duration2);
     box-shadow: var(--shadow-vertical);
     display: flex;
     flex-flow: column nowrap;
@@ -979,7 +979,7 @@ button.low-emphasis.danger:active {
 }
 .modal-container.modal-container-open>.modal-content {
     transform: translate(0, 0);
-    transition: transform 0.25s ease-out;
+    transition: transform var(--animation-duration2) ease-out;
 }
 .modal-header {
     flex: 0 0 auto;
