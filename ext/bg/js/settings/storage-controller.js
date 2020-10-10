@@ -70,15 +70,16 @@ class StorageController {
         }
 
         const info = document.querySelector('#storage-persist-info');
-        const button = document.querySelector('#storage-persist-button');
+        if (info !== null) { info.hidden = false; }
+
         const checkbox = this._persistentStorageCheckbox;
-
-        info.hidden = false;
-        button.hidden = false;
-
         checkbox.checked = await this._isStoragePeristent();
 
-        button.addEventListener('click', this._onPersistStorageButtonClick.bind(this), false);
+        const button = document.querySelector('#storage-persist-button');
+        if (button !== null) {
+            button.hidden = false;
+            button.addEventListener('click', this._onPersistStorageButtonClick.bind(this), false);
+        }
     }
 
     _onPersistentStorageCheckboxChange(e) {
