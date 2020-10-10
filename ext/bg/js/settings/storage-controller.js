@@ -83,7 +83,11 @@ class StorageController {
     }
 
     _onPersistentStorageCheckboxChange(e) {
-        if (!e.currentTarget.checked) { return; }
+        const node = e.currentTarget;
+        if (!node.checked) {
+            node.checked = true;
+            return;
+        }
         this._attemptPersistStorage();
     }
 
