@@ -957,6 +957,9 @@ button.low-emphasis.danger:active {
     visibility: hidden;
     transition: opacity var(--animation-duration2) ease-in, visibility 0s linear var(--animation-duration2);
 }
+.modal-container:not(.modal-container-open):not(.modal-container-opening):not(.modal-container-closing) {
+    display: none;
+}
 .modal-container.modal-container-open {
     opacity: 1;
     visibility: visible;
