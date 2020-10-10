@@ -556,6 +556,15 @@ h3 {
     padding: 0em var(--settings-group-inner-horizontal-padding-half) var(--settings-group-inner-vertical-padding) var(--settings-group-inner-horizontal-padding);
     margin-top: 0;
 }
+.settings-item-children.settings-item-children-group {
+    padding: 0 0 0 calc(var(--settings-group-inner-horizontal-padding) + var(--settings-group-inner-horizontal-padding));
+}
+.settings-item-children.settings-item-children-group .settings-item {
+    border-top: var(--thin-border-size) solid var(--separator-color2);
+}
+.settings-item-children.settings-item-children-group .settings-item-left {
+    padding-left: 0;
+}
 :root:not([data-advanced=true]) .advanced-only {
     display: none;
 }
