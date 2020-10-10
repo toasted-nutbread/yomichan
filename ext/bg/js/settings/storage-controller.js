@@ -31,12 +31,12 @@ class StorageController {
 
     prepare() {
         this._persistentStorageCheckbox = document.querySelector('#storage-persistent-checkbox');
-        this._storageUsageNodes = document.querySelectorAll('#storage-usage');
-        this._storageQuotaNodes = document.querySelectorAll('#storage-quota');
-        this._storageUseFiniteNodes = document.querySelectorAll('#storage-use-finite');
-        this._storageUseInfiniteNodes = document.querySelectorAll('#storage-use-infinite');
-        this._storageUseValidNodes = document.querySelectorAll('#storage-use-valid');
-        this._storageUseInvalidNodes = document.querySelectorAll('#storage-use-invalid');
+        this._storageUsageNodes = document.querySelectorAll('.storage-usage');
+        this._storageQuotaNodes = document.querySelectorAll('.storage-quota');
+        this._storageUseFiniteNodes = document.querySelectorAll('.storage-use-finite');
+        this._storageUseInfiniteNodes = document.querySelectorAll('.storage-use-infinite');
+        this._storageUseValidNodes = document.querySelectorAll('.storage-use-valid');
+        this._storageUseInvalidNodes = document.querySelectorAll('.storage-use-invalid');
 
         this._preparePersistentStorage();
         this.updateStats();
