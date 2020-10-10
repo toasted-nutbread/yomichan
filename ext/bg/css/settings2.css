@@ -563,8 +563,12 @@ h3 {
 
 /* Settings item groups */
 .settings-item-group {
-    margin-top: var(--padding-negative);
     margin-right: var(--padding-negative);
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    align-content: center;
+    justify-content: flex-end;
 }
 .settings-item-group-item {
     flex: 0 1 auto;
