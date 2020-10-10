@@ -19,6 +19,7 @@
  * GenericSettingController
  * ModalController
  * SettingsController
+ * SettingsDisplayController
  * api
  */
 
@@ -28,97 +29,32 @@ async function setupGenericSettingsController(genericSettingController) {
 }
 
 (async () => {
-    api.forwardLogsToBackend();
-    await yomichan.prepare();
+    try {
+        document.querySelector('#content-scroll-focus').focus();
 
-    const optionsFull = await api.optionsGetFull();
+        api.forwardLogsToBackend();
+        await yomichan.prepare();
 
-    const preparePromises = [];
+        const optionsFull = await api.optionsGetFull();
 
-    const modalController = new ModalController();
-    modalController.prepare();
+        const preparePromises = [];
 
-    const settingsController = new SettingsController(optionsFull.profileCurrent);
-    settingsController.prepare();
+        const modalController = new ModalController();
+        modalController.prepare();
 
-    const genericSettingController = new GenericSettingController(settingsController);
-    preparePromises.push(setupGenericSettingsController(genericSettingController));
+        const settingsController = new SettingsController(optionsFull.profileCurrent);
+        settingsController.prepare();
 
-    await Promise.all(preparePromises);
+        const genericSettingController = new GenericSettingController(settingsController);
+        preparePromises.push(setupGenericSettingsController(genericSettingController));
 
-    document.documentElement.dataset.loaded = 'true';
+        await Promise.all(preparePromises);
 
-    const onScroll = (e) => {
-        const content = e.currentTarget;
-        const topLink = document.querySelector('.sidebar-top-link');
-        const scrollTop = content.scrollTop;
-        topLink.hidden = (scrollTop < 100);
-    };
-    document.querySelector('.content').addEventListener('scroll', onScroll, {passive: true});
+        document.documentElement.dataset.loaded = 'true';
 
-    const updateScrollTarget = () => {
-        const hash = window.location.hash;
-        if (!hash.startsWith('#!')) { return; }
-
-        const content = document.querySelector('.content');
-        const target = document.getElementById(hash.substring(2));
-        if (content !== null && target !== null) {
-            const rect1 = content.getBoundingClientRect();
-            const rect2 = target.getBoundingClientRect();
-            content.scrollTop += rect2.top - rect1.top;
-            onScroll({currentTarget: content});
-        }
-    };
-    window.addEventListener('popstate', updateScrollTarget, false);
-    updateScrollTarget();
-
-    for (const fabButton of document.querySelectorAll('.fab-button')) {
-        fabButton.addEventListener('click', (e) => {
-            const action = e.currentTarget.dataset.action;
-            switch (action) {
-                case 'toggle-sidebar':
-                    document.body.classList.toggle('sidebar-visible');
-                    break;
-                case 'toggle-preview-sidebar':
-                    document.body.classList.toggle('preview-sidebar-visible');
-                    break;
-            }
-        }, false);
+        const settingsDisplayController = new SettingsDisplayController();
+        settingsDisplayController.prepare();
+    } catch (e) {
+        yomichan.logError(e);
     }
 })();
-
-document.querySelector('#show-preview-checkbox').addEventListener('change', (e) => {
-    document.querySelector('.preview-frame-container').classList.toggle('preview-frame-container-visible', e.checked);
-});
-
-function getMoreContainer(link) {
-    const v = link.dataset.parentDistance;
-    const distance = v ? parseInt(v, 10) : 1;
-    if (Number.isNaN(distance)) { return null; }
-
-    for (let i = 0; i < distance; ++i) {
-        link = link.parentNode;
-        if (link === null) { break; }
-    }
-    return link;
-}
-
-for (const node of document.querySelectorAll('.more-toggle')) {
-    node.addEventListener('click', (e) => {
-        const container = getMoreContainer(e.currentTarget);
-        if (container === null) { return; }
-        const more = container.querySelector('.more');
-        if (more === null) { return; }
-
-        const moreVisible = more.hidden;
-        more.hidden = !moreVisible;
-        for (const moreToggle of container.querySelectorAll('.more-toggle')) {
-            moreToggle.dataset.expanded = `${moreVisible}`;
-        }
-
-        e.preventDefault();
-        return false;
-    });
-}
-
-document.querySelector('#content-scroll-focus').focus();
