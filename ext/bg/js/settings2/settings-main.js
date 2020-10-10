@@ -21,6 +21,7 @@
  * ModalController
  * SettingsController
  * SettingsDisplayController
+ * StorageController
  * api
  */
 
@@ -53,6 +54,9 @@ async function setupGenericSettingsController(genericSettingController) {
 
         const settingsController = new SettingsController(optionsFull.profileCurrent);
         settingsController.prepare();
+
+        const storageController = new StorageController();
+        storageController.prepare();
 
         const genericSettingController = new GenericSettingController(settingsController);
         preparePromises.push(setupGenericSettingsController(genericSettingController));
