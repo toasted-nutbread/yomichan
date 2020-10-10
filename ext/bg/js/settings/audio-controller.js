@@ -72,8 +72,6 @@ class AudioController {
         );
         voices.sort(this._textToSpeechVoiceCompare.bind(this));
 
-        document.querySelector('#text-to-speech-voice-container').hidden = (voices.length === 0);
-
         const fragment = document.createDocumentFragment();
 
         let option = document.createElement('option');
