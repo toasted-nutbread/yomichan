@@ -24,7 +24,7 @@ class StorageController {
     }
 
     prepare() {
-        this._persistentStorageCheckbox = document.querySelector('#storage-persist-button-checkbox');
+        this._persistentStorageCheckbox = document.querySelector('#persistent-storage-checkbox');
         this._preparePersistentStorage();
         this.updateStats();
         document.querySelector('#storage-refresh').addEventListener('click', this.updateStats.bind(this), false);
