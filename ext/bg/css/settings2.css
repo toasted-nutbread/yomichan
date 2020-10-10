@@ -604,6 +604,13 @@ select.settings-item-group-item-input {
     padding-top: var(--padding);
     padding-right: var(--padding);
 }
+button.settings-details-button,
+button.settings-details-button:hover,
+button.settings-details-button:focus,
+button.settings-details-button:active {
+    background-color: transparent;
+    box-shadow: none;
+}
 
 
 /* Material design toggle switch */
@@ -1051,11 +1058,18 @@ button.low-emphasis.danger:active {
 .fab-container-item {
     padding-bottom: var(--main-content-padding);
 }
-.fab-button {
+button.fab-button {
     display: block;
     padding: 0;
     margin: 0;
     pointer-events: all;
+}
+button.fab-button,
+button.fab-button:hover,
+button.fab-button:focus,
+button.fab-button:active {
+    background-color: transparent;
+    box-shadow: none;
 }
 .fab-button-background {
     position: absolute;
@@ -1069,7 +1083,7 @@ button.low-emphasis.danger:active {
     background-color: var(--accent-color);
     box-shadow: var(--shadow-vertical);
 }
-.fab-button>.icon-button-inner>.icon-button-icon {
+button.fab-button>.icon-button-inner>.icon-button-icon {
     background-color: #ffffff;
 }
 .fab-container-item.fab-container-item-popup-preview {
