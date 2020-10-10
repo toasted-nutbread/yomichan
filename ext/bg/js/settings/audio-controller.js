@@ -65,7 +65,6 @@ class AudioController {
         speechSynthesis.addEventListener('voiceschanged', this._updateTextToSpeechVoices.bind(this), false);
         this._updateTextToSpeechVoices();
 
-        document.querySelector('#text-to-speech-voice').addEventListener('change', this._onTextToSpeechVoiceChange.bind(this), false);
         document.querySelector('#text-to-speech-voice-test').addEventListener('click', this._testTextToSpeech.bind(this), false);
     }
 
@@ -92,7 +91,6 @@ class AudioController {
         const select = document.querySelector('#text-to-speech-voice');
         select.textContent = '';
         select.appendChild(fragment);
-        select.value = select.dataset.value;
     }
 
     _textToSpeechVoiceCompare(a, b) {
@@ -193,10 +191,6 @@ class AudioController {
         }
         eventListeners.removeAllEventListeners();
         this._audioSourceEntries.splice(index, 1);
-    }
-
-    _onTextToSpeechVoiceChange(e) {
-        e.currentTarget.dataset.value = e.currentTarget.value;
     }
 
     async _onAddAudioSource() {
