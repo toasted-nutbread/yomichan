@@ -23,7 +23,7 @@
 html:root:not([data-options-anki-enable=true]) #anki-general,
 html:root:not([data-options-general-debug-info=true]) .debug,
 html:root:not([data-options-general-show-advanced=true]) .options-advanced,
-html:root:not([data-options-general-result-output-mode=merge]) #dict-main-group {
+html:root:not([data-options-general-result-output-mode=merge]) #dictionary-main-group {
     display: none;
 }
 
@@ -309,21 +309,21 @@ input[type=checkbox].storage-button-checkbox {
     height: 320px;
 }
 
-.dict-delete-table {
+.dictionary-delete-table {
     display: table;
     width: 100%;
 }
-.dict-delete-table>*:first-child {
+.dictionary-delete-table>*:first-child {
     display: table-cell;
     vertical-align: middle;
     padding-right: 1em;
 }
-.dict-delete-table>*:nth-child(n+2) {
+.dictionary-delete-table>*:nth-child(n+2) {
     display: table-cell;
     width: 100%;
     vertical-align: middle;
 }
-.dict-delete-table .progress {
+.dictionary-delete-table .progress {
     margin: 0;
 }
 
