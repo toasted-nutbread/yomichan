@@ -152,15 +152,15 @@ class DictionaryController {
     }
 
     async prepare() {
-        this._warningNode = document.querySelector('#dict-warning');
-        this._checkIntegrityButton = document.querySelector('#dict-check-integrity');
+        this._warningNode = document.querySelector('#dictionary-warning');
+        this._checkIntegrityButton = document.querySelector('#dictionary-check-integrity');
         this._dictionaryEntryContainer = document.querySelector('#dictionary-list');
         this._integrityExtraInfoContainer = document.querySelector('#dictionary-list-extra');
-        this._deleteDictionaryModal = this._modalController.getModal('dict-delete-modal');
+        this._deleteDictionaryModal = this._modalController.getModal('dictionary-confirm-delete');
 
         yomichan.on('databaseUpdated', this._onDatabaseUpdated.bind(this));
 
-        document.querySelector('#dict-delete-confirm').addEventListener('click', this._onDictionaryConfirmDelete.bind(this), false);
+        document.querySelector('#dictionary-confirm-delete-button').addEventListener('click', this._onDictionaryConfirmDelete.bind(this), false);
         this._checkIntegrityButton.addEventListener('click', this._onCheckIntegrityButtonClick.bind(this), false);
 
         await this._onDatabaseUpdated();
@@ -170,7 +170,7 @@ class DictionaryController {
         if (this._isDeleting) { return; }
         const modal = this._deleteDictionaryModal;
         modal.node.dataset.dictionaryTitle = dictionaryTitle;
-        modal.node.querySelector('#dict-remove-modal-dict-name').textContent = dictionaryTitle;
+        modal.node.querySelector('#dictionary-confirm-delete-name').textContent = dictionaryTitle;
         modal.setVisible(true);
     }
 

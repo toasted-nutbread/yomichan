@@ -656,7 +656,7 @@
 
             <div class="ignore-form-changes">
                 <div>
-                    <img src="/mixed/img/spinner.gif" class="pull-right" id="dict-spinner" alt hidden>
+                    <img src="/mixed/img/spinner.gif" class="pull-right" id="dictionary-spinner" alt hidden>
                     <h3>Dictionaries</h3>
                 </div>
 
@@ -665,20 +665,20 @@
                 </p>
 
                 <div class="form-group" id="dictionary-main-group">
-                    <label for="dict-main">Main dictionary for merged mode</label>
-                    <select class="form-control" id="dict-main" data-setting="general.mainDictionary"></select>
+                    <label for="dictionary-main">Main dictionary for merged mode</label>
+                    <select class="form-control" id="dictionary-main" data-setting="general.mainDictionary"></select>
                 </div>
 
                 <div class="text-danger" id="dict-purge" hidden>Dictionary data is being purged, please be patient...</div>
-                <div class="alert alert-warning" id="dict-warning" hidden>No dictionaries have been installed</div>
-                <div class="alert alert-danger" id="dict-error" hidden></div>
+                <div class="alert alert-warning" id="dictionary-warning" hidden>No dictionaries have been installed</div>
+                <div class="alert alert-danger" id="dictionary-error" hidden></div>
 
                 <div id="dictionary-list"></div>
                 <div id="dictionary-list-extra"></div>
 
-                <div id="dict-import-progress" hidden>
+                <div id="dictionary-import-progress-container" hidden>
                     Dictionary data is being imported, please be patient...
-                    <span id="dict-import-info" hidden></span>
+                    <span id="dictionary-import-info" hidden></span>
                     <div class="progress">
                         <div class="progress-bar progress-bar-striped" style="width: 0%"></div>
                     </div>
@@ -693,7 +693,7 @@
                     <div>
                         <button class="btn btn-primary dictionary-database-mutating-input" id="dict-file-button">Import Dictionary</button>
                         <button class="btn btn-danger dictionary-database-mutating-input" id="dict-purge-button">Purge Database</button>
-                        <button class="btn btn-default dictionary-database-mutating-input" id="dict-check-integrity">Check integrity</button>
+                        <button class="btn btn-default dictionary-database-mutating-input" id="dictionary-check-integrity">Check integrity</button>
                     </div>
                     <div hidden><input type="file" id="dict-file" accept=".zip,application/zip" multiple></div>
                 </div>
@@ -728,7 +728,7 @@
                     </div>
                 </div>
 
-                <div class="modal fade" tabindex="-1" role="dialog" id="dict-delete-modal">
+                <div class="modal fade" tabindex="-1" role="dialog" id="dictionary-confirm-delete">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -736,12 +736,12 @@
                                 <h4 class="modal-title">Confirm dictionary deletion</h4>
                             </div>
                             <div class="modal-body">
-                                Are you sure you want to delete the dictionary <em id="dict-remove-modal-dict-name"></em>?
+                                Are you sure you want to delete the dictionary <em id="dictionary-confirm-delete-name"></em>?
                                 This operation may take some time and the responsiveness of this browser tab may be reduced.
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                                <button type="button" class="btn btn-danger dictionary-database-mutating-input" id="dict-delete-confirm">Delete Dictionary</button>
+                                <button type="button" class="btn btn-danger dictionary-database-mutating-input" id="dictionary-confirm-delete-button">Delete Dictionary</button>
                             </div>
                         </div>
                     </div>

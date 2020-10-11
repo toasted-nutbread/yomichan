@@ -56,12 +56,12 @@ class DictionaryImportController {
         this._importFileButton = document.querySelector('#dict-file-button');
         this._importFileInput = document.querySelector('#dict-file');
         this._purgeConfirmModal = this._modalController.getModal('dict-purge-modal');
-        this._errorContainer = document.querySelector('#dict-error');
-        this._spinner = document.querySelector('#dict-spinner');
-        this._progressContainer = document.querySelector('#dict-import-progress');
+        this._errorContainer = document.querySelector('#dictionary-error');
+        this._spinner = document.querySelector('#dictionary-spinner');
+        this._progressContainer = document.querySelector('#dictionary-import-progress-container');
         this._progressBar = this._progressContainer.querySelector('.progress-bar');
         this._purgeNotification = document.querySelector('#dict-purge');
-        this._importInfo = document.querySelector('#dict-import-info');
+        this._importInfo = document.querySelector('#dictionary-import-info');
 
         this._purgeButton.addEventListener('click', this._onPurgeButtonClick.bind(this), false);
         this._purgeConfirmButton.addEventListener('click', this._onPurgeConfirmButtonClick.bind(this), false);
