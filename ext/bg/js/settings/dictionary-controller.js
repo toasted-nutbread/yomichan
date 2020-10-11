@@ -27,7 +27,6 @@ class DictionaryEntry {
         this._dictionaryController = dictionaryController;
         this._node = node;
         this._dictionaryInfo = dictionaryInfo;
-        this._dictionaryTitle = dictionaryInfo.title;
         this._eventListeners = new EventListenerCollection();
         this._detailsContainer = null;
     }
@@ -37,7 +36,7 @@ class DictionaryEntry {
     }
 
     get dictionaryTitle() {
-        return this._dictionaryTitle;
+        return this.dictionaryInfo.title;
     }
 
     prepare() {
@@ -94,7 +93,7 @@ class DictionaryEntry {
 
     _onDeleteButtonClicked(e) {
         e.preventDefault();
-        this._dictionaryController.deleteDictionary(this._dictionaryTitle);
+        this._dictionaryController.deleteDictionary(this.dictionaryTitle);
     }
 
     _onDetailsToggleLinkClicked(e) {
