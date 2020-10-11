@@ -50,7 +50,7 @@ class DictionaryEntry {
         const priorityInput = node.querySelector('.dict-priority');
         const deleteButton = node.querySelector('.dict-delete-button');
         const detailsTable = node.querySelector('.dict-details-table');
-        const detailsToggleLink = node.querySelector('.dict-details-toggle-link');
+        const detailsToggleLink = node.querySelector('.dictionary-details-toggle-link');
         const outdatedContainer = node.querySelector('.dict-outdated');
         const titleNode = node.querySelector('.dict-title');
         const versionNode = node.querySelector('.dict-revision');
@@ -165,8 +165,8 @@ class DictionaryController {
     async prepare() {
         this._warningNode = document.querySelector('#dict-warning');
         this._checkIntegrityButton = document.querySelector('#dict-check-integrity');
-        this._dictionaryEntryContainer = document.querySelector('#dict-groups');
-        this._integrityExtraInfoContainer = document.querySelector('#dict-groups-extra');
+        this._dictionaryEntryContainer = document.querySelector('#dictionary-list');
+        this._integrityExtraInfoContainer = document.querySelector('#dictionary-list-extra');
         this._deleteDictionaryModal = this._modalController.getModal('dict-delete-modal');
 
         yomichan.on('databaseUpdated', this._onDatabaseUpdated.bind(this));

@@ -377,16 +377,16 @@ html:root[data-operating-system=openbsd] [data-hide-for-operating-system~=openbs
     display: none;
 }
 
-#dict-groups {
+#dictionary-list {
     display: flex;
     flex-flow: column;
 }
 
-.dict-details-container {
+.dictionary-details-container {
     margin: 0.5em 0;
 }
 
-.dict-details-toggle-link {
+.dictionary-details-toggle-link {
     cursor: pointer;
 }
 
