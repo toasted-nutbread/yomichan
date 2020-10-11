@@ -588,12 +588,16 @@ h3 {
     font-size: var(--font-size-small);
     line-height: 1;
 }
-input[type=text].settings-item-group-item-input,
-input[type=number].settings-item-group-item-input,
-select.settings-item-group-item-input {
+input[type=text].short-width,
+input[type=number].short-width,
+select.short-width {
+    width: var(--input-short);
+}
+input[type=text].short-height,
+input[type=number].short-height,
+select.short-height {
     height: var(--input-height-short);
     margin-top: calc(var(--settings-group-right-max-height) - var(--input-height-short) - var(--font-size-small));
-    width: var(--input-short);
     line-height: var(--input-height-short);
 }
 .settings-item-button-group-container {
