@@ -43,13 +43,13 @@ class DictionaryEntry {
         const node = this._node;
         const {title, revision, prefixWildcardsSupported, version} = this._dictionaryInfo;
 
-        this._detailsContainer = node.querySelector('.dict-details');
+        this._detailsContainer = node.querySelector('.dictionary-details');
 
         const enabledCheckbox = node.querySelector('.dict-enabled');
         const allowSecondarySearchesCheckbox = node.querySelector('.dict-allow-secondary-searches');
         const priorityInput = node.querySelector('.dict-priority');
         const deleteButton = node.querySelector('.dict-delete-button');
-        const detailsTable = node.querySelector('.dict-details-table');
+        const detailsTable = node.querySelector('.dictionary-details-table');
         const detailsToggleLink = node.querySelector('.dictionary-details-toggle-link');
         const outdatedContainer = node.querySelector('.dict-outdated');
         const titleNode = node.querySelector('.dict-title');
@@ -120,10 +120,10 @@ class DictionaryEntry {
             const info = dictionaryInfo[key];
             if (typeof info !== 'string') { continue; }
 
-            const details = this._dictionaryController.instantiateTemplate('dict-details-entry');
+            const details = this._dictionaryController.instantiateTemplate('dictionary-details-entry');
             details.dataset.type = key;
-            details.querySelector('.dict-details-entry-label').textContent = `${label}:`;
-            details.querySelector('.dict-details-entry-info').textContent = info;
+            details.querySelector('.dictionary-details-entry-label').textContent = `${label}:`;
+            details.querySelector('.dictionary-details-entry-info').textContent = info;
             fragment.appendChild(details);
 
             any = true;

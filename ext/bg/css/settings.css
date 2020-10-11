@@ -393,31 +393,31 @@ html:root[data-operating-system=openbsd] [data-hide-for-operating-system~=openbs
     cursor: pointer;
 }
 
-.dict-details {
+.dictionary-details {
     margin-left: 1em;
 }
 
-.dict-details-table {
+.dictionary-details-table {
     display: table;
     width: 100%
 }
 
-.dict-details-entry {
+.dictionary-details-entry {
     display: table-row;
 }
 
-.dict-details-entry+.dict-details-entry>* {
+.dictionary-details-entry+.dictionary-details-entry>* {
     padding-top: 0.25em;
 }
 
-.dict-details-entry-label {
+.dictionary-details-entry-label {
     display: table-cell;
     font-weight: bold;
     white-space: nowrap;
     padding-right: 0.5em;
 }
 
-.dict-details-entry-info {
+.dictionary-details-entry-info {
     display: table-cell;
     white-space: pre-line;
 }
