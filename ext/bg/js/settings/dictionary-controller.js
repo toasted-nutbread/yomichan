@@ -333,7 +333,7 @@ class DictionaryController {
 
         const entry = this._dictionaryEntries[index];
         const node = entry.node;
-        const progress = node.querySelector('.progress');
+        const progress = node.querySelector('.progress-container');
         const progressBar = node.querySelector('.progress-bar');
         const prevention = this._settingsController.preventPageExit();
         try {
