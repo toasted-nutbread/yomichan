@@ -64,7 +64,6 @@ class DictionaryEntry {
 
         outdatedContainer.hidden = (version >= 3);
         detailsToggleLink.hidden = !hasDetails;
-        this._detailsContainer.hidden = !hasDetails;
 
         enabledCheckbox.dataset.setting = ObjectPropertyAccessor.getPathString(['dictionaries', title, 'enabled']);
         allowSecondarySearchesCheckbox.dataset.setting = ObjectPropertyAccessor.getPathString(['dictionaries', title, 'allowSecondarySearches']);
