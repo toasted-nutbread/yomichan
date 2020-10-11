@@ -48,10 +48,9 @@ class DictionaryEntry {
 
     prepare() {
         const node = this._node;
-        const dictionaryInfo = this._dictionaryInfo;
-        const {title, revision, prefixWildcardsSupported} = dictionaryInfo;
+        const {title, revision, prefixWildcardsSupported, version} = this._dictionaryInfo;
 
-        if (dictionaryInfo.version < 3) {
+        if (version < 3) {
             node.querySelector('.dict-outdated').hidden = false;
         }
 
@@ -59,7 +58,7 @@ class DictionaryEntry {
         node.querySelector('.dict-revision').textContent = `rev.${revision}`;
         node.querySelector('.dict-prefix-wildcard-searches-supported').checked = !!prefixWildcardsSupported;
 
-        this._setupDetails(dictionaryInfo);
+        this._setupDetails();
 
         this._enabledCheckbox.dataset.setting = ObjectPropertyAccessor.getPathString(['dictionaries', title, 'enabled']);
         this._allowSecondarySearchesCheckbox.dataset.setting = ObjectPropertyAccessor.getPathString(['dictionaries', title, 'allowSecondarySearches']);
@@ -101,7 +100,7 @@ class DictionaryEntry {
         this._node.style.order = `${-value}`;
     }
 
-    _setupDetails(dictionaryInfo) {
+    _setupDetails() {
         const targets = [
             ['Author', 'author'],
             ['URL', 'url'],
@@ -109,6 +108,7 @@ class DictionaryEntry {
             ['Attribution', 'attribution']
         ];
 
+        const dictionaryInfo = this._dictionaryInfo;
         const fragment = document.createDocumentFragment();
         let count = 0;
         for (const [label, key] of targets) {
