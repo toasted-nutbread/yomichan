@@ -124,8 +124,12 @@ class GenericSettingController {
         if (typeof ancestorDistance === 'string') {
             const ii = Number.parseInt(ancestorDistance, 10);
             if (Number.isFinite(ii)) {
-                for (let i = 0; i < ii && node !== null; ++i) {
-                    node = node.parentNode;
+                if (ii < 0) {
+                    node = document.documentElement;
+                } else {
+                    for (let i = 0; i < ii && node !== null; ++i) {
+                        node = node.parentNode;
+                    }
                 }
             }
         }
