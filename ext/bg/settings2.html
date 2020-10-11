@@ -180,19 +180,45 @@
                 <label class="toggle"><input type="checkbox" data-setting="general.compactTags"><span class="toggle-track"></span><span class="toggle-knob"></span></label>
             </div>
         </div></div>
-        <div class="settings-item"><div class="settings-item-inner settings-item-inner-wrappable">
-            <div class="settings-item-left">
-                <div class="settings-item-label">Result grouping mode</div>
-                <div class="settings-item-description">Change how related results are grouped.</div>
+        <div class="settings-item">
+            <div class="settings-item-inner settings-item-inner-wrappable">
+                <div class="settings-item-left">
+                    <div class="settings-item-label">Result grouping mode</div>
+                    <div class="settings-item-description">Change how related results are grouped.</div>
+                </div>
+                <div class="settings-item-right">
+                    <select data-setting="general.resultOutputMode" data-transform="setVisibility" data-ancestor-distance="-1" data-relative-selector="#main-dictionary-container" data-visbility-condition='{"op":"===","value":"merge"}'>
+                        <option value="split">No grouping</option>
+                        <option value="group">Group by term-reading pairs</option>
+                        <option value="merge">Group by main dictionary entry</option>
+                    </select>
+                </div>
             </div>
-            <div class="settings-item-right">
-                <select data-setting="general.resultOutputMode" data-transform-pre="setDocumentAttribute" data-transform-post="setDocumentAttribute" data-document-attribute="data-options-general-result-output-mode">
-                    <option value="split">No grouping</option>
-                    <option value="group">Group by term-reading pairs</option>
-                    <option value="merge">Group by main dictionary entry</option>
-                </select>
+            <div class="settings-item-children settings-item-children-group" id="main-dictionary-container" hidden>
+                <div class="settings-item">
+                    <div class="settings-item-inner">
+                        <div class="settings-item-left">
+                            <div class="settings-item-label">
+                                Primary dictionary
+                                <a class="more-toggle more-only" data-parent-distance="4">(?)</a>
+                            </div>
+                        </div>
+                        <div class="settings-item-right">
+                            <select data-setting="general.mainDictionary"></select>
+                        </div>
+                    </div>
+                    <div class="settings-item-children more" hidden>
+                        <p>
+                            The primary dictionary is used in merge mode to find related definitions from the
+                            same dictionary.
+                        </p>
+                        <p>
+                            <a class="more-toggle" data-parent-distance="3">Less&hellip;</a>
+                        </p>
+                    </div>
+                </div>
             </div>
-        </div></div>
+        </div>
         <div class="settings-item advanced-only"><div class="settings-item-inner settings-item-inner-wrappable">
             <div class="settings-item-left">
                 <div class="settings-item-label">Maximum number of results</div>
