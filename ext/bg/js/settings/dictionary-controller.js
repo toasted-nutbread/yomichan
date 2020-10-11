@@ -152,7 +152,6 @@ class DictionaryController {
         this._databaseStateToken = null;
         this._checkingIntegrity = false;
         this._warningNode = null;
-        this._mainDictionarySelect = null;
         this._checkIntegrityButton = null;
         this._dictionaryEntryContainer = null;
         this._integrityExtraInfoContainer = null;
@@ -163,7 +162,6 @@ class DictionaryController {
 
     async prepare() {
         this._warningNode = document.querySelector('#dict-warning');
-        this._mainDictionarySelect = document.querySelector('#dict-main');
         this._checkIntegrityButton = document.querySelector('#dict-check-integrity');
         this._dictionaryEntryContainer = document.querySelector('#dict-groups');
         this._integrityExtraInfoContainer = document.querySelector('#dict-groups-extra');
@@ -227,25 +225,26 @@ class DictionaryController {
     }
 
     _updateMainDictionarySelectOptions(dictionaries) {
-        const fragment = document.createDocumentFragment();
+        for (const select of document.querySelectorAll('[data-setting="general.mainDictionary"]')) {
+            const fragment = document.createDocumentFragment();
 
-        let option = document.createElement('option');
-        option.className = 'text-muted';
-        option.value = '';
-        option.textContent = 'Not selected';
-        fragment.appendChild(option);
-
-        for (const {title, sequenced} of dictionaries) {
-            if (!sequenced) { continue; }
-            option = document.createElement('option');
-            option.value = title;
-            option.textContent = title;
+            let option = document.createElement('option');
+            option.className = 'text-muted';
+            option.value = '';
+            option.textContent = 'Not selected';
             fragment.appendChild(option);
-        }
 
-        const select = this._mainDictionarySelect;
-        select.textContent = ''; // Empty
-        select.appendChild(fragment);
+            for (const {title, sequenced} of dictionaries) {
+                if (!sequenced) { continue; }
+                option = document.createElement('option');
+                option.value = title;
+                option.textContent = title;
+                fragment.appendChild(option);
+            }
+
+            select.textContent = ''; // Empty
+            select.appendChild(fragment);
+        }
     }
 
     async _checkIntegrity() {
