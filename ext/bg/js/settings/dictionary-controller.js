@@ -288,7 +288,7 @@ class DictionaryController {
     }
 
     _createExtra(totalCounts, remainders, totalRemainder) {
-        const node = this.instantiateTemplate('dict-extra');
+        const node = this.instantiateTemplate('dictionary-extra');
         this._integrityExtraInfoNode = node;
 
         node.querySelector('.dictionary-total-count').textContent = `${totalRemainder} item${totalRemainder !== 1 ? 's' : ''}`;
@@ -312,7 +312,7 @@ class DictionaryController {
     }
 
     _createDictionaryEntry(dictionary) {
-        const node = this.instantiateTemplate('dict');
+        const node = this.instantiateTemplate('dictionary');
         this._dictionaryEntryContainer.appendChild(node);
 
         const entry = new DictionaryEntry(this, node, dictionary);
