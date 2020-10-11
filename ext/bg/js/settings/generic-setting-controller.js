@@ -53,11 +53,12 @@ class GenericSettingController {
     }
 
     _createElementMetadata(element) {
+        const {dataset: {setting: path, scope, transform, transformPre, transformPost}} = element;
         return {
-            path: element.dataset.setting,
-            scope: element.dataset.scope,
-            transformPre: element.dataset.transformPre,
-            transformPost: element.dataset.transformPost
+            path,
+            scope,
+            transformPre: typeof transformPre === 'string' ? transformPre : transform,
+            transformPost: typeof transformPost === 'string' ? transformPost : transform
         };
     }
 
