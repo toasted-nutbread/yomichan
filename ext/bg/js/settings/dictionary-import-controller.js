@@ -301,7 +301,7 @@ class DictionaryImportController {
 
     _setButtonsEnabled(value) {
         value = !value;
-        for (const node of document.querySelectorAll('.dictionary-modifying-input')) {
+        for (const node of document.querySelectorAll('.dictionary-database-mutating-input')) {
             node.disabled = value;
         }
     }
