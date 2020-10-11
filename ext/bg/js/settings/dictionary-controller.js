@@ -45,16 +45,16 @@ class DictionaryEntry {
 
         this._detailsContainer = node.querySelector('.dictionary-details');
 
-        const enabledCheckbox = node.querySelector('.dict-enabled');
-        const allowSecondarySearchesCheckbox = node.querySelector('.dict-allow-secondary-searches');
-        const priorityInput = node.querySelector('.dict-priority');
-        const deleteButton = node.querySelector('.dict-delete-button');
+        const enabledCheckbox = node.querySelector('.dictionary-enabled');
+        const allowSecondarySearchesCheckbox = node.querySelector('.dictionary-allow-secondary-searches');
+        const priorityInput = node.querySelector('.dictionary-priority');
+        const deleteButton = node.querySelector('.dictionary-delete-button');
         const detailsTable = node.querySelector('.dictionary-details-table');
         const detailsToggleLink = node.querySelector('.dictionary-details-toggle-link');
-        const outdatedContainer = node.querySelector('.dict-outdated');
-        const titleNode = node.querySelector('.dict-title');
-        const versionNode = node.querySelector('.dict-revision');
-        const wildcardSupportedCheckbox = node.querySelector('.dict-prefix-wildcard-searches-supported');
+        const outdatedContainer = node.querySelector('.dictionary-outdated-notification');
+        const titleNode = node.querySelector('.dictionary-title');
+        const versionNode = node.querySelector('.dictionary-version');
+        const wildcardSupportedCheckbox = node.querySelector('.dictionary-prefix-wildcard-searches-supported');
 
         const hasDetails = this._setupDetails(detailsTable);
 
@@ -83,7 +83,7 @@ class DictionaryEntry {
     }
 
     setCounts(counts) {
-        const node = this._node.querySelector('.dict-counts');
+        const node = this._node.querySelector('.dictionary-counts');
         node.textContent = JSON.stringify({info: this._dictionaryInfo, counts}, null, 4);
         node.hidden = false;
     }
@@ -291,9 +291,9 @@ class DictionaryController {
         const node = this.instantiateTemplate('dict-extra');
         this._integrityExtraInfoNode = node;
 
-        node.querySelector('.dict-total-count').textContent = `${totalRemainder} item${totalRemainder !== 1 ? 's' : ''}`;
+        node.querySelector('.dictionary-total-count').textContent = `${totalRemainder} item${totalRemainder !== 1 ? 's' : ''}`;
 
-        const n = node.querySelector('.dict-counts');
+        const n = node.querySelector('.dictionary-counts');
         n.textContent = JSON.stringify({counts: totalCounts, remainders}, null, 4);
         n.hidden = false;
 

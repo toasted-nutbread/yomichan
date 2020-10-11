@@ -748,21 +748,21 @@
                 </div>
 
                 <template id="dict-template"><div class="well well-sm">
-                    <h4><span class="text-muted glyphicon glyphicon-book"></span> <span class="dict-title"></span> <small class="dict-revision"></small></h4>
-                    <p class="text-warning dict-outdated" hidden>This dictionary is outdated and may not support new extension features; please import the latest version.</p>
+                    <h4><span class="text-muted glyphicon glyphicon-book"></span> <span class="dictionary-title"></span> <small class="dictionary-version"></small></h4>
+                    <p class="text-warning dictionary-outdated-notification" hidden>This dictionary is outdated and may not support new extension features; please import the latest version.</p>
 
                     <div class="checkbox">
-                        <label><input type="checkbox" class="dict-enabled"> Enable search</label>
+                        <label><input type="checkbox" class="dictionary-enabled"> Enable search</label>
                     </div>
                     <div class="checkbox options-advanced">
-                        <label><input type="checkbox" class="dict-allow-secondary-searches"> Allow secondary searches</label>
+                        <label><input type="checkbox" class="dictionary-allow-secondary-searches"> Allow secondary searches</label>
                     </div>
                     <div class="checkbox">
-                        <label><input type="checkbox" class="dict-prefix-wildcard-searches-supported" disabled> Prefix wildcard searches supported</label>
+                        <label><input type="checkbox" class="dictionary-prefix-wildcard-searches-supported" disabled> Prefix wildcard searches supported</label>
                     </div>
                     <div class="form-group options-advanced">
                         <label>Result priority</label>
-                        <input type="number" class="form-control dict-priority">
+                        <input type="number" class="form-control dictionary-priority">
                     </div>
                     <div class="dictionary-details-container">
                         <a class="dictionary-details-toggle-link">Details...</a>
@@ -770,7 +770,7 @@
                     </div>
                     <div class="dictionary-delete-table">
                         <div>
-                            <button class="btn btn-default dict-delete-button dictionary-database-mutating-input">Delete Dictionary</button>
+                            <button class="btn btn-default dictionary-delete-button dictionary-database-mutating-input">Delete Dictionary</button>
                         </div>
                         <div class="progress-container" hidden>
                             <div class="progress">
@@ -778,7 +778,7 @@
                             </div>
                         </div>
                     </div>
-                    <pre class="debug dict-counts" hidden></pre>
+                    <pre class="debug dictionary-counts" hidden></pre>
                 </div></template>
 
                 <template id="dictionary-details-entry-template"><div class="dictionary-details-entry">
@@ -787,12 +787,12 @@
                 </div></template>
 
                 <template id="dict-extra-template"><div class="well well-sm">
-                    <h4><span class="text-muted glyphicon glyphicon-alert"></span> <span class="dict-title">Unassociated Data</span> <small class="dict-total-count"></small></h4>
+                    <h4><span class="text-muted glyphicon glyphicon-alert"></span> <span class="dictionary-title">Unassociated Data</span> <small class="dictionary-total-count"></small></h4>
                     <p class="text-warning">
                         The database contains extra data which is not associated with any installed dictionary.
                         Purging the database can fix this issue.
                     </p>
-                    <pre class="debug dict-counts" hidden></pre>
+                    <pre class="debug dictionary-counts" hidden></pre>
                 </div></template>
             </div>
 
