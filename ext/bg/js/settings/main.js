@@ -24,6 +24,7 @@
  * DictionaryController
  * DictionaryImportController
  * GenericSettingController
+ * ModalController
  * PopupPreviewController
  * ProfileController
  * ScanInputsController
@@ -56,6 +57,9 @@ async function setupEnvironmentInfo() {
         showExtensionInformation();
 
         const optionsFull = await api.optionsGetFull();
+
+        const modalController = new ModalController();
+        modalController.prepare();
 
         const settingsController = new SettingsController(optionsFull.profileCurrent);
         settingsController.prepare();
