@@ -29,13 +29,7 @@ class DictionaryEntry {
         this._dictionaryInfo = dictionaryInfo;
         this._dictionaryTitle = dictionaryInfo.title;
         this._eventListeners = new EventListenerCollection();
-        this._enabledCheckbox = node.querySelector('.dict-enabled');
-        this._allowSecondarySearchesCheckbox = node.querySelector('.dict-allow-secondary-searches');
-        this._priorityInput = node.querySelector('.dict-priority');
-        this._deleteButton = node.querySelector('.dict-delete-button');
-        this._detailsToggleLink = node.querySelector('.dict-details-toggle-link');
-        this._detailsContainer = node.querySelector('.dict-details');
-        this._detailsTable = node.querySelector('.dict-details-table');
+        this._detailsContainer = null;
     }
 
     get node() {
@@ -50,20 +44,36 @@ class DictionaryEntry {
         const node = this._node;
         const {title, revision, prefixWildcardsSupported, version} = this._dictionaryInfo;
 
-        node.querySelector('.dict-outdated').hidden = (version >= 3);
-        node.querySelector('.dict-title').textContent = title;
-        node.querySelector('.dict-revision').textContent = `rev.${revision}`;
-        node.querySelector('.dict-prefix-wildcard-searches-supported').checked = !!prefixWildcardsSupported;
+        this._detailsContainer = node.querySelector('.dict-details');
 
-        this._setupDetails();
+        const enabledCheckbox = node.querySelector('.dict-enabled');
+        const allowSecondarySearchesCheckbox = node.querySelector('.dict-allow-secondary-searches');
+        const priorityInput = node.querySelector('.dict-priority');
+        const deleteButton = node.querySelector('.dict-delete-button');
+        const detailsTable = node.querySelector('.dict-details-table');
+        const detailsToggleLink = node.querySelector('.dict-details-toggle-link');
+        const outdatedContainer = node.querySelector('.dict-outdated');
+        const titleNode = node.querySelector('.dict-title');
+        const versionNode = node.querySelector('.dict-revision');
+        const wildcardSupportedCheckbox = node.querySelector('.dict-prefix-wildcard-searches-supported');
 
-        this._enabledCheckbox.dataset.setting = ObjectPropertyAccessor.getPathString(['dictionaries', title, 'enabled']);
-        this._allowSecondarySearchesCheckbox.dataset.setting = ObjectPropertyAccessor.getPathString(['dictionaries', title, 'allowSecondarySearches']);
-        this._priorityInput.dataset.setting = ObjectPropertyAccessor.getPathString(['dictionaries', title, 'priority']);
+        const hasDetails = this._setupDetails(detailsTable);
 
-        this._eventListeners.addEventListener(this._deleteButton, 'click', this._onDeleteButtonClicked.bind(this), false);
-        this._eventListeners.addEventListener(this._detailsToggleLink, 'click', this._onDetailsToggleLinkClicked.bind(this), false);
-        this._eventListeners.addEventListener(this._priorityInput, 'settingChanged', this._onPriorityChanged.bind(this), false);
+        titleNode.textContent = title;
+        versionNode.textContent = `rev.${revision}`;
+        wildcardSupportedCheckbox.checked = !!prefixWildcardsSupported;
+
+        outdatedContainer.hidden = (version >= 3);
+        detailsToggleLink.hidden = !hasDetails;
+        this._detailsContainer.hidden = !hasDetails;
+
+        enabledCheckbox.dataset.setting = ObjectPropertyAccessor.getPathString(['dictionaries', title, 'enabled']);
+        allowSecondarySearchesCheckbox.dataset.setting = ObjectPropertyAccessor.getPathString(['dictionaries', title, 'allowSecondarySearches']);
+        priorityInput.dataset.setting = ObjectPropertyAccessor.getPathString(['dictionaries', title, 'priority']);
+
+        this._eventListeners.addEventListener(deleteButton, 'click', this._onDeleteButtonClicked.bind(this), false);
+        this._eventListeners.addEventListener(detailsToggleLink, 'click', this._onDetailsToggleLinkClicked.bind(this), false);
+        this._eventListeners.addEventListener(priorityInput, 'settingChanged', this._onPriorityChanged.bind(this), false);
     }
 
     cleanup() {
@@ -97,7 +107,7 @@ class DictionaryEntry {
         this._node.style.order = `${-value}`;
     }
 
-    _setupDetails() {
+    _setupDetails(detailsTable) {
         const targets = [
             ['Author', 'author'],
             ['URL', 'url'],
@@ -107,7 +117,7 @@ class DictionaryEntry {
 
         const dictionaryInfo = this._dictionaryInfo;
         const fragment = document.createDocumentFragment();
-        let count = 0;
+        let any = false;
         for (const [label, key] of targets) {
             const info = dictionaryInfo[key];
             if (typeof info !== 'string') { continue; }
@@ -128,15 +138,11 @@ class DictionaryEntry {
 
             fragment.appendChild(n1);
 
-            ++count;
+            any = true;
         }
 
-        if (count > 0) {
-            this._detailsTable.appendChild(fragment);
-        } else {
-            this._detailsContainer.hidden = true;
-            this._detailsToggleLink.hidden = true;
-        }
+        detailsTable.appendChild(fragment);
+        return any;
     }
 }
 
