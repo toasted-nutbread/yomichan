@@ -326,6 +326,9 @@ input[type=checkbox].storage-button-checkbox {
 .dictionary-delete-table .progress {
     margin: 0;
 }
+.dictionary-delete-table>*[hidden] {
+    display: none;
+}
 
 .error-data-show-button {
     display: inline-block;
