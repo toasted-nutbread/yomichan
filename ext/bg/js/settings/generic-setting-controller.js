@@ -33,6 +33,7 @@ class GenericSettingController {
         this._transforms = new Map([
             ['setDocumentAttribute', this._setDocumentAttribute.bind(this)],
             ['setRelativeAttribute', this._setRelativeAttribute.bind(this)],
+            ['setVisibility', this._setVisibility.bind(this)],
             ['splitTags', this._splitTags.bind(this)],
             ['joinTags', this._joinTags.bind(this)],
             ['toNumber', this._toNumber.bind(this)],
@@ -141,6 +142,35 @@ class GenericSettingController {
         );
     }
 
+    _getConditionalResult(value, conditionString) {
+        let op = '!!';
+        let rhsOperand = null;
+        try {
+            if (typeof conditionString === 'string') {
+                const {op: op2, value: value2} = JSON.parse(conditionString);
+                op = (typeof op2 === 'string' ? op2 : '===');
+                rhsOperand = value2;
+            }
+        } catch (e) {
+            // NOP
+        }
+        return this._evaluateSimpleOperation(op, value, rhsOperand);
+    }
+
+    _evaluateSimpleOperation(operation, lhs, rhs) {
+        switch (operation) {
+            case '!': return !lhs;
+            case '!!': return !!lhs;
+            case '===': return lhs === rhs;
+            case '!==': return lhs !== rhs;
+            case '>=': return lhs >= rhs;
+            case '<=': return lhs <= rhs;
+            case '>': return lhs > rhs;
+            case '<': return lhs < rhs;
+            default: return false;
+        }
+    }
+
     // Transforms
 
     _setDocumentAttribute(value, metadata, element) {
@@ -153,6 +183,15 @@ class GenericSettingController {
         const relativeElement = this._getElementRelativeToAncestor(element, ancestorDistance, relativeSelector);
         if (relativeElement !== null) {
             relativeElement.setAttribute(relativeAttribute, `${value}`);
+        }
+        return value;
+    }
+
+    _setVisibility(value, metadata, element) {
+        const {ancestorDistance, relativeSelector, visbilityCondition} = element.dataset;
+        const relativeElement = this._getElementRelativeToAncestor(element, ancestorDistance, relativeSelector);
+        if (relativeElement !== null) {
+            relativeElement.hidden = !this._getConditionalResult(value, visbilityCondition);
         }
         return value;
     }
