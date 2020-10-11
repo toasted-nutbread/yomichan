@@ -50,10 +50,7 @@ class DictionaryEntry {
         const node = this._node;
         const {title, revision, prefixWildcardsSupported, version} = this._dictionaryInfo;
 
-        if (version < 3) {
-            node.querySelector('.dict-outdated').hidden = false;
-        }
-
+        node.querySelector('.dict-outdated').hidden = (version >= 3);
         node.querySelector('.dict-title').textContent = title;
         node.querySelector('.dict-revision').textContent = `rev.${revision}`;
         node.querySelector('.dict-prefix-wildcard-searches-supported').checked = !!prefixWildcardsSupported;
