@@ -120,21 +120,11 @@ class DictionaryEntry {
             const info = dictionaryInfo[key];
             if (typeof info !== 'string') { continue; }
 
-            const n1 = document.createElement('div');
-            n1.className = 'dict-details-entry';
-            n1.dataset.type = key;
-
-            const n2 = document.createElement('span');
-            n2.className = 'dict-details-entry-label';
-            n2.textContent = `${label}:`;
-            n1.appendChild(n2);
-
-            const n3 = document.createElement('span');
-            n3.className = 'dict-details-entry-info';
-            n3.textContent = info;
-            n1.appendChild(n3);
-
-            fragment.appendChild(n1);
+            const details = this._dictionaryController.instantiateTemplate('dict-details-entry');
+            details.dataset.type = key;
+            details.querySelector('.dict-details-entry-label').textContent = `${label}:`;
+            details.querySelector('.dict-details-entry-info').textContent = info;
+            fragment.appendChild(details);
 
             any = true;
         }
@@ -182,6 +172,10 @@ class DictionaryController {
         modal.node.dataset.dictionaryTitle = dictionaryTitle;
         modal.node.querySelector('#dict-remove-modal-dict-name').textContent = dictionaryTitle;
         modal.setVisible(true);
+    }
+
+    instantiateTemplate(name) {
+        return this._settingsController.instantiateTemplate(name);
     }
 
     // Private
@@ -294,7 +288,7 @@ class DictionaryController {
     }
 
     _createExtra(totalCounts, remainders, totalRemainder) {
-        const node = this._settingsController.instantiateTemplate('dict-extra');
+        const node = this.instantiateTemplate('dict-extra');
         this._integrityExtraInfoNode = node;
 
         node.querySelector('.dict-total-count').textContent = `${totalRemainder} item${totalRemainder !== 1 ? 's' : ''}`;
@@ -318,7 +312,7 @@ class DictionaryController {
     }
 
     _createDictionaryEntry(dictionary) {
-        const node = this._settingsController.instantiateTemplate('dict');
+        const node = this.instantiateTemplate('dict');
         this._dictionaryEntryContainer.appendChild(node);
 
         const entry = new DictionaryEntry(this, node, dictionary);
