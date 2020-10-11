@@ -118,6 +118,29 @@ class GenericSettingController {
         return value;
     }
 
+    _getAncestor(node, ancestorDistance) {
+        if (typeof ancestorDistance === 'string') {
+            const ii = Number.parseInt(ancestorDistance, 10);
+            if (Number.isFinite(ii)) {
+                for (let i = 0; i < ii && node !== null; ++i) {
+                    node = node.parentNode;
+                }
+            }
+        }
+        return node;
+    }
+
+    _getElementRelativeToAncestor(node, ancestorDistance, relativeSelector) {
+        const relativeElement = this._getAncestor(node, ancestorDistance);
+        if (relativeElement === null) { return null; }
+
+        return (
+            typeof relativeSelector === 'string' ?
+            relativeElement.querySelector(relativeSelector) :
+            relativeElement
+        );
+    }
+
     // Transforms
 
     _setDocumentAttribute(value, metadata, element) {
@@ -140,29 +163,6 @@ class GenericSettingController {
 
     _joinTags(value) {
         return value.join(' ');
-    }
-
-    _getAncestor(node, ancestorDistance) {
-        if (typeof ancestorDistance === 'string') {
-            const ii = Number.parseInt(ancestorDistance, 10);
-            if (Number.isFinite(ii)) {
-                for (let i = 0; i < ii && node !== null; ++i) {
-                    node = node.parentNode;
-                }
-            }
-        }
-        return node;
-    }
-
-    _getElementRelativeToAncestor(node, ancestorDistance, relativeSelector) {
-        const relativeElement = this._getAncestor(node, ancestorDistance);
-        if (relativeElement === null) { return null; }
-
-        return (
-            typeof relativeSelector === 'string' ?
-            relativeElement.querySelector(relativeSelector) :
-            relativeElement
-        );
     }
 
     _toNumber(value, metadata, element) {
