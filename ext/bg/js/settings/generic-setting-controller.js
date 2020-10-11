@@ -127,14 +127,9 @@ class GenericSettingController {
 
     _setRelativeAttribute(value, metadata, element) {
         const {ancestorDistance, relativeSelector, relativeAttribute} = element.dataset;
-        let relativeElement = this._getAncestor(element, ancestorDistance);
+        const relativeElement = this._getElementRelativeToAncestor(element, ancestorDistance, relativeSelector);
         if (relativeElement !== null) {
-            if (typeof relativeSelector === 'string') {
-                relativeElement = relativeElement.querySelector(relativeSelector);
-            }
-            if (relativeElement !== null) {
-                relativeElement.setAttribute(relativeAttribute, `${value}`);
-            }
+            relativeElement.setAttribute(relativeAttribute, `${value}`);
         }
         return value;
     }
@@ -157,6 +152,17 @@ class GenericSettingController {
             }
         }
         return node;
+    }
+
+    _getElementRelativeToAncestor(node, ancestorDistance, relativeSelector) {
+        const relativeElement = this._getAncestor(node, ancestorDistance);
+        if (relativeElement === null) { return null; }
+
+        return (
+            typeof relativeSelector === 'string' ?
+            relativeElement.querySelector(relativeSelector) :
+            relativeElement
+        );
     }
 
     _toNumber(value, metadata, element) {
