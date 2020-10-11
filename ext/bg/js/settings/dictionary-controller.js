@@ -36,7 +36,7 @@ class DictionaryEntry {
     }
 
     get dictionaryTitle() {
-        return this.dictionaryInfo.title;
+        return this._dictionaryInfo.title;
     }
 
     prepare() {
