@@ -44,6 +44,11 @@ class ScanInputsSimpleController {
         this._onOptionsChanged({options});
     }
 
+    async refresh() {
+        const options = await this._settingsController.getOptions();
+        this._onOptionsChanged({options});
+    }
+
     // Private
 
     _onOptionsChanged({options}) {

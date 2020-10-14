@@ -39,8 +39,7 @@ class ScanInputsController {
         this._addButton.addEventListener('click', this._onAddButtonClick.bind(this), false);
         this._settingsController.on('optionsChanged', this._onOptionsChanged.bind(this));
 
-        const options = await this._settingsController.getOptions();
-        this._onOptionsChanged({options});
+        this.refresh();
     }
 
     removeInput(index) {
@@ -67,6 +66,11 @@ class ScanInputsController {
 
     instantiateTemplate(name) {
         return this._settingsController.instantiateTemplate(name);
+    }
+
+    async refresh() {
+        const options = await this._settingsController.getOptions();
+        this._onOptionsChanged({options});
     }
 
     // Private
