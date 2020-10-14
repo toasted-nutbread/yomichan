@@ -50,13 +50,14 @@ class ScanInputsController {
         for (let i = index, ii = this._entries.length; i < ii; ++i) {
             this._entries[i].index = i;
         }
-        this._settingsController.modifyProfileSettings([{
+        this._modifyProfileSettings([{
             action: 'splice',
             path: 'scanning.inputs',
             start: index,
             deleteCount: 1,
             items: []
         }]);
+        return true;
     }
 
     setProperty(index, property, value) {
@@ -96,7 +97,7 @@ class ScanInputsController {
         const include = '';
         const exclude = '';
         this._addOption(index, include, exclude);
-        this._settingsController.modifyProfileSettings([{
+        this._modifyProfileSettings([{
             action: 'splice',
             path: 'scanning.inputs',
             start: index,
@@ -109,6 +110,10 @@ class ScanInputsController {
         const field = new ScanInputField(this, index, this._os);
         this._entries.push(field);
         field.prepare(this._container, include, exclude);
+    }
+
+    async _modifyProfileSettings(targets) {
+        await this._settingsController.modifyProfileSettings(targets);
     }
 
     static createDefaultMouseInput(include, exclude) {

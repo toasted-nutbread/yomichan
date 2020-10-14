@@ -114,7 +114,7 @@ class ScanInputsSimpleController {
             let insertionPosition = this._getIndexOfMainScanInput(inputs);
             insertionPosition = (insertionPosition >= 0 ? insertionPosition + 1 : inputs.length);
             const input = ScanInputsController.createDefaultMouseInput('mouse2', '');
-            await this._settingsController.modifyProfileSettings([{
+            await this._modifyProfileSettings([{
                 action: 'splice',
                 path: 'scanning.inputs',
                 start: insertionPosition,
@@ -124,7 +124,7 @@ class ScanInputsSimpleController {
         } else {
             // Modify existing
             if (index < 0) { return; }
-            await this._settingsController.modifyProfileSettings([{
+            await this._modifyProfileSettings([{
                 action: 'splice',
                 path: 'scanning.inputs',
                 start: index,
@@ -145,7 +145,7 @@ class ScanInputsSimpleController {
         if (index < 0) {
             // Add new
             const input = ScanInputsController.createDefaultMouseInput(value, 'mouse0');
-            await this._settingsController.modifyProfileSettings([{
+            await this._modifyProfileSettings([{
                 action: 'splice',
                 path: 'scanning.inputs',
                 start: inputs.length,
@@ -154,12 +154,16 @@ class ScanInputsSimpleController {
             }]);
         } else {
             // Modify existing
-            await this._settingsController.modifyProfileSettings([{
+            await this._modifyProfileSettings([{
                 action: 'set',
                 path: `scanning.inputs[${index}].include`,
                 value
             }]);
         }
+    }
+
+    async _modifyProfileSettings(targets) {
+        await this._settingsController.modifyProfileSettings(targets);
     }
 
     _getIndexOfMainScanInput(inputs) {
