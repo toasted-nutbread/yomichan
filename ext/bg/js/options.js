@@ -386,7 +386,7 @@ class OptionsUtil {
     }
 
     async _addFieldTemplatesBeforeEnd(fieldTemplates, addition) {
-        const pattern = /[ \t]*\{\{~?>\s*\(\s*lookup\s*\.\s*"marker"\s*\)\s*~?\}\}/;
+        const pattern = /[ \t]*\{\{~?>\s*\(\s*lookup\s*\.\s*"marker"\s*\)\s*~?\}\}/g;
         const newline = '\n';
         let replaced = false;
         fieldTemplates = fieldTemplates.replace(pattern, (g0) => {
