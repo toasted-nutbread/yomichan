@@ -97,21 +97,7 @@ class ScanInputsController {
             path: 'scanning.inputs',
             start: index,
             deleteCount: 0,
-            items: [{
-                include,
-                exclude,
-                types: {mouse: true, touch: false, pen: false},
-                options: {
-                    showAdvanced: false,
-                    searchTerms: true,
-                    searchKanji: true,
-                    scanOnTouchMove: true,
-                    scanOnPenHover: true,
-                    scanOnPenPress: true,
-                    scanOnPenRelease: false,
-                    preventTouchScrolling: true
-                }
-            }]
+            items: [ScanInputsController.createDefaultMouseInput(include, exclude)]
         }]);
     }
 
@@ -119,6 +105,24 @@ class ScanInputsController {
         const field = new ScanInputField(this, index, this._os);
         this._entries.push(field);
         field.prepare(this._container, include, exclude);
+    }
+
+    static createDefaultMouseInput(include, exclude) {
+        return {
+            include,
+            exclude,
+            types: {mouse: true, touch: false, pen: false},
+            options: {
+                showAdvanced: false,
+                searchTerms: true,
+                searchKanji: true,
+                scanOnTouchMove: true,
+                scanOnPenHover: true,
+                scanOnPenPress: true,
+                scanOnPenRelease: false,
+                preventTouchScrolling: true
+            }
+        };
     }
 }
 
