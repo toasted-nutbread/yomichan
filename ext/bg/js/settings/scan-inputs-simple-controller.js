@@ -40,6 +40,7 @@ class ScanInputsSimpleController {
         this._middleMouseButtonScan.addEventListener('change', this.onMiddleMouseButtonScanChange.bind(this), false);
         this._mainScanModifierKeyInput.addEventListener('change', this._onMainScanModifierKeyInputChange.bind(this), false);
 
+        this._settingsController.on('scanInputsChanged', this._onScanInputsChanged.bind(this));
         this._settingsController.on('optionsChanged', this._onOptionsChanged.bind(this));
         this._onOptionsChanged({options});
     }
@@ -50,6 +51,11 @@ class ScanInputsSimpleController {
     }
 
     // Private
+
+    _onScanInputsChanged({source}) {
+        if (source === this) { return; }
+        this.refresh();
+    }
 
     _onOptionsChanged({options}) {
         const {scanning: {inputs}} = options;
@@ -170,6 +176,7 @@ class ScanInputsSimpleController {
 
     async _modifyProfileSettings(targets) {
         await this._settingsController.modifyProfileSettings(targets);
+        this._settingsController.trigger('scanInputsChanged', {source: this});
     }
 
     _getIndexOfMainScanInput(inputs) {

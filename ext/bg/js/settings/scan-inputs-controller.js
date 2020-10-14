@@ -37,6 +37,7 @@ class ScanInputsController {
         this._addButton = document.querySelector('#scan-input-add');
 
         this._addButton.addEventListener('click', this._onAddButtonClick.bind(this), false);
+        this._settingsController.on('scanInputsChanged', this._onScanInputsChanged.bind(this));
         this._settingsController.on('optionsChanged', this._onOptionsChanged.bind(this));
 
         this.refresh();
@@ -76,6 +77,11 @@ class ScanInputsController {
 
     // Private
 
+    _onScanInputsChanged({source}) {
+        if (source === this) { return; }
+        this.refresh();
+    }
+
     _onOptionsChanged({options}) {
         const {inputs} = options.scanning;
 
@@ -114,6 +120,7 @@ class ScanInputsController {
 
     async _modifyProfileSettings(targets) {
         await this._settingsController.modifyProfileSettings(targets);
+        this._settingsController.trigger('scanInputsChanged', {source: this});
     }
 
     static createDefaultMouseInput(include, exclude) {
