@@ -16,9 +16,9 @@
  */
 
 /* global
- * api
  * DocumentUtil
  * ScanInputsController
+ * api
  */
 
 class ScanInputsSimpleController {
