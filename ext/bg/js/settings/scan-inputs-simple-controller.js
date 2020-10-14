@@ -56,7 +56,13 @@ class ScanInputsSimpleController {
         const middleMouseSupportedIndex = this._getIndexOfMiddleMouseButtonScanInput(inputs);
         const mainScanInputIndex = this._getIndexOfMainScanInput(inputs);
 
-        const middleMouseSupported = (middleMouseSupportedIndex >= 0);
+        let middleMouseSupported = false;
+        if (middleMouseSupportedIndex >= 0) {
+            const includeValues = this._splitValue(inputs[middleMouseSupportedIndex].include);
+            if (includeValues.includes('mouse2')) {
+                middleMouseSupported = true;
+            }
+        }
 
         let mainScanInput = 'none';
         if (mainScanInputIndex >= 0) {
