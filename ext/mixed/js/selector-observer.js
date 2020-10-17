@@ -15,7 +15,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * Class which is used to observe elements matching a selector in specific element.
+ */
 class SelectorObserver {
+    /**
+     * Creates a new instance.
+     * @param selector A string CSS selector used to find elements.
+     * @param ignoreSelector A string CSS selector used to filter elements, or null for no filtering.
+     * @param onAdded A function which is invoked for each element that is added that matches the selector.
+     *   The signature is (element) => data.
+     * @param onRemoved A function which is invoked for each element that is removed, or null.
+     *   The signature is (element, data) => void.
+     * @param onChildrenUpdated A function which is invoked for each element which has its children updated, or null.
+     *   The signature is (element, data) => void.
+     * @param isStale A function which checks if the data is stale for a given element, or null.
+     *   If the element is stale, it will be removed and potentially re-added.
+     *   The signature is (element, data) => bool.
+     */
     constructor({selector, ignoreSelector=null, onAdded=null, onRemoved=null, onChildrenUpdated=null, isStale=null}) {
         this._selector = selector;
         this._ignoreSelector = ignoreSelector;
@@ -30,10 +47,21 @@ class SelectorObserver {
         this._isObserving = false;
     }
 
+    /**
+     * Returns whether or not an element is currently being observed.
+     * @returns True if an element is being observed, false otherwise.
+     */
     get isObserving() {
         return this._observingElement !== null;
     }
 
+    /**
+     * Starts DOM mutation observing the target element.
+     * @param element The element to observe changes in.
+     * @param attributes A boolean for whether or not attribute changes should be observed.
+     * @throws An error if element is null.
+     * @throws An error if an element is already being observed.
+     */
     observe(element, attributes=false) {
         if (element === null) {
             throw new Error('Invalid element');
@@ -57,6 +85,9 @@ class SelectorObserver {
         }]);
     }
 
+    /**
+     * Stops observing the target element.
+     */
     disconnect() {
         if (!this.isObserving) { return; }
 
@@ -68,12 +99,20 @@ class SelectorObserver {
         }
     }
 
+    /**
+     * Returns an iterable list of [element, data] pairs.
+     * @yields A sequence of [element, data] pairs.
+     */
     *entries() {
         for (const [element, {data}] of this._elementMap) {
             yield [element, data];
         }
     }
 
+    /**
+     * Returns an iterable list of data for every element.
+     * @yields A sequence of data values.
+     */
     *datas() {
         for (const {data} of this._elementMap.values()) {
             yield data;
