@@ -70,8 +70,8 @@ class SelectorObserver {
     }
 
     *entries() {
-        for (const [key, {data}] of this._elementMap) {
-            yield [key, data];
+        for (const [element, {data}] of this._elementMap) {
+            yield [element, data];
         }
     }
 
