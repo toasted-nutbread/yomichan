@@ -15,12 +15,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+/* global
+ * SelectorObserver
+ */
+
 class SettingsDisplayController {
     constructor(modalController) {
         this._modalController = modalController;
         this._contentNode = null;
         this._previewFrameContainer = null;
         this._topLink = null;
+        this._onMoreToggleClickBind = null;
     }
 
     prepare() {
@@ -33,11 +38,6 @@ class SettingsDisplayController {
             fabButton.addEventListener('click', onFabButtonClick, false);
         }
 
-        const onMoreToggleClick = this._onMoreToggleClick.bind(this);
-        for (const node of document.querySelectorAll('.more-toggle')) {
-            node.addEventListener('click', onMoreToggleClick, false);
-        }
-
         const onModalAction = this._onModalAction.bind(this);
         for (const node of document.querySelectorAll('[data-modal-action]')) {
             node.addEventListener('click', onModalAction, false);
@@ -47,6 +47,14 @@ class SettingsDisplayController {
         for (const node of document.querySelectorAll('[data-select-on-click]')) {
             node.addEventListener('click', onSelectOnClickElementClick, false);
         }
+
+        this._onMoreToggleClickBind = this._onMoreToggleClick.bind(this);
+        const moreSelectorObserver = new SelectorObserver({
+            selector: '.more-toggle',
+            onAdded: this._onMoreSetup.bind(this),
+            onRemoved: this._onMoreCleanup.bind(this)
+        });
+        moreSelectorObserver.observe(document.documentElement, false);
 
         this._contentNode.addEventListener('scroll', this._onScroll.bind(this), {passive: true});
         this._topLink.addEventListener('click', this._onTopLinkClick.bind(this), false);
@@ -58,6 +66,15 @@ class SettingsDisplayController {
     }
 
     // Private
+
+    _onMoreSetup(element) {
+        element.addEventListener('click', this._onMoreToggleClickBind, false);
+        return null;
+    }
+
+    _onMoreCleanup(element) {
+        element.removeEventListener('click', this._onMoreToggleClickBind, false);
+    }
 
     _onScroll(e) {
         const content = e.currentTarget;
