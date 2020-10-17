@@ -92,6 +92,12 @@ class SettingsDisplayController {
         const moreVisible = more.hidden;
         more.hidden = !moreVisible;
         for (const moreToggle of container.querySelectorAll('.more-toggle')) {
+            const container2 = this._getMoreContainer(moreToggle);
+            if (container2 === null) { continue; }
+
+            const more2 = container2.querySelector('.more');
+            if (more2 === null || more2 !== more) { continue; }
+
             moreToggle.dataset.expanded = `${moreVisible}`;
         }
 
