@@ -34,7 +34,7 @@ class SelectorObserver {
         return this._observingElement !== null;
     }
 
-    observe(element, attributes) {
+    observe(element, attributes=false) {
         if (element === null) {
             throw new Error('Invalid element');
         }
@@ -44,8 +44,7 @@ class SelectorObserver {
 
         this._observingElement = element;
         this._mutationObserver.observe(element, {
-            attributes: attributes,
-            attributeOldValue: attributes,
+            attributes: !!attributes,
             childList: true,
             subtree: true
         });
