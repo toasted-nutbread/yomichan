@@ -184,15 +184,41 @@
             <div class="settings-item-inner settings-item-inner-wrappable">
                 <div class="settings-item-left">
                     <div class="settings-item-label">Result grouping mode</div>
-                    <div class="settings-item-description">Change how related results are grouped.</div>
+                    <div class="settings-item-description">
+                        Change how related results are grouped.
+                        <a class="more-toggle more-only" data-parent-distance="4">More...</a>
+                    </div>
                 </div>
                 <div class="settings-item-right">
                     <select data-setting="general.resultOutputMode" data-transform="setVisibility" data-ancestor-distance="-1" data-relative-selector="#main-dictionary-container" data-visbility-condition='{"op":"===","value":"merge"}'>
                         <option value="split">No grouping</option>
-                        <option value="group">Group by term-reading pairs</option>
-                        <option value="merge">Group by main dictionary entry</option>
+                        <option value="group">Group term-reading pairs</option>
+                        <option value="merge">Group related terms</option>
                     </select>
                 </div>
+            </div>
+            <div class="settings-item-children more" hidden>
+                <ul>
+                    <li>
+                        <strong>No grouping</strong> - Every definition will be listed as a separate entry.
+                    </li>
+                    <li>
+                        <strong>Group term-reading pairs</strong> - Definitions for the same term with the same reading will be grouped together.
+                    </li>
+                    <li>
+                        <p>
+                            <strong>Group related terms</strong> - Related terms that share the same definitions will be grouped together.
+                            This is only supported for some dictionaries, and a primary dictionary must be selected.
+                        </p>
+                        <p>
+                            Additionally, enabling the <em>Allow secondary searches</em> option for dictionaries will also
+                            include definitions from those dictionaries for the related terms.
+                        </p>
+                    </li>
+                </ul>
+                <p>
+                    <a class="more-toggle" data-parent-distance="3">Less&hellip;</a>
+                </p>
             </div>
             <div class="settings-item-children settings-item-children-group" id="main-dictionary-container" hidden>
                 <div class="settings-item">
@@ -209,7 +235,7 @@
                     </div>
                     <div class="settings-item-children more" hidden>
                         <p>
-                            The primary dictionary is used in merge mode to find related definitions from the
+                            The primary dictionary is used in merge mode to find related terms from the
                             same dictionary.
                         </p>
                         <p>
