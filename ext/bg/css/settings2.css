@@ -96,6 +96,9 @@
     --danger-color-transparent5: rgba(200, 60, 40, 0.05);
     --danger-color-transparent25: rgba(200, 60, 40, 0.25);
     --warning-color: #96751c;
+    --disabled-color: #aaaaaa;
+    --disabled-color-light: #dddddd;
+    --disabled-color-lighter: #eeeeee;
     --dim-background-color: rgba(0, 0, 0, 0.5);
     --toggle-track-color: #cccccc;
     --toggle-knob-color: var(--background-color-light);
@@ -700,8 +703,8 @@ select.short-height {
                 opacity var(--animation-duration2) ease-in-out,
                 visibility 0s ease-in-out var(--animation-duration2);
 }
-.toggle>input[type=checkbox]:focus~.toggle-knob::after,
-.toggle:active>.toggle-knob::after {
+.toggle>input[type=checkbox]:focus:not(:disabled)~.toggle-knob::after,
+.toggle:active>input[type=checkbox]:not(:disabled)~.toggle-knob::after {
     transform: scale(1);
     opacity: 1;
     visibility: visible;
@@ -716,16 +719,24 @@ select.short-height {
 .toggle:active>input[type=checkbox]:focus~.toggle-knob::after {
     opacity: 1;
 }
-.toggle>input[type=checkbox]:checked~.toggle-track {
-    background-color: var(--accent-color-lighter);
-}
 .toggle>input[type=checkbox]:checked~.toggle-knob {
     transform: translateX(1em);
+}
+.toggle>input[type=checkbox]:checked:not(:disabled)~.toggle-track {
+    background-color: var(--accent-color-lighter);
+}
+.toggle>input[type=checkbox]:checked:not(:disabled)~.toggle-knob {
     background-color: var(--accent-color);
 }
-.toggle>input[type=checkbox]:focus:checked~.toggle-knob::after,
-.toggle:active>input[type=checkbox]:checked~.toggle-knob::after {
+.toggle>input[type=checkbox]:focus:checked:not(:disabled)~.toggle-knob::after,
+.toggle:active>input[type=checkbox]:checked:not(:disabled)~.toggle-knob::after {
     background-color: var(--accent-color-transparent25);
+}
+.toggle>input[type=checkbox]:disabled~.toggle-track {
+    background-color: var(--disabled-color-light);
+}
+.toggle>input[type=checkbox]:disabled~.toggle-knob {
+    background-color: var(--disabled-color-lighter);
 }
 
 
@@ -799,75 +810,88 @@ button:active {
 }
 
 /* Standard button */
-button {
+button:not(:disabled) {
     color: var(--button-text-color);
     border-color: var(--accent-color);
     background-color: var(--accent-color);
 }
-button:hover {
+button:hover:not(:disabled) {
     background-color: var(--accent-color-light);
     border-color: var(--accent-color-light);
 }
-button:focus {
+button:focus:not(:disabled) {
     background-color: var(--accent-color-light);
 }
-button:active {
+button:active:not(:disabled) {
     border-color: var(--accent-color-lighter);
     background-color: var(--accent-color-lighter);
 }
 
 /* Standard danger button */
-button.danger {
+button.danger:not(:disabled) {
     color: var(--button-text-color);
     border-color: var(--danger-color);
     background-color: var(--danger-color);
 }
-button.danger:hover {
+button.danger:hover:not(:disabled) {
     background-color: var(--danger-color-light);
     border-color: var(--danger-color-light);
 }
-button.danger:focus {
+button.danger:focus:not(:disabled) {
     background-color: var(--danger-color-light);
 }
-button.danger:active {
+button.danger:active:not(:disabled) {
     border-color: var(--danger-color-lighter);
     background-color: var(--danger-color-lighter);
 }
 
 /* Low emphasis button */
-button.low-emphasis {
+button.low-emphasis:not(:disabled) {
     color: var(--accent-color);
     border-color: var(--button-border-color);
     background-color: var(--accent-color-transparent0);
 }
-button.low-emphasis:hover {
+button.low-emphasis:hover:not(:disabled) {
     background-color: var(--accent-color-transparent5);
     border-color: var(--accent-color-light);
 }
-button.low-emphasis:focus {
+button.low-emphasis:focus:not(:disabled) {
     border-color: var(--accent-color);
 }
-button.low-emphasis:active {
+button.low-emphasis:active:not(:disabled) {
     border-color: var(--accent-color);
     background-color: var(--accent-color-transparent25);
 }
 
 /* Low emphasis danger button */
-button.low-emphasis.danger {
+button.low-emphasis.danger:not(:disabled) {
     color: var(--danger-color);
     border-color: var(--button-border-color);
     background-color: var(--danger-color-transparent0);
 }
-button.low-emphasis.danger:hover {
+button.low-emphasis.danger:hover:not(:disabled) {
     border-color: var(--danger-color-light);
     background-color: var(--danger-color-transparent5);
 }
-button.low-emphasis.danger:focus {
+button.low-emphasis.danger:focus:not(:disabled) {
     border-color: var(--danger-color);
 }
-button.low-emphasis.danger:active {
+button.low-emphasis.danger:active:not(:disabled) {
     border-color: var(--danger-color);
     background-color: var(--danger-color-transparent25);
+}
+
+/* Disabled buttons */
+button:disabled {
+    color: var(--button-text-color);
+    border-color: var(--disabled-color);
+    background-color: var(--disabled-color);
+    cursor: default;
+}
+button.low-emphasis:disabled {
+    color: var(--disabled-color);
+    border-color: var(--disabled-color);
+    background-color: transparent;
 }
 
 /* Material design icon button */
