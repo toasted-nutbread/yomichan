@@ -646,10 +646,6 @@ select.short-height {
 .toggle {
     font-size: var(--toggle-size);
     display: inline-block;
-    width: 2em;
-    height: 1em;
-    position: relative;
-    cursor: pointer;
 }
 .toggle>input[type=checkbox] {
     opacity: 0;
@@ -659,6 +655,13 @@ select.short-height {
     margin: 0;
     padding: 0;
     border: none;
+}
+.toggle-body {
+    display: block;
+    cursor: pointer;
+    width: 2em;
+    height: 1em;
+    position: relative;
 }
 .toggle-track {
     display: block;
@@ -703,8 +706,8 @@ select.short-height {
                 opacity var(--animation-duration2) ease-in-out,
                 visibility 0s ease-in-out var(--animation-duration2);
 }
-.toggle>input[type=checkbox]:focus:not(:disabled)~.toggle-knob::after,
-.toggle:active>input[type=checkbox]:not(:disabled)~.toggle-knob::after {
+.toggle>input[type=checkbox]:focus:not(:disabled)+.toggle-body>.toggle-knob::after,
+.toggle:active>input[type=checkbox]:not(:disabled)+.toggle-body>.toggle-knob::after {
     transform: scale(1);
     opacity: 1;
     visibility: visible;
@@ -713,29 +716,32 @@ select.short-height {
                 opacity var(--animation-duration2) ease-in-out,
                 visibility var(--animation-duration2) ease-in-out;
 }
-.toggle>input[type=checkbox]:focus~.toggle-knob::after {
+.toggle>input[type=checkbox]:focus+.toggle-body>.toggle-knob::after {
     opacity: 0.5;
 }
-.toggle:active>input[type=checkbox]:focus~.toggle-knob::after {
+.toggle:active>input[type=checkbox]:focus+.toggle-body>.toggle-knob::after {
     opacity: 1;
 }
-.toggle>input[type=checkbox]:checked~.toggle-knob {
+.toggle>input[type=checkbox]:checked+.toggle-body>.toggle-knob {
     transform: translateX(1em);
 }
-.toggle>input[type=checkbox]:checked:not(:disabled)~.toggle-track {
+.toggle>input[type=checkbox]:checked:not(:disabled)+.toggle-body>.toggle-track {
     background-color: var(--accent-color-lighter);
 }
-.toggle>input[type=checkbox]:checked:not(:disabled)~.toggle-knob {
+.toggle>input[type=checkbox]:checked:not(:disabled)+.toggle-body>.toggle-knob {
     background-color: var(--accent-color);
 }
-.toggle>input[type=checkbox]:focus:checked:not(:disabled)~.toggle-knob::after,
-.toggle:active>input[type=checkbox]:checked:not(:disabled)~.toggle-knob::after {
+.toggle>input[type=checkbox]:focus:checked:not(:disabled)+.toggle-body>.toggle-knob::after,
+.toggle:active>input[type=checkbox]:checked:not(:disabled)+.toggle-body>.toggle-knob::after {
     background-color: var(--accent-color-transparent25);
 }
-.toggle>input[type=checkbox]:disabled~.toggle-track {
+.toggle>input[type=checkbox]:disabled+.toggle-body {
+    cursor: default;
+}
+.toggle>input[type=checkbox]:disabled+.toggle-body>.toggle-track {
     background-color: var(--disabled-color-light);
 }
-.toggle>input[type=checkbox]:disabled~.toggle-knob {
+.toggle>input[type=checkbox]:disabled+.toggle-body>.toggle-knob {
     background-color: var(--disabled-color-lighter);
 }
 
