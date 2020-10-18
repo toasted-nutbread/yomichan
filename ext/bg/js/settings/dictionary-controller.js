@@ -69,8 +69,12 @@ class DictionaryEntry {
         allowSecondarySearchesCheckbox.dataset.setting = ObjectPropertyAccessor.getPathString(['dictionaries', title, 'allowSecondarySearches']);
         priorityInput.dataset.setting = ObjectPropertyAccessor.getPathString(['dictionaries', title, 'priority']);
 
-        this._eventListeners.addEventListener(deleteButton, 'click', this._onDeleteButtonClicked.bind(this), false);
-        this._eventListeners.addEventListener(detailsToggleLink, 'click', this._onDetailsToggleLinkClicked.bind(this), false);
+        if (deleteButton !== null) {
+            this._eventListeners.addEventListener(deleteButton, 'click', this._onDeleteButtonClicked.bind(this), false);
+        }
+        if (this._detailsContainer !== null) {
+            this._eventListeners.addEventListener(detailsToggleLink, 'click', this._onDetailsToggleLinkClicked.bind(this), false);
+        }
         this._eventListeners.addEventListener(priorityInput, 'settingChanged', this._onPriorityChanged.bind(this), false);
     }
 
