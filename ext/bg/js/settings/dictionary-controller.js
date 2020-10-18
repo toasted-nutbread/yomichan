@@ -49,6 +49,7 @@ class DictionaryEntry {
         const allowSecondarySearchesCheckbox = node.querySelector('.dictionary-allow-secondary-searches');
         const priorityInput = node.querySelector('.dictionary-priority');
         const deleteButton = node.querySelector('.dictionary-delete-button');
+        const menuButton = node.querySelector('.dictionary-menu-button');
         const detailsTable = node.querySelector('.dictionary-details-table');
         const detailsToggleLink = node.querySelector('.dictionary-details-toggle-link');
         const outdatedContainer = node.querySelector('.dictionary-outdated-notification');
@@ -71,6 +72,9 @@ class DictionaryEntry {
 
         if (deleteButton !== null) {
             this._eventListeners.addEventListener(deleteButton, 'click', this._onDeleteButtonClicked.bind(this), false);
+        }
+        if (menuButton !== null) {
+            this._eventListeners.addEventListener(menuButton, 'menuClosed', this._onMenuClosed.bind(this), false);
         }
         if (this._detailsContainer !== null) {
             this._eventListeners.addEventListener(detailsToggleLink, 'click', this._onDetailsToggleLinkClicked.bind(this), false);
@@ -97,6 +101,15 @@ class DictionaryEntry {
     _onDeleteButtonClicked(e) {
         e.preventDefault();
         this._delete();
+    }
+
+    _onMenuClosed(e) {
+        const {detail: {action}} = e;
+        switch (action) {
+            case 'remove':
+                this._delete();
+                break;
+        }
     }
 
     _onDetailsToggleLinkClicked(e) {
