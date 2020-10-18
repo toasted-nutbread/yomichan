@@ -942,6 +942,12 @@ button.icon-button:active {
     mask-size: 16px 16px;
     -webkit-mask-size: 16px 16px;
 }
+.icon-button-icon[data-icon=kebab-menu] {
+    mask-image: url(/mixed/img/kebab-menu.svg);
+    -webkit-mask-image: url(/mixed/img/kebab-menu.svg);
+    mask-size: 16px 16px;
+    -webkit-mask-size: 16px 16px;
+}
 .icon-button-icon[data-icon=popup] {
     mask-image: url(/mixed/img/popup.svg);
     -webkit-mask-image: url(/mixed/img/popup.svg);
