@@ -95,6 +95,7 @@
     --danger-color-transparent0: rgba(200, 60, 40, 0);
     --danger-color-transparent5: rgba(200, 60, 40, 0.05);
     --danger-color-transparent25: rgba(200, 60, 40, 0.25);
+    --warning-color: #96751c;
     --dim-background-color: rgba(0, 0, 0, 0.5);
     --toggle-track-color: #cccccc;
     --toggle-knob-color: var(--background-color-light);
@@ -168,9 +169,19 @@ a:hover {
     color: var(--link-color-hover);
     text-decoration: underline;
 }
+
+
+/* Text styles */
 .light {
     color: var(--text-color-light);
 }
+.warning-text {
+    color: var(--warning-color);
+}
+.danger-text {
+    color: var(--danger-color);
+}
+
 
 /* Headings */
 h1 {
