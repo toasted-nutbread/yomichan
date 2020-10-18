@@ -216,7 +216,7 @@ class AudioController {
         await this._settingsController.setProfileSetting(`audio.sources[${index}]`, value);
     }
 
-    async _onAudioSourceRemoveClicked(entry) {
-        await this._removeAudioSourceEntry(entry);
+    _onAudioSourceRemoveClicked(entry) {
+        this._removeAudioSourceEntry(entry);
     }
 }
