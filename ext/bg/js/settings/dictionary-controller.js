@@ -94,6 +94,9 @@ class DictionaryEntry {
         const node = this._node.querySelector('.dictionary-counts');
         node.textContent = JSON.stringify({info: this._dictionaryInfo, counts}, null, 4);
         node.hidden = false;
+
+        const show = this._node.querySelector('.dictionary-details-toggle-link');
+        if (show !== null) { show.hidden = false; }
     }
 
     // Private
