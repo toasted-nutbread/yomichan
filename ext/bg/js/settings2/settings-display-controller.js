@@ -28,6 +28,7 @@ class SettingsDisplayController {
         this._previewFrameContainer = null;
         this._topLink = null;
         this._menuContainer = null;
+        this._openPopupMenus = new Set();
         this._onMoreToggleClickBind = null;
         this._onMenuButtonClickBind = null;
     }
@@ -157,7 +158,7 @@ class SettingsDisplayController {
     _onKeyDown(e) {
         switch (e.code) {
             case 'Escape':
-                this._closeTopModal();
+                this._closeTopMenuOrModal();
                 e.preventDefault();
                 break;
         }
@@ -224,6 +225,12 @@ class SettingsDisplayController {
         return false;
     }
 
+    _onClosePopupMenu({popupMenu, onClose}) {
+        console.log('wew');
+        this._openPopupMenus.delete(popupMenu);
+        popupMenu.off('closed', onClose);
+    }
+
     _updateScrollTarget() {
         const hash = window.location.hash;
         if (!hash.startsWith('#!')) { return; }
@@ -250,10 +257,16 @@ class SettingsDisplayController {
         return link;
     }
 
-    _closeTopModal() {
+    _closeTopMenuOrModal() {
+        for (const popupMenu of this._openPopupMenus) {
+            popupMenu.close();
+            return;
+        }
+
         const modal = this._modalController.getTopVisibleModal();
-        if (modal === null) { return; }
-        modal.setVisible(false);
+        if (modal !== null) {
+            modal.setVisible(false);
+        }
     }
 
     _showMenu(element, menuName) {
@@ -263,6 +276,12 @@ class SettingsDisplayController {
         this._menuContainer.appendChild(menu);
 
         const popupMenu = new PopupMenu(element, menu);
+        this._openPopupMenus.add(popupMenu);
+
+        const data = {popupMenu, onClose: null};
+        data.onClose = this._onClosePopupMenu.bind(this, data);
+
+        popupMenu.on('closed', data.onClose);
         popupMenu.prepare();
     }
 }
