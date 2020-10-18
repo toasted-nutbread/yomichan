@@ -1046,6 +1046,9 @@ button.icon-button:active {
     flex-flow: column nowrap;
     overflow: hidden;
 }
+.modal-container:not(.modal-container-open)>.modal-content {
+    pointer-events: none;
+}
 .modal-content.modal-content-small {
     width: var(--modal-width-small);
     height: var(--modal-height-small);
