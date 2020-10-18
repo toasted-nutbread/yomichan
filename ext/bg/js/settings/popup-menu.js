@@ -24,6 +24,10 @@ class PopupMenu {
         this._eventListeners = new EventListenerCollection();
     }
 
+    get isClosed() {
+        return this._isClosed;
+    }
+
     prepare() {
         const items = this._menu.querySelectorAll('.popup-menu-item');
         this._setPosition(items);
