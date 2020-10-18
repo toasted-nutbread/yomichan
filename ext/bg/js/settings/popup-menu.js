@@ -53,7 +53,7 @@ class PopupMenu {
     }
 
     close() {
-        this._close(null, 'close');
+        return this._close(null, 'close');
     }
 
     // Private
@@ -154,7 +154,7 @@ class PopupMenu {
     }
 
     _close(item, cause) {
-        if (this._isClosed) { return; }
+        if (this._isClosed) { return true; }
         const action = (item !== null ? item.dataset.menuAction : null);
 
         const result = this._sourceElement.dispatchEvent(new CustomEvent('menuClosed', {
@@ -169,11 +169,12 @@ class PopupMenu {
                 cause
             }
         }));
-        if (!result) { return; }
+        if (!result) { return false; }
 
         this._eventListeners.removeAllEventListeners();
         if (this._container.parentNode !== null) {
             this._container.parentNode.removeChild(this._container);
         }
+        return true;
     }
 }
