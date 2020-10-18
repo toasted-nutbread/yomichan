@@ -226,7 +226,6 @@ class SettingsDisplayController {
     }
 
     _onClosePopupMenu({popupMenu, onClose}) {
-        console.log('wew');
         this._openPopupMenus.delete(popupMenu);
         popupMenu.off('closed', onClose);
     }
