@@ -17,10 +17,13 @@
 
 /* global
  * AudioController
+ * DictionaryController
+ * DictionaryImportController
  * GenericSettingController
  * ModalController
  * SettingsController
  * SettingsDisplayController
+ * StatusFooter
  * StorageController
  * api
  */
@@ -40,6 +43,9 @@ async function setupGenericSettingsController(genericSettingController) {
     try {
         document.querySelector('#content-scroll-focus').focus();
 
+        const statusFooter = new StatusFooter(document.querySelector('.status-footer-container'));
+        statusFooter.prepare();
+
         api.forwardLogsToBackend();
         await yomichan.prepare();
 
@@ -57,6 +63,12 @@ async function setupGenericSettingsController(genericSettingController) {
 
         const storageController = new StorageController();
         storageController.prepare();
+
+        const dictionaryController = new DictionaryController(settingsController, modalController, statusFooter);
+        dictionaryController.prepare();
+
+        const dictionaryImportController = new DictionaryImportController(settingsController, modalController, storageController, statusFooter);
+        dictionaryImportController.prepare();
 
         const genericSettingController = new GenericSettingController(settingsController);
         preparePromises.push(setupGenericSettingsController(genericSettingController));

@@ -27,7 +27,7 @@
     --shadow-color-off: rgba(0, 0, 0, 0);
     --shadow-color-light: rgba(0, 0, 0, 0.085);
     --shadow-vertical: 0 1px 4px 0 var(--shadow-color), 0 2px 2px 0 var(--shadow-color);
-    --shadow-vertical-strong: 0 2px 4px 0 var(--shadow-color), 0 3px 3px 0 var(--shadow-color);
+    --shadow-vertical-strong: 0 1px 3px 1px var(--shadow-color), 0 2px 4px 3px var(--shadow-color);
     --shadow-vertical-top: 0 -1px 4px 0 var(--shadow-color), 0 -2px 2px 0 var(--shadow-color);
     --shadow-left: -1px 0 4px 0 var(--shadow-color), -2px 0 2px 0 var(--shadow-color);
     --shadow-right: 1px 0 4px 0 var(--shadow-color), 2px 0 2px 0 var(--shadow-color);
@@ -64,7 +64,7 @@
     --modal-width: 600px;
     --modal-height: 400px;
     --modal-width-small: 400px;
-    --modal-height-small: 300px;
+    --modal-height-small: 200px;
     --modal-transition-offset: -64px;
 
     --menu-border-radius: 0.3em;
@@ -172,6 +172,7 @@ li {
 a {
     color: var(--link-color);
     text-decoration: none;
+    cursor: pointer;
 }
 a:hover {
     color: var(--link-color-hover);
@@ -1051,7 +1052,9 @@ button.icon-button:active {
 }
 .modal-content.modal-content-small {
     width: var(--modal-width-small);
-    height: var(--modal-height-small);
+    min-height: var(--modal-height-small);
+    height: auto;
+    max-height: 100%;
 }
 .modal-content.modal-content-full {
     max-width: var(--main-content-size);
@@ -1206,7 +1209,7 @@ button.popup-menu-item:disabled {
     pointer-events: auto;
     overflow: auto;
     flex: 0 1 auto;
-    padding: 1em 0.75em;
+    padding: 0.375em 0;
     box-sizing: border-box;
     box-shadow: var(--shadow-vertical-top);
     background-color: var(--background-color-light);
@@ -1215,13 +1218,28 @@ button.popup-menu-item:disabled {
     opacity: 1;
     transition: transform var(--animation-duration) ease-out, opacity var(--animation-duration) ease-out;
 }
-.status-footer-container:not(.status-footer-container-visible) .status-footer {
+.status-footer-container:not(.status-footer-container-open) .status-footer {
     transform: translate(0, 100%);
     opacity: 0;
     transition: transform var(--animation-duration) ease-in, opacity var(--animation-duration) ease-in;
 }
-.status-footer-container:not(.status-footer-container-visible):not(.status-footer-container-visibility-changing) {
+.status-footer-container:not(.status-footer-container-open):not(.status-footer-container-opening):not(.status-footer-container-closing) {
     display: none;
+}
+.status-footer-header {
+    display: flex;
+    width: 100%;
+    flex-flow: row nowrap;
+    align-items: center;
+    padding: 0.375em 0.75em;
+    box-sizing: border-box;
+}
+.status-footer-header-label {
+    font-weight: bold;
+    flex: 1 1 auto;
+}
+.status-footer-item {
+    padding: 0.375em 0.75em;
 }
 
 
@@ -1308,6 +1326,35 @@ button.fab-button>.icon-button-inner>.icon-button-icon {
 }
 
 
+/* Progress */
+.progress-labels {
+    display: flex;
+    flex-flow: row nowrap;
+    width: 100%;
+}
+.progress-info {
+    flex: 1 0 auto;
+}
+.progress-status {
+    text-align: right;
+    flex: 1 0 auto;
+    white-space: nowrap;
+}
+.progress-bar-track {
+    width: 100%;
+    height: 4px;
+    background-color: var(--input-background-color);
+}
+.progress-bar {
+    width: 0;
+    height: 100%;
+    background-color: var(--accent-color);
+}
+.progress-bar.danger {
+    background-color: var(--danger-color);
+}
+
+
 /* Conditional styles */
 body.sidebar-visible .content-dimmer {
     visibility: visible;
@@ -1366,6 +1413,42 @@ body.preview-sidebar-visible .fab-container-item.fab-container-item-popup-previe
 }
 #audio-source-list:empty+#audio-source-list-empty {
     display: block;
+}
+
+.dictionary-list>.settings-item {
+    margin-left: calc(var(--modal-padding-horizontal) * -1);
+    margin-right: calc(var(--modal-padding-horizontal) * -1);
+    border-top: var(--thin-border-size) solid var(--separator-color2);
+}
+.dictionary-details-table {
+    display: table;
+    width: 100%
+}
+.dictionary-details-entry {
+    display: table-row;
+}
+.dictionary-details-entry+.dictionary-details-entry>* {
+    padding-top: 0.25em;
+}
+.dictionary-details-entry-label {
+    display: table-cell;
+    font-weight: bold;
+    white-space: nowrap;
+    padding-right: 0.5em;
+}
+.dictionary-details-entry-info {
+    display: table-cell;
+    white-space: pre-line;
+}
+.dictionary-counts {
+    width: 100%;
+    box-sizing: border-box;
+    font-size: inherit;
+    max-height: 10em;
+    line-height: 1.25;
+    font-family: 'Courier New', Courier, monospace;
+    white-space: pre;
+    overflow: auto;
 }
 
 
