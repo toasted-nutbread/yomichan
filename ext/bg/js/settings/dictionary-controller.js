@@ -159,9 +159,10 @@ class DictionaryEntry {
 }
 
 class DictionaryController {
-    constructor(settingsController, modalController) {
+    constructor(settingsController, modalController, statusFooter=null) {
         this._settingsController = settingsController;
         this._modalController = modalController;
+        this._statusFooter = statusFooter;
         this._dictionaries = null;
         this._dictionaryEntries = [];
         this._databaseStateToken = null;
@@ -351,24 +352,41 @@ class DictionaryController {
         const index = this._dictionaryEntries.findIndex((entry) => entry.dictionaryTitle === dictionaryTitle);
         if (index < 0) { return; }
 
-        const entry = this._dictionaryEntries[index];
-        const node = entry.node;
-        const progress = node.querySelector('.progress-container');
-        const progressBar = node.querySelector('.progress-bar');
+        const statusFooter = this._statusFooter;
+        const {node} = this._dictionaryEntries[index];
+        const progressSelector = '.dictionary-delete-progress';
+        const progressContainers = [
+            ...node.querySelectorAll('.progress-container'),
+            ...document.querySelectorAll(`#dictionaries ${progressSelector}`)
+        ];
+        const progressBars = [
+            ...node.querySelectorAll('.progress-bar'),
+            ...document.querySelectorAll(`${progressSelector} .progress-bar`)
+        ];
+        const infoLabels = document.querySelectorAll(`${progressSelector} .progress-info`);
+        const statusLabels = document.querySelectorAll(`${progressSelector} .progress-status`);
         const prevention = this._settingsController.preventPageExit();
         try {
             this._isDeleting = true;
             this._setButtonsEnabled(false);
 
-            progress.hidden = false;
-
             const onProgress = ({processed, count, storeCount, storesProcesed}) => {
-                let percent = 0.0;
-                if (count > 0 && storesProcesed > 0) {
-                    percent = (processed / count) * (storesProcesed / storeCount) * 100.0;
-                }
-                progressBar.style.width = `${percent}%`;
+                const percent = (
+                    (count > 0 && storesProcesed > 0) ?
+                    (processed / count) * (storesProcesed / storeCount) * 100.0 :
+                    0.0
+                );
+                const cssString = `${percent}%`;
+                const statusString = `${percent.toFixed(0)}%`;
+                for (const progressBar of progressBars) { progressBar.style.width = cssString; }
+                for (const label of statusLabels) { label.textContent = statusString; }
             };
+
+            onProgress({processed: 0, count: 1, storeCount: 1, storesProcesed: 0});
+
+            for (const progress of progressContainers) { progress.hidden = false; }
+            for (const label of infoLabels) { label.textContent = 'Deleting dictionary...'; }
+            if (statusFooter !== null) { statusFooter.setTaskActive(progressSelector, true); }
 
             await this._deleteDictionaryInternal(dictionaryTitle, onProgress);
             await this._deleteDictionarySettings(dictionaryTitle);
@@ -376,7 +394,8 @@ class DictionaryController {
             yomichan.logError(e);
         } finally {
             prevention.end();
-            progress.hidden = true;
+            for (const progress of progressContainers) { progress.hidden = true; }
+            if (statusFooter !== null) { statusFooter.setTaskActive(progressSelector, false); }
             this._setButtonsEnabled(true);
             this._isDeleting = false;
         }
