@@ -29,6 +29,8 @@ class DictionaryEntry {
         this._dictionaryInfo = dictionaryInfo;
         this._eventListeners = new EventListenerCollection();
         this._detailsContainer = null;
+        this._hasDetails = false;
+        this._hasCounts = false;
     }
 
     get node() {
@@ -58,6 +60,7 @@ class DictionaryEntry {
         const wildcardSupportedCheckbox = node.querySelector('.dictionary-prefix-wildcard-searches-supported');
 
         const hasDetails = this._setupDetails(detailsTable);
+        this._hasDetails = hasDetails;
 
         titleNode.textContent = title;
         versionNode.textContent = `rev.${revision}`;
@@ -94,6 +97,7 @@ class DictionaryEntry {
         const node = this._node.querySelector('.dictionary-counts');
         node.textContent = JSON.stringify({info: this._dictionaryInfo, counts}, null, 4);
         node.hidden = false;
+        this._hasCounts = true;
 
         const show = this._node.querySelector('.dictionary-details-toggle-link');
         if (show !== null) { show.hidden = false; }
