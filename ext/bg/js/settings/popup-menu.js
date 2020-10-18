@@ -19,15 +19,15 @@ class PopupMenu {
     constructor(sourceElement, container) {
         this._sourceElement = sourceElement;
         this._container = container;
+        this._menu = container.querySelector('.popup-menu');
         this._isClosed = false;
         this._eventListeners = new EventListenerCollection();
     }
 
     prepare() {
-        const menu = this._container.querySelector('.popup-menu');
-        const items = menu.querySelectorAll('.popup-menu-item');
-        this._setPosition(menu, items);
-        menu.focus();
+        const items = this._menu.querySelectorAll('.popup-menu-item');
+        this._setPosition(items);
+        this._menu.focus();
 
         this._eventListeners.addEventListener(window, 'resize', this._onWindowResize.bind(this), false);
         this._eventListeners.addEventListener(this._container, 'click', this._onMenuContainerClick.bind(this), false);
@@ -59,7 +59,7 @@ class PopupMenu {
         this._close(null, 'resize');
     }
 
-    _setPosition(menu, items) {
+    _setPosition(items) {
         // Get flags
         let horizontal = 1;
         let vertical = 1;
@@ -107,6 +107,7 @@ class PopupMenu {
         }
 
         // Position
+        const menu = this._menu;
         const fullRect = this._container.getBoundingClientRect();
         const sourceRect = this._sourceElement.getBoundingClientRect();
         const menuRect = menu.getBoundingClientRect();
