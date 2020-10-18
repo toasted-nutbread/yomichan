@@ -16,22 +16,27 @@
  */
 
 /* global
+ * PopupMenu
  * SelectorObserver
  */
 
 class SettingsDisplayController {
-    constructor(modalController) {
+    constructor(settingsController, modalController) {
+        this._settingsController = settingsController;
         this._modalController = modalController;
         this._contentNode = null;
         this._previewFrameContainer = null;
         this._topLink = null;
+        this._menuContainer = null;
         this._onMoreToggleClickBind = null;
+        this._onMenuButtonClickBind = null;
     }
 
     prepare() {
         this._contentNode = document.querySelector('.content');
         this._previewFrameContainer = document.querySelector('.preview-frame-container');
         this._topLink = document.querySelector('.sidebar-top-link');
+        this._menuContainer = document.querySelector('#popup-menus');
 
         const onFabButtonClick = this._onFabButtonClick.bind(this);
         for (const fabButton of document.querySelectorAll('.fab-button')) {
@@ -56,6 +61,14 @@ class SettingsDisplayController {
         });
         moreSelectorObserver.observe(document.documentElement, false);
 
+        this._onMenuButtonClickBind = this._onMenuButtonClick.bind(this);
+        const menuSelectorObserver = new SelectorObserver({
+            selector: '[data-menu]',
+            onAdded: this._onMenuSetup.bind(this),
+            onRemoved: this._onMenuCleanup.bind(this)
+        });
+        menuSelectorObserver.observe(document.documentElement, false);
+
         this._contentNode.addEventListener('scroll', this._onScroll.bind(this), {passive: true});
         this._topLink.addEventListener('click', this._onTopLinkClick.bind(this), false);
         document.querySelector('#show-preview-checkbox').addEventListener('change', this._onShowPreviewCheckboxChange.bind(this), false);
@@ -74,6 +87,21 @@ class SettingsDisplayController {
 
     _onMoreCleanup(element) {
         element.removeEventListener('click', this._onMoreToggleClickBind, false);
+    }
+
+    _onMenuSetup(element) {
+        element.addEventListener('click', this._onMenuButtonClickBind, false);
+        return null;
+    }
+
+    _onMenuCleanup(element) {
+        element.removeEventListener('click', this._onMenuButtonClickBind, false);
+    }
+
+    _onMenuButtonClick(e) {
+        const element = e.currentTarget;
+        const {menu} = element.dataset;
+        this._showMenu(element, menu);
     }
 
     _onScroll(e) {
@@ -226,5 +254,15 @@ class SettingsDisplayController {
         const modal = this._modalController.getTopVisibleModal();
         if (modal === null) { return; }
         modal.setVisible(false);
+    }
+
+    _showMenu(element, menuName) {
+        const menu = this._settingsController.instantiateTemplate(menuName);
+        if (menu === null) { return; }
+
+        this._menuContainer.appendChild(menu);
+
+        const popupMenu = new PopupMenu(element, menu);
+        popupMenu.prepare();
     }
 }

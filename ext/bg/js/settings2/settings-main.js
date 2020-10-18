@@ -68,7 +68,7 @@ async function setupGenericSettingsController(genericSettingController) {
 
         document.documentElement.dataset.loaded = 'true';
 
-        const settingsDisplayController = new SettingsDisplayController(modalController);
+        const settingsDisplayController = new SettingsDisplayController(settingsController, modalController);
         settingsDisplayController.prepare();
     } catch (e) {
         yomichan.logError(e);
