@@ -804,14 +804,16 @@ button {
     box-shadow: var(--button-shadow-params) var(--shadow-color-off);
     transition: background-color 0.125s ease-in, box-shadow 0.125s ease-in, border-color 0.125s ease-in;
 }
-button:hover {
-    box-shadow: var(--button-shadow-params) var(--shadow-color-light);
-    transition: background-color 0.125s ease-out, box-shadow 0.125s ease-out, border-color 0.125s ease-out;
-}
 button:focus {
     outline: none;
 }
-button:active {
+button:hover {
+    transition: background-color 0.125s ease-out, box-shadow 0.125s ease-out, border-color 0.125s ease-out;
+}
+button:hover:not(:disabled) {
+    box-shadow: var(--button-shadow-params) var(--shadow-color-light);
+}
+button:active:not(:disabled) {
     box-shadow: var(--button-shadow-params) var(--shadow-color);
 }
 
