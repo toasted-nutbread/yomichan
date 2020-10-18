@@ -114,3 +114,70 @@ class Modal extends PopupElement {
         });
     }
 }
+
+class StatusFooter extends PopupElement {
+    constructor(node) {
+        super({
+            node,
+            visibleClassName: 'status-footer-container-open',
+            openingClassName: 'status-footer-container-opening',
+            closingClassName: 'status-footer-container-closing',
+            closingAnimationDuration: 375 // Milliseconds; includes buffer
+        });
+        this._body = node.querySelector('.status-footer');
+    }
+
+    prepare() {
+        this.on('closeCompleted', this._onCloseCompleted.bind(this), false);
+        this._body.querySelector('.status-footer-header-close').addEventListener('click', this._onCloseClick.bind(this), false);
+    }
+
+    getTaskContainer(selector) {
+        return this._body.querySelector(selector);
+    }
+
+    isTaskActive(selector) {
+        const target = this.getTaskContainer(selector);
+        return (target !== null && target.dataset.active);
+    }
+
+    setTaskActive(selector, active) {
+        const target = this.getTaskContainer(selector);
+        if (target === null) { return; }
+
+        const activeElements = new Set();
+        for (const element of this._body.querySelectorAll('.status-footer-item')) {
+            if (element.dataset.active) {
+                activeElements.add(element);
+            }
+        }
+
+        if (active) {
+            target.dataset.active = true;
+            if (!this.isVisible()) {
+                this.setVisible(true);
+            }
+            target.hidden = false;
+        } else {
+            delete target.dataset.active;
+            if (activeElements.size <= 1) {
+                this.setVisible(false);
+            }
+        }
+    }
+
+    // Private
+
+    _onCloseClick(e) {
+        e.preventDefault();
+        this.setVisible(false);
+    }
+
+    _onCloseCompleted() {
+        for (const element of this._body.querySelectorAll('.status-footer-item')) {
+            if (!element.dataset.active) {
+                element.hidden = true;
+            }
+        }
+    }
+}
