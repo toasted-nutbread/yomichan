@@ -159,9 +159,10 @@ class DictionaryEntry {
 }
 
 class DictionaryController {
-    constructor(settingsController, modalController, statusFooter=null) {
+    constructor(settingsController, modalController, storageController, statusFooter=null) {
         this._settingsController = settingsController;
         this._modalController = modalController;
+        this._storageController = storageController;
         this._statusFooter = statusFooter;
         this._dictionaries = null;
         this._dictionaryEntries = [];
@@ -352,6 +353,7 @@ class DictionaryController {
         const index = this._dictionaryEntries.findIndex((entry) => entry.dictionaryTitle === dictionaryTitle);
         if (index < 0) { return; }
 
+        const storageController = this._storageController;
         const statusFooter = this._statusFooter;
         const {node} = this._dictionaryEntries[index];
         const progressSelector = '.dictionary-delete-progress';
@@ -397,6 +399,7 @@ class DictionaryController {
             for (const progress of progressContainers) { progress.hidden = true; }
             if (statusFooter !== null) { statusFooter.setTaskActive(progressSelector, false); }
             this._setButtonsEnabled(true);
+            storageController.updateStats();
             this._isDeleting = false;
         }
     }
