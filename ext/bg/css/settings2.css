@@ -283,7 +283,8 @@ h3 {
 .more-toggle {
     cursor: pointer;
 }
-.more-toggle.more-only[data-expanded=true] {
+.more-toggle.more-only[data-expanded=true],
+.more-toggle.no-more-only:not([data-expanded=true]) {
     display: none;
 }
 .more {
