@@ -36,6 +36,15 @@ class PopupMenu {
         for (const item of items) {
             this._eventListeners.addEventListener(item, 'click', onMenuItemClick, false);
         }
+
+        this._sourceElement.dispatchEvent(new CustomEvent('menuOpened', {
+            bubbles: false,
+            cancelable: false,
+            detail: {
+                container: this._container,
+                menu: this._menu
+            }
+        }));
     }
 
     close() {
