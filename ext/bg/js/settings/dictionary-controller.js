@@ -77,6 +77,7 @@ class DictionaryEntry {
             this._eventListeners.addEventListener(deleteButton, 'click', this._onDeleteButtonClicked.bind(this), false);
         }
         if (menuButton !== null) {
+            this._eventListeners.addEventListener(menuButton, 'menuOpened', this._onMenuOpened.bind(this), false);
             this._eventListeners.addEventListener(menuButton, 'menuClosed', this._onMenuClosed.bind(this), false);
         }
         if (detailsToggleLink !== null && this._detailsContainer !== null) {
@@ -107,11 +108,33 @@ class DictionaryEntry {
         this._delete();
     }
 
+    _onMenuOpened(e) {
+        const {detail: {menu}} = e;
+        const showDetails = menu.querySelector('.popup-menu-item[data-menu-action="showDetails"]');
+        const hideDetails = menu.querySelector('.popup-menu-item[data-menu-action="hideDetails"]');
+        const hasDetails = (this._detailsContainer !== null && (this._hasDetails || this._hasCounts));
+        const detailsVisible = (hasDetails && !this._detailsContainer.hidden);
+        if (showDetails !== null) {
+            showDetails.hidden = detailsVisible;
+            showDetails.disabled = !hasDetails;
+        }
+        if (hideDetails !== null) {
+            hideDetails.hidden = !detailsVisible;
+            hideDetails.disabled = !hasDetails;
+        }
+    }
+
     _onMenuClosed(e) {
         const {detail: {action}} = e;
         switch (action) {
             case 'delete':
                 this._delete();
+                break;
+            case 'showDetails':
+                if (this._detailsContainer !== null) { this._detailsContainer.hidden = false; }
+                break;
+            case 'hideDetails':
+                if (this._detailsContainer !== null) { this._detailsContainer.hidden = true; }
                 break;
         }
     }
