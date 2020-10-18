@@ -15,8 +15,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-class PopupMenu {
+class PopupMenu extends EventDispatcher {
     constructor(sourceElement, container) {
+        super();
         this._sourceElement = sourceElement;
         this._container = container;
         this._menu = container.querySelector('.popup-menu');
@@ -175,6 +176,15 @@ class PopupMenu {
         if (this._container.parentNode !== null) {
             this._container.parentNode.removeChild(this._container);
         }
+
+        this.trigger('closed', {
+            popupMenu: this,
+            container: this._container,
+            menu: this._menu,
+            item,
+            action,
+            cause
+        });
         return true;
     }
 }
