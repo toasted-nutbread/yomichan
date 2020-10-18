@@ -67,7 +67,7 @@ class DictionaryEntry {
         wildcardSupportedCheckbox.checked = !!prefixWildcardsSupported;
 
         outdatedContainer.hidden = (version >= 3);
-        detailsToggleLink.hidden = !hasDetails;
+        if (detailsToggleLink !== null) { detailsToggleLink.hidden = !hasDetails; }
 
         enabledCheckbox.dataset.setting = ObjectPropertyAccessor.getPathString(['dictionaries', title, 'enabled']);
         allowSecondarySearchesCheckbox.dataset.setting = ObjectPropertyAccessor.getPathString(['dictionaries', title, 'allowSecondarySearches']);
@@ -79,7 +79,7 @@ class DictionaryEntry {
         if (menuButton !== null) {
             this._eventListeners.addEventListener(menuButton, 'menuClosed', this._onMenuClosed.bind(this), false);
         }
-        if (this._detailsContainer !== null) {
+        if (detailsToggleLink !== null && this._detailsContainer !== null) {
             this._eventListeners.addEventListener(detailsToggleLink, 'click', this._onDetailsToggleLinkClicked.bind(this), false);
         }
         this._eventListeners.addEventListener(priorityInput, 'settingChanged', this._onPriorityChanged.bind(this), false);
@@ -98,9 +98,6 @@ class DictionaryEntry {
         node.textContent = JSON.stringify({info: this._dictionaryInfo, counts}, null, 4);
         node.hidden = false;
         this._hasCounts = true;
-
-        const show = this._node.querySelector('.dictionary-details-toggle-link');
-        if (show !== null) { show.hidden = false; }
     }
 
     // Private
