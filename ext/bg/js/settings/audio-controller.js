@@ -165,7 +165,9 @@ class AudioController {
         };
 
         eventListeners.addEventListener(select, 'change', this._onAudioSourceSelectChange.bind(this, entry), false);
-        eventListeners.addEventListener(removeButton, 'click', this._onAudioSourceRemoveClicked.bind(this, entry), false);
+        if (removeButton !== null) {
+            eventListeners.addEventListener(removeButton, 'click', this._onAudioSourceRemoveClicked.bind(this, entry), false);
+        }
 
         this._audioSourceContainer.appendChild(container);
         this._audioSourceEntries.push(entry);
