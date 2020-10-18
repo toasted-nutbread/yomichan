@@ -45,6 +45,7 @@ class PopupMenu {
             bubbles: false,
             cancelable: false,
             detail: {
+                popupMenu: this,
                 container: this._container,
                 menu: this._menu
             }
@@ -160,6 +161,7 @@ class PopupMenu {
             bubbles: false,
             cancelable: true,
             detail: {
+                popupMenu: this,
                 container: this._container,
                 menu: this._menu,
                 item,
