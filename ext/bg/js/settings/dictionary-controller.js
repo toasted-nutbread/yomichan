@@ -96,7 +96,7 @@ class DictionaryEntry {
 
     _onDeleteButtonClicked(e) {
         e.preventDefault();
-        this._dictionaryController.deleteDictionary(this.dictionaryTitle);
+        this._delete();
     }
 
     _onDetailsToggleLinkClicked(e) {
@@ -135,6 +135,10 @@ class DictionaryEntry {
 
         detailsTable.appendChild(fragment);
         return any;
+    }
+
+    _delete() {
+        this._dictionaryController.deleteDictionary(this.dictionaryTitle);
     }
 }
 
