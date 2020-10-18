@@ -109,7 +109,7 @@ class DictionaryEntry {
     _onMenuClosed(e) {
         const {detail: {action}} = e;
         switch (action) {
-            case 'remove':
+            case 'delete':
                 this._delete();
                 break;
         }
