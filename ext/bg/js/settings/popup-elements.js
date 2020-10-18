@@ -43,12 +43,11 @@ class PopupElement extends EventDispatcher {
 
         if (this._closeTimer !== null) {
             clearTimeout(this._closeTimer);
-            this._closeTimer = null;
+            this._completeClose(classList, true);
         }
 
         if (value) {
             if (animate) { classList.add(this._openingClassName); }
-            classList.remove(this._closingClassName);
             getComputedStyle(this._node).getPropertyValue('display'); // Force update of CSS display property, allowing animation
             classList.add(this._visibleClassName);
             if (animate) { classList.remove(this._openingClassName); }
@@ -57,10 +56,7 @@ class PopupElement extends EventDispatcher {
             if (animate) { classList.add(this._closingClassName); }
             classList.remove(this._visibleClassName);
             if (animate) {
-                this._closeTimer = setTimeout(() => {
-                    this._closeTimer = null;
-                    classList.remove(this._closingClassName);
-                }, this._closingAnimationDuration);
+                this._closeTimer = setTimeout(() => this._completeClose(classList, false), this._closingAnimationDuration);
             }
         }
     }
@@ -98,6 +94,12 @@ class PopupElement extends EventDispatcher {
         if (this._visible === visible) { return; }
         this._visible = visible;
         this.trigger('visibilityChanged', {visible});
+    }
+
+    _completeClose(classList, reopening) {
+        this._closeTimer = null;
+        classList.remove(this._closingClassName);
+        this.trigger('closeCompleted', {reopening});
     }
 }
 
