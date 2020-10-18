@@ -143,14 +143,18 @@ class PopupMenu {
         if (this._isClosed) { return; }
         const action = (item !== null ? item.dataset.menuAction : null);
 
-        this._sourceElement.dispatchEvent(new CustomEvent('menuClosed', {
+        const result = this._sourceElement.dispatchEvent(new CustomEvent('menuClosed', {
             bubbles: false,
+            cancelable: true,
             detail: {
+                container: this._container,
+                menu: this._menu,
                 item,
                 action,
                 cause
             }
         }));
+        if (!result) { return; }
 
         this._eventListeners.removeAllEventListeners();
         if (this._container.parentNode !== null) {
