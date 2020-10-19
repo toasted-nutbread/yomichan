@@ -37,15 +37,15 @@ class BackupController {
     async prepare() {
         await this._optionsUtil.prepare();
 
-        this._settingsResetModal = this._modalController.getModal('settings-reset-modal');
-        this._settingsImportErrorModal = this._modalController.getModal('settings-import-error-modal');
-        this._settingsImportWarningModal = this._modalController.getModal('settings-import-warning-modal');
+        this._settingsResetModal = this._modalController.getModal('settings-reset');
+        this._settingsImportErrorModal = this._modalController.getModal('settings-import-error');
+        this._settingsImportWarningModal = this._modalController.getModal('settings-import-warning');
 
-        document.querySelector('#settings-export').addEventListener('click', this._onSettingsExportClick.bind(this), false);
-        document.querySelector('#settings-import').addEventListener('click', this._onSettingsImportClick.bind(this), false);
+        document.querySelector('#settings-export-button').addEventListener('click', this._onSettingsExportClick.bind(this), false);
+        document.querySelector('#settings-import-button').addEventListener('click', this._onSettingsImportClick.bind(this), false);
         document.querySelector('#settings-import-file').addEventListener('change', this._onSettingsImportFileChange.bind(this), false);
-        document.querySelector('#settings-reset').addEventListener('click', this._onSettingsResetClick.bind(this), false);
-        document.querySelector('#settings-reset-modal-confirm').addEventListener('click', this._onSettingsResetConfirmClick.bind(this), false);
+        document.querySelector('#settings-reset-button').addEventListener('click', this._onSettingsResetClick.bind(this), false);
+        document.querySelector('#settings-reset-confirm-button').addEventListener('click', this._onSettingsResetConfirmClick.bind(this), false);
     }
 
     // Private
@@ -161,14 +161,14 @@ class BackupController {
 
     _showSettingsImportError(error) {
         yomichan.logError(error);
-        document.querySelector('#settings-import-error-modal-message').textContent = `${error}`;
+        document.querySelector('#settings-import-error-message').textContent = `${error}`;
         this._settingsImportErrorModal.setVisible(true);
     }
 
     async _showSettingsImportWarnings(warnings) {
         const modal = this._settingsImportWarningModal;
-        const buttons = document.querySelectorAll('.settings-import-warning-modal-import-button');
-        const messageContainer = document.querySelector('#settings-import-warning-modal-message');
+        const buttons = document.querySelectorAll('.settings-import-warning-import-button');
+        const messageContainer = document.querySelector('#settings-import-warning-message');
         if (buttons.length === 0 || messageContainer === null) {
             return {result: false};
         }
