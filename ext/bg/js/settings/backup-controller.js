@@ -75,7 +75,7 @@ class BackupController {
         // Format options
         for (const {options} of optionsFull.profiles) {
             if (options.anki.fieldTemplates === fieldTemplatesDefault || !options.anki.fieldTemplates) {
-                delete options.anki.fieldTemplates; // Default
+                options.anki.fieldTemplates = null;
             }
         }
 
