@@ -929,13 +929,14 @@
             <div class="settings-item-right settings-item-button-group-container">
                 <div class="settings-item-button-group">
                     <div class="settings-item-button-group-item">
-                        <button class="low-emphasis">Import Settings</button>
+                        <button class="low-emphasis" id="settings-import-button">Import Settings</button>
+                        <div hidden><input type="file" id="settings-import-file" accept=".json,application/json"></div>
                     </div>
                     <div class="settings-item-button-group-item">
-                        <button class="low-emphasis">Export Settings</button>
+                        <button class="low-emphasis" id="settings-export-button">Export Settings</button>
                     </div>
                     <div class="settings-item-button-group-item">
-                        <button class="low-emphasis danger">Reset Settings</button>
+                        <button class="low-emphasis danger" id="settings-reset-button">Reset Settings</button>
                     </div>
                 </div>
             </div>
@@ -1218,6 +1219,59 @@
     <div class="modal-footer">
         <button class="low-emphasis" data-modal-action="hide">Cancel</button>
         <button class="danger" data-modal-action="hide" id="dictionary-confirm-delete-all-button">Delete</button>
+    </div>
+</div></div>
+
+
+<!-- Import/export modals -->
+<div id="settings-import-error" class="modal-container" tabindex="-1" role="dialog"><div class="modal-content modal-content-small">
+    <div class="modal-header"><div class="modal-title">Import Error</div></div>
+    <div class="modal-body">
+        <p>An error occurred while trying to import the settings file:</p>
+        <p class="danger-text" id="settings-import-error-message"></p>
+        <p>Additional info can be found in the developer console.</p>
+    </div>
+    <div class="modal-footer">
+        <button class="low-emphasis" data-modal-action="hide">Close</button>
+    </div>
+</div></div>
+
+<div id="settings-import-warning" class="modal-container" tabindex="-1" role="dialog"><div class="modal-content modal-content-small">
+    <div class="modal-header"><div class="modal-title">Import Security Warning</div></div>
+    <div class="modal-body">
+        <p>
+            Settings file contains settings which may pose a security risk.
+            Only import settings from sources you trust.
+        </p>
+        <ul class="danger-text" id="settings-import-warning-message"></ul>
+    </div>
+    <div class="modal-footer">
+        <button class="low-emphasis" data-modal-action="hide">Cancel</button>
+        <button class="danger settings-import-warning-import-button">Import</button>
+        <button class="settings-import-warning-import-button" data-import-sanitize="true">Sanitize and Import</button>
+    </div>
+</div></div>
+
+<div id="settings-reset" class="modal-container" tabindex="-1" role="dialog"><div class="modal-content modal-content-small">
+    <div class="modal-header"><div class="modal-title">Reset Settings</div></div>
+    <div class="modal-body">
+        <p class="danger-text">
+            You are about to reset all Yomichan settings back to their default values.
+            This will delete all custom profiles you may have created.
+            <strong>This action cannot be undone.</strong>
+        </p>
+        <p>
+            Consider making a backup using the <em>Export Settings</em> button before resetting
+            if you want to be able to revert.
+        </p>
+        <p>
+            Dictionary data will not be deleted, but any installed dictionaries
+            will need to be re-enabled.
+        </p>
+    </div>
+    <div class="modal-footer">
+        <button class="low-emphasis" data-modal-action="hide">Cancel</button>
+        <button class="danger" id="settings-reset-confirm-button">Reset All Settings</button>
     </div>
 </div></div>
 

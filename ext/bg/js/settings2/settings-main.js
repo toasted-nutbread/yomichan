@@ -17,6 +17,7 @@
 
 /* global
  * AudioController
+ * BackupController
  * DictionaryController
  * DictionaryImportController
  * GenericSettingController
@@ -75,6 +76,9 @@ async function setupGenericSettingsController(genericSettingController) {
 
         const audioController = new AudioController(settingsController);
         audioController.prepare();
+
+        const settingsBackup = new BackupController(settingsController, modalController);
+        settingsBackup.prepare();
 
         await Promise.all(preparePromises);
 
