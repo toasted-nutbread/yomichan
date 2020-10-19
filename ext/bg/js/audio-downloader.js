@@ -32,6 +32,8 @@ class AudioDownloader {
             ['custom', this._getInfoCustom.bind(this)]
         ]);
         this._customUrlFormatPattern = /\{([^}]*)\}/g;
+        this._customUrlRandomPattern = /^random:([\w\W]+),(\d+)$/;
+        this._customUrlRandomPartsPattern = /\\?([\w\W])(?:-\\?([\w\W]))?/g;
     }
 
     async getInfo(source, expression, reading, details) {
@@ -203,7 +205,13 @@ class AudioDownloader {
             throw new Error('No custom URL defined');
         }
         const data = {expression, reading};
-        const url = customSourceUrl.replace(this._customUrlFormatPattern, (m0, m1) => (hasOwn(data, m1) ? `${data[m1]}` : m0));
+        const url = customSourceUrl.replace(this._customUrlFormatPattern, (m0, m1) => {
+            const match = this._customUrlRandomPattern.exec(m1);
+            if (match !== null) {
+                return this._generateRandom(match[1], parseInt(match[2], 10));
+            }
+            return (hasOwn(data, m1) ? `${data[m1]}` : m0);
+        });
         return {type: 'url', details: {url}};
     }
 
@@ -251,5 +259,47 @@ class AudioDownloader {
 
     _arrayBufferToBase64(arrayBuffer) {
         return btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+    }
+
+    _generateRandom(characters, count) {
+        // Build character parts
+        const charactersArray = [];
+        let characterCount = 0;
+        let matchIndex = 0;
+        while (true) {
+            const match = this._customUrlRandomPartsPattern.exec(characters);
+            if (match === null || match.index !== matchIndex) { break; }
+
+            const c = match[1].codePointAt(0);
+            let c2 = match[2];
+            c2 = typeof c2 !== 'undefined' ? c2.codePointAt(0) : c;
+
+            if (c2 >= c) {
+                const range = c2 + 1 - c;
+                charactersArray.push([c, range]);
+                characterCount += range;
+            }
+
+            matchIndex = match.index + match[0].length;
+        }
+
+        // Invalid
+        if (characterCount === 0) { return ''; }
+
+        // Build string
+        let result = '';
+        for (let i = 0; i < count; ++i) {
+            let char = '';
+            let index = Math.min(Math.floor(Math.random() * characterCount), characterCount - 1);
+            for (const [start, range] of charactersArray) {
+                if (index < range) {
+                    char = String.fromCodePoint(start + index);
+                    break;
+                }
+                index -= range;
+            }
+            result += char;
+        }
+        return result;
     }
 }
