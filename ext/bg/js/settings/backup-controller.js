@@ -340,6 +340,7 @@ class BackupController {
 
         // Upgrade options
         optionsFull = await this._optionsUtil.update(optionsFull);
+        optionsFull = this._optionsUtil.getValidValueOrDefault(optionsFull);
 
         // Check for warnings
         const sanitizationWarnings = this._settingsImportSanitizeOptions(optionsFull, true);
