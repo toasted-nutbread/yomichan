@@ -31,6 +31,7 @@ class AudioDownloader {
             ['text-to-speech-reading', this._getInfoTextToSpeechReading.bind(this)],
             ['custom', this._getInfoCustom.bind(this)]
         ]);
+        this._customUrlFormatPattern = /\{([^}]*)\}/g;
     }
 
     async getInfo(source, expression, reading, details) {
@@ -202,7 +203,7 @@ class AudioDownloader {
             throw new Error('No custom URL defined');
         }
         const data = {expression, reading};
-        const url = customSourceUrl.replace(/\{([^}]*)\}/g, (m0, m1) => (hasOwn(data, m1) ? `${data[m1]}` : m0));
+        const url = customSourceUrl.replace(this._customUrlFormatPattern, (m0, m1) => (hasOwn(data, m1) ? `${data[m1]}` : m0));
         return {type: 'url', details: {url}};
     }
 
