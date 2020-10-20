@@ -16,13 +16,16 @@
  */
 
 html {
-    transition: background-color 0.25s linear 0s, color 0.25s linear 0s;
-    background-color: #ffffff;
-    color: #333333;
+    --text-color: #333333;
+    --background-color: #ffffff;
+    --theme-transition: background-color 0.25s linear 0s, color 0.25s linear 0s;
+    transition: var(--theme-transition);
+    background-color: var(--background-color);
+    color: var(--text-color);
 }
 html.dark {
-    background-color: #1e1e1e;
-    color: #d4d4d4;
+    --text-color: #d4d4d4;
+    --background-color: #1e1e1e;
 }
 html,
 body {
@@ -51,22 +54,52 @@ body {
     width: 400px;
 }
 .top-options {
-    width: 100%;
+    max-width: 100%;
     display: flex;
     flex-flow: row nowrap;
     align-items: center;
 }
 .top-options-left {
     flex: 1 1 auto;
+    overflow-x: hidden;
 }
 .top-options-right {
     flex: 0 0 auto;
 }
 
 .example-text-container {
+    position: relative;
+}
+.example-text {
+    display: block;
+    width: 100%;
     font-size: 24px;
     line-height: 1.25em;
     height: 1.25em;
+    box-sizing: border-box;
+    border: 1px solid rgba(221, 221, 221, 0);
+    margin: 0;
+    padding: 0;
+    outline: none;
+    color: inherit;
+    background-color: transparent;
+    white-space: pre;
+    transition: background-color 0.25s linear 0s, border-color 0.25s linear 0s;
+}
+.example-text:hover,
+.example-text-input {
+    border-color: #dddddd;
+}
+.example-text[hidden] {
+    display: none;
+}
+.example-text-input {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--background-color);
 }
 
 .popup-placeholder {
