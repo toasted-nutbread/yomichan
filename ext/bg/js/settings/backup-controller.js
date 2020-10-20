@@ -152,11 +152,7 @@ class BackupController {
     // Importing
 
     async _settingsImportSetOptionsFull(optionsFull) {
-        try {
-            await this._settingsController.setAllSettings(optionsFull);
-        } catch (e) {
-            yomichan.logError(e);
-        }
+        await this._settingsController.setAllSettings(optionsFull);
     }
 
     _showSettingsImportError(error) {
@@ -389,6 +385,10 @@ class BackupController {
         const optionsFull = this._optionsUtil.getDefault();
 
         // Assign options
-        await this._settingsImportSetOptionsFull(optionsFull);
+        try {
+            await this._settingsImportSetOptionsFull(optionsFull);
+        } catch (e) {
+            yomichan.logError(e);
+        }
     }
 }
