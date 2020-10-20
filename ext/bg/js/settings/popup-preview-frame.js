@@ -20,6 +20,7 @@
  * Popup
  * TextSourceRange
  * api
+ * wanakana
  */
 
 class PopupPreviewFrame {
@@ -49,6 +50,10 @@ class PopupPreviewFrame {
     async prepare() {
         this._exampleText = document.querySelector('#example-text');
         this._exampleTextInput = document.querySelector('#example-text-input');
+
+        if (this._exampleTextInput !== null && typeof wanakana !== 'undefined') {
+            wanakana.bind(this._exampleTextInput);
+        }
 
         window.addEventListener('message', this._onMessage.bind(this), false);
 
