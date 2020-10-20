@@ -17,59 +17,69 @@
 
 html {
     transition: background-color 0.25s linear 0s, color 0.25s linear 0s;
+    background-color: #ffffff;
     color: #333333;
 }
 html.dark {
     background-color: #1e1e1e;
     color: #d4d4d4;
 }
-html, body {
+html,
+body {
     margin: 0;
     padding: 0;
     border: 0;
     overflow: hidden;
     width: 100%;
     height: 100%;
-    font-family: "Helvetica Neue", Helvetica, Arial ,sans-serif;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 14px;
 }
-iframe.yomichan-float {
-    resize: none;
+
+.content {
+    display: flex;
+    min-width: 100%;
+    min-height: 100%;
+    box-sizing: border-box;
+    padding: 1em;
+    flex-flow: column nowrap;
+    align-items: center;
+    justify-content: center;
 }
-.vertical-align-outer {
+.content-body {
+    max-width: 100%;
+    width: 400px;
+}
+.top-options {
     width: 100%;
-    height: 100%;
-    white-space: nowrap;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
 }
-.vertical-align-outer::before {
-    content: "";
-    display: inline-block;
-    vertical-align: middle;
-    width: 0;
-    height: 100%;
+.top-options-left {
+    flex: 1 1 auto;
 }
-.vertical-align-inner {
-    display: inline-block;
-    vertical-align: middle;
-    white-space: normal;
-    width: 100%;
+.top-options-right {
+    flex: 0 0 auto;
 }
-.horizontal-size {
-    max-width: 400px;
-    padding: 15px;
-    margin: 0 auto;
-}
+
 .example-text-container {
     font-size: 24px;
     line-height: 1.25em;
     height: 1.25em;
 }
+
 .popup-placeholder {
+    display: flex;
+    width: 100%;
     height: 250px;
     padding-top: 10px;
     border: 1px solid rgba(0, 0, 0, 0);
+    flex-flow: column nowrap;
+    justify-content: center;
 }
 .placeholder-info {
+    flex: 0 1 auto;
     visibility: hidden;
     opacity: 0;
     transition: opacity 0.5s linear 0s, visibility 0s linear 0.5s;
@@ -80,11 +90,6 @@ iframe.yomichan-float {
     transition: opacity 0.5s linear 0s, visibility 0s linear 0s;
 }
 
-.options {
-    float: right;
-    font-size: 14px;
-    line-height: 30px;
-}
 .theme-button {
     display: inline-block;
     margin-left: 0.5em;
