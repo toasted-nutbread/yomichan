@@ -1048,93 +1048,6 @@
 <div id="popup-menus"></div>
 
 
-<!-- Audio sources modal -->
-<div id="audio-sources" class="modal-container" tabindex="-1" role="dialog"><div class="modal-content">
-    <div class="modal-header"><div class="modal-title">Audio Sources</div></div>
-    <div class="modal-body">
-        <div class="settings-item">
-            <div class="settings-item-inner">
-                <div class="settings-item-left">
-                    <div class="settings-item-label">
-                        Text-to-speech voice
-                        <a class="more-toggle more-only" data-parent-distance="4">(?)</a>
-                    </div>
-                </div>
-                <div class="settings-item-right">
-                    <select data-setting="audio.textToSpeechVoice" id="text-to-speech-voice"></select>
-                </div>
-            </div>
-            <div class="settings-item-children more" hidden>
-                <p>
-                    Change which voice is used for text-to-speech audio playback.
-                </p>
-                <div class="horizontal-flex">
-                    <input type="text" value="よみちゃん" id="text-to-speech-voice-test-text">
-                    <button id="text-to-speech-voice-test">Test</button>
-                    <a class="more-toggle" data-parent-distance="3">Hide&hellip;</a>
-                </div>
-            </div>
-        </div>
-        <div class="settings-item">
-            <div class="settings-item-inner">
-                <div class="settings-item-left">
-                    <div class="settings-item-label">
-                        Custom audio source
-                        <a class="more-toggle more-only" data-parent-distance="4">(?)</a>
-                    </div>
-                </div>
-                <div class="settings-item-right">
-                    <input type="text" spellcheck="false" autocomplete="off" data-setting="audio.customSourceUrl" placeholder="None">
-                </div>
-            </div>
-            <div class="settings-item-children more" hidden>
-                <p>
-                    URL format used for fetching audio clips in "Custom" mode.
-                    The replacement tags <code data-select-on-click="">{expression}</code> and <code data-select-on-click="">{reading}</code> can be used to specify which
-                    expression and reading is being looked up.<br>
-                    Example: <a data-select-on-click="">http://localhost/audio.mp3?expression={expression}&reading={reading}</a>
-                </p>
-                <p>
-                    <a class="more-toggle" data-parent-distance="3">Less&hellip;</a>
-                </p>
-            </div>
-        </div>
-        <div class="settings-item">
-            <div class="settings-item-inner">
-                <div class="settings-item-left">
-                    <div class="settings-item-label">
-                        Audio sources
-                        <a class="more-toggle more-only" data-parent-distance="4">(?)</a>
-                    </div>
-                </div>
-                <div class="settings-item-right">
-                    <button id="audio-source-add" class="low-emphasis">Add</button>
-                </div>
-            </div>
-            <div class="settings-item-children more" hidden>
-                <p>
-                    When searching for audio, the sources are checked in order until the first
-                    valid source is found. This allows for selecting a fallback source if the
-                    first choice is not available.
-                </p>
-                <p>
-                    <a class="more-toggle" data-parent-distance="3">Less&hellip;</a>
-                </p>
-            </div>
-            <div class="settings-item-children">
-                <div id="audio-source-list" class="generic-list"></div>
-                <div id="audio-source-list-empty">
-                    No audio sources enabled
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal-footer">
-        <button data-modal-action="hide">Close</button>
-    </div>
-</div></div>
-
-
 <!-- Dictionary modals -->
 <div id="dictionaries" class="modal-container" tabindex="-1" role="dialog"><div class="modal-content modal-content-full">
     <div class="modal-header"><div class="modal-title">Dictionaries</div></div>
@@ -1223,6 +1136,93 @@
 </div></div>
 
 
+<!-- Audio sources modal -->
+<div id="audio-sources" class="modal-container" tabindex="-1" role="dialog"><div class="modal-content">
+    <div class="modal-header"><div class="modal-title">Audio Sources</div></div>
+    <div class="modal-body">
+        <div class="settings-item">
+            <div class="settings-item-inner">
+                <div class="settings-item-left">
+                    <div class="settings-item-label">
+                        Text-to-speech voice
+                        <a class="more-toggle more-only" data-parent-distance="4">(?)</a>
+                    </div>
+                </div>
+                <div class="settings-item-right">
+                    <select data-setting="audio.textToSpeechVoice" id="text-to-speech-voice"></select>
+                </div>
+            </div>
+            <div class="settings-item-children more" hidden>
+                <p>
+                    Change which voice is used for text-to-speech audio playback.
+                </p>
+                <div class="horizontal-flex">
+                    <input type="text" value="よみちゃん" id="text-to-speech-voice-test-text">
+                    <button id="text-to-speech-voice-test">Test</button>
+                    <a class="more-toggle" data-parent-distance="3">Hide&hellip;</a>
+                </div>
+            </div>
+        </div>
+        <div class="settings-item">
+            <div class="settings-item-inner">
+                <div class="settings-item-left">
+                    <div class="settings-item-label">
+                        Custom audio source
+                        <a class="more-toggle more-only" data-parent-distance="4">(?)</a>
+                    </div>
+                </div>
+                <div class="settings-item-right">
+                    <input type="text" spellcheck="false" autocomplete="off" data-setting="audio.customSourceUrl" placeholder="None">
+                </div>
+            </div>
+            <div class="settings-item-children more" hidden>
+                <p>
+                    URL format used for fetching audio clips in "Custom" mode.
+                    The replacement tags <code data-select-on-click="">{expression}</code> and <code data-select-on-click="">{reading}</code> can be used to specify which
+                    expression and reading is being looked up.<br>
+                    Example: <a data-select-on-click="">http://localhost/audio.mp3?expression={expression}&reading={reading}</a>
+                </p>
+                <p>
+                    <a class="more-toggle" data-parent-distance="3">Less&hellip;</a>
+                </p>
+            </div>
+        </div>
+        <div class="settings-item">
+            <div class="settings-item-inner">
+                <div class="settings-item-left">
+                    <div class="settings-item-label">
+                        Audio sources
+                        <a class="more-toggle more-only" data-parent-distance="4">(?)</a>
+                    </div>
+                </div>
+                <div class="settings-item-right">
+                    <button id="audio-source-add" class="low-emphasis">Add</button>
+                </div>
+            </div>
+            <div class="settings-item-children more" hidden>
+                <p>
+                    When searching for audio, the sources are checked in order until the first
+                    valid source is found. This allows for selecting a fallback source if the
+                    first choice is not available.
+                </p>
+                <p>
+                    <a class="more-toggle" data-parent-distance="3">Less&hellip;</a>
+                </p>
+            </div>
+            <div class="settings-item-children">
+                <div id="audio-source-list" class="generic-list"></div>
+                <div id="audio-source-list-empty">
+                    No audio sources enabled
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button data-modal-action="hide">Close</button>
+    </div>
+</div></div>
+
+
 <!-- Import/export modals -->
 <div id="settings-import-error" class="modal-container" tabindex="-1" role="dialog"><div class="modal-content modal-content-small">
     <div class="modal-header"><div class="modal-title">Import Error</div></div>
@@ -1274,26 +1274,6 @@
         <button class="danger" id="settings-reset-confirm-button">Reset All Settings</button>
     </div>
 </div></div>
-
-
-<!-- Audio templates -->
-<template id="audio-source-template"><div class="audio-source horizontal-flex">
-    <div class="generic-list-index-prefix"></div>
-    <select class="audio-source-select">
-        <option value="jpod101">JapanesePod101</option>
-        <option value="jpod101-alternate">JapanesePod101 (Alternate)</option>
-        <option value="jisho">Jisho.org</option>
-        <option value="text-to-speech">Text-to-speech</option>
-        <option value="text-to-speech-reading">Text-to-speech (Kana reading)</option>
-        <option value="custom">Custom</option>
-    </select>
-    <div class="horizontal-flex-fill"></div>
-    <button class="icon-button audio-source-menu-button" data-menu="audio-source-menu" data-menu-position="below,left"><span class="icon-button-inner"><span class="icon-button-icon" data-icon="kebab-menu"></span></span></button>
-</div></template>
-
-<template id="audio-source-menu-template"><div class="popup-menu-container" tabindex="-1" role="dialog"><div class="popup-menu">
-    <button class="popup-menu-item" data-menu-action="remove">Remove</button>
-</div></div></template>
 
 
 <!-- Dictionary templates -->
@@ -1399,6 +1379,26 @@
     <button class="popup-menu-item" data-menu-action="showDetails">Show details</button>
     <button class="popup-menu-item" data-menu-action="hideDetails" hidden>Hide details</button>
     <button class="popup-menu-item" data-menu-action="delete">Delete</button>
+</div></div></template>
+
+
+<!-- Audio templates -->
+<template id="audio-source-template"><div class="audio-source horizontal-flex">
+    <div class="generic-list-index-prefix"></div>
+    <select class="audio-source-select">
+        <option value="jpod101">JapanesePod101</option>
+        <option value="jpod101-alternate">JapanesePod101 (Alternate)</option>
+        <option value="jisho">Jisho.org</option>
+        <option value="text-to-speech">Text-to-speech</option>
+        <option value="text-to-speech-reading">Text-to-speech (Kana reading)</option>
+        <option value="custom">Custom</option>
+    </select>
+    <div class="horizontal-flex-fill"></div>
+    <button class="icon-button audio-source-menu-button" data-menu="audio-source-menu" data-menu-position="below,left"><span class="icon-button-inner"><span class="icon-button-icon" data-icon="kebab-menu"></span></span></button>
+</div></template>
+
+<template id="audio-source-menu-template"><div class="popup-menu-container" tabindex="-1" role="dialog"><div class="popup-menu">
+    <button class="popup-menu-item" data-menu-action="remove">Remove</button>
 </div></div></template>
 
 
