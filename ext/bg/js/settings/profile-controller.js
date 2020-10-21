@@ -176,7 +176,7 @@ class ProfileController {
 
         const profileIndex = this._settingsController.profileIndex;
         const max = this._optionsFull.profiles.length;
-        const index = this._tryGetIntegerValue('#profile-copy-source', 0, max);
+        const index = this._tryGetIntegerValue(this._profileCopySourceSelect.value, 0, max);
         if (index === null || index === profileIndex) { return; }
 
         this._copyProfile(profileIndex, index);
