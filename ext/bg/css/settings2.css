@@ -693,7 +693,7 @@ select.short-height {
     transition: transform var(--animation-duration) ease-in-out,
                 background-color var(--animation-duration) ease-in-out;
 }
-.toggle>.toggle-knob::after {
+.toggle-body>.toggle-knob::after {
     position: absolute;
     display: block;
     content: "";
