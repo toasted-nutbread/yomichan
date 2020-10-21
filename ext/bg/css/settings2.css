@@ -58,6 +58,7 @@
     --thin-border-size: 1px;
     --icon-button-size: 36px;
     --toggle-size: 16px;
+    --radio-size: 20px;
     --button-shadow-params: 0 1px 2px 0;
     --material-arrow-dimension1: 5px;
     --material-arrow-dimension2: 10px;
@@ -749,6 +750,122 @@ select.short-height {
 }
 .toggle>input[type=checkbox]:disabled+.toggle-body>.toggle-knob {
     background-color: var(--disabled-color-lighter);
+}
+
+
+/* Radio button */
+.radio {
+    display: inline-block;
+    vertical-align: middle;
+}
+.radio>input[type=radio] {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    display: block;
+    margin: 0;
+    padding: 0;
+    border: none;
+    cursor: default;
+}
+.radio>input[type=radio]:not(:disabled)+.radio-body {
+    cursor: pointer;
+}
+.radio-body {
+    display: block;
+    position: relative;
+    width: var(--radio-size);
+    height: var(--radio-size);
+}
+.radio-border,
+.radio-dot {
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--accent-color);
+    mask-repeat: no-repeat;
+    mask-position: center center;
+    mask-mode: alpha;
+    mask-size: var(--radio-size) var(--radio-size);
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center center;
+    -webkit-mask-mode: alpha;
+    -webkit-mask-size: var(--radio-size) var(--radio-size);
+}
+.radio-border {
+    mask-image: url(/mixed/img/radio-button.svg);
+    -webkit-mask-image: url(/mixed/img/radio-button.svg);
+}
+.radio-dot {
+    mask-image: url(/mixed/img/radio-button-dot.svg);
+    -webkit-mask-image: url(/mixed/img/radio-button-dot.svg);
+    opacity: 1;
+    transform: none;
+    transition: transform var(--animation-duration2) ease-in-out,
+                opacity var(--animation-duration2) ease-in-out,
+                visibility var(--animation-duration2) ease-in-out;
+}
+.radio>input[type=radio]:disabled+.radio-body>.radio-border,
+.radio>input[type=radio]:disabled+.radio-body>.radio-dot {
+    background-color: var(--disabled-color);
+}
+.radio>input[type=radio]:not(:checked)+.radio-body>.radio-dot {
+    opacity: 0;
+    transform: scale(0);
+    transition: transform 0s ease-in-out var(--animation-duration2),
+                opacity var(--animation-duration2) ease-in-out,
+                visibility 0s ease-in-out var(--animation-duration2);
+}
+.radio-body::after {
+    position: absolute;
+    display: block;
+    content: "";
+    left: -0.75em;
+    top: -0.75em;
+    right: -0.75em;
+    bottom: -0.75em;
+    border-radius: 2.5em;
+    background-color: var(--selectable-indicator-color);
+    pointer-events: none;
+    transform: scale(0);
+    opacity: 0;
+    visibility: hidden;
+    transition: transform 0s ease-in-out var(--animation-duration2),
+                background-color var(--animation-duration2) ease-in-out,
+                opacity var(--animation-duration2) ease-in-out,
+                visibility 0s ease-in-out var(--animation-duration2);
+}
+.radio>input[type=radio]:focus:not(:disabled)+.radio-body::after,
+.radio:active>input[type=radio]:not(:disabled)+.radio-body::after {
+    transform: scale(1);
+    opacity: 1;
+    visibility: visible;
+    transition: transform var(--animation-duration2) ease-in-out,
+                background-color var(--animation-duration2) ease-in-out,
+                opacity var(--animation-duration2) ease-in-out,
+                visibility var(--animation-duration2) ease-in-out;
+}
+.radio>input[type=radio]:focus+.radio-body::after {
+    opacity: 0.5;
+}
+.radio:active>input[type=radio]:focus+.radio-body::after {
+    opacity: 1;
+}
+.radio-label {
+    cursor: pointer;
+    white-space: nowrap;
+}
+.radio-label>.radio {
+    vertical-align: middle;
+}
+.radio-label>.radio-label-text {
+    display: inline-block;
+    margin-left: 0.5em;
+    vertical-align: middle;
+    white-space: normal;
 }
 
 
