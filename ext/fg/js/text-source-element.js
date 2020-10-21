@@ -100,6 +100,10 @@ class TextSourceElement {
         );
     }
 
+    getNodesInRange() {
+        return [];
+    }
+
     static getElementContent(element) {
         let content;
         switch (element.nodeName.toUpperCase()) {

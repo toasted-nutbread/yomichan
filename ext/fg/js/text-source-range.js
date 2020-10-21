@@ -17,6 +17,7 @@
 
 /* global
  * DOMTextScanner
+ * DocumentUtil
  */
 
 class TextSourceRange {
@@ -104,6 +105,10 @@ class TextSourceRange {
                 throw e;
             }
         }
+    }
+
+    getNodesInRange() {
+        return DocumentUtil.getNodesInRange(this.range);
     }
 
     static getParentElement(node) {
