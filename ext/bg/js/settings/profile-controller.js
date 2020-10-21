@@ -31,8 +31,11 @@ class ProfileController {
         this._profileCopySourceSelect = null;
         this._profileNameInput = null;
         this._removeProfileNameElement = null;
+        this._profileAddButton = null;
         this._profileRemoveButton = null;
+        this._profileRemoveConfirmButton = null;
         this._profileCopyButton = null;
+        this._profileCopyConfirmButton = null;
         this._profileMoveUpButton = null;
         this._profileMoveDownButton = null;
         this._profileRemoveModal = null;
@@ -49,8 +52,11 @@ class ProfileController {
         this._profileCopySourceSelect = document.querySelector('#profile-copy-source');
         this._profileNameInput = document.querySelector('#profile-name');
         this._removeProfileNameElement = document.querySelector('#profile-remove-modal-profile-name');
+        this._profileAddButton = document.querySelector('#profile-add');
         this._profileRemoveButton = document.querySelector('#profile-remove');
+        this._profileRemoveConfirmButton = document.querySelector('#profile-remove-confirm');
         this._profileCopyButton = document.querySelector('#profile-copy');
+        this._profileCopyConfirmButton = document.querySelector('#profile-copy-confirm');
         this._profileMoveUpButton = document.querySelector('#profile-move-up');
         this._profileMoveDownButton = document.querySelector('#profile-move-down');
         this._profileRemoveModal = this._modalController.getModal('profile-remove-modal');
@@ -59,11 +65,11 @@ class ProfileController {
         this._profileActiveSelect.addEventListener('change', this._onProfileActiveChange.bind(this), false);
         this._profileTargetSelect.addEventListener('change', this._onProfileTargetChange.bind(this), false);
         this._profileNameInput.addEventListener('change', this._onNameChanged.bind(this), false);
-        document.querySelector('#profile-add').addEventListener('click', this._onAdd.bind(this), false);
+        this._profileAddButton.addEventListener('click', this._onAdd.bind(this), false);
         this._profileRemoveButton.addEventListener('click', this._onRemove.bind(this), false);
-        document.querySelector('#profile-remove-confirm').addEventListener('click', this._onRemoveConfirm.bind(this), false);
+        this._profileRemoveConfirmButton.addEventListener('click', this._onRemoveConfirm.bind(this), false);
         this._profileCopyButton.addEventListener('click', this._onCopy.bind(this), false);
-        document.querySelector('#profile-copy-confirm').addEventListener('click', this._onCopyConfirm.bind(this), false);
+        this._profileCopyConfirmButton.addEventListener('click', this._onCopyConfirm.bind(this), false);
         this._profileMoveUpButton.addEventListener('click', this._onMove.bind(this, -1), false);
         this._profileMoveDownButton.addEventListener('click', this._onMove.bind(this, 1), false);
 
