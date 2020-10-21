@@ -88,7 +88,7 @@ class TextSourceRange {
         selection.removeAllRanges();
     }
 
-    equals(other) {
+    hasSameStart(other) {
         if (!(
             typeof other === 'object' &&
             other !== null &&

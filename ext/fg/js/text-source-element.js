@@ -89,7 +89,7 @@ class TextSourceElement {
         // NOP
     }
 
-    equals(other) {
+    hasSameStart(other) {
         return (
             typeof other === 'object' &&
             other !== null &&

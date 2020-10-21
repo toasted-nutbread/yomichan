@@ -247,7 +247,7 @@ class TextScanner extends EventDispatcher {
         let optionsContext = null;
 
         try {
-            if (this._textSourceCurrent !== null && this._textSourceCurrent.equals(textSource)) {
+            if (this._textSourceCurrent !== null && this._textSourceCurrent.hasSameStart(textSource)) {
                 return;
             }
 
@@ -772,7 +772,7 @@ class TextScanner extends EventDispatcher {
 
         if (
             this._textSourceCurrent !== null &&
-            !this._textSourceCurrent.equals(textSourceCurrentPrevious)
+            !this._textSourceCurrent.hasSameStart(textSourceCurrentPrevious)
         ) {
             this._preventScroll = preventScroll;
             this._preventNextContextMenu = true;
