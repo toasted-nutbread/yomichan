@@ -1532,7 +1532,8 @@ body.preview-sidebar-visible .fab-container-item.fab-container-item-popup-previe
     display: block;
 }
 
-.dictionary-list>.settings-item {
+.dictionary-list>.settings-item,
+.dictionary-list>.settings-item+.settings-item {
     margin-left: calc(var(--modal-padding-horizontal) * -1);
     margin-right: calc(var(--modal-padding-horizontal) * -1);
     border-top: var(--thin-border-size) solid var(--separator-color2);
