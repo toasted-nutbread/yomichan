@@ -450,7 +450,7 @@ class ProfileConditionUI {
 
         this._eventListeners.addEventListener(this._typeInput, 'change', this._onTypeChange.bind(this), false);
         this._eventListeners.addEventListener(this._operatorInput, 'change', this._onOperatorChange.bind(this), false);
-        this._eventListeners.addEventListener(this._removeButton, 'click', this._onRemoveButtonClick.bind(this), false);
+        if (this._removeButton !== null) { this._eventListeners.addEventListener(this._removeButton, 'click', this._onRemoveButtonClick.bind(this), false); }
     }
 
     cleanup() {
