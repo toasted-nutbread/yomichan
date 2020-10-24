@@ -1120,6 +1120,12 @@ button.icon-button:active {
     mask-size: 16px 16px;
     -webkit-mask-size: 16px 16px;
 }
+.icon-button-icon[data-icon=mouse] {
+    mask-image: url(/mixed/img/mouse.svg);
+    -webkit-mask-image: url(/mixed/img/mouse.svg);
+    mask-size: 16px 16px;
+    -webkit-mask-size: 16px 16px;
+}
 
 
 /* Modal */
