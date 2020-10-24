@@ -22,6 +22,7 @@
  * DictionaryImportController
  * GenericSettingController
  * ModalController
+ * ProfileController
  * SettingsController
  * SettingsDisplayController
  * StatusFooter
@@ -76,6 +77,9 @@ async function setupGenericSettingsController(genericSettingController) {
 
         const audioController = new AudioController(settingsController);
         audioController.prepare();
+
+        const profileController = new ProfileController(settingsController, modalController);
+        profileController.prepare();
 
         const settingsBackup = new BackupController(settingsController, modalController);
         settingsBackup.prepare();

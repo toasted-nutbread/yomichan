@@ -69,7 +69,7 @@
                 <select id="profile-target-select"></select>
             </div>
         </div></div>
-        <div class="settings-item settings-item-button"><div class="settings-item-inner">
+        <div class="settings-item settings-item-button" data-modal-action="show,profiles"><div class="settings-item-inner">
             <div class="settings-item-left">
                 <div class="settings-item-label">Adjust profiles</div>
             </div>
@@ -1058,6 +1058,96 @@
 <div id="popup-menus"></div>
 
 
+<!-- Profile modals -->
+<div id="profiles" class="modal-container" tabindex="-1" role="dialog"><div class="modal-content">
+    <div class="modal-header"><div class="modal-title">Profiles</div></div>
+    <div class="modal-body">
+        <div class="profile-entry-header">
+            <div class="profile-entry-cell"></div>
+            <div class="profile-entry-cell"><span class="profile-entry-header-text">Default</span></div>
+            <div class="profile-entry-cell"><span class="profile-entry-header-text">Name</span></div>
+            <div class="profile-entry-cell"><span class="profile-entry-header-text">Conditions</span></div>
+            <div class="profile-entry-cell"></div>
+        </div>
+        <div class="profile-entry-list generic-list" id="profile-entry-list"></div>
+        <div class="profile-add-button-container">
+            <button class="low-emphasis" id="profile-add-button">Add</button>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button data-modal-action="hide">Close</button>
+    </div>
+</div></div>
+
+<div id="profile-conditions" class="modal-container" tabindex="-1" role="dialog"><div class="modal-content">
+    <div class="modal-header"><div class="modal-title">Profile Conditions</div></div>
+    <div class="modal-body">
+        <div class="settings-item">
+            <div class="settings-item-inner">
+                <div class="settings-item-left">
+                    <div class="settings-item-label">
+                        Conditions for profile <em id="profile-conditions-profile-name"></em>:
+                    </div>
+                </div>
+                <div class="settings-item-right">
+                    <a class="more-toggle more-only" data-parent-distance="3">Info&hellip;</a>
+                </div>
+            </div>
+            <div class="settings-item-children more" hidden>
+                <p>
+                    Profile usage conditions are used to automatically select certain profiles based on context.
+                    For example, different profiles can be used depending on the nested level of the popup, or based on the website's URL.
+                </p>
+                <p>
+                    Conditions are organized into groups corresponding to the order that they are checked in.
+                    If all of the conditions in any group of a profile are met, then that profile will be used for that context.
+                </p>
+                <p>
+                    If no conditions are specified, the profile will only be used if it is selected as the default profile.
+                </p>
+                <p>
+                    <a class="more-toggle" data-parent-distance="3">Hide&hellip;</a>
+                </p>
+            </div>
+        </div>
+        <div class="profile-condition-groups" id="profile-condition-groups"></div>
+        <div class="profile-condition-group-list-info">
+            <div class="profile-condition-groups-empty-info"><em>No conditions set up.</em></div>
+            <div class="profile-condition-group-list-info-space"></div>
+            <button class="low-emphasis" id="profile-add-condition-group">Add Group</button>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button data-modal-action="hide">Close</button>
+    </div>
+</div></div>
+
+<div id="profile-copy" class="modal-container" tabindex="-1" role="dialog"><div class="modal-content modal-content-small">
+    <div class="modal-header"><div class="modal-title">Copy Profile</div></div>
+    <div class="modal-body">
+        <p>Select which profile to copy options from:</p>
+        <select class="form-control" id="profile-copy-source-select"></select>
+    </div>
+    <div class="modal-footer">
+        <button class="low-emphasis" data-modal-action="hide">Cancel</button>
+        <button id="profile-copy-confirm-button">Copy Profile</button>
+    </div>
+</div></div>
+
+<div id="profile-remove" class="modal-container" tabindex="-1" role="dialog"><div class="modal-content modal-content-small">
+    <div class="modal-header"><div class="modal-title">Confirm Profile Deletion</div></div>
+    <div class="modal-body">
+        <p>
+            Are you sure you want to delete the profile <em id="profile-remove-name"></em>?
+        </p>
+    </div>
+    <div class="modal-footer">
+        <button class="low-emphasis" data-modal-action="hide">Cancel</button>
+        <button class="danger" id="profile-remove-confirm-button">Remove Profile</button>
+    </div>
+</div></div>
+
+
 <!-- Dictionary modals -->
 <div id="dictionaries" class="modal-container" tabindex="-1" role="dialog"><div class="modal-content modal-content-full">
     <div class="modal-header"><div class="modal-title">Dictionaries</div></div>
@@ -1284,6 +1374,55 @@
         <button class="danger" id="settings-reset-confirm-button">Reset All Settings</button>
     </div>
 </div></div>
+
+
+<!-- Profile templates -->
+<template id="profile-entry-template"><div class="profile-entry generic-list-entry">
+    <div class="profile-entry-cell generic-list-index-prefix"></div>
+    <div class="profile-entry-cell"><label class="radio"><input type="radio" class="profile-entry-is-default-radio" name="profile-entry-default-radio"><span class="radio-body"><span class="radio-border"></span><span class="radio-dot"></span></span></label></div>
+    <div class="profile-entry-cell"><input class="profile-entry-name-input" type="text" autocomplete="off" placeholder="Profile name"></div>
+    <div class="profile-entry-cell"><a class="profile-entry-condition-count-link"><span class="profile-entry-condition-count">0</span></a></div>
+    <div class="profile-entry-cell input-height-icon-button-container"><button class="icon-button profile-entry-menu-button" data-menu="profile-menu" data-menu-position="below,left"><span class="icon-button-inner"><span class="icon-button-icon" data-icon="kebab-menu"></span></span></button></div>
+</div></template>
+
+<template id="profile-condition-group-template"><div class="profile-condition-group">
+    <div class="profile-condition-list"></div>
+    <div class="profile-condition-list-info">
+        <div class="profile-condition-group-separator-label">or</div>
+        <div class="profile-condition-list-info-space"></div>
+        <button class="profile-condition-add-button low-emphasis">Add</button>
+    </div>
+</div></template>
+
+<template id="profile-condition-template"><div class="profile-condition">
+    <div class="profile-condition-prefix"></div>
+    <div class="profile-condition-inner">
+        <select class="profile-condition-type"><optgroup label="Type"></optgroup></select>
+        <select class="profile-condition-operator"><optgroup label="Operator"></optgroup></select>
+        <div class="profile-condition-input-container">
+            <input type="text" class="profile-condition-input">
+            <div class="input-height-icon-button-container mouse-button-container" hidden>
+                <button class="icon-button profile-condition-mouse-button mouse-button"><span class="icon-button-inner"><span class="icon-button-icon" data-icon="mouse"></span></span></button>
+            </div>
+        </div>
+    </div>
+    <div class="profile-condition-menu-button-container input-height-icon-button-container">
+        <button class="icon-button profile-condition-menu-button" data-menu="profile-condition-menu" data-menu-position="below,left"><span class="icon-button-inner"><span class="icon-button-icon" data-icon="kebab-menu"></span></span></button>
+    </div>
+</div></template>
+
+<template id="profile-menu-template"><div class="popup-menu-container" tabindex="-1" role="dialog"><div class="popup-menu">
+    <button class="popup-menu-item" data-menu-action="moveUp">Move up</button>
+    <button class="popup-menu-item" data-menu-action="moveDown">Move down</button>
+    <button class="popup-menu-item" data-menu-action="copyFrom">Copy from...</button>
+    <button class="popup-menu-item" data-menu-action="editConditions">Edit conditions...</button>
+    <button class="popup-menu-item" data-menu-action="duplicate">Duplicate</button>
+    <button class="popup-menu-item" data-menu-action="delete">Delete</button>
+</div></div></template>
+
+<template id="profile-condition-menu-template"><div class="popup-menu-container" tabindex="-1" role="dialog"><div class="popup-menu">
+    <button class="popup-menu-item" data-menu-action="delete">Delete</button>
+</div></div></template>
 
 
 <!-- Dictionary templates -->

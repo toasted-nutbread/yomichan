@@ -1584,6 +1584,165 @@ body.preview-sidebar-visible .fab-container-item.fab-container-item-popup-previe
     overflow: auto;
 }
 
+.profile-add-button-container {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-end;
+}
+.profile-entry-header {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+}
+.profile-entry-header-text {
+    font-size: var(--font-size-small);
+    line-height: 1;
+    text-align: left;
+}
+.profile-entry {
+    width: 100%;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    margin-bottom: 0.25em;
+}
+.profile-entry-cell:nth-child(1) {
+    flex: 0 0 auto;
+    min-width: 2em;
+    text-align: center;
+}
+.profile-entry-cell:nth-child(2) {
+    flex: 0 0 auto;
+    text-align: center;
+    width: 3.5em;
+}
+.profile-entry-cell:nth-child(3) {
+    flex: 1 1 auto;
+}
+.profile-entry-cell:nth-child(4) {
+    flex: 0 0 auto;
+    min-width: 4em;
+    text-align: center;
+    align-self: stretch
+}
+.profile-entry-cell:nth-child(5) {
+    flex: 0 0 auto;
+    width: 2.75em;
+    text-align: right;
+}
+input[type=text].profile-entry-name-input {
+    width: 100%;
+}
+.profile-entry-condition-count-link {
+    display: flex;
+    flex-flow: row nowrap;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-condition-groups {
+    margin-left: calc(var(--modal-padding-horizontal) * -1);
+    margin-right: calc(var(--modal-padding-horizontal) * -1);
+    padding-left: var(--modal-padding-horizontal);
+    padding-right: var(--modal-padding-horizontal);
+    border-top: var(--thin-border-size) solid var(--separator-color2);
+}
+.profile-condition-group-list-info {
+    display: flex;
+    flex-flow: row nowrap;
+    width: 100%;
+    align-items: center;
+    margin-top: 0.5em;
+}
+.profile-condition-group-list-info-space {
+    flex: 1 1 auto;
+}
+.profile-condition-groups-empty-info {
+    flex: 1 1 auto;
+}
+.profile-condition-groups:not(:empty)+.profile-condition-group-list-info>.profile-condition-groups-empty-info {
+    display: none;
+}
+.profile-condition-group {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+.profile-condition-list-info {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    margin-bottom: 1em;
+}
+.profile-condition-list-info-space {
+    flex: 1 1 auto;
+}
+.profile-condition-group-separator-label {
+    width: 2.5em;
+    text-align: center;
+    margin-right: 0.25em;
+}
+.profile-condition-group:last-child>.profile-condition-list-info>.profile-condition-group-separator-label {
+    display: none;
+}
+
+.profile-condition {
+    display: flex;
+    width: 100%;
+    flex-flow: row nowrap;
+    align-items: flex-start;
+    margin-bottom: 0.25em;
+}
+.profile-condition-inner {
+    display: flex;
+    width: 100%;
+    flex-flow: row wrap;
+    align-items: center;
+    margin-top: -0.25em;
+    margin-left: -0.25em;
+}
+.profile-condition-inner>* {
+    margin-left: 0.25em;
+    margin-top: 0.25em;
+}
+.profile-condition-prefix {
+    width: 2.5em;
+    text-align: center;
+    flex: 0 0 auto;
+    height: var(--input-height);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.25em;
+}
+.profile-condition-prefix::after {
+    content: "if"
+}
+.profile-condition:nth-child(n+2)>.profile-condition-prefix::after {
+    content: "and"
+}
+select.profile-condition-type,
+select.profile-condition-operator {
+    width: auto;
+    padding-left: 1em;
+    padding-right: 1em;
+    flex: 1 0 auto;
+}
+.profile-condition-input-container {
+    flex: 1000000 1 auto;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+}
+.profile-condition-input {
+    width: 100%;
+    flex: 1 1 auto;
+}
+.profile-condition-menu-button-container {
+    margin-left: 0.25em;
+}
+
 
 /* Miscellaneous styles */
 .horizontal-flex {
