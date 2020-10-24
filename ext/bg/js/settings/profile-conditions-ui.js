@@ -301,9 +301,9 @@ class ProfileConditionGroupUI {
     }
 
     prepare(conditionGroup) {
-        this._node = this._parent.instantiateTemplate('condition-group');
-        this._conditionContainer = this._node.querySelector('.condition-list');
-        this._addConditionButton = this._node.querySelector('.condition-add');
+        this._node = this._parent.instantiateTemplate('profile-condition-group');
+        this._conditionContainer = this._node.querySelector('.profile-condition-list');
+        this._addConditionButton = this._node.querySelector('.profile-condition-add-button');
 
         const conditions = conditionGroup.conditions;
         for (let i = 0, ii = conditions.length; i < ii; ++i) {
@@ -403,6 +403,7 @@ class ProfileConditionUI {
         this._valueInputContainer = null;
         this._removeButton = null;
         this._mouseButton = null;
+        this._mouseButtonContainer = null;
         this._value = '';
         this._kbmInputField = null;
         this._eventListeners = new EventListenerCollection();
@@ -432,14 +433,15 @@ class ProfileConditionUI {
     prepare(condition) {
         const {type, operator, value} = condition;
 
-        this._node = this._parent.parent.instantiateTemplate('condition');
-        this._typeInput = this._node.querySelector('.condition-type');
+        this._node = this._parent.parent.instantiateTemplate('profile-condition');
+        this._typeInput = this._node.querySelector('.profile-condition-type');
         this._typeOptionContainer = this._typeInput.querySelector('optgroup');
-        this._operatorInput = this._node.querySelector('.condition-operator');
+        this._operatorInput = this._node.querySelector('.profile-condition-operator');
         this._operatorOptionContainer = this._operatorInput.querySelector('optgroup');
-        this._valueInput = this._node.querySelector('.condition-input-inner');
-        this._removeButton = this._node.querySelector('.condition-remove');
+        this._valueInput = this._node.querySelector('.profile-condition-input');
+        this._removeButton = this._node.querySelector('.profile-condition-remove');
         this._mouseButton = this._node.querySelector('.mouse-button');
+        this._mouseButtonContainer = this._node.querySelector('.mouse-button-container');
 
         const operatorDetails = this._getOperatorDetails(type, operator);
         this._updateTypes(type);
@@ -609,7 +611,7 @@ class ProfileConditionUI {
         } else {
             node.removeAttribute('step');
         }
-        this._mouseButton.hidden = mouseButtonHidden;
+        this._mouseButtonContainer.hidden = mouseButtonHidden;
         for (const args of events) {
             this._inputEventListeners.addGeneric(...args);
         }
