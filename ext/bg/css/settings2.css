@@ -1127,6 +1127,15 @@ button.icon-button:active {
     -webkit-mask-size: 16px 16px;
 }
 
+.input-height-icon-button-container {
+    height: var(--input-height);
+    box-sizing: border-box;
+}
+.input-height-icon-button-container>.icon-button {
+    position: relative;
+    top: calc((var(--input-height) - var(--icon-button-size)) * 0.5);
+}
+
 
 /* Modal */
 .modal-container {
