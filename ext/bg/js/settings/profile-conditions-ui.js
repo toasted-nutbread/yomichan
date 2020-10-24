@@ -28,6 +28,7 @@ class ProfileConditionsUI {
         this._children = [];
         this._eventListeners = new EventListenerCollection();
         this._defaultType = 'popupLevel';
+        this._profileIndex = 0;
         this._descriptors = new Map([
             [
                 'popupLevel',
@@ -76,7 +77,7 @@ class ProfileConditionsUI {
     }
 
     get profileIndex() {
-        return this._settingsController.profileIndex;
+        return this._profileIndex;
     }
 
     get os() {
@@ -87,7 +88,8 @@ class ProfileConditionsUI {
         this._os = value;
     }
 
-    prepare(conditionGroups) {
+    prepare(profileIndex, conditionGroups) {
+        this._profileIndex = profileIndex;
         this._conditionGroupsContainer = document.querySelector('#profile-condition-groups');
         this._addConditionGroupButton = document.querySelector('#profile-add-condition-group');
 
