@@ -404,6 +404,7 @@ class ProfileConditionUI {
         this._removeButton = null;
         this._mouseButton = null;
         this._mouseButtonContainer = null;
+        this._menuButton = null;
         this._value = '';
         this._kbmInputField = null;
         this._eventListeners = new EventListenerCollection();
@@ -442,6 +443,7 @@ class ProfileConditionUI {
         this._removeButton = this._node.querySelector('.profile-condition-remove');
         this._mouseButton = this._node.querySelector('.mouse-button');
         this._mouseButtonContainer = this._node.querySelector('.mouse-button-container');
+        this._menuButton = this._node.querySelector('.profile-condition-menu-button');
 
         const operatorDetails = this._getOperatorDetails(type, operator);
         this._updateTypes(type);
@@ -451,6 +453,7 @@ class ProfileConditionUI {
         this._eventListeners.addEventListener(this._typeInput, 'change', this._onTypeChange.bind(this), false);
         this._eventListeners.addEventListener(this._operatorInput, 'change', this._onOperatorChange.bind(this), false);
         if (this._removeButton !== null) { this._eventListeners.addEventListener(this._removeButton, 'click', this._onRemoveButtonClick.bind(this), false); }
+        if (this._menuButton !== null) { this._eventListeners.addEventListener(this._menuButton, 'menuClosed', this._onMenuClosed.bind(this), false); }
     }
 
     cleanup() {
@@ -530,7 +533,15 @@ class ProfileConditionUI {
     }
 
     _onRemoveButtonClick() {
-        this._parent.removeCondition(this);
+        this._removeSelf();
+    }
+
+    _onMenuClosed({detail: {action}}) {
+        switch (action) {
+            case 'delete':
+                this._removeSelf();
+                break;
+        }
     }
 
     _getDescriptorTypes() {
@@ -627,5 +638,9 @@ class ProfileConditionUI {
 
     _normalizeValue(value, normalize) {
         return (normalize !== null ? normalize(value) : value);
+    }
+
+    _removeSelf() {
+        this._parent.removeCondition(this);
     }
 }
