@@ -32,6 +32,10 @@ class AnkiController {
             onRemoved: this._removeCardController.bind(this),
             isStale: this._isCardControllerStale.bind(this)
         });
+        this._fieldMarkersRequiringClipboardPermission = new Set([
+            'clipboard-image',
+            'clipboard-text'
+        ]);
         this._ankiOptions = null;
         this._getAnkiDataPromise = null;
         this._ankiErrorContainer = null;
@@ -128,6 +132,20 @@ class AnkiController {
 
     async getModelFieldNames(model) {
         return await this._ankiConnect.getModelFieldNames(model);
+    }
+
+    validateFieldPermissions(fieldValue) {
+        let requireClipboard = false;
+        const markers = this._getFieldMarkers(fieldValue);
+        for (const marker of markers) {
+            if (this._fieldMarkersRequiringClipboardPermission.has(marker)) {
+                requireClipboard = true;
+            }
+        }
+
+        if (requireClipboard) {
+            this._requestClipboardReadPermission();
+        }
     }
 
     // Private
@@ -231,6 +249,27 @@ class AnkiController {
         this._ankiErrorMessageDetailsContainer.hidden = true;
         this._ankiErrorInvalidResponseInfo.hidden = (errorString.indexOf('Invalid response') < 0);
     }
+
+    async _requestClipboardReadPermission() {
+        const permissions = ['clipboardRead'];
+
+        if (await new Promise((resolve) => chrome.permissions.contains({permissions}, resolve))) {
+            // Already has permission
+            return;
+        }
+
+        return await new Promise((resolve) => chrome.permissions.request({permissions}, resolve));
+    }
+
+    _getFieldMarkers(fieldValue) {
+        const pattern = /\{([\w-]+)\}/g;
+        const markers = [];
+        let match;
+        while ((match = pattern.exec(fieldValue)) !== null) {
+            markers.push(match[1]);
+        }
+        return markers;
+    }
 }
 
 class AnkiCardController {
@@ -295,6 +334,10 @@ class AnkiCardController {
         this._setModel(e.currentTarget.value);
     }
 
+    _onFieldChange(e) {
+        this._ankiController.validateFieldPermissions(e.currentTarget.value);
+    }
+
     _onFieldMarkerLinkClick(e) {
         e.preventDefault();
         const link = e.currentTarget;
@@ -349,6 +392,7 @@ class AnkiCardController {
             const inputField = content.querySelector('.anki-card-field-value');
             inputField.value = fieldValue;
             inputField.dataset.setting = ObjectPropertyAccessor.getPathString(['anki', this._cardType, 'fields', fieldName]);
+            this._fieldEventListeners.addEventListener(inputField, 'change', this._onFieldChange.bind(this), false);
 
             const markerList = content.querySelector('.anki-card-field-marker-list');
             if (markerList !== null) {
