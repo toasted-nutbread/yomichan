@@ -240,6 +240,7 @@ class AnkiCardController {
         this._node = node;
         this._cardType = node.dataset.ankiCardType;
         this._eventListeners = new EventListenerCollection();
+        this._fieldEventListeners = new EventListenerCollection();
         this._deck = null;
         this._model = null;
         this._fields = null;
@@ -294,6 +295,14 @@ class AnkiCardController {
         this._setModel(e.currentTarget.value);
     }
 
+    _onFieldMarkerLinkClick(e) {
+        e.preventDefault();
+        const link = e.currentTarget;
+        const input = link.closest('.anki-card-field-value-container').querySelector('.anki-card-field-value');
+        input.value = `{${link.textContent}}`;
+        input.dispatchEvent(new Event('change'));
+    }
+
     _getCardOptions(ankiOptions, cardType) {
         switch (cardType) {
             case 'terms': return ankiOptions.terms;
@@ -328,6 +337,8 @@ class AnkiCardController {
     }
 
     _setupFields() {
+        this._fieldEventListeners.removeAllEventListeners();
+
         const markers = this._ankiController.getFieldMarkers(this._cardType);
         const totalFragment = document.createDocumentFragment();
         for (const [fieldName, fieldValue] of Object.entries(this._fields)) {
@@ -341,7 +352,11 @@ class AnkiCardController {
 
             const markerList = content.querySelector('.anki-card-field-marker-list');
             if (markerList !== null) {
-                markerList.appendChild(this._ankiController.getFieldMarkersHtml(markers));
+                const markersFragment = this._ankiController.getFieldMarkersHtml(markers);
+                for (const element of markersFragment.querySelectorAll('.marker-link')) {
+                    this._fieldEventListeners.addEventListener(element, 'click', this._onFieldMarkerLinkClick.bind(this), false);
+                }
+                markerList.appendChild(markersFragment);
             }
 
             totalFragment.appendChild(content);
