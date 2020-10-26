@@ -417,8 +417,14 @@ class AnkiCardController {
 
             totalFragment.appendChild(content);
         }
-        this._ankiCardFieldsContainer.textContent = '';
-        this._ankiCardFieldsContainer.appendChild(totalFragment);
+
+        const ELEMENT_NODE = Node.ELEMENT_NODE;
+        const container = this._ankiCardFieldsContainer;
+        for (const node of [...container.childNodes]) {
+            if (node.nodeType === ELEMENT_NODE && node.dataset.persistent === 'true') { continue; }
+            container.removeChild(node);
+        }
+        container.appendChild(totalFragment);
     }
 
     async _setDeck(value) {
