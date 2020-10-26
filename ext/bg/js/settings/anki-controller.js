@@ -349,8 +349,12 @@ class AnkiCardController {
     _onFieldMarkerLinkClick(e) {
         e.preventDefault();
         const link = e.currentTarget;
-        const input = link.closest('.anki-card-field-value-container').querySelector('.anki-card-field-value');
-        input.value = `{${link.textContent}}`;
+        this._setFieldMarker(link, link.textContent);
+    }
+
+    _setFieldMarker(element, marker) {
+        const input = element.closest('.anki-card-field-value-container').querySelector('.anki-card-field-value');
+        input.value = `{${marker}}`;
         input.dispatchEvent(new Event('change'));
     }
 
