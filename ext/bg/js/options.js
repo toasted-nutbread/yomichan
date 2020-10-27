@@ -82,7 +82,13 @@ class OptionsUtil {
         }
 
         // Generic updates
-        return await this._applyUpdates(options, this._getVersionUpdates());
+        options = await this._applyUpdates(options, this._getVersionUpdates());
+
+        // Validation
+        options = this._schemaValidator.getValidValueOrDefault(this._optionsSchema, options);
+
+        // Result
+        return options;
     }
 
     async load() {
@@ -105,9 +111,9 @@ class OptionsUtil {
 
         if (typeof options !== 'undefined') {
             options = await this.update(options);
+        } else {
+            options = this.getDefault();
         }
-
-        options = this._schemaValidator.getValidValueOrDefault(this._optionsSchema, options);
 
         return options;
     }
