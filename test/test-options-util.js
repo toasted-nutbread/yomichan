@@ -518,6 +518,32 @@ async function testUpdate(extDir) {
     assert.deepStrictEqual(optionsUpdated, optionsExpected);
 }
 
+async function testDefault(extDir) {
+    const data = [
+        (options) => options,
+        (options) => {
+            delete options.profiles[0].options.audio.autoPlay;
+        },
+        (options) => {
+            options.profiles[0].options.audio.autoPlay = void 0;
+        }
+    ];
+
+    const vm = createVM(extDir);
+    const [OptionsUtil] = vm.get(['OptionsUtil']);
+    const optionsUtil = new OptionsUtil();
+    await optionsUtil.prepare();
+
+    for (const modify of data) {
+        const options = optionsUtil.getDefault();
+
+        const optionsModified = clone(options);
+        modify(optionsModified);
+
+        const optionsUpdated = await optionsUtil.update(clone(optionsModified));
+        assert.deepStrictEqual(clone(optionsUpdated), clone(options));
+    }
+}
 
 async function testFieldTemplatesUpdate(extDir) {
     const vm = createVM(extDir);
@@ -591,6 +617,7 @@ ${update4}
 async function main() {
     const extDir = path.join(__dirname, '..', 'ext');
     await testUpdate(extDir);
+    await testDefault(extDir);
     await testFieldTemplatesUpdate(extDir);
 }
 
