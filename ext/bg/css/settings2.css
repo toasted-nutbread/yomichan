@@ -1795,6 +1795,89 @@ select.profile-condition-operator {
     margin-left: 0.25em;
 }
 
+.anki-card-fields {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto;
+    align-items: center;
+    width: 100%;
+    margin-top: 0.5em;
+}
+.anki-card-field-name-header {
+    font-weight: bold;
+    margin-right: 1em;
+}
+.anki-card-field-input-header {
+    font-weight: bold;
+}
+.anki-card-field-name {
+    margin-right: 1em;
+    margin-top: 0.25em;
+}
+.anki-card-field-value-container {
+    display: flex;
+    flex-flow: row nowrap;
+    width: 100%;
+    align-items: stretch;
+    margin-top: 0.25em;
+}
+input.anki-card-field-value {
+    flex: 1 1 auto;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+button.anki-card-field-value-menu-button {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border: none;
+    height: var(--input-height);
+    line-height: var(--input-height);
+    background-color: var(--input-background-color);
+    box-sizing: border-box;
+    padding: 0 0.5em;
+}
+#anki-error-message-details-toggle {
+    display: inline-block;
+    margin-left: 0.5em;
+    cursor: pointer;
+    font-weight: bold;
+}
+#anki-error-message-details {
+    margin-top: 0.25em;
+    font-family: 'Courier New', Courier, monospace;
+    white-space: pre;
+    overflow-x: auto;
+}
+
+.anki-field-marker-info-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+.anki-field-marker-info-table>thead {
+    font-weight: bold;
+}
+code.anki-field-marker{
+    white-space: nowrap;
+    font-size: 0.85em;
+    font-weight: bold;
+}
+.anki-field-marker-info-table thead tr {
+    background-color: var(--input-background-color);
+}
+.anki-field-marker-info-table td {
+    vertical-align: top;
+    border: 1px solid var(--separator-color1);
+    margin: 0;
+    padding: 0.25em;
+}
+.anki-field-marker-info-table td:nth-child(n+2) {
+    border-left: none;
+}
+.anki-field-marker-info-table td:nth-last-child(n+2) {
+    border-right: none;
+}
+
 
 /* Miscellaneous styles */
 .horizontal-flex {
