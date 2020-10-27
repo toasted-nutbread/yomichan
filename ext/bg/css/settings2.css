@@ -168,7 +168,8 @@ ul {
 }
 p+p,  p+ol,  p+ul,
 ol+p, ol+ol, ol+ul,
-ul+p, ul+ol, ul+ul {
+ul+p, ul+ol, ul+ul,
+.margin-above {
     margin-top: 0.85em;
 }
 li {
@@ -182,6 +183,10 @@ a {
 a:hover {
     color: var(--link-color-hover);
     text-decoration: underline;
+}
+code {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: var(--input-background-color);
 }
 
 
@@ -889,6 +894,7 @@ select {
     background-position: right var(--padding) center;
     background-color: var(--input-background-color);
     background-size: var(--material-arrow-dimension2) var(--material-arrow-dimension1);
+    cursor: pointer;
 }
 select::-ms-expand {
     display: none;
