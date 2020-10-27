@@ -63,6 +63,7 @@ function clone(value) {
 
 function createProfileOptionsTestData1() {
     return {
+        version: 14,
         general: {
             enable: true,
             enableClipboardPopups: false,
@@ -495,7 +496,7 @@ function createOptionsUpdatedTestData1() {
             }
         ],
         profileCurrent: 0,
-        version: 4,
+        version: 5,
         global: {
             database: {
                 prefixWildcardsSupported: false

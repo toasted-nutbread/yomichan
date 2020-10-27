@@ -133,12 +133,8 @@ class OptionsUtil {
 
     getDefault() {
         const optionsVersion = this._getVersionUpdates().length;
-        const profileOptionsVersion = this._legacyProfileUpdateGetUpdates().length;
         const options = this._schemaValidator.getValidValueOrDefault(this._optionsSchema);
         options.version = optionsVersion;
-        for (const profile of options.profiles) {
-            profile.options.version = profileOptionsVersion;
-        }
         return options;
     }
 
@@ -481,6 +477,10 @@ class OptionsUtil {
             {
                 async: true,
                 update: this._updateVersion4.bind(this)
+            },
+            {
+                async: false,
+                update: this._updateVersion5.bind(this)
             }
         ];
     }
@@ -597,6 +597,15 @@ class OptionsUtil {
             profileOptions.scanning.inputs = scanningInputs;
         }
         await this._addFieldTemplatesToOptions(options, '/bg/data/anki-field-templates-upgrade-v4.handlebars');
+        return options;
+    }
+
+    _updateVersion5(options) {
+        // Version 5 changes:
+        //  Removed legacy version number from profile options.
+        for (const profile of options.profiles) {
+            delete profile.options.version;
+        }
         return options;
     }
 }
