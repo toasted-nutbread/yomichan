@@ -151,37 +151,6 @@ class JsonSchemaValidator {
         return this._getValidValueOrDefault(schema, value, info);
     }
 
-    _getValidValueOrDefault(schema, value, info) {
-        let type = this._getValueType(value);
-        const schemaType = schema.type;
-        if (typeof value === 'undefined' || !this._isValueTypeAny(value, type, schemaType)) {
-            let assignDefault = true;
-
-            const schemaDefault = schema.default;
-            if (typeof schemaDefault !== 'undefined') {
-                value = clone(schemaDefault);
-                type = this._getValueType(value);
-                assignDefault = !this._isValueTypeAny(value, type, schemaType);
-            }
-
-            if (assignDefault) {
-                value = this._getDefaultTypeValue(schemaType);
-                type = this._getValueType(value);
-            }
-        }
-
-        switch (type) {
-            case 'object':
-                value = this._populateObjectDefaults(value, schema, info);
-                break;
-            case 'array':
-                value = this._populateArrayDefaults(value, schema, info);
-                break;
-        }
-
-        return value;
-    }
-
     getPropertySchema(schema, property, value) {
         return this._getPropertySchema(schema, property, value, null);
     }
@@ -623,6 +592,37 @@ class JsonSchemaValidator {
             }
         }
         return null;
+    }
+
+    _getValidValueOrDefault(schema, value, info) {
+        let type = this._getValueType(value);
+        const schemaType = schema.type;
+        if (typeof value === 'undefined' || !this._isValueTypeAny(value, type, schemaType)) {
+            let assignDefault = true;
+
+            const schemaDefault = schema.default;
+            if (typeof schemaDefault !== 'undefined') {
+                value = clone(schemaDefault);
+                type = this._getValueType(value);
+                assignDefault = !this._isValueTypeAny(value, type, schemaType);
+            }
+
+            if (assignDefault) {
+                value = this._getDefaultTypeValue(schemaType);
+                type = this._getValueType(value);
+            }
+        }
+
+        switch (type) {
+            case 'object':
+                value = this._populateObjectDefaults(value, schema, info);
+                break;
+            case 'array':
+                value = this._populateArrayDefaults(value, schema, info);
+                break;
+        }
+
+        return value;
     }
 
     _populateObjectDefaults(value, schema, info) {
