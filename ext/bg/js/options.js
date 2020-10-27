@@ -126,7 +126,14 @@ class OptionsUtil {
     }
 
     getDefault() {
-        return this._schemaValidator.getValidValueOrDefault(this._optionsSchema);
+        const optionsVersion = this._getVersionUpdates().length;
+        const profileOptionsVersion = this._legacyProfileUpdateGetUpdates().length;
+        const options = this._schemaValidator.getValidValueOrDefault(this._optionsSchema);
+        options.version = optionsVersion;
+        for (const profile of options.profiles) {
+            profile.options.version = profileOptionsVersion;
+        }
+        return options;
     }
 
     getValidValueOrDefault(options) {
