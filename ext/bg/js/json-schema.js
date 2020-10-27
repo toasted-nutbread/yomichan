@@ -147,6 +147,11 @@ class JsonSchemaValidator {
     }
 
     getValidValueOrDefault(schema, value) {
+        const info = new JsonSchemaTraversalInfo(value, schema);
+        return this._getValidValueOrDefault(schema, value, info);
+    }
+
+    _getValidValueOrDefault(schema, value, info) {
         let type = this._getValueType(value);
         const schemaType = schema.type;
         if (typeof value === 'undefined' || !this._isValueTypeAny(value, type, schemaType)) {
@@ -167,10 +172,10 @@ class JsonSchemaValidator {
 
         switch (type) {
             case 'object':
-                value = this._populateObjectDefaults(value, schema);
+                value = this._populateObjectDefaults(value, schema, info);
                 break;
             case 'array':
-                value = this._populateArrayDefaults(value, schema);
+                value = this._populateArrayDefaults(value, schema, info);
                 break;
         }
 
@@ -620,7 +625,7 @@ class JsonSchemaValidator {
         return null;
     }
 
-    _populateObjectDefaults(value, schema) {
+    _populateObjectDefaults(value, schema, info) {
         const properties = new Set(Object.getOwnPropertyNames(value));
 
         const required = schema.required;
@@ -630,7 +635,11 @@ class JsonSchemaValidator {
 
                 const propertySchema = this._getPropertySchema(schema, property, value, null);
                 if (propertySchema === null) { continue; }
-                value[property] = this.getValidValueOrDefault(propertySchema, value[property]);
+                info.valuePush(property, value);
+                info.schemaPush(property, propertySchema);
+                value[property] = this._getValidValueOrDefault(propertySchema, value[property], info);
+                info.schemaPop();
+                info.valuePop();
             }
         }
 
@@ -639,18 +648,26 @@ class JsonSchemaValidator {
             if (propertySchema === null) {
                 Reflect.deleteProperty(value, property);
             } else {
-                value[property] = this.getValidValueOrDefault(propertySchema, value[property]);
+                info.valuePush(property, value);
+                info.schemaPush(property, propertySchema);
+                value[property] = this._getValidValueOrDefault(propertySchema, value[property], info);
+                info.schemaPop();
+                info.valuePop();
             }
         }
 
         return value;
     }
 
-    _populateArrayDefaults(value, schema) {
+    _populateArrayDefaults(value, schema, info) {
         for (let i = 0, ii = value.length; i < ii; ++i) {
             const propertySchema = this._getPropertySchema(schema, i, value, null);
             if (propertySchema === null) { continue; }
-            value[i] = this.getValidValueOrDefault(propertySchema, value[i]);
+            info.valuePush(i, value);
+            info.schemaPush(i, propertySchema);
+            value[i] = this._getValidValueOrDefault(propertySchema, value[i], info);
+            info.schemaPop();
+            info.valuePop();
         }
 
         const minItems = schema.minItems;
@@ -658,7 +675,11 @@ class JsonSchemaValidator {
             for (let i = value.length; i < minItems; ++i) {
                 const propertySchema = this._getPropertySchema(schema, i, value, null);
                 if (propertySchema === null) { break; }
-                const item = this.getValidValueOrDefault(propertySchema);
+                info.valuePush(i, value);
+                info.schemaPush(i, propertySchema);
+                const item = this._getValidValueOrDefault(propertySchema, void 0, info);
+                info.schemaPop();
+                info.valuePop();
                 value.push(item);
             }
         }
