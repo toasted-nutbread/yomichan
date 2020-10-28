@@ -195,6 +195,7 @@ class DictionaryController {
         this._checkIntegrityButton = null;
         this._dictionaryEntryContainer = null;
         this._integrityExtraInfoContainer = null;
+        this._dictionaryInstallCountNode = null;
         this._deleteDictionaryModal = null;
         this._integrityExtraInfoNode = null;
         this._isDeleting = false;
@@ -204,6 +205,7 @@ class DictionaryController {
         this._checkIntegrityButton = document.querySelector('#dictionary-check-integrity');
         this._dictionaryEntryContainer = document.querySelector('#dictionary-list');
         this._integrityExtraInfoContainer = document.querySelector('#dictionary-list-extra');
+        this._dictionaryInstallCountNode = document.querySelector('#dictionary-install-count');
         this._noDictionariesInstalledWarnings = document.querySelectorAll('.no-dictionaries-installed-warning');
         this._deleteDictionaryModal = this._modalController.getModal('dictionary-confirm-delete');
 
@@ -243,6 +245,10 @@ class DictionaryController {
             entry.cleanup();
         }
         this._dictionaryEntries = [];
+
+        if (this._dictionaryInstallCountNode !== null) {
+            this._dictionaryInstallCountNode.textContent = `${dictionaries.length}`;
+        }
 
         const hasDictionary = (dictionaries.length > 0);
         for (const node of this._noDictionariesInstalledWarnings) {
