@@ -104,6 +104,7 @@
     --danger-color-transparent5: rgba(200, 60, 40, 0.05);
     --danger-color-transparent25: rgba(200, 60, 40, 0.25);
     --warning-color: #96751c;
+    --warning-color-light: hsl(44, 80%, 65%);
     --disabled-color: #aaaaaa;
     --disabled-color-light: #dddddd;
     --disabled-color-lighter: #eeeeee;
@@ -420,6 +421,44 @@ h3 {
     height: var(--outline-item-icon-size);
     min-width: var(--outline-item-icon-size);
     min-height: var(--outline-item-icon-size);
+    position: relative;
+}
+.outline-item-left-warning-badge {
+    position: absolute;
+    right: calc(var(--outline-item-icon-size) * -0.125);
+    top: calc(var(--outline-item-icon-size) * -0.125);
+    width: calc(var(--outline-item-icon-size) * 0.5);
+    height: calc(var(--outline-item-icon-size) * 0.5);
+    margin: 0;
+    padding: 0;
+    background-color: var(--warning-color-light);
+    border-radius: calc(var(--outline-item-icon-size) * 0.5);
+    box-shadow: var(--shadow-vertical);
+}
+.outline-item-left-warning-badge:not([hidden]) {
+    display: block;
+}
+.outline-item-left-warning-badge[data-icon]::after {
+    content: "";
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--warning-color);
+    mask-repeat: no-repeat;
+    mask-position: center center;
+    mask-mode: alpha;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center center;
+    -webkit-mask-mode: alpha;
+}
+.outline-item-left-warning-badge[data-icon=exclamation-point-short]::after {
+    mask-image: url(/mixed/img/exclamation-point-short.svg);
+    -webkit-mask-image: url(/mixed/img/exclamation-point-short.svg);
+    mask-size: 100% 100%;
+    -webkit-mask-size: 100% 100%;
 }
 .outline-item-label {
     white-space: nowrap;

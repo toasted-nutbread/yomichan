@@ -22,7 +22,7 @@
         <div class="sidebar-body">
             <div class="sidebar-top"><a href="" class="sidebar-top-link" hidden><span class="sidebar-top-icon"></span>Top</a></div>
             <a href="#!profile"      class="outline-item"><span class="outline-item-inner"><span class="outline-item-left outline-item-icon outline-item-icon-profile"></span><span class="outline-item-label">Profile</span></span></a>
-            <a href="#!dictionaries" class="outline-item"><span class="outline-item-inner"><span class="outline-item-left outline-item-icon outline-item-icon-dictionaries"></span><span class="outline-item-label">Dictionaries</span></span></a>
+            <a href="#!dictionaries" class="outline-item"><span class="outline-item-inner"><span class="outline-item-left outline-item-icon outline-item-icon-dictionaries"><span class="outline-item-left-warning-badge no-dictionaries-installed-warning" data-icon="exclamation-point-short" hidden></span></span><span class="outline-item-label">Dictionaries</span></span></a>
             <a href="#!general"      class="outline-item"><span class="outline-item-inner"><span class="outline-item-left outline-item-icon outline-item-icon-general"></span><span class="outline-item-label">General</span></span></a>
             <a href="#!appearance"   class="outline-item"><span class="outline-item-inner"><span class="outline-item-left outline-item-icon outline-item-icon-appearance"></span><span class="outline-item-label">Appearance</span></span></a>
             <a href="#!popup"        class="outline-item"><span class="outline-item-inner"><span class="outline-item-left outline-item-icon outline-item-icon-popup"></span><span class="outline-item-label">Popup</span></span></a>
@@ -79,7 +79,7 @@
         </div></div>
     </div>
 
-    <h2 id="dictionaries">Dictionaries <span class="heading-sub-text" data-modal-action="show,dictionaries">(# installed)</span></h2>
+    <h2 id="dictionaries">Dictionaries <span class="heading-sub-text" data-modal-action="show,dictionaries">(<span id="dictionary-install-count">#</span> installed)</span></h2>
     <div class="settings-group">
         <div class="settings-item settings-item-button" data-modal-action="show,dictionaries"><div class="settings-item-inner">
             <div class="settings-item-left">
@@ -1188,17 +1188,14 @@
             </div>
         </div>
 
-        <div id="dictionary-delete-all-status" hidden>Dictionary data is being purged, please be patient...</div>
-        <div id="dictionary-warning" hidden>No dictionaries have been installed</div>
-        <div id="dictionary-error" hidden></div>
+        <div class="warning-text margin-above no-dictionaries-installed-warning" hidden>
+            No dictionaries have been installed yet.
+            Visit the <a href="https://foosoft.net/projects/yomichan/#dictionaries" target="_blank" rel="noopener noreferrer">Yomichan homepage</a>
+            for a list free dictionaries, or click the <em>Import</em> button below to select a dictionary file to import.
+        </div>
+        <div id="dictionary-error" class="danger-text margin-above" hidden></div>
         <div id="dictionary-list" class="dictionary-list"></div>
         <div id="dictionary-list-extra" class="dictionary-list"></div>
-
-        <div id="dictionary-import-progress-container" hidden>
-            Dictionary data is being imported, please be patient...
-            <span id="dictionary-import-info" hidden></span>
-            <div class="progress-track"><div class="progress-bar" style="width: 0;"></div></div>
-        </div>
 
         <div hidden><input type="file" id="dictionary-import-file-input" accept=".zip,application/zip" multiple></div>
     </div>
