@@ -17,6 +17,7 @@
 
 /* global
  * AnkiController
+ * AnkiTemplatesController
  * AudioController
  * BackupController
  * DictionaryController
@@ -87,6 +88,9 @@ async function setupGenericSettingsController(genericSettingController) {
 
         const ankiController = new AnkiController(settingsController);
         ankiController.prepare();
+
+        const ankiTemplatesController = new AnkiTemplatesController(settingsController, modalController, ankiController);
+        ankiTemplatesController.prepare();
 
         await Promise.all(preparePromises);
 

@@ -1535,6 +1535,61 @@
 </div></div>
 
 
+<!-- Anki field template modals -->
+<div id="anki-card-templates" class="modal-container" tabindex="-1" role="dialog"><div class="modal-content modal-content-full">
+    <div class="modal-header"><div class="modal-title">Anki Card Templates</div></div>
+    <div class="modal-body anki-card-templates-layout">
+        <div class="anki-card-templates-info">
+            <p>
+                Anki card fields are formatted using the <a href="https://handlebarsjs.com/" target="_blank" rel="noopener noreferrer">Handlebars.js</a>
+                template rendering engine.
+                Advanced users can modify these templates for full control over what information is included in Anki cards.
+            </p>
+            <p>
+                Consider copy-pasting the source into a code editor that supports syntax highlighting for easier editing.
+            </p>
+        </div>
+        <textarea autocomplete="off" spellcheck="false" wrap="off" id="anki-card-templates-textarea" class="margin-above"></textarea>
+        <div id="anki-card-templates-compile-result" class="danger-text margin-above" hidden></div>
+        <div class="anki-card-templates-test-container margin-above">
+            <p>
+                Card templates can be tested using the inputs below.
+            </p>
+            <div class="anki-card-templates-test-table margin-above">
+                <div class="anki-card-templates-test-table-header">Scanned text</div>
+                <div class="anki-card-templates-test-table-header">Card field</div>
+                <div></div>
+                <input type="text" id="anki-card-templates-test-text-input" class="form-control" value="読め" placeholder="Preview text">
+                <div class="anki-card-templates-test-input-container">
+                    <input type="text" class="input-with-suffix-button" id="anki-card-templates-test-field-input" value="{expression}" placeholder="{marker}">
+                    <button class="input-suffix-button input-suffix-icon-button" id="anki-card-templates-test-field-menu-button" data-menu="anki-card-all-field-menu" data-menu-position="below,left"><span class="icon-button-icon icon-button-icon-light" data-icon="material-down-arrow"></span></button>
+                </div>
+                <button id="anki-card-templates-test-render-button">Test</button>
+            </div>
+        </div>
+        <div class="margin-above" id="anki-card-templates-render-result"><em>Card render result</em></div>
+    </div>
+    <div class="modal-footer">
+        <button class="danger" id="anki-card-templates-reset-button">Reset Templates</button>
+        <button data-modal-action="hide">Close</button>
+    </div>
+</div></div>
+
+<div id="anki-card-templates-reset" class="modal-container" tabindex="-1" role="dialog"><div class="modal-content modal-content-small">
+    <div class="modal-header"><div class="modal-title">Reset Anki Card Templates</div></div>
+    <div class="modal-body">
+        <p class="danger-text">
+            Are you sure you want to reset the card templates to their default value?
+            Any changes you made will be lost.
+        </p>
+    </div>
+    <div class="modal-footer">
+        <button class="low-emphasis" data-modal-action="hide">Cancel</button>
+        <button class="danger" id="anki-card-templates-reset-button-confirm">Reset Templates</button>
+    </div>
+</div></div>
+
+
 <!-- Import/export modals -->
 <div id="settings-import-error" class="modal-container" tabindex="-1" role="dialog"><div class="modal-content modal-content-small">
     <div class="modal-header"><div class="modal-title">Import Error</div></div>
@@ -1773,6 +1828,8 @@
 <template id="anki-card-terms-field-menu-template"><div class="popup-menu-container" tabindex="-1" role="dialog"><div class="popup-menu"></div></div></template>
 
 <template id="anki-card-kanji-field-menu-template"><div class="popup-menu-container" tabindex="-1" role="dialog"><div class="popup-menu"></div></div></template>
+
+<template id="anki-card-all-field-menu-template"><div class="popup-menu-container" tabindex="-1" role="dialog"><div class="popup-menu"></div></div></template>
 
 
 <!-- Scripts -->
