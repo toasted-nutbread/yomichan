@@ -26,6 +26,7 @@ class ScanInputsController {
         this._os = null;
         this._container = null;
         this._addButton = null;
+        this._scanningInputCountNodes = null;
         this._entries = [];
     }
 
@@ -35,6 +36,7 @@ class ScanInputsController {
 
         this._container = document.querySelector('#scan-input-list');
         this._addButton = document.querySelector('#scan-input-add');
+        this._scanningInputCountNodes = document.querySelectorAll('.scanning-input-count');
 
         this._addButton.addEventListener('click', this._onAddButtonClick.bind(this), false);
         this._settingsController.on('scanInputsChanged', this._onScanInputsChanged.bind(this));
@@ -94,6 +96,8 @@ class ScanInputsController {
             const {include, exclude} = inputs[i];
             this._addOption(i, include, exclude);
         }
+
+        this._updateCounts();
     }
 
     _onAddButtonClick(e) {
@@ -103,6 +107,7 @@ class ScanInputsController {
         const include = '';
         const exclude = '';
         this._addOption(index, include, exclude);
+        this._updateCounts();
         this._modifyProfileSettings([{
             action: 'splice',
             path: 'scanning.inputs',
@@ -116,6 +121,13 @@ class ScanInputsController {
         const field = new ScanInputField(this, index, this._os);
         this._entries.push(field);
         field.prepare(this._container, include, exclude);
+    }
+
+    _updateCounts() {
+        const stringValue = `${this._entries.length}`;
+        for (const node of this._scanningInputCountNodes) {
+            node.textContent = stringValue;
+        }
     }
 
     async _modifyProfileSettings(targets) {
