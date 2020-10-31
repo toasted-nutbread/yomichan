@@ -93,8 +93,7 @@ class ScanInputsController {
         this._entries.length = 0;
 
         for (let i = 0, ii = inputs.length; i < ii; ++i) {
-            const {include, exclude} = inputs[i];
-            this._addOption(i, include, exclude);
+            this._addOption(i, inputs[i]);
         }
 
         this._updateCounts();
@@ -104,23 +103,22 @@ class ScanInputsController {
         e.preventDefault();
 
         const index = this._entries.length;
-        const include = '';
-        const exclude = '';
-        this._addOption(index, include, exclude);
+        const scanningInput = ScanInputsController.createDefaultMouseInput('', '');
+        this._addOption(index, scanningInput);
         this._updateCounts();
         this._modifyProfileSettings([{
             action: 'splice',
             path: 'scanning.inputs',
             start: index,
             deleteCount: 0,
-            items: [ScanInputsController.createDefaultMouseInput(include, exclude)]
+            items: [scanningInput]
         }]);
     }
 
-    _addOption(index, include, exclude) {
+    _addOption(index, scanningInput) {
         const field = new ScanInputField(this, index, this._os);
         this._entries.push(field);
-        field.prepare(this._container, include, exclude);
+        field.prepare(this._container, scanningInput);
     }
 
     _updateCounts() {
@@ -174,7 +172,9 @@ class ScanInputField {
         this._updateDataSettingTargets();
     }
 
-    prepare(container, include, exclude) {
+    prepare(container, scanningInput) {
+        const {include, exclude, options: {showAdvanced}} = scanningInput;
+
         const node = this._parent.instantiateTemplate('scan-input');
         const includeInputNode = node.querySelector('.scan-input-field[data-property=include]');
         const includeMouseButton = node.querySelector('.mouse-button[data-property=include]');
