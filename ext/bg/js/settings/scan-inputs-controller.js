@@ -64,9 +64,12 @@ class ScanInputsController {
         return true;
     }
 
-    setProperty(index, property, value) {
+    async setProperty(index, property, value, event) {
         const path = `scanning.inputs[${index}].${property}`;
-        return this._settingsController.setProfileSetting(path, value);
+        await this._settingsController.setProfileSetting(path, value);
+        if (event) {
+            this._triggerScanInputsChanged();
+        }
     }
 
     instantiateTemplate(name) {
@@ -228,11 +231,11 @@ class ScanInputField {
     // Private
 
     _onIncludeValueChange({value}) {
-        this._parent.setProperty(this._index, 'include', value);
+        this._parent.setProperty(this._index, 'include', value, true);
     }
 
     _onExcludeValueChange({value}) {
-        this._parent.setProperty(this._index, 'exclude', value);
+        this._parent.setProperty(this._index, 'exclude', value, true);
     }
 
     _onRemoveClick(e) {
@@ -291,6 +294,6 @@ class ScanInputField {
     _setAdvancedOptionsVisible(showAdvanced) {
         showAdvanced = !!showAdvanced;
         this._node.dataset.showAdvanced = `${showAdvanced}`;
-        this._parent.setProperty(this._index, 'options.showAdvanced', showAdvanced);
+        this._parent.setProperty(this._index, 'options.showAdvanced', showAdvanced, false);
     }
 }
