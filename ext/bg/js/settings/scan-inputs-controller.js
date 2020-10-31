@@ -65,7 +65,7 @@ class ScanInputsController {
 
     setProperty(index, property, value) {
         const path = `scanning.inputs[${index}].${property}`;
-        this._settingsController.setProfileSetting(path, value);
+        return this._settingsController.setProfileSetting(path, value);
     }
 
     instantiateTemplate(name) {
