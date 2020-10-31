@@ -54,6 +54,11 @@ class SettingsDisplayController {
             node.addEventListener('click', onSelectOnClickElementClick, false);
         }
 
+        const onInputTabActionKeyDown = this._onInputTabActionKeyDown.bind(this);
+        for (const node of document.querySelectorAll('[data-tab-action]')) {
+            node.addEventListener('keydown', onInputTabActionKeyDown, false);
+        }
+
         this._onMoreToggleClickBind = this._onMoreToggleClick.bind(this);
         const moreSelectorObserver = new SelectorObserver({
             selector: '.more-toggle',
@@ -230,6 +235,25 @@ class SettingsDisplayController {
         popupMenu.off('closed', onClose);
     }
 
+    _onInputTabActionKeyDown(e) {
+        if (e.key !== 'Tab' || e.ctrlKey) { return; }
+
+        const node = e.currentTarget;
+        const {tabAction} = node.dataset;
+        if (typeof tabAction !== 'string') { return; }
+
+        const args = tabAction.split(',');
+        switch (args[0]) {
+            case 'ignore':
+                e.preventDefault();
+                break;
+            case 'indent':
+                e.preventDefault();
+                this._indentInput(e, node, args);
+                break;
+        }
+    }
+
     _updateScrollTarget() {
         const hash = window.location.hash;
         if (!hash.startsWith('#!')) { return; }
@@ -282,5 +306,36 @@ class SettingsDisplayController {
 
         popupMenu.on('closed', data.onClose);
         popupMenu.prepare();
+    }
+
+    _indentInput(e, node, args) {
+        let indent = '\t';
+        if (args.length > 1) {
+            const count = parseInt(args[1], 10);
+            indent = (Number.isFinite(count) && count >= 0 ? ' '.repeat(count) : args[1]);
+        }
+
+        const {selectionStart: start, selectionEnd: end, value} = node;
+        const lineStart = value.substring(0, start).lastIndexOf('\n') + 1;
+        const lineWhitespace = /^[ \t]*/.exec(value.substring(lineStart))[0];
+
+        if (e.shiftKey) {
+            const whitespaceLength = Math.max(0, Math.floor((lineWhitespace.length - 1) / 4) * 4);
+            const selectionStartNew = lineStart + whitespaceLength;
+            const selectionEndNew = lineStart + lineWhitespace.length;
+            const removeCount = selectionEndNew - selectionStartNew;
+            if (removeCount > 0) {
+                node.selectionStart = selectionStartNew;
+                node.selectionEnd = selectionEndNew;
+                document.execCommand('delete', false);
+                node.selectionStart = Math.max(lineStart, start - removeCount);
+                node.selectionEnd = Math.max(lineStart, end - removeCount);
+            }
+        } else {
+            if (indent.length > 0) {
+                const indentLength = (Math.ceil((start - lineStart + 1) / indent.length) * indent.length - (start - lineStart));
+                document.execCommand('insertText', false, indent.substring(0, indentLength));
+            }
+        }
     }
 }
