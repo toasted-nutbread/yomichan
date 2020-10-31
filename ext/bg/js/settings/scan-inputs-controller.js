@@ -183,6 +183,8 @@ class ScanInputField {
         const removeButton = node.querySelector('.scan-input-remove');
         const menuButton = node.querySelector('.scanning-input-menu-button');
 
+        node.dataset.showAdvanced = `${showAdvanced}`;
+
         this._node = node;
         container.appendChild(node);
 
