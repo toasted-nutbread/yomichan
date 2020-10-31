@@ -549,9 +549,9 @@
                 <label class="toggle"><input type="checkbox" id="middle-mouse-button-scan"><span class="toggle-body"><span class="toggle-track"></span><span class="toggle-knob"></span></span></label>
             </div>
         </div></div>
-        <div class="settings-item settings-item-button" data-modal-action="show,scanning-inputs"><div class="settings-item-inner">
+        <div class="settings-item settings-item-button advanced-only" data-modal-action="show,scanning-inputs"><div class="settings-item-inner">
             <div class="settings-item-left">
-                <div class="settings-item-label">Configure advanced scanning inputs <span class="light">(# defined)</span></div>
+                <div class="settings-item-label">Configure advanced scanning inputs <span class="light">(<span class="scanning-input-count">#</span> defined)</span></div>
             </div>
             <div class="settings-item-right open-panel-button-container">
                 <button class="icon-button"><span class="icon-button-inner"><span class="icon-button-icon" data-icon="right-arrow"></span></span></button>
@@ -1379,6 +1379,56 @@
 </div></div>
 
 
+<!-- Scanning inputs modal -->
+<div id="scanning-inputs" class="modal-container" tabindex="-1" role="dialog"><div class="modal-content modal-content-full">
+    <div class="modal-header"><div class="modal-title">Scanning Inputs</div></div>
+    <div class="modal-body">
+        <div>
+            <p>
+                Scanning inputs are used to define when text scanning should occur.
+                <a class="more-toggle more-only" data-parent-distance="2">More&hellip;</a>
+            </p>
+            <div class="margin-above more" hidden>
+                <p>
+                    Text scanning is performed when a pointer is moved and certain inputs are either pressed or not pressed.
+                    The <em>Required inputs</em> field is used to define which inputs <em>must</em> be pressed, and
+                    the <em>Excluded inputs</em> field is used to define which inputs <em>must not</em> be pressed.
+                    If the <em>Required inputs</em> field is empty, text will be scanned whenever the pointer is moved.
+                </p>
+                <p>
+                    The <em>Input types</em> group is used to define which types of pointer input that the
+                    keyboard and button inputs are applied to.
+                    Supported pointer types include the mouse cursor, touchscreen touches, and pen devices.
+                    When using the <em>Pen</em> option, the defined inputs will correspond to buttons on the pen device.
+                </p>
+                <p>
+                    Some additional scanning and search options can be configured by clicking the menu button and selecting
+                    <em>Show advanced options</em>.
+                </p>
+                <ul>
+                    <li>To assign keyboard keys, select the input field and press modifier keys on the keyboard.</li>
+                    <li>To assign mouse or pen buttons, click on the button with the mouse icon using the desired button.</li>
+                    <li>
+                        To clear inputs, select the input field and press the <em>Escape</em> button,
+                        or use the <em>Clear inputs</em> menu option.
+                    </li>
+                </ul>
+                <p><a class="more-toggle" data-parent-distance="3">Less&hellip;</a></p>
+            </div>
+        </div>
+        <div class="scan-input-list generic-list margin-above" id="scan-input-list"></div>
+        <div class="scan-input-list-empty-info warning-text margin-above">
+            No scanning inputs have been defined yet.
+            Click the <em>Add</em> button to add a new input.
+        </div>
+        <div class="flex-row-nowrap right"><button class="low-emphasis" id="scan-input-add">Add</button></div>
+    </div>
+    <div class="modal-footer">
+        <button data-modal-action="hide">Close</button>
+    </div>
+</div></div>
+
+
 <!-- Anki cards modal -->
 <div id="anki-cards" class="modal-container" tabindex="-1" role="dialog"><div class="modal-content modal-content-full">
     <div class="modal-header"><div class="modal-title">Anki Cards</div></div>
@@ -1865,6 +1915,90 @@
 </div></template>
 
 <template id="audio-source-menu-template"><div class="popup-menu-container" tabindex="-1" role="dialog"><div class="popup-menu">
+    <button class="popup-menu-item" data-menu-action="remove">Remove</button>
+</div></div></template>
+
+
+<!-- Scanning inputs templates -->
+<template id="scan-input-template"><div class="scan-input" data-show-advanced="false">
+    <div class="scan-input-grid">
+        <div class="scan-input-index-cell generic-list-index-prefix"></div>
+        <div class="scan-input-suffix-cell">
+            <div class="input-height-icon-button-container">
+                <button class="icon-button scanning-input-menu-button" data-menu="scanning-inputs-menu" data-menu-position="below,left"><span class="icon-button-inner"><span class="icon-button-icon" data-icon="kebab-menu"></span></span></button>
+            </div>
+        </div>
+
+        <div class="scan-input-prefix-cell" data-property="include"><span>Required inputs:</span></div>
+        <div class="scan-input-content-cell" data-property="include">
+            <input type="text" class="input-with-suffix-button scan-input-field" placeholder="No inputs" data-property="include">
+            <button class="input-suffix-button input-suffix-icon-button mouse-button" data-property="include"><span class="icon-button-icon icon-button-icon-light" data-icon="mouse"></span></button>
+        </div>
+
+        <div class="scan-input-prefix-cell" data-property="exclude"><span>Excluded inputs:</span></div>
+        <div class="scan-input-content-cell" data-property="exclude">
+            <input type="text" class="input-with-suffix-button scan-input-field" placeholder="No inputs" data-property="exclude">
+            <button class="input-suffix-button input-suffix-icon-button mouse-button" data-property="exclude"><span class="icon-button-icon icon-button-icon-light" data-icon="mouse"></span></button>
+        </div>
+
+        <div class="scan-input-prefix-cell scan-input-options-cell" data-property="types"><span>Input types:</span></div>
+        <div class="scan-input-content-cell scan-input-options-cell" data-property="types">
+            <label class="scan-input-checkbox-item">
+                <label class="checkbox"><input type="checkbox" class="scan-input-settings-checkbox" data-property="types.mouse"><span class="checkbox-body"><span class="checkbox-fill"></span><span class="checkbox-border"></span><span class="checkbox-check"></span></span></label>
+                <span>Mouse</span>
+            </label>
+            <label class="scan-input-checkbox-item">
+                <label class="checkbox"><input type="checkbox" class="scan-input-settings-checkbox" data-property="types.touch"><span class="checkbox-body"><span class="checkbox-fill"></span><span class="checkbox-border"></span><span class="checkbox-check"></span></span></label>
+                <span>Touch</span>
+            </label>
+            <label class="scan-input-checkbox-item">
+                <label class="checkbox"><input type="checkbox" class="scan-input-settings-checkbox" data-property="types.pen"><span class="checkbox-body"><span class="checkbox-fill"></span><span class="checkbox-border"></span><span class="checkbox-check"></span></span></label>
+                <span>Pen</span>
+            </label>
+        </div>
+
+        <div class="scan-input-prefix-cell scan-input-options-cell scan-input-advanced-only" data-property="search-options"><span>Search types:</span></div>
+        <div class="scan-input-content-cell scan-input-options-cell scan-input-advanced-only" data-property="search-options">
+            <label class="scan-input-checkbox-item">
+                <label class="checkbox"><input type="checkbox" class="scan-input-settings-checkbox" data-property="options.searchTerms"><span class="checkbox-body"><span class="checkbox-fill"></span><span class="checkbox-border"></span><span class="checkbox-check"></span></span></label>
+                <span>Search for terms</span>
+            </label>
+            <label class="scan-input-checkbox-item">
+                <label class="checkbox"><input type="checkbox" class="scan-input-settings-checkbox" data-property="options.searchKanji"><span class="checkbox-body"><span class="checkbox-fill"></span><span class="checkbox-border"></span><span class="checkbox-check"></span></span></label>
+                <span>Search for kanji</span>
+            </label>
+        </div>
+
+        <div class="scan-input-prefix-cell scan-input-options-cell scan-input-advanced-only" data-property="touch-pen-options"><span>Touch &amp; pen:</span></div>
+        <div class="scan-input-content-cell scan-input-options-cell scan-input-advanced-only" data-property="touch-pen-options">
+            <label class="scan-input-checkbox-item">
+                <label class="checkbox"><input type="checkbox" class="scan-input-settings-checkbox" data-property="options.scanOnTouchMove"><span class="checkbox-body"><span class="checkbox-fill"></span><span class="checkbox-border"></span><span class="checkbox-check"></span></span></label>
+                <span>Scan on touch move</span>
+            </label>
+            <label class="scan-input-checkbox-item">
+                <label class="checkbox"><input type="checkbox" class="scan-input-settings-checkbox" data-property="options.scanOnPenHover"><span class="checkbox-body"><span class="checkbox-fill"></span><span class="checkbox-border"></span><span class="checkbox-check"></span></span></label>
+                <span>Scan on pen hover</span>
+            </label>
+            <label class="scan-input-checkbox-item">
+                <label class="checkbox"><input type="checkbox" class="scan-input-settings-checkbox" data-property="options.scanOnPenPress"><span class="checkbox-body"><span class="checkbox-fill"></span><span class="checkbox-border"></span><span class="checkbox-check"></span></span></label>
+                <span>Scan on pen press</span>
+            </label>
+            <label class="scan-input-checkbox-item">
+                <label class="checkbox"><input type="checkbox" class="scan-input-settings-checkbox" data-property="options.scanOnPenRelease"><span class="checkbox-body"><span class="checkbox-fill"></span><span class="checkbox-border"></span><span class="checkbox-check"></span></span></label>
+                <span>Scan on pen release</span>
+            </label>
+            <label class="scan-input-checkbox-item">
+                <label class="checkbox"><input type="checkbox" class="scan-input-settings-checkbox" data-property="options.preventTouchScrolling"><span class="checkbox-body"><span class="checkbox-fill"></span><span class="checkbox-border"></span><span class="checkbox-check"></span></span></label>
+                <span>Prevent touch/pen scrolling</span>
+            </label>
+        </div>
+    </div>
+</div></template>
+
+<template id="scanning-inputs-menu-template"><div class="popup-menu-container" tabindex="-1" role="dialog"><div class="popup-menu">
+    <button class="popup-menu-item" data-menu-action="showAdvanced">Show advanced options</button>
+    <button class="popup-menu-item" data-menu-action="hideAdvanced">Hide advanced options</button>
+    <button class="popup-menu-item" data-menu-action="clearInputs">Clear inputs</button>
     <button class="popup-menu-item" data-menu-action="remove">Remove</button>
 </div></div></template>
 

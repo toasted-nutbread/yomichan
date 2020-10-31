@@ -26,6 +26,7 @@
  * ModalController
  * PopupPreviewController
  * ProfileController
+ * ScanInputsController
  * ScanInputsSimpleController
  * SettingsController
  * SettingsDisplayController
@@ -96,6 +97,9 @@ async function setupGenericSettingsController(genericSettingController) {
 
         const popupPreviewController = new PopupPreviewController(settingsController);
         popupPreviewController.prepare();
+
+        const scanInputsController = new ScanInputsController(settingsController);
+        scanInputsController.prepare();
 
         const simpleScanningInputController = new ScanInputsSimpleController(settingsController);
         simpleScanningInputController.prepare();
