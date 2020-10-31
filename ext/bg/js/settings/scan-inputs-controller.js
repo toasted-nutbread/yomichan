@@ -200,6 +200,7 @@ class ScanInputField {
             this._eventListeners.addEventListener(removeButton, 'click', this._onRemoveClick.bind(this));
         }
         if (menuButton !== null) {
+            this._eventListeners.addEventListener(menuButton, 'menuOpened', this._onMenuOpened.bind(this));
             this._eventListeners.addEventListener(menuButton, 'menuClosed', this._onMenuClosed.bind(this));
         }
 
@@ -219,6 +220,8 @@ class ScanInputField {
         }
     }
 
+    // Private
+
     _onIncludeValueChange({value}) {
         this._parent.setProperty(this._index, 'include', value);
     }
@@ -232,10 +235,32 @@ class ScanInputField {
         this._removeSelf();
     }
 
+    _onMenuOpened({detail: {menu}}) {
+        const showAdvanced = menu.querySelector('.popup-menu-item[data-menu-action="showAdvanced"]');
+        const hideAdvanced = menu.querySelector('.popup-menu-item[data-menu-action="hideAdvanced"]');
+        const advancedVisible = (this._node.dataset.showAdvanced === 'true');
+        if (showAdvanced !== null) {
+            showAdvanced.hidden = advancedVisible;
+        }
+        if (hideAdvanced !== null) {
+            hideAdvanced.hidden = !advancedVisible;
+        }
+    }
+
     _onMenuClosed({detail: {action}}) {
         switch (action) {
             case 'remove':
                 this._removeSelf();
+                break;
+            case 'showAdvanced':
+                this._setAdvancedOptionsVisible(true);
+                break;
+            case 'hideAdvanced':
+                this._setAdvancedOptionsVisible(false);
+                break;
+            case 'clearInputs':
+                this._includeInputField.clearInputs();
+                this._excludeInputField.clearInputs();
                 break;
         }
     }
@@ -256,5 +281,11 @@ class ScanInputField {
 
     _removeSelf() {
         this._parent.removeInput(this._index);
+    }
+
+    _setAdvancedOptionsVisible(showAdvanced) {
+        showAdvanced = !!showAdvanced;
+        this._node.dataset.showAdvanced = `${showAdvanced}`;
+        this._parent.setProperty(this._index, 'options.showAdvanced', showAdvanced);
     }
 }
