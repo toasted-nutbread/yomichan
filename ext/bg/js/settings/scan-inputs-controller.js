@@ -131,6 +131,10 @@ class ScanInputsController {
 
     async _modifyProfileSettings(targets) {
         await this._settingsController.modifyProfileSettings(targets);
+        this._triggerScanInputsChanged();
+    }
+
+    _triggerScanInputsChanged() {
         this._settingsController.trigger('scanInputsChanged', {source: this});
     }
 
