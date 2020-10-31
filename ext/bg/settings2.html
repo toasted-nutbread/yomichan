@@ -413,7 +413,7 @@
                 </div>
             </div>
         </div></div>
-        <div class="settings-item settings-item-button advanced-only"><div class="settings-item-inner">
+        <div class="settings-item settings-item-button advanced-only" data-modal-action="show,custom-css"><div class="settings-item-inner">
             <div class="settings-item-left">
                 <div class="settings-item-label">Custom CSS</div>
             </div>
@@ -1024,7 +1024,7 @@
             </span></label>
         </div>
         <div class="preview-frame-container">
-            <iframe src="/bg/popup-preview.html" class="preview-frame"></iframe>
+            <iframe src="/bg/popup-preview.html" class="preview-frame" id="popup-preview-frame"></iframe>
         </div>
     </div></div>
 </div>
@@ -1239,6 +1239,21 @@
         <button class="danger" data-modal-action="hide" id="dictionary-confirm-delete-all-button">Delete</button>
     </div>
 </div></div>
+
+
+<!-- Custom CSS modal -->
+<div id="custom-css" class="modal-container modal-container-left" tabindex="-1" role="dialog"><div class="modal-content-container1"><div class="modal-content-container2 modal-content-dimmer"><div class="modal-content">
+    <div class="modal-header"><div class="modal-title">Custom CSS</div></div>
+    <div class="modal-body custom-popup-css-container">
+        <div class="custom-popup-css-header">Popup CSS</div>
+        <textarea autocomplete="off" spellcheck="false" wrap="off" id="custom-popup-css" data-setting="general.customPopupCss" data-tab-action="indent,4"></textarea>
+        <div class="custom-popup-css-header margin-above">Popup outer CSS</div>
+        <textarea autocomplete="off" spellcheck="false" wrap="off" id="custom-popup-outer-css" data-setting="general.customPopupOuterCss" data-tab-action="indent,4"></textarea>
+    </div>
+    <div class="modal-footer">
+        <button data-modal-action="hide">Close</button>
+    </div>
+</div></div></div></div>
 
 
 <!-- Audio sources modal -->

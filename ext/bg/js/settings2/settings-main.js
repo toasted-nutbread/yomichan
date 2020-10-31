@@ -24,6 +24,7 @@
  * DictionaryImportController
  * GenericSettingController
  * ModalController
+ * PopupPreviewController
  * ProfileController
  * SettingsController
  * SettingsDisplayController
@@ -91,6 +92,9 @@ async function setupGenericSettingsController(genericSettingController) {
 
         const ankiTemplatesController = new AnkiTemplatesController(settingsController, modalController, ankiController);
         ankiTemplatesController.prepare();
+
+        const popupPreviewController = new PopupPreviewController(settingsController);
+        popupPreviewController.prepare();
 
         await Promise.all(preparePromises);
 
