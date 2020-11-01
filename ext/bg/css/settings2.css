@@ -734,6 +734,8 @@ label.checkbox {
     margin: 0;
     padding: 0;
     border: none;
+    appearance: none;
+    -moz-appearance: none;
 }
 .checkbox-body {
     display: block;
@@ -823,6 +825,8 @@ label.toggle {
     margin: 0;
     padding: 0;
     border: none;
+    appearance: none;
+    -moz-appearance: none;
 }
 .toggle-body {
     display: block;
@@ -931,6 +935,8 @@ label.radio {
     padding: 0;
     border: none;
     cursor: default;
+    appearance: none;
+    -moz-appearance: none;
 }
 .radio>input[type=radio]:not(:disabled)+.radio-body {
     cursor: pointer;
