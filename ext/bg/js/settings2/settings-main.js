@@ -24,6 +24,7 @@
  * DictionaryImportController
  * GenericSettingController
  * ModalController
+ * NestedPopupsController
  * PopupPreviewController
  * ProfileController
  * ScanInputsController
@@ -103,6 +104,9 @@ async function setupGenericSettingsController(genericSettingController) {
 
         const simpleScanningInputController = new ScanInputsSimpleController(settingsController);
         simpleScanningInputController.prepare();
+
+        const nestedPopupsController = new NestedPopupsController(settingsController);
+        nestedPopupsController.prepare();
 
         await Promise.all(preparePromises);
 

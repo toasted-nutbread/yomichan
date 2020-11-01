@@ -438,31 +438,44 @@
 
     <h2 id="popup">Popup Interactions</h2>
     <div class="settings-group">
-        <div class="settings-item"><div class="settings-item-inner">
-            <div class="settings-item-left">
-                <div class="settings-item-label">Allow scanning popup content</div>
-                <div class="settings-item-description">Change the limit on the number of popups that can be generated.</div>
+        <div class="settings-item">
+            <div class="settings-item-inner">
+                <div class="settings-item-left">
+                    <div class="settings-item-label">Allow scanning popup content</div>
+                    <div class="settings-item-description">Text inside of popups can be scanned for definitions, which will open a new popup.</div>
+                </div>
+                <div class="settings-item-right">
+                    <label class="toggle"><input type="checkbox" id="nested-popups-enabled"><span class="toggle-body"><span class="toggle-track"></span><span class="toggle-knob"></span></span></label>
+                </div>
             </div>
-            <div class="settings-item-right">
-                <label class="toggle"><input type="checkbox"><span class="toggle-body"><span class="toggle-track"></span><span class="toggle-knob"></span></span></label>
+            <div class="settings-item-children settings-item-children-group" id="nested-popups-enabled-more-options" hidden>
+                <div class="settings-item"><div class="settings-item-inner">
+                    <div class="settings-item-left">
+                        <div class="settings-item-label">Maximum number of child popups</div>
+                        <div class="settings-item-description">Change the limit on the number of popups that may be generated.</div>
+                    </div>
+                    <div class="settings-item-right">
+                        <input type="number" min="0" step="1" id="nested-popups-count">
+                    </div>
+                </div></div>
+                <div class="settings-item"><div class="settings-item-inner">
+                    <div class="settings-item-left">
+                        <div class="settings-item-label">Allow scanning popups on the search page</div>
+                    </div>
+                    <div class="settings-item-right">
+                        <label class="toggle"><input type="checkbox" data-setting="scanning.enableOnSearchPage"><span class="toggle-body"><span class="toggle-track"></span><span class="toggle-knob"></span></span></label>
+                    </div>
+                </div></div>
+                <div class="settings-item advanced-only"><div class="settings-item-inner">
+                    <div class="settings-item-left">
+                        <div class="settings-item-label">Allow scanning popup source terms</div>
+                    </div>
+                    <div class="settings-item-right">
+                        <label class="toggle"><input type="checkbox" data-setting="scanning.enableOnPopupExpressions"><span class="toggle-body"><span class="toggle-track"></span><span class="toggle-knob"></span></span></label>
+                    </div>
+                </div></div>
             </div>
-        </div></div>
-        <div class="settings-item"><div class="settings-item-inner">
-            <div class="settings-item-left">
-                <div class="settings-item-label">Allow scanning popups on the search page</div>
-            </div>
-            <div class="settings-item-right">
-                <label class="toggle"><input type="checkbox" data-setting="scanning.enableOnSearchPage"><span class="toggle-body"><span class="toggle-track"></span><span class="toggle-knob"></span></span></label>
-            </div>
-        </div></div>
-        <div class="settings-item advanced-only"><div class="settings-item-inner">
-            <div class="settings-item-left">
-                <div class="settings-item-label" data-setting="scanning.enableOnPopupExpressions">Allow scanning popup source terms</div>
-            </div>
-            <div class="settings-item-right">
-                <label class="toggle"><input type="checkbox"><span class="toggle-body"><span class="toggle-track"></span><span class="toggle-knob"></span></span></label>
-            </div>
-        </div></div>
+        </div>
         <div class="settings-item advanced-only">
             <div class="settings-item-inner">
                 <div class="settings-item-left">
@@ -2083,6 +2096,7 @@
 <script src="/bg/js/settings/settings-controller.js"></script>
 <script src="/bg/js/settings/storage-controller.js"></script>
 
+<script src="/bg/js/settings2/nested-popups-controller.js"></script>
 <script src="/bg/js/settings2/settings-display-controller.js"></script>
 
 <script src="/bg/js/settings2/settings-main.js"></script>
