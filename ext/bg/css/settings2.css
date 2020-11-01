@@ -55,6 +55,7 @@
     --input-short: 80px;
     --input-height: 32px;
     --input-height-short: 24px;
+    --input-half-width: calc(var(--input-width-large) / 2 - var(--padding) / 2);
     --thin-border-size: 1px;
     --icon-button-size: 36px;
     --checkbox-size: 16px;
@@ -690,6 +691,11 @@ input[type=text].short-width,
 input[type=number].short-width,
 select.short-width {
     width: var(--input-short);
+}
+input[type=text].half-width,
+input[type=number].half-width,
+select.short-width {
+    width: var(--input-half-width);
 }
 input[type=text].short-height,
 input[type=number].short-height,
