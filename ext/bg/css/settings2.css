@@ -479,20 +479,21 @@ h3 {
     background-color: transparent;
     background-repeat: no-repeat;
 }
-.outline-item-icon.outline-item-icon-profile      { background-image: url(/mixed/img/profile.svg); }
-.outline-item-icon.outline-item-icon-general      { background-image: url(/mixed/img/cog.svg); }
-.outline-item-icon.outline-item-icon-appearance   { background-image: url(/mixed/img/palette.svg); }
-.outline-item-icon.outline-item-icon-popup        { background-image: url(/mixed/img/popup.svg); }
-.outline-item-icon.outline-item-icon-audio        { background-image: url(/mixed/img/speaker.svg); }
-.outline-item-icon.outline-item-icon-scanning     { background-image: url(/mixed/img/scanning.svg); }
-.outline-item-icon.outline-item-icon-text-parsing { background-image: url(/mixed/img/text-parsing.svg); }
-.outline-item-icon.outline-item-icon-translation  { background-image: url(/mixed/img/translation.svg); }
-.outline-item-icon.outline-item-icon-dictionaries { background-image: url(/mixed/img/book.svg); }
-.outline-item-icon.outline-item-icon-anki         { background-image: url(/mixed/img/note-card.svg); }
-.outline-item-icon.outline-item-icon-shortcuts    { background-image: url(/mixed/img/keyboard.svg); }
-.outline-item-icon.outline-item-icon-backup       { background-image: url(/mixed/img/backup.svg); }
-.outline-item-icon.outline-item-icon-security     { background-image: url(/mixed/img/lock.svg); }
-.outline-item-icon.outline-item-icon-about        { background-image: url(/mixed/img/question-mark.svg); }
+.outline-item-icon[data-icon=profile]      { background-image: url(/mixed/img/profile.svg); }
+.outline-item-icon[data-icon=general]      { background-image: url(/mixed/img/cog.svg); }
+.outline-item-icon[data-icon=appearance]   { background-image: url(/mixed/img/palette.svg); }
+.outline-item-icon[data-icon=popup]        { background-image: url(/mixed/img/popup.svg); }
+.outline-item-icon[data-icon=audio]        { background-image: url(/mixed/img/speaker.svg); }
+.outline-item-icon[data-icon=scanning]     { background-image: url(/mixed/img/scanning.svg); }
+.outline-item-icon[data-icon=text-parsing] { background-image: url(/mixed/img/text-parsing.svg); }
+.outline-item-icon[data-icon=translation]  { background-image: url(/mixed/img/translation.svg); }
+.outline-item-icon[data-icon=dictionaries] { background-image: url(/mixed/img/book.svg); }
+.outline-item-icon[data-icon=anki]         { background-image: url(/mixed/img/note-card.svg); }
+.outline-item-icon[data-icon=shortcuts]    { background-image: url(/mixed/img/keyboard.svg); }
+.outline-item-icon[data-icon=backup]       { background-image: url(/mixed/img/backup.svg); }
+.outline-item-icon[data-icon=security]     { background-image: url(/mixed/img/lock.svg); }
+.outline-item-icon[data-icon=about]        { background-image: url(/mixed/img/question-mark.svg); }
+.outline-item-icon[data-icon=popup-size]   { background-image: url(/mixed/img/popup-size.svg); }
 
 
 /* Preview sidebar */
