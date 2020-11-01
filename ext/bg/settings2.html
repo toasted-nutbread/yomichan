@@ -958,14 +958,21 @@
                     <select data-setting="anki.duplicateScope">
                         <option value="collection">Collection</option>
                         <option value="deck">Deck</option>
+                        <option value="deck-root">Deck root</option>
                     </select>
                 </div>
             </div>
             <div class="settings-item-children more" hidden>
                 <p>
-                    A card is considered a duplicate if the value of its first field matches that of any other card.
-                    By default, this check will include cards across all decks, but this constraint can be relaxed
-                    to include only the deck that the card will be added to.
+                    A card is considered a duplicate if the value of the first field matches that of any other card.
+                    By default, this check will include cards across all decks in a collection, but this constraint can be relaxed
+                    by using either the <em>Deck</em> or <em>Deck root</em> option.
+                </p>
+                <p>
+                    The <em>Deck</em> option will only check for duplicates in the target deck.
+                    The <em>Deck root</em> option will additionally check for duplicates in all child decks of the root deck.
+                    This allows adding cards that are unique for decks including a subdeck structure.
+                    For decks which don't have any parent-child hierarchy, both options function the same.
                 </p>
                 <p>
                     <a class="more-toggle" data-parent-distance="3">Less&hellip;</a>
