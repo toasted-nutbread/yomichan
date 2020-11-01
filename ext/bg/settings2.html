@@ -324,6 +324,88 @@
                 </div></div>
             </div>
         </div>
+        <div class="settings-item advanced-only">
+            <div class="settings-item-inner">
+                <div class="settings-item-left">
+                    <div class="settings-item-label">
+                        Show iframe popups in the root frame
+                        <a class="more-toggle more-only" data-parent-distance="4">(?)</a>
+                    </div>
+                </div>
+                <div class="settings-item-right">
+                    <label class="toggle"><input type="checkbox" data-setting="general.showIframePopupsInRootFrame"><span class="toggle-body"><span class="toggle-track"></span><span class="toggle-knob"></span></span></label>
+                </div>
+            </div>
+            <div class="settings-item-children more" hidden>
+                <p>
+                    By default, scanning text inside of an embeded <code>&lt;iframe&gt;</code> element will open
+                    a new popup inside of that frame, which can sometimes be limiting due to the frame's size.
+                    When this option is enabled, the popup will be created in the root of the page, if possible.
+                </p>
+                <p>
+                    Note that when this option is enabled, there is a possibility that the extension can interfere with the underlying webpage,
+                    since it must send messages to the webpage in order to determine the correct position of the popup.
+                    This typically does not cause issues, but if anything unexpected happens, this option could be the cause.
+                </p>
+                <p>
+                    <a class="more-toggle" data-parent-distance="3">Less&hellip;</a>
+                </p>
+            </div>
+        </div>
+        <div class="settings-item advanced-only">
+            <div class="settings-item-inner">
+                <div class="settings-item-left">
+                    <div class="settings-item-label">
+                        Use a native browser window instead of an embedded popup
+                        <a class="more-toggle more-only" data-parent-distance="4">(?)</a>
+                    </div>
+                </div>
+                <div class="settings-item-right">
+                    <label class="toggle"><input type="checkbox" data-setting="general.usePopupWindow"><span class="toggle-body"><span class="toggle-track"></span><span class="toggle-knob"></span></span></label>
+                </div>
+            </div>
+            <div class="settings-item-children more" hidden>
+                <p>
+                    Instead of showing definitions in a popup embedded into the webpage,
+                    a native browser window containing the popup content will be opened instead.
+                    This window will be shared across all tabs.
+                </p>
+                <p>
+                    <a class="more-toggle" data-parent-distance="3">Less&hellip;</a>
+                </p>
+            </div>
+        </div>
+        <div class="settings-item advanced-only">
+            <div class="settings-item-inner">
+                <div class="settings-item-left">
+                    <div class="settings-item-label">
+                        Open a native browser window when copying Japanese text
+                        <a class="more-toggle more-only" data-parent-distance="4">(?)</a>
+                    </div>
+                </div>
+                <div class="settings-item-right">
+                    <label class="toggle"><input type="checkbox" id="enable-clipboard-popups"><span class="toggle-body"><span class="toggle-track"></span><span class="toggle-knob"></span></span></label>
+                </div>
+            </div>
+            <div class="settings-item-children more" hidden>
+                <p>
+                    When Japanese text is copied to the clipboard, a browser window popup searching for the clipboard
+                    text will be opened.
+                    This can be useful for using Yomichan to scan text from external applications.
+                </p>
+                <p>
+                    This feature requires Yomichan to have clipboard reading permissions, and when this option is enabled,
+                    the clipboard will be polled for new contents several times per second.
+                </p>
+                <p>
+                    Alternatively, this feature can be enabled only on the search page, and clipboard contents polling will
+                    only be performed when the search page is already open.
+                </p>
+                <p>
+                    <a class="more-toggle" data-parent-distance="3">Less&hellip;</a>
+                </p>
+            </div>
+        </div>
     </div>
 
     <h2 id="popup-appearance">Popup Appearance</h2>

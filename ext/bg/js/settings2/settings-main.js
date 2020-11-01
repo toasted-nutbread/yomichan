@@ -20,6 +20,7 @@
  * AnkiTemplatesController
  * AudioController
  * BackupController
+ * ClipboardPopupsController
  * DictionaryController
  * DictionaryImportController
  * GenericSettingController
@@ -107,6 +108,9 @@ async function setupGenericSettingsController(genericSettingController) {
 
         const nestedPopupsController = new NestedPopupsController(settingsController);
         nestedPopupsController.prepare();
+
+        const clipboardPopupsController = new ClipboardPopupsController(settingsController);
+        clipboardPopupsController.prepare();
 
         await Promise.all(preparePromises);
 
