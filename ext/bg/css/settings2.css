@@ -199,6 +199,9 @@ code {
     font-family: 'Courier New', Courier, monospace;
     background-color: var(--input-background-color);
 }
+label {
+    cursor: pointer;
+}
 
 
 /* Text styles */
@@ -258,18 +261,6 @@ h3 {
 .heading-description.more {
     padding: 0;
     margin: 0 0 1.0125em;
-}
-
-
-/* Generic layouts */
-.flex-row-nowrap {
-    display: flex;
-    flex-flow: row nowrap;
-    align-items: center;
-    width: 100%;
-}
-.flex-row-nowrap.right {
-    justify-content: flex-end;
 }
 
 
@@ -678,6 +669,9 @@ h3 {
     align-items: center;
     align-content: center;
     justify-content: flex-end;
+}
+.settings-item-group.settings-item-group-wrap {
+    flex-wrap: wrap;
 }
 .settings-item-group-item {
     flex: 0 1 auto;
@@ -2270,7 +2264,7 @@ code.anki-field-marker {
 }
 
 
-/* Miscellaneous styles */
+/* Generic layouts */
 .horizontal-flex {
     display: flex;
     flex-flow: row wrap;
@@ -2292,6 +2286,32 @@ code.anki-field-marker {
 .generic-list-index-prefix::after {
     counter-increment: generic-list-index;
     content: counter(generic-list-index);
+}
+
+.flex-row-nowrap {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    width: 100%;
+}
+.flex-row-nowrap.right {
+    justify-content: flex-end;
+}
+.flex-row-wrap {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+}
+.flex-label {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+}
+.flex-label>span {
+    margin-left: 0.375em;
+}
+.flex-label.no-wrap>span {
+    white-space: nowrap;
 }
 
 
