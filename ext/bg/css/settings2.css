@@ -716,6 +716,9 @@ select.short-height {
 
 
 /* Material design checkbox */
+label.checkbox {
+    cursor: default;
+}
 .checkbox {
     font-size: var(--checkbox-size);
     display: inline-block;
@@ -802,6 +805,9 @@ select.short-height {
 
 
 /* Material design toggle switch */
+label.toggle {
+    cursor: default;
+}
 .toggle {
     font-size: var(--toggle-size);
     display: inline-block;
@@ -906,6 +912,9 @@ select.short-height {
 
 
 /* Radio button */
+label.radio {
+    cursor: default;
+}
 .radio {
     display: inline-block;
     vertical-align: middle;
