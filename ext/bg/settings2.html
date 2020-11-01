@@ -317,33 +317,70 @@
                 </p>
             </div>
         </div>
-        <div class="settings-item"><div class="settings-item-inner settings-item-inner-wrappable">
-            <div class="settings-item-left">
-                <div class="settings-item-label">Scale</div>
-                <div class="settings-item-description">Control the scaling factor of the popup.</div>
+        <div class="settings-item">
+            <div class="settings-item-inner settings-item-inner-wrappable">
+                <div class="settings-item-left">
+                    <div class="settings-item-label">Scale</div>
+                    <div class="settings-item-description">Control the scaling factor of the popup.</div>
+                </div>
+                <div class="settings-item-right">
+                    <select data-setting="general.popupScalingFactor" data-transform-pre="toNumber" data-transform-post="toString" data-min="0.25">
+                        <option value="0.25">25%</option>
+                        <option value="0.33">33%</option>
+                        <option value="0.5">50%</option>
+                        <option value="0.67">67%</option>
+                        <option value="0.75">75%</option>
+                        <option value="0.8">80%</option>
+                        <option value="0.9">90%</option>
+                        <option value="1">100%</option>
+                        <option value="1.1">110%</option>
+                        <option value="1.25">125%</option>
+                        <option value="1.5">150%</option>
+                        <option value="1.75">175%</option>
+                        <option value="2">200%</option>
+                        <option value="2.5">250%</option>
+                        <option value="3">300%</option>
+                        <option value="4">400%</option>
+                        <option value="5">500%</option>
+                    </select>
+                </div>
             </div>
-            <div class="settings-item-right">
-                <select data-setting="general.popupScalingFactor" data-transform-pre="toNumber" data-transform-post="toString" data-min="0.25">
-                    <option value="0.25">25%</option>
-                    <option value="0.33">33%</option>
-                    <option value="0.5">50%</option>
-                    <option value="0.67">67%</option>
-                    <option value="0.75">75%</option>
-                    <option value="0.8">80%</option>
-                    <option value="0.9">90%</option>
-                    <option value="1">100%</option>
-                    <option value="1.1">110%</option>
-                    <option value="1.25">125%</option>
-                    <option value="1.5">150%</option>
-                    <option value="1.75">175%</option>
-                    <option value="2">200%</option>
-                    <option value="2.5">250%</option>
-                    <option value="3">300%</option>
-                    <option value="4">400%</option>
-                    <option value="5">500%</option>
-                </select>
+            <div class="settings-item-children settings-item-children-group advanced-only">
+                <div class="settings-item">
+                    <div class="settings-item-inner">
+                        <div class="settings-item-left">
+                            <div class="settings-item-label">
+                                Auto-scale
+                                <a class="more-toggle more-only" data-parent-distance="4">(?)</a>
+                            </div>
+                        </div>
+                        <div class="settings-item-right flex-row-wrap">
+                            <div class="settings-item-group settings-item-group-wrap">
+                                <label class="settings-item-group-item flex-label no-wrap">
+                                    <label class="checkbox"><input type="checkbox" data-setting="general.popupScaleRelativeToPageZoom"><span class="checkbox-body"><span class="checkbox-fill"></span><span class="checkbox-border"></span><span class="checkbox-check"></span></span></label>
+                                    <span>Zoom level</span>
+                                </label>
+                                <label class="settings-item-group-item flex-label no-wrap">
+                                    <label class="checkbox"><input type="checkbox" data-setting="general.popupScaleRelativeToVisualViewport"><span class="checkbox-body"><span class="checkbox-fill"></span><span class="checkbox-border"></span><span class="checkbox-check"></span></span></label>
+                                    <span>Viewport</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="settings-item-children more" hidden>
+                        <p>
+                            Auto-scaling will scale the popup automatically based on the browser's zoom levels
+                            in order to keep the popup at a constant physical size, regardless of the zoom level.
+                            <em>Zoom level</em> uses the zoom level that is typically used on desktop browsers,
+                            and <em>Viewport</em> uses the zoom level that is typically used on mobile browsers.
+                        </p>
+                        <p>
+                            <a class="more-toggle" data-parent-distance="3">Less&hellip;</a>
+                        </p>
+                    </div>
+                </div>
             </div>
-        </div></div>
+        </div>
         <div class="settings-item"><div class="settings-item-inner settings-item-inner-wrappable">
             <div class="settings-item-left">
                 <div class="settings-item-label">Size</div>
