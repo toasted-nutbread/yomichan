@@ -180,9 +180,6 @@ ul {
 p+p,  p+ol,  p+ul,
 ol+p, ol+ol, ol+ul,
 ul+p, ul+ol, ul+ul,
-.margin-above {
-    margin-top: 0.85em;
-}
 li {
     margin: 0.425em 0;
 }
@@ -2265,6 +2262,13 @@ code.anki-field-marker {
 
 
 /* Generic layouts */
+.margin-above {
+    margin-top: 0.85em;
+}
+.margin-left {
+    margin-left: 0.85em;
+}
+
 .horizontal-flex {
     display: flex;
     flex-flow: row wrap;
@@ -2302,6 +2306,17 @@ code.anki-field-marker {
     flex-flow: row wrap;
     align-items: center;
 }
+
+.flex-column-nowrap {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: flex-start;
+    width: 100%;
+}
+.flex-column-nowrap-spaced>* {
+    margin-top: 0.25em;
+}
+
 .flex-label {
     display: flex;
     flex-flow: row nowrap;
