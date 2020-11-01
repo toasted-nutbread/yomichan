@@ -33,6 +33,7 @@
     --shadow-right: 1px 0 4px 0 var(--shadow-color), 2px 0 2px 0 var(--shadow-color);
     --animation-duration: 0s;
     --animation-duration2: calc(var(--animation-duration) * 2);
+    --animation-duration-half: calc(var(--animation-duration) / 2);
     --settings-group-horizontal-margin: 0;
     --settings-group-inner-vertical-margin: 0.75em;
     --settings-group-inner-vertical-padding: 0.85em;
@@ -74,12 +75,13 @@
     --menu-item-hover-color: #bbbbbb;
     --menu-item-active-color: #aaaaaa;
 
+    --text-color-default: #222222;
     --background-color: #f8f9fa;
     --background-color-light: #ffffff;
     --input-background-color: #f2f2f2;
     --input-background-color-dark: #dddddd;
     --input-background-color-darker: #cccccc;
-    --text-color-default: #222222;
+    --input-outline-color: var(--text-color-default);
     --link-color: var(--accent-color);
     --link-color-hover: var(--accent-color-dark);
     --text-color-light: #666666;
@@ -1095,6 +1097,20 @@ input[type=text].is-invalid,
 input[type=number].is-invalid,
 textarea.is-invalid {
     border-color: var(--danger-color);
+}
+select,
+textarea,
+input[type=text],
+input[type=number] {
+    box-shadow: none;
+    transition: box-shadow var(--animation-duration-half) linear;
+}
+select:focus,
+textarea:focus,
+input[type=text]:focus,
+input[type=number]:focus {
+    box-shadow: 0 0 0 2px var(--input-outline-color);
+    outline: none;
 }
 
 
