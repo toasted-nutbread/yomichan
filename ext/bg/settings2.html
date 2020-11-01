@@ -332,7 +332,7 @@
                 </select>
             </div>
         </div></div>
-        <div class="settings-item advanced-only"><div class="settings-item-inner settings-item-inner-wrappable">
+        <div class="settings-item"><div class="settings-item-inner settings-item-inner-wrappable">
             <div class="settings-item-left">
                 <div class="settings-item-label">Size</div>
                 <div class="settings-item-description">Control the size of the popup, in pixels.</div>
@@ -364,6 +364,21 @@
         </div></div>
         <div class="settings-item advanced-only"><div class="settings-item-inner settings-item-inner-wrappable">
             <div class="settings-item-left">
+                <div class="settings-item-label">Vertical text positioning</div>
+                <div class="settings-item-description">Change where the popup is positioned relative to vertical text.</div>
+            </div>
+            <div class="settings-item-right">
+                <select data-setting="general.popupVerticalTextPosition">
+                    <option value="default">Same as for horizontal text</option>
+                    <option value="before">Before text reading direction</option>
+                    <option value="after">After text reading direction</option>
+                    <option value="left">Left of text</option>
+                    <option value="right">Right of text</option>
+                </select>
+            </div>
+        </div></div>
+        <div class="settings-item advanced-only"><div class="settings-item-inner settings-item-inner-wrappable">
+            <div class="settings-item-left">
                 <div class="settings-item-label">Horizontal text offset</div>
                 <div class="settings-item-description">Change the distance the popup is placed relative to horizontal text.</div>
             </div>
@@ -378,21 +393,6 @@
                         <input type="number" class="short-width short-height" data-setting="general.popupVerticalOffset">
                     </div>
                 </div>
-            </div>
-        </div></div>
-        <div class="settings-item advanced-only"><div class="settings-item-inner settings-item-inner-wrappable">
-            <div class="settings-item-left">
-                <div class="settings-item-label">Vertical text positioning</div>
-                <div class="settings-item-description">Change where the popup is positioned relative to vertical text.</div>
-            </div>
-            <div class="settings-item-right">
-                <select data-setting="general.popupVerticalTextPosition">
-                    <option value="default">Same as for horizontal text</option>
-                    <option value="before">Before text reading direction</option>
-                    <option value="after">After text reading direction</option>
-                    <option value="left">Left of text</option>
-                    <option value="right">Right of text</option>
-                </select>
             </div>
         </div></div>
         <div class="settings-item advanced-only"><div class="settings-item-inner settings-item-inner-wrappable">
