@@ -698,14 +698,16 @@ class Translator {
             switch (mode) {
                 case 'freq':
                     for (const term of termsUnique[index]) {
-                        const frequencyData = this._getFrequencyData(expression, data, dictionary, term);
+                        const reading = term.reading || expression;
+                        const frequencyData = this._getFrequencyData(expression, reading, dictionary, data);
                         if (frequencyData === null) { continue; }
                         term.frequencies.push(frequencyData);
                     }
                     break;
                 case 'pitch':
                     for (const term of termsUnique[index]) {
-                        const pitchData = await this._getPitchData(expression, data, dictionary, term);
+                        const reading = term.reading || expression;
+                        const pitchData = await this._getPitchData(expression, reading, dictionary, data);
                         if (pitchData === null) { continue; }
                         term.pitches.push(pitchData);
                     }
@@ -796,22 +798,17 @@ class Translator {
         return tagMetaList;
     }
 
-    _getFrequencyData(expression, data, dictionary, term) {
+    _getFrequencyData(expression, reading, dictionary, data) {
+        let frequency = data;
         if (data !== null && typeof data === 'object') {
-            const {frequency, reading} = data;
-
-            const termReading = term.reading || expression;
-            if (reading !== termReading) { return null; }
-
-            return {expression, frequency, dictionary};
+            if (data.reading !== reading) { return null; }
+            frequency = data.frequency2;
         }
-        return {expression, frequency: data, dictionary};
+        return {expression, reading, dictionary, frequency};
     }
 
-    async _getPitchData(expression, data, dictionary, term) {
-        const reading = data.reading;
-        const termReading = term.reading || expression;
-        if (reading !== termReading) { return null; }
+    async _getPitchData(expression, reading, dictionary, data) {
+        if (data.reading !== reading) { return null; }
 
         const pitches = [];
         for (let {position, tags} of data.pitches) {
@@ -819,7 +816,7 @@ class Translator {
             pitches.push({position, tags});
         }
 
-        return {reading, pitches, dictionary};
+        return {expression, reading, dictionary, pitches};
     }
 
     // Simple helpers
