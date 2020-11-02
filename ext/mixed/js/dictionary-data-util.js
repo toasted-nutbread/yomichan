@@ -17,10 +17,8 @@
 
 class DictionaryDataUtil {
     static getPitchAccentInfos(definition) {
-        if (typeof definition.character === 'string') {
-            // Kanji
-            return [];
-        }
+        const {type} = definition;
+        if (type === 'kanji') { return []; }
 
         const results = new Map();
         const allExpressions = new Set();
