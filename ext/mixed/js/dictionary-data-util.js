@@ -23,8 +23,7 @@ class DictionaryDataUtil {
         const results = new Map();
         const allExpressions = new Set();
         const allReadings = new Set();
-        const expressions = definition.expressions;
-        const sources = Array.isArray(expressions) ? expressions : [definition];
+        const sources = [definition];
 
         for (const {pitches: expressionPitches, expression} of sources) {
             allExpressions.add(expression);
