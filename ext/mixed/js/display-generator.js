@@ -45,12 +45,12 @@ class DisplayGenerator {
         const debugInfoContainer = node.querySelector('.debug-info');
         const bodyContainer = node.querySelector('.term-entry-body');
 
-        const {termTags, expressions, definitions} = details;
+        const {termTags, expressions, definitions, type} = details;
 
         const pitches = DictionaryDataUtil.getPitchAccentInfos(details);
         const pitchCount = pitches.reduce((i, v) => i + v.pitches.length, 0);
 
-        const expressionMulti = Array.isArray(expressions);
+        const expressionMulti = (type === 'termMerged' || type === 'termMergedByGlossary');
         const definitionMulti = Array.isArray(definitions);
         const expressionCount = expressionMulti ? expressions.length : 1;
         const definitionCount = definitionMulti ? definitions.length : 1;
