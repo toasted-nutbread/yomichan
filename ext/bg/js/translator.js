@@ -726,63 +726,6 @@ class Translator {
         }
     }
 
-    async _buildTermMeta2(definitions, enabledDictionaryMap) {
-        const terms = [];
-        for (const definition of definitions) {
-            switch (definition.type) {
-                case 'term':
-                case 'termGrouped':
-                    terms.push(definition);
-                    break;
-                case 'termMerged':
-                    terms.push(...definition.expressions);
-                    break;
-            }
-        }
-
-        if (terms.length === 0) {
-            return;
-        }
-
-        // Create mapping of unique terms
-        const expressionsUnique = [];
-        const termsUnique = [];
-        const termsUniqueMap = new Map();
-        for (const term of terms) {
-            const {expression} = term;
-            let termList = termsUniqueMap.get(expression);
-            if (typeof termList === 'undefined') {
-                termList = [];
-                expressionsUnique.push(expression);
-                termsUnique.push(termList);
-                termsUniqueMap.set(expression, termList);
-            }
-            termList.push(term);
-        }
-
-        const metas = await this._database.findTermMetaBulk(expressionsUnique, enabledDictionaryMap);
-        for (const {expression, mode, data, dictionary, index} of metas) {
-            switch (mode) {
-                case 'freq':
-                    for (const term of termsUnique[index]) {
-                        const reading = term.reading || expression;
-                        const frequencyData = this._getFrequencyData(expression, reading, dictionary, data);
-                        if (frequencyData === null) { continue; }
-                        term.frequencies.push(frequencyData);
-                    }
-                    break;
-                case 'pitch':
-                    for (const term of termsUnique[index]) {
-                        const reading = term.reading || expression;
-                        const pitchData = await this._getPitchData(expression, reading, dictionary, data);
-                        if (pitchData === null) { continue; }
-                        term.pitches.push(pitchData);
-                    }
-                    break;
-            }
-        }
-    }
-
     async _buildKanjiMeta(definitions, enabledDictionaryMap) {
         const kanjiList = [];
         for (const {character} of definitions) {
