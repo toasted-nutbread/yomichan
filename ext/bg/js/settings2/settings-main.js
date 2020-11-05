@@ -30,6 +30,7 @@
  * ProfileController
  * ScanInputsController
  * ScanInputsSimpleController
+ * SecondarySearchDictionaryController
  * SettingsController
  * SettingsDisplayController
  * StatusFooter
@@ -111,6 +112,9 @@ async function setupGenericSettingsController(genericSettingController) {
 
         const clipboardPopupsController = new ClipboardPopupsController(settingsController);
         clipboardPopupsController.prepare();
+
+        const secondarySearchDictionaryController = new SecondarySearchDictionaryController(settingsController);
+        secondarySearchDictionaryController.prepare();
 
         await Promise.all(preparePromises);
 
