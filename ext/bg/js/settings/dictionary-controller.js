@@ -237,7 +237,7 @@ class DictionaryController {
         const token = {};
         this._databaseStateToken = token;
         this._dictionaries = null;
-        const dictionaries = await api.getDictionaryInfo();
+        const dictionaries = await this._settingsController.getDictionaryInfo();
         if (this._databaseStateToken !== token) { return; }
         this._dictionaries = dictionaries;
 
