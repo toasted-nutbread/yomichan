@@ -1590,7 +1590,7 @@
                     Change which voice is used for text-to-speech audio playback.
                 </p>
                 <div class="horizontal-flex">
-                    <input type="text" value="よみちゃん" id="text-to-speech-voice-test-text">
+                    <input type="text" value="よみちゃん" id="text-to-speech-voice-test-text" autocomplete="off">
                     <button id="text-to-speech-voice-test">Test</button>
                     <a class="more-toggle" data-parent-distance="3">Hide&hellip;</a>
                 </div>
@@ -1967,9 +1967,9 @@
                 <div class="anki-card-templates-test-table-header">Scanned text</div>
                 <div class="anki-card-templates-test-table-header">Card field</div>
                 <div></div>
-                <input type="text" id="anki-card-templates-test-text-input" class="form-control" value="読め" placeholder="Preview text">
+                <input type="text" id="anki-card-templates-test-text-input" class="form-control" value="読め" placeholder="Preview text" autocomplete="off">
                 <div class="anki-card-templates-test-input-container">
-                    <input type="text" class="input-with-suffix-button" id="anki-card-templates-test-field-input" value="{expression}" placeholder="{marker}">
+                    <input type="text" class="input-with-suffix-button" id="anki-card-templates-test-field-input" value="{expression}" placeholder="{marker}" autocomplete="off" spellcheck="false">
                     <button class="input-suffix-button input-suffix-icon-button" id="anki-card-templates-test-field-menu-button" data-menu="anki-card-all-field-menu" data-menu-position="below,left"><span class="icon-button-icon icon-button-icon-light" data-icon="material-down-arrow"></span></button>
                 </div>
                 <button id="anki-card-templates-test-render-button">Test</button>
@@ -2075,7 +2075,7 @@
         <select class="profile-condition-type"><optgroup label="Type"></optgroup></select>
         <select class="profile-condition-operator"><optgroup label="Operator"></optgroup></select>
         <div class="profile-condition-input-container">
-            <input type="text" class="profile-condition-input">
+            <input type="text" class="profile-condition-input" autocomplete="off" spellcheck="false">
             <div class="input-height-icon-button-container mouse-button-container" hidden>
                 <button class="icon-button profile-condition-mouse-button mouse-button"><span class="icon-button-inner"><span class="icon-button-icon" data-icon="mouse"></span></span></button>
             </div>
@@ -2238,13 +2238,13 @@
 
         <div class="scan-input-prefix-cell" data-property="include"><span>Required inputs:</span></div>
         <div class="scan-input-content-cell" data-property="include">
-            <input type="text" class="input-with-suffix-button scan-input-field" placeholder="No inputs" data-property="include">
+            <input type="text" class="input-with-suffix-button scan-input-field" autocomplete="off" spellcheck="false" placeholder="No inputs" data-property="include">
             <button class="input-suffix-button input-suffix-icon-button mouse-button" data-property="include"><span class="icon-button-icon icon-button-icon-light" data-icon="mouse"></span></button>
         </div>
 
         <div class="scan-input-prefix-cell" data-property="exclude"><span>Excluded inputs:</span></div>
         <div class="scan-input-content-cell" data-property="exclude">
-            <input type="text" class="input-with-suffix-button scan-input-field" placeholder="No inputs" data-property="exclude">
+            <input type="text" class="input-with-suffix-button scan-input-field" autocomplete="off" spellcheck="false" placeholder="No inputs" data-property="exclude">
             <button class="input-suffix-button input-suffix-icon-button mouse-button" data-property="exclude"><span class="icon-button-icon icon-button-icon-light" data-icon="mouse"></span></button>
         </div>
 
@@ -2313,7 +2313,7 @@
 <!-- Anki templates -->
 <template id="anki-card-field-template"><div class="anki-card-field-name"></div>
 <div class="anki-card-field-value-container">
-    <input type="text" class="anki-card-field-value input-with-suffix-button">
+    <input type="text" class="anki-card-field-value input-with-suffix-button" autocomplete="off">
     <button class="anki-card-field-value-menu-button input-suffix-button input-suffix-icon-button" data-menu-position="below,left"><span class="icon-button-icon icon-button-icon-light" data-icon="material-down-arrow"></span></button>
 </div></template>
 
