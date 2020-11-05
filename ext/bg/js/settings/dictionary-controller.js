@@ -70,8 +70,10 @@ class DictionaryEntry {
         if (detailsToggleLink !== null) { detailsToggleLink.hidden = !hasDetails; }
 
         enabledCheckbox.dataset.setting = ObjectPropertyAccessor.getPathString(['dictionaries', title, 'enabled']);
-        allowSecondarySearchesCheckbox.dataset.setting = ObjectPropertyAccessor.getPathString(['dictionaries', title, 'allowSecondarySearches']);
         priorityInput.dataset.setting = ObjectPropertyAccessor.getPathString(['dictionaries', title, 'priority']);
+        if (allowSecondarySearchesCheckbox !== null) {
+            allowSecondarySearchesCheckbox.dataset.setting = ObjectPropertyAccessor.getPathString(['dictionaries', title, 'allowSecondarySearches']);
+        }
 
         if (deleteButton !== null) {
             this._eventListeners.addEventListener(deleteButton, 'click', this._onDeleteButtonClicked.bind(this), false);
