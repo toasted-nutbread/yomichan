@@ -388,7 +388,7 @@
                 </p>
                 <p>
                     This feature requires Yomichan to have clipboard reading permissions, and when this option is enabled,
-                    the clipboard will be polled for new contents several times per second.
+                    the clipboard will be frequently polled for new text.
                 </p>
                 <p>
                     Alternatively, this feature can be enabled only on the search page, and clipboard contents polling will
@@ -663,8 +663,8 @@
     <div class="settings-group">
         <div class="settings-item"><div class="settings-item-inner">
             <div class="settings-item-left">
-                <div class="settings-item-label">Enable audio playback of search results</div>
-                <div class="settings-item-description">Show a clickable speaker icon next to result expressions.</div>
+                <div class="settings-item-label">Enable audio playback for terms</div>
+                <div class="settings-item-description">Show a clickable speaker icon next to search results.</div>
             </div>
             <div class="settings-item-right">
                 <label class="toggle"><input type="checkbox" data-setting="audio.enabled"><span class="toggle-body"><span class="toggle-track"></span><span class="toggle-knob"></span></span></label>
@@ -804,7 +804,7 @@
         <div class="settings-item"><div class="settings-item-inner">
             <div class="settings-item-left">
                 <div class="settings-item-label">Scan delay <span class="light">(in milliseconds)</span></div>
-                <div class="settings-item-description">When no key or button is required for scanning, delay before scanning occurs.</div>
+                <div class="settings-item-description">When no key or button is required for scanning, the delay before scanning occurs.</div>
             </div>
             <div class="settings-item-right">
                 <input type="number" data-setting="scanning.delay" min="0">
@@ -829,7 +829,7 @@
         <div class="settings-item advanced-only"><div class="settings-item-inner">
             <div class="settings-item-left">
                 <div class="settings-item-label">Layout-aware scanning</div>
-                <div class="settings-item-description">Use styling information to determine where line breaks are likely to be.</div>
+                <div class="settings-item-description">Use webpage styling information to determine where line breaks are likely to be.</div>
             </div>
             <div class="settings-item-right">
                 <label class="toggle"><input type="checkbox" data-setting="scanning.layoutAwareScan"><span class="toggle-body"><span class="toggle-track"></span><span class="toggle-knob"></span></span></label>
@@ -882,7 +882,7 @@
         <div class="settings-item"><div class="settings-item-inner">
             <div class="settings-item-left">
                 <div class="settings-item-label">Parse text using installed dictionaries</div>
-                <div class="settings-item-description">Scan words by automatically advancing in the sentence after a matching word.</div>
+                <div class="settings-item-description">Words are scanned by automatically advancing in the sentence after a matching word.</div>
             </div>
             <div class="settings-item-right">
                 <label class="toggle"><input type="checkbox" data-setting="parsing.enableScanningParser"><span class="toggle-body"><span class="toggle-track"></span><span class="toggle-knob"></span></span></label>
@@ -948,7 +948,7 @@
             </p>
             <p>
                 The conversion options below are listed in the order that the conversions are applied to the input text.
-                Conversions commonly have three possible values:
+                Most of the conversions have three possible values:
             </p>
             <ul>
                 <li>
@@ -1092,7 +1092,7 @@
             <div class="settings-item-children more" hidden>
                 <p>
                     The default address for a server on the same device is <a href="http://127.0.0.1:8765" target="_blank" rel="noopener noreferrer">http://127.0.0.1:8765</a>.
-                    If Anki is running, clicking this URL should open a page showing the current version of AnkiConnect.
+                    If Anki is running and AnkiConnect is installed, clicking this URL should open a page showing the current version of AnkiConnect.
                 </p>
                 <p>
                     <a class="more-toggle" data-parent-distance="3">Less&hellip;</a>
@@ -1413,7 +1413,7 @@
                     For example, different profiles can be used depending on the nested level of the popup, or based on the website's URL.
                 </p>
                 <p>
-                    Conditions are organized into groups corresponding to the order that they are checked in.
+                    Conditions are organized into groups corresponding to the order in which they are checked.
                     If all of the conditions in any group of a profile are met, then that profile will be used for that context.
                 </p>
                 <p>
@@ -1617,7 +1617,7 @@
             </div>
             <div class="settings-item-children more" hidden>
                 <p>
-                    URL format used for fetching audio clips in "Custom" mode.
+                    URL format used for fetching audio clips in <em>Custom</em> mode.
                     The replacement tags <code data-select-on-click="">{expression}</code> and <code data-select-on-click="">{reading}</code> can be used to specify which
                     expression and reading is being looked up.<br>
                     Example: <a data-select-on-click="">http://localhost/audio.mp3?expression={expression}&reading={reading}</a>
@@ -1797,7 +1797,7 @@
     </div>
 </div></div>
 
-<div id="anki-cards-info" class="modal-container" tabindex="-1" role="dialog"><div class="modal-content">
+<div id="anki-cards-info" class="modal-container" tabindex="-1" role="dialog"><div class="modal-content modal-content-full">
     <div class="modal-header"><div class="modal-title">Anki Card Information</div></div>
     <div class="modal-body">
         <p>
