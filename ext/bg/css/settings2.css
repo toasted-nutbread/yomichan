@@ -1452,6 +1452,7 @@ button.icon-button:active {
     flex: 0 0 auto;
     padding: var(--modal-padding-vertical-half) var(--modal-padding-horizontal) var(--modal-padding-vertical);
     margin-right: calc(var(--modal-button-spacing) * -1);
+    margin-top: calc(var(--modal-button-spacing) * -1);
     display: flex;
     flex-flow: row wrap;
     align-items: flex-end;
@@ -1460,6 +1461,7 @@ button.icon-button:active {
 }
 .modal-footer>* {
     margin-right: var(--modal-button-spacing);
+    margin-top: var(--modal-button-spacing);
 }
 .modal-body {
     flex: 1 1 auto;
