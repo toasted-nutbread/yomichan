@@ -2378,6 +2378,10 @@ code.anki-field-marker {
     white-space: nowrap;
 }
 
+.no-wrap {
+    white-space: nowrap;
+}
+
 
 /* Environment-specific display */
 :root[data-browser=edge] [data-show-for-browser]:not([data-show-for-browser~=edge]),
