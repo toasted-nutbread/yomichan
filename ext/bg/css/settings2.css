@@ -1133,6 +1133,7 @@ button {
     background-color: transparent;
     box-shadow: var(--button-shadow-params) var(--shadow-color-off);
     transition: background-color 0.125s ease-in, box-shadow 0.125s ease-in, border-color 0.125s ease-in;
+    -webkit-tap-highlight-color: transparent;
 }
 button:focus {
     outline: none;
