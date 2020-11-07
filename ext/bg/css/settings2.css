@@ -59,6 +59,8 @@
     --input-half-width: calc(var(--input-width-large) / 2 - var(--padding) / 2);
     --thin-border-size: 1px;
     --icon-button-size: 36px;
+    --fab-button-size: 56px;
+    --fab-button-padding: 16px;
     --checkbox-size: 16px;
     --toggle-size: 16px;
     --radio-size: 20px;
@@ -1677,9 +1679,17 @@ button.popup-menu-item:disabled {
     position: fixed;
     left: 0;
     bottom: 0;
+    top: 0;
     right: 0;
     pointer-events: none;
     z-index: 10;
+}
+.fab-container::after {
+    content: '';
+    display: block;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    visibility: hidden;
 }
 .fab-container-left {
     flex: 1 1 0;
@@ -1713,17 +1723,21 @@ button.popup-menu-item:disabled {
     flex-flow: column nowrap;
     position: absolute;
     right: 100%;
-    bottom: 100%;
-    padding: 0 var(--main-content-padding);
+    bottom: 0;
+    padding: 0 var(--fab-button-padding) 0 0;
 }
 .fab-container-item {
-    padding-bottom: var(--main-content-padding);
+    padding-bottom: var(--fab-button-padding);
 }
 button.fab-button {
     display: block;
     padding: 0;
     margin: 0;
     pointer-events: all;
+}
+button.fab-button>.icon-button-inner {
+    width: var(--fab-button-size);
+    height: var(--fab-button-size);
 }
 button.fab-button,
 button.fab-button:hover,
@@ -1815,7 +1829,7 @@ body.preview-sidebar-visible .content-right {
 }
 body.preview-sidebar-visible .fab-container-right-inner1 {
     width: 70vw;
-    max-width: calc(var(--preview-sidebar-expanded-width) + var(--main-content-padding));
+    max-width: var(--preview-sidebar-expanded-width);
 }
 body.preview-sidebar-visible .fab-container {
     visibility: visible;
