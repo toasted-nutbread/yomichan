@@ -51,6 +51,9 @@ function validateHtmlScripts(fileName, extDir) {
         for (const {src} of document.querySelectorAll('script')) {
             validatePath(src, fileName, extDir);
         }
+        for (const {href} of document.querySelectorAll('link')) {
+            validatePath(href, fileName, extDir);
+        }
     } finally {
         window.close();
     }
