@@ -25,7 +25,7 @@
 
 class DisplaySearch extends Display {
     constructor() {
-        super(document.querySelector('#spinner'), document.querySelector('#content'));
+        super();
         this._searchButton = document.querySelector('#search');
         this._queryInput = document.querySelector('#query');
         this._introElement = document.querySelector('#intro');
