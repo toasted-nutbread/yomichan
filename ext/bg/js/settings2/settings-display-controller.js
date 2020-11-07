@@ -25,7 +25,6 @@ class SettingsDisplayController {
         this._settingsController = settingsController;
         this._modalController = modalController;
         this._contentNode = null;
-        this._previewFrameContainer = null;
         this._topLink = null;
         this._menuContainer = null;
         this._openPopupMenus = new Set();
@@ -35,7 +34,6 @@ class SettingsDisplayController {
 
     prepare() {
         this._contentNode = document.querySelector('.content');
-        this._previewFrameContainer = document.querySelector('.preview-frame-container');
         this._topLink = document.querySelector('.sidebar-top-link');
         this._menuContainer = document.querySelector('#popup-menus');
 
@@ -77,7 +75,6 @@ class SettingsDisplayController {
 
         this._contentNode.addEventListener('scroll', this._onScroll.bind(this), {passive: true});
         this._topLink.addEventListener('click', this._onTopLinkClick.bind(this), false);
-        document.querySelector('#show-preview-checkbox').addEventListener('change', this._onShowPreviewCheckboxChange.bind(this), false);
 
         window.addEventListener('keydown', this._onKeyDown.bind(this), false);
         window.addEventListener('popstate', this._onPopState.bind(this), false);
@@ -127,10 +124,6 @@ class SettingsDisplayController {
                 document.body.classList.toggle('preview-sidebar-visible');
                 break;
         }
-    }
-
-    _onShowPreviewCheckboxChange(e) {
-        this._previewFrameContainer.classList.toggle('preview-frame-container-visible', e.checked);
     }
 
     _onMoreToggleClick(e) {
