@@ -372,6 +372,7 @@ h3 {
     position: sticky;
     top: 0;
     height: 2em;
+    z-index: 1;
 }
 .sidebar-top-link {
     display: block;
