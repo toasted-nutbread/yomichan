@@ -15,19 +15,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/* global
- * HtmlTemplateCollection
- * api
- */
-
 class QueryParserGenerator {
-    constructor() {
-        this._templates = null;
-    }
-
     async prepare() {
-        const html = await api.getQueryParserTemplatesHtml();
-        this._templates = new HtmlTemplateCollection(html);
     }
 
     createParseResult(terms, preview) {
