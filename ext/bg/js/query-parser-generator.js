@@ -30,7 +30,7 @@ class QueryParserGenerator {
         this._templates = new HtmlTemplateCollection(html);
     }
 
-    createParseResult(terms, preview=false) {
+    createParseResult(terms, preview) {
         const type = preview ? 'preview' : 'normal';
         const fragment = document.createDocumentFragment();
         for (const term of terms) {

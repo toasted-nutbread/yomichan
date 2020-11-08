@@ -148,6 +148,6 @@ class QueryParser extends EventDispatcher {
         const parseResult = this._getParseResult();
         this._queryParser.textContent = '';
         if (!parseResult) { return; }
-        this._queryParser.appendChild(this._queryParserGenerator.createParseResult(parseResult.content));
+        this._queryParser.appendChild(this._queryParserGenerator.createParseResult(parseResult.content, false));
     }
 }
