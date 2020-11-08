@@ -86,6 +86,7 @@ class Display extends EventDispatcher {
         this._ankiNoteBuilder = new AnkiNoteBuilder({
             renderTemplate: this._renderTemplate.bind(this)
         });
+        this._updateAdderButtonsPromise = Promise.resolve();
 
         this.registerActions([
             ['close',            () => { this.onEscape(); }],
@@ -956,24 +957,35 @@ class Display extends EventDispatcher {
     }
 
     async _updateAdderButtons(token, isTerms, definitions) {
-        const modes = isTerms ? ['term-kanji', 'term-kana'] : ['kanji'];
-        let states;
-        try {
-            if (this._options.anki.checkForDuplicates) {
-                const noteContext = await this._getNoteContext();
-                states = await this._areDefinitionsAddable(definitions, modes, noteContext);
-            } else {
-                if (!await api.isAnkiConnected()) {
-                    throw new Error('Anki not connected');
-                }
-                states = this._areDefinitionsAddableForcedValue(definitions, modes, true);
-            }
-        } catch (e) {
-            return;
-        }
+        await this._updateAdderButtonsPromise;
         if (this._setContentToken !== token) { return; }
 
-        this._updateAdderButtons2(states, modes);
+        const {promise, resolve} = deferPromise();
+        try {
+            this._updateAdderButtonsPromise = promise;
+
+            const modes = isTerms ? ['term-kanji', 'term-kana'] : ['kanji'];
+            let states;
+            try {
+                if (this._options.anki.checkForDuplicates) {
+                    const noteContext = await this._getNoteContext();
+                    states = await this._areDefinitionsAddable(definitions, modes, noteContext);
+                } else {
+                    if (!await api.isAnkiConnected()) {
+                        throw new Error('Anki not connected');
+                    }
+                    states = this._areDefinitionsAddableForcedValue(definitions, modes, true);
+                }
+            } catch (e) {
+                return;
+            }
+
+            if (this._setContentToken !== token) { return; }
+
+            this._updateAdderButtons2(states, modes);
+        } finally {
+            resolve();
+        }
     }
 
     _updateAdderButtons2(states, modes) {
