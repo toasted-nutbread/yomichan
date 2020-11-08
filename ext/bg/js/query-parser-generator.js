@@ -67,24 +67,26 @@ class QueryParserGenerator {
     }
 
     createParserSelect(parseResults, selectedParser) {
-        const selectContainer = this._templates.instantiate('select');
+        const select = document.createElement('select');
+        select.className = 'query-parser-select form-control';
         for (const parseResult of parseResults) {
-            const optionContainer = this._templates.instantiate('select-option');
-            optionContainer.value = parseResult.id;
+            const option = document.createElement('option');
+            option.className = 'query-parser-select-option';
+            option.value = parseResult.id;
             switch (parseResult.source) {
                 case 'scanning-parser':
-                    optionContainer.textContent = 'Scanning parser';
+                    option.textContent = 'Scanning parser';
                     break;
                 case 'mecab':
-                    optionContainer.textContent = `MeCab: ${parseResult.dictionary}`;
+                    option.textContent = `MeCab: ${parseResult.dictionary}`;
                     break;
                 default:
-                    optionContainer.textContent = 'Unrecognized dictionary';
+                    option.textContent = 'Unrecognized dictionary';
                     break;
             }
-            optionContainer.defaultSelected = selectedParser === parseResult.id;
-            selectContainer.appendChild(optionContainer);
+            option.defaultSelected = selectedParser === parseResult.id;
+            select.appendChild(option);
         }
-        return selectContainer;
+        return select;
     }
 }
