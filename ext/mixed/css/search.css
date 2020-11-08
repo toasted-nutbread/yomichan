@@ -49,6 +49,7 @@
     --disabled-color-lighter: #eeeeee;
     --accent-color: #1a73e8;
     --accent-color-lighter: #8db9f4;
+    --accent-color-transparent25: rgba(28, 116, 233, 0.25);
 }
 :root[data-loaded=true] {
     --animation-duration: 0.125s;
