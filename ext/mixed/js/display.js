@@ -892,30 +892,9 @@ class Display extends EventDispatcher {
             this.autoPlayAudio();
         }
 
-        this._setContentTermsOrKanjiUpdateAdderButtons(token, isTerms, definitions);
+        this._updateAdderButtons(token, isTerms, definitions);
 
         return true;
-    }
-
-    async _setContentTermsOrKanjiUpdateAdderButtons(token, isTerms, definitions) {
-        const modes = isTerms ? ['term-kanji', 'term-kana'] : ['kanji'];
-        let states;
-        try {
-            if (this._options.anki.checkForDuplicates) {
-                const noteContext = await this._getNoteContext();
-                states = await this._areDefinitionsAddable(definitions, modes, noteContext);
-            } else {
-                if (!await api.isAnkiConnected()) {
-                    throw new Error('Anki not connected');
-                }
-                states = this._areDefinitionsAddableForcedValue(definitions, modes, true);
-            }
-        } catch (e) {
-            return;
-        }
-        if (this._setContentToken !== token) { return; }
-
-        this._updateAdderButtons(states, modes);
     }
 
     _setContentExtensionUnloaded() {
@@ -976,7 +955,28 @@ class Display extends EventDispatcher {
         this._navigationHeader.dataset.hasNext = `${!!next}`;
     }
 
-    _updateAdderButtons(states, modes) {
+    async _updateAdderButtons(token, isTerms, definitions) {
+        const modes = isTerms ? ['term-kanji', 'term-kana'] : ['kanji'];
+        let states;
+        try {
+            if (this._options.anki.checkForDuplicates) {
+                const noteContext = await this._getNoteContext();
+                states = await this._areDefinitionsAddable(definitions, modes, noteContext);
+            } else {
+                if (!await api.isAnkiConnected()) {
+                    throw new Error('Anki not connected');
+                }
+                states = this._areDefinitionsAddableForcedValue(definitions, modes, true);
+            }
+        } catch (e) {
+            return;
+        }
+        if (this._setContentToken !== token) { return; }
+
+        this._updateAdderButtons2(states, modes);
+    }
+
+    _updateAdderButtons2(states, modes) {
         for (let i = 0, ii = states.length; i < ii; ++i) {
             const infos = states[i];
             let noteId = null;
