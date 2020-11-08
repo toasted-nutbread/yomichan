@@ -42,7 +42,7 @@
     --separator-color1: #cccccc;
     --button-icon-color: #333333;
     --toggle-track-color: #cccccc;
-    --toggle-knob-color: var(--background-color-light);
+    --toggle-knob-color: #ffffff;
     --selectable-indicator-color: rgba(160, 160, 160, 0.25);
     --disabled-color: #aaaaaa;
     --disabled-color-light: #dddddd;
@@ -52,6 +52,20 @@
 }
 :root[data-loaded=true] {
     --animation-duration: 0.125s;
+}
+:root[data-yomichan-theme=dark] {
+    --text-color-default: #d8d8d8;
+    --background-color: #1e1e1e;
+    --shadow-color: rgba(255, 255, 255, 0.185);
+    --separator-color1: #cccccc;
+    --input-background-color: #2f2f2f;
+    --input-background-color-dark: #383838;
+    --input-background-color-darker: #484848;
+    --selectable-indicator-color: rgba(100, 100, 100, 0.25);
+    --button-icon-color: #cccccc;
+    --disabled-color: #444444;
+    --disabled-color-light: #585858;
+    --disabled-color-lighter: #777777;
 }
 
 /* Common styles */
@@ -217,6 +231,7 @@ label.toggle {
     border: 0;
 }
 #search-textbox {
+    color: var(--text-color-default);
     flex: 1 1 auto;
     box-sizing: border-box;
     padding: var(--textarea-padding);
