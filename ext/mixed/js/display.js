@@ -1401,7 +1401,7 @@ class Display extends EventDispatcher {
     async _createNote(definition, mode, context, options, templates, injectMedia) {
         const {
             general: {resultOutputMode, compactGlossaries},
-            anki: {tags, duplicateScope, kanji, terms, screenshot: {format, quality}},
+            anki: {tags, checkForDuplicates, duplicateScope, kanji, terms, screenshot: {format, quality}},
             audio: {sources, customSourceUrl}
         } = options;
         const modeOptions = (mode === 'kanji') ? kanji : terms;
@@ -1437,6 +1437,7 @@ class Display extends EventDispatcher {
             context,
             templates,
             tags,
+            checkForDuplicates,
             duplicateScope,
             resultOutputMode,
             compactGlossaries,
