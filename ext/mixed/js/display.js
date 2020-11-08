@@ -804,7 +804,10 @@ class Display extends EventDispatcher {
 
     async _setContentTermsOrKanji(token, isTerms, urlSearchParams, eventArgs) {
         let source = urlSearchParams.get('query');
-        if (!source) { return false; }
+        if (!source) {
+            this._setQueryParserText('');
+            return false;
+        }
 
         let {state, content} = this._history;
         let changeHistory = false;
