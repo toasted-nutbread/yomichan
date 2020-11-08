@@ -1111,37 +1111,50 @@
                 <input type="text" spellcheck="false" autocomplete="off" data-setting="anki.tags" data-transform-pre="splitTags" data-transform-post="joinTags">
             </div>
         </div></div>
-        <div class="settings-item">
+        <div class="settings-item advanced-only">
             <div class="settings-item-inner settings-item-inner-wrappable">
                 <div class="settings-item-left">
-                    <div class="settings-item-label">
-                        Duplicate card scope
-                        <a class="more-toggle more-only" data-parent-distance="4">(?)</a>
-                    </div>
+                    <div class="settings-item-label">Check for card duplicates</div>
+                    <div class="settings-item-description">When a card is detected as a duplicate, the add buttons will be disabled.</div>
                 </div>
                 <div class="settings-item-right">
-                    <select data-setting="anki.duplicateScope">
-                        <option value="collection">Collection</option>
-                        <option value="deck">Deck</option>
-                        <option value="deck-root">Deck root</option>
-                    </select>
+                    <label class="toggle"><input type="checkbox" data-setting="anki.checkForDuplicates" data-transform="setVisibility" data-ancestor-distance="-1" data-relative-selector="#anki-card-duplicate-options" data-visbility-condition='{"op":"===","value":true}'><span class="toggle-body"><span class="toggle-track"></span><span class="toggle-knob"></span></span></label>
                 </div>
             </div>
-            <div class="settings-item-children more" hidden>
-                <p>
-                    A card is considered a duplicate if the value of the first field matches that of any other card.
-                    By default, this check will include cards across all decks in a collection, but this constraint can be relaxed
-                    by using either the <em>Deck</em> or <em>Deck root</em> option.
-                </p>
-                <p>
-                    The <em>Deck</em> option will only check for duplicates in the target deck.
-                    The <em>Deck root</em> option will additionally check for duplicates in all child decks of the root deck.
-                    This allows adding cards that are unique for decks including a subdeck structure.
-                    For decks which don't have any parent-child hierarchy, both options function the same.
-                </p>
-                <p>
-                    <a class="more-toggle" data-parent-distance="3">Less&hellip;</a>
-                </p>
+            <div class="settings-item-children settings-item-children-group" id="anki-card-duplicate-options" hidden>
+                <div class="settings-item">
+                    <div class="settings-item-inner settings-item-inner-wrappable">
+                        <div class="settings-item-left">
+                            <div class="settings-item-label">
+                                Duplicate card scope
+                                <a class="more-toggle more-only" data-parent-distance="4">(?)</a>
+                            </div>
+                        </div>
+                        <div class="settings-item-right">
+                            <select data-setting="anki.duplicateScope">
+                                <option value="collection">Collection</option>
+                                <option value="deck">Deck</option>
+                                <option value="deck-root">Deck root</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="settings-item-children more" hidden>
+                        <p>
+                            A card is considered a duplicate if the value of the first field matches that of any other card.
+                            By default, this check will include cards across all decks in a collection, but this constraint can be relaxed
+                            by using either the <em>Deck</em> or <em>Deck root</em> option.
+                        </p>
+                        <p>
+                            The <em>Deck</em> option will only check for duplicates in the target deck.
+                            The <em>Deck root</em> option will additionally check for duplicates in all child decks of the root deck.
+                            This allows adding cards that are unique for decks including a subdeck structure.
+                            For decks which don't have any parent-child hierarchy, both options function the same.
+                        </p>
+                        <p>
+                            <a class="more-toggle" data-parent-distance="3">Less&hellip;</a>
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="settings-item advanced-only">
