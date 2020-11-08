@@ -11,52 +11,41 @@
         <link rel="icon" type="image/png" href="/mixed/img/icon48.png" sizes="48x48">
         <link rel="icon" type="image/png" href="/mixed/img/icon64.png" sizes="64x64">
         <link rel="icon" type="image/png" href="/mixed/img/icon128.png" sizes="128x128">
-        <link rel="stylesheet" type="text/css" href="/mixed/lib/bootstrap/css/bootstrap.min.css">
-        <link rel="stylesheet" type="text/css" href="/mixed/lib/bootstrap/css/bootstrap-theme.min.css">
+        <link rel="stylesheet" type="text/css" href="/mixed/css/search.css">
         <link rel="stylesheet" type="text/css" href="/mixed/css/display.css">
     </head>
     <body>
+
+<div class="content"><div class="content-center">
+
         <div class="container">
-            <div id="intro" style="overflow: hidden;">
-                <div class="page-header">
-                    <h1>Yomichan Search</h1>
-                </div>
-                <p style="margin-bottom: 0;">Search your installed dictionaries by entering a Japanese expression into the field below.</p>
+            <div id="intro">
+                <h1>Yomichan Search</h1>
             </div>
 
-            <div class="search-input">
-                <div class="input-group" style="padding-top: 20px;">
-                    <span title="Enable kana input method" class="input-group-text">
-                        <input type="checkbox" id="wanakana-enable" class="icon-checkbox" />
-                        <label for="wanakana-enable" class="scan-disable">あ</label>
-                    </span>
-                    <span title="Enable clipboard monitor" class="input-group-text">
-                        <input type="checkbox" id="clipboard-monitor-enable" class="icon-checkbox" />
-                        <label for="clipboard-monitor-enable"><span class="glyphicon glyphicon-paste"></span></label>
-                    </span>
+            <div class="scan-disable">
+                <div class="search-options">
+                    <label class="search-option">
+                        <label class="toggle"><input type="checkbox" id="wanakana-enable"><span class="toggle-body"><span class="toggle-track"></span><span class="toggle-knob"></span></span></label>
+                        <span class="search-option-label">Automatic kana conversion</span>
+                    </label>
+                    <label class="search-option">
+                        <label class="toggle"><input type="checkbox" id="clipboard-monitor-enable"><span class="toggle-body"><span class="toggle-track"></span><span class="toggle-knob"></span></span></label>
+                        <span class="search-option-label">Clipboard monitor</span>
+                    </label>
                 </div>
-
-                <form class="input-group">
-                    <input type="text" class="form-control" placeholder="Search for..." id="query" autofocus>
-                    <span class="input-group-btn">
-                        <input type="submit" class="btn btn-default form-control" id="search" value="Search">
-                    </span>
-                </form>
+                <div class="search-textbox-container">
+                    <textarea id="search-textbox" placeholder="Input a term, expression, sentence, or block of text" autocomplete="false" autofocus></textarea>
+                    <button id="search-button"><span class="icon-button-icon" data-icon="magnifying-glass"></span></button>
+                </div>
             </div>
 
             <div id="spinner" hidden><img src="/mixed/img/spinner.gif"></div>
 
             <div class="scan-disable" id="query-parser-container">
-                <div id="query-parser-select-container" class="input-group"></div>
+                <div id="query-parser-select-container"></div>
                 <div id="query-parser-content"></div>
             </div>
-
-            <hr>
-
-            <div id="navigation-header" class="navigation-header" hidden><div class="navigation-header-actions">
-                <button class="action-button action-previous" data-icon="source-term" title="Source term (Alt + B)"></button>
-                <button class="action-button action-next" data-icon="source-term" title="Next term (Alt + F)"></button>
-            </div></div><div class="navigation-header-spacer"></div>
 
             <div id="definitions"></div>
 
@@ -66,6 +55,8 @@
                 </div>
             </div>
         </div>
+
+</div></div>
 
         <script src="/mixed/lib/wanakana.min.js"></script>
 
