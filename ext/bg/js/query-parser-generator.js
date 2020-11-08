@@ -16,9 +16,6 @@
  */
 
 class QueryParserGenerator {
-    async prepare() {
-    }
-
     createParseResult(terms, preview) {
         const type = preview ? 'preview' : 'normal';
         const fragment = document.createDocumentFragment();

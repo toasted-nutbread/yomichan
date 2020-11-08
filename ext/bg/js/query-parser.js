@@ -44,8 +44,7 @@ class QueryParser extends EventDispatcher {
         });
     }
 
-    async prepare() {
-        await this._queryParserGenerator.prepare();
+    prepare() {
         this._textScanner.prepare();
         this._textScanner.on('searched', this._onSearched.bind(this));
     }
