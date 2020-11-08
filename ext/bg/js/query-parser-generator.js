@@ -31,37 +31,21 @@ class QueryParserGenerator {
     }
 
     createParseResult(terms, preview=false) {
+        const type = preview ? 'preview' : 'normal';
         const fragment = document.createDocumentFragment();
         for (const term of terms) {
-            const termContainer = this._templates.instantiate(preview ? 'term-preview' : 'term');
+            const termNode = document.createElement('span');
+            termNode.className = 'query-parser-term';
+            termNode.dataset.type = type;
             for (const segment of term) {
                 if (!segment.text.trim()) { continue; }
                 if (!segment.reading.trim()) {
-                    termContainer.appendChild(this.createSegmentText(segment.text));
+                    this._addSegmentText(segment.text, termNode);
                 } else {
-                    termContainer.appendChild(this.createSegment(segment));
+                    termNode.appendChild(this._createSegment(segment));
                 }
             }
-            fragment.appendChild(termContainer);
-        }
-        return fragment;
-    }
-
-    createSegment(segment) {
-        const segmentContainer = this._templates.instantiate('segment');
-        const segmentTextContainer = segmentContainer.querySelector('.query-parser-segment-text');
-        const segmentReadingContainer = segmentContainer.querySelector('.query-parser-segment-reading');
-        segmentTextContainer.appendChild(this.createSegmentText(segment.text));
-        segmentReadingContainer.textContent = segment.reading;
-        return segmentContainer;
-    }
-
-    createSegmentText(text) {
-        const fragment = document.createDocumentFragment();
-        for (const chr of text) {
-            const charContainer = this._templates.instantiate('char');
-            charContainer.textContent = chr;
-            fragment.appendChild(charContainer);
+            fragment.appendChild(termNode);
         }
         return fragment;
     }
@@ -88,5 +72,35 @@ class QueryParserGenerator {
             select.appendChild(option);
         }
         return select;
+    }
+
+    // Private
+
+    _createSegment(segment) {
+        const segmentNode = document.createElement('ruby');
+        segmentNode.className = 'query-parser-segment';
+
+        const textNode = document.createElement('span');
+        textNode.className = 'query-parser-segment-text';
+
+        const readingNode = document.createElement('rt');
+        readingNode.className = 'query-parser-segment-reading';
+
+        segmentNode.appendChild(textNode);
+        segmentNode.appendChild(readingNode);
+
+        this._addSegmentText(segment.text, textNode);
+        readingNode.textContent = segment.reading;
+
+        return segmentNode;
+    }
+
+    _addSegmentText(text, container) {
+        for (const character of text) {
+            const node = document.createElement('span');
+            node.className = 'query-parser-char';
+            node.textContent = character;
+            container.appendChild(node);
+        }
     }
 }
