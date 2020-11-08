@@ -901,8 +901,15 @@ class Display extends EventDispatcher {
         const modes = isTerms ? ['term-kanji', 'term-kana'] : ['kanji'];
         let states;
         try {
-            const noteContext = await this._getNoteContext();
-            states = await this._areDefinitionsAddable(definitions, modes, noteContext);
+            if (this._options.anki.checkForDuplicates) {
+                const noteContext = await this._getNoteContext();
+                states = await this._areDefinitionsAddable(definitions, modes, noteContext);
+            } else {
+                if (!await api.isAnkiConnected()) {
+                    throw new Error('Anki not connected');
+                }
+                states = this._areDefinitionsAddableForcedValue(definitions, modes, true);
+            }
         } catch (e) {
             return;
         }
@@ -1373,6 +1380,20 @@ class Display extends EventDispatcher {
         const results = [];
         for (let i = 0, ii = infos.length; i < ii; i += modeCount) {
             results.push(infos.slice(i, i + modeCount));
+        }
+        return results;
+    }
+
+    _areDefinitionsAddableForcedValue(definitions, modes, canAdd) {
+        const results = [];
+        const definitionCount = definitions.length;
+        const modeCount = modes.length;
+        for (let i = 0; i < definitionCount; ++i) {
+            const modeArray = [];
+            for (let j = 0; j < modeCount; ++j) {
+                modeArray.push({canAdd, noteIds: null});
+            }
+            results.push(modeArray);
         }
         return results;
     }
