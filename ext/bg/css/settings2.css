@@ -739,6 +739,7 @@ label.checkbox {
     border: none;
     appearance: none;
     -moz-appearance: none;
+    -webkit-appearance: none;
 }
 .checkbox-body {
     display: block;
@@ -830,6 +831,7 @@ label.toggle {
     border: none;
     appearance: none;
     -moz-appearance: none;
+    -webkit-appearance: none;
 }
 .toggle-body {
     display: block;
@@ -940,6 +942,7 @@ label.radio {
     cursor: default;
     appearance: none;
     -moz-appearance: none;
+    -webkit-appearance: none;
 }
 .radio>input[type=radio]:not(:disabled)+.radio-body {
     cursor: pointer;
@@ -1051,8 +1054,9 @@ select {
     border-radius: 0.25em;
     box-sizing: border-box;
     padding: 0 0.5em;
-    -webkit-appearance: none;
+    appearance: none;
     -moz-appearance: none;
+    -webkit-appearance: none;
     background-image: url(/mixed/img/material-down-arrow.svg);
     background-repeat: no-repeat;
     background-position: right var(--padding) center;
@@ -1076,10 +1080,14 @@ input[type=number] {
     border-radius: var(--text-input-border-radius);
     box-sizing: border-box;
     padding: 0 0.5em;
+    appearance: textfield;
     -moz-appearance: textfield;
+    -webkit-appearance: textfield;
 }
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
+    appearance: none;
+    -moz-appearance: none;
     -webkit-appearance: none;
     margin: 0;
 }
