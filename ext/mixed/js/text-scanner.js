@@ -286,7 +286,7 @@ class TextScanner extends EventDispatcher {
     _onMouseMove(e) {
         this._scanTimerClear();
 
-        const inputInfo = this._getMatchingInputGroupFromEvent('mouse', e);
+        const inputInfo = this._getMatchingInputGroupFromEvent('mouse', 'mouseMove', e);
         if (inputInfo === null) { return; }
 
         this._searchAtFromMouseMove(e.clientX, e.clientY, inputInfo);
@@ -404,7 +404,7 @@ class TextScanner extends EventDispatcher {
         }
 
         const type = 'touch';
-        const inputInfo = this._getMatchingInputGroupFromEvent(type, e);
+        const inputInfo = this._getMatchingInputGroupFromEvent(type, 'touchMove', e);
         if (inputInfo === null) { return; }
 
         if (inputInfo.input.options.scanOnTouchMove) {
@@ -513,7 +513,7 @@ class TextScanner extends EventDispatcher {
             return;
         }
 
-        const inputInfo = this._getMatchingInputGroupFromEvent('touch', e);
+        const inputInfo = this._getMatchingInputGroupFromEvent('touch', 'touchMove', e);
         if (inputInfo === null || !inputInfo.input.options.scanOnTouchMove) { return; }
 
         this._searchAt(e.clientX, e.clientY, 'touch', 'touchMove', inputInfo);
@@ -761,7 +761,7 @@ class TextScanner extends EventDispatcher {
 
         const type = 'touch';
         const cause = 'touchStart';
-        const inputInfo = this._getMatchingInputGroupFromEvent(type, e);
+        const inputInfo = this._getMatchingInputGroupFromEvent(type, cause, e);
         if (inputInfo === null) { return; }
 
         const textSourceCurrentPrevious = this._textSourceCurrent !== null ? this._textSourceCurrent.clone() : null;
@@ -783,7 +783,7 @@ class TextScanner extends EventDispatcher {
         if (this._pendingLookup) { return; }
 
         const type = 'pen';
-        const inputInfo = this._getMatchingInputGroupFromEvent(type, e);
+        const inputInfo = this._getMatchingInputGroupFromEvent(type, cause, e);
         if (inputInfo === null) { return; }
 
         const {input: {options}} = inputInfo;
@@ -809,14 +809,14 @@ class TextScanner extends EventDispatcher {
         }
     }
 
-    _getMatchingInputGroupFromEvent(type, event) {
+    _getMatchingInputGroupFromEvent(type, cause, event) {
         const modifierKeys = DocumentUtil.getActiveModifiers(event);
         const modifiers = DocumentUtil.getActiveModifiersAndButtons(event);
         this.trigger('activeModifiersChanged', {modifiers, modifierKeys});
-        return this._getMatchingInputGroup(type, modifiers, modifierKeys);
+        return this._getMatchingInputGroup(type, cause, modifiers, modifierKeys);
     }
 
-    _getMatchingInputGroup(type, modifiers, modifierKeys) {
+    _getMatchingInputGroup(type, cause, modifiers, modifierKeys) {
         let fallback = null;
         const modifiersSet = new Set(modifiers);
         for (let i = 0, ii = this._inputs.length; i < ii; ++i) {
@@ -825,9 +825,9 @@ class TextScanner extends EventDispatcher {
             if (!types.has(type)) { continue; }
             if (this._setHasAll(modifiersSet, include) && (exclude.length === 0 || !this._setHasAll(modifiersSet, exclude))) {
                 if (include.length > 0) {
-                    return {index: i, empty: false, input, modifiers, modifierKeys};
+                    return {index: i, empty: false, input, type, cause, modifiers, modifierKeys};
                 } else if (fallback === null) {
-                    fallback = {index: i, empty: true, input, modifiers, modifierKeys};
+                    fallback = {index: i, empty: true, input, type, cause, modifiers, modifierKeys};
                 }
             }
         }
