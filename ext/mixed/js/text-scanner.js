@@ -808,8 +808,8 @@ class TextScanner extends EventDispatcher {
     }
 
     _getMatchingInputGroupFromEvent(type, cause, event) {
-        const modifierKeys = DocumentUtil.getActiveModifiers(event);
         const modifiers = DocumentUtil.getActiveModifiersAndButtons(event);
+        const modifierKeys = DocumentUtil.getActiveModifiers(event);
         this.trigger('activeModifiersChanged', {modifiers, modifierKeys});
         return this._getMatchingInputGroup(type, cause, modifiers, modifierKeys);
     }
