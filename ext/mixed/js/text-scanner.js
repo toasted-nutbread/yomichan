@@ -286,7 +286,7 @@ class TextScanner extends EventDispatcher {
     _onMouseMove(e) {
         this._scanTimerClear();
 
-        const inputInfo = this._getMatchingInputGroupFromEvent(e, 'mouse');
+        const inputInfo = this._getMatchingInputGroupFromEvent('mouse', e);
         if (inputInfo === null) { return; }
 
         this._searchAtFromMouseMove(e.clientX, e.clientY, inputInfo);
@@ -404,7 +404,7 @@ class TextScanner extends EventDispatcher {
         }
 
         const type = 'touch';
-        const inputInfo = this._getMatchingInputGroupFromEvent(e, type);
+        const inputInfo = this._getMatchingInputGroupFromEvent(type, e);
         if (inputInfo === null) { return; }
 
         if (inputInfo.input.options.scanOnTouchMove) {
@@ -513,7 +513,7 @@ class TextScanner extends EventDispatcher {
             return;
         }
 
-        const inputInfo = this._getMatchingInputGroupFromEvent(e, 'touch');
+        const inputInfo = this._getMatchingInputGroupFromEvent('touch', e);
         if (inputInfo === null || !inputInfo.input.options.scanOnTouchMove) { return; }
 
         this._searchAt(e.clientX, e.clientY, 'touch', 'touchMove', inputInfo);
@@ -761,7 +761,7 @@ class TextScanner extends EventDispatcher {
 
         const type = 'touch';
         const cause = 'touchStart';
-        const inputInfo = this._getMatchingInputGroupFromEvent(e, type);
+        const inputInfo = this._getMatchingInputGroupFromEvent(type, e);
         if (inputInfo === null) { return; }
 
         const textSourceCurrentPrevious = this._textSourceCurrent !== null ? this._textSourceCurrent.clone() : null;
@@ -783,7 +783,7 @@ class TextScanner extends EventDispatcher {
         if (this._pendingLookup) { return; }
 
         const type = 'pen';
-        const inputInfo = this._getMatchingInputGroupFromEvent(e, type);
+        const inputInfo = this._getMatchingInputGroupFromEvent(type, e);
         if (inputInfo === null) { return; }
 
         const {input: {options}} = inputInfo;
@@ -809,13 +809,13 @@ class TextScanner extends EventDispatcher {
         }
     }
 
-    _getMatchingInputGroupFromEvent(event, type) {
+    _getMatchingInputGroupFromEvent(type, event) {
         const modifiers = DocumentUtil.getActiveModifiersAndButtons(event);
         this.trigger('activeModifiersChanged', {modifiers});
-        return this._getMatchingInputGroup(modifiers, type);
+        return this._getMatchingInputGroup(type, modifiers);
     }
 
-    _getMatchingInputGroup(modifiers, type) {
+    _getMatchingInputGroup(type, modifiers) {
         let fallback = null;
         const modifiersSet = new Set(modifiers);
         for (let i = 0, ii = this._inputs.length; i < ii; ++i) {
