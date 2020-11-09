@@ -65,6 +65,7 @@ class Frontend {
         this._updatePopupToken = null;
         this._clearSelectionTimer = null;
         this._isPointerOverPopup = false;
+        this._optionsContextOverride = null;
 
         this._runtimeMessageHandlers = new Map([
             ['requestFrontendReadyBroadcast', {async: false, handler: this._onMessageRequestFrontendReadyBroadcast.bind(this)}],
@@ -131,12 +132,20 @@ class Frontend {
         this._updateTextScannerEnabled();
     }
 
+    setOptionsContextOverride(optionsContext) {
+        this._optionsContextOverride = optionsContext;
+    }
+
     async setTextSource(textSource) {
         this._textScanner.setCurrentTextSource(null);
         await this._textScanner.search(textSource);
     }
 
     async getOptionsContext() {
+        if (this._optionsContextOverride !== null) {
+            return this._optionsContextOverride;
+        }
+
         let url = window.location.href;
         if (this._useProxyPopup) {
             try {
