@@ -326,7 +326,7 @@ class TextScanner extends EventDispatcher {
             const modifiers = DocumentUtil.getActiveModifiersAndButtons(e);
             const modifierKeys = DocumentUtil.getActiveModifiers(e);
             const inputInfo = this._createInputInfo(-1, false, null, 'mouse', 'click', modifiers, modifierKeys);
-            this._searchAt(e.clientX, e.clientY, 'mouse', 'click', inputInfo);
+            this._searchAt(e.clientX, e.clientY, inputInfo);
         }
 
         if (this._preventNextClick) {
@@ -407,12 +407,11 @@ class TextScanner extends EventDispatcher {
             return;
         }
 
-        const type = 'touch';
-        const inputInfo = this._getMatchingInputGroupFromEvent(type, 'touchMove', e);
+        const inputInfo = this._getMatchingInputGroupFromEvent('touch', 'touchMove', e);
         if (inputInfo === null) { return; }
 
         if (inputInfo.input.options.scanOnTouchMove) {
-            this._searchAt(primaryTouch.clientX, primaryTouch.clientY, type, 'touchMove', inputInfo);
+            this._searchAt(primaryTouch.clientX, primaryTouch.clientY, inputInfo);
         }
 
         e.preventDefault(); // Disable scroll
@@ -520,7 +519,7 @@ class TextScanner extends EventDispatcher {
         const inputInfo = this._getMatchingInputGroupFromEvent('touch', 'touchMove', e);
         if (inputInfo === null || !inputInfo.input.options.scanOnTouchMove) { return; }
 
-        this._searchAt(e.clientX, e.clientY, 'touch', 'touchMove', inputInfo);
+        this._searchAt(e.clientX, e.clientY, inputInfo);
     }
 
     _onTouchPointerUp() {
@@ -711,7 +710,7 @@ class TextScanner extends EventDispatcher {
         return {definitions, sentence, type: 'kanji'};
     }
 
-    async _searchAt(x, y, type, cause, inputInfo) {
+    async _searchAt(x, y, inputInfo) {
         if (this._pendingLookup) { return; }
 
         try {
@@ -755,21 +754,19 @@ class TextScanner extends EventDispatcher {
             }
         }
 
-        await this._searchAt(x, y, 'mouse', 'mouseMove', inputInfo);
+        await this._searchAt(x, y, inputInfo);
     }
 
     async _searchAtFromTouchStart(e, x, y) {
         if (this._pendingLookup) { return; }
 
-        const type = 'touch';
-        const cause = 'touchStart';
-        const inputInfo = this._getMatchingInputGroupFromEvent(type, cause, e);
+        const inputInfo = this._getMatchingInputGroupFromEvent('touch', 'touchStart', e);
         if (inputInfo === null) { return; }
 
         const textSourceCurrentPrevious = this._textSourceCurrent !== null ? this._textSourceCurrent.clone() : null;
         const preventScroll = inputInfo.input.options.preventTouchScrolling;
 
-        await this._searchAt(x, y, type, cause, inputInfo);
+        await this._searchAt(x, y, inputInfo);
 
         if (
             this._textSourceCurrent !== null &&
@@ -784,8 +781,7 @@ class TextScanner extends EventDispatcher {
     async _searchAtFromPen(e, x, y, cause, prevent) {
         if (this._pendingLookup) { return; }
 
-        const type = 'pen';
-        const inputInfo = this._getMatchingInputGroupFromEvent(type, cause, e);
+        const inputInfo = this._getMatchingInputGroupFromEvent('pen', cause, e);
         if (inputInfo === null) { return; }
 
         const {input: {options}} = inputInfo;
@@ -798,7 +794,7 @@ class TextScanner extends EventDispatcher {
 
         const preventScroll = inputInfo.input.options.preventTouchScrolling;
 
-        await this._searchAt(x, y, type, cause, inputInfo);
+        await this._searchAt(x, y, inputInfo);
 
         if (
             prevent &&
