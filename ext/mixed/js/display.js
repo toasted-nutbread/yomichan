@@ -227,8 +227,9 @@ class Display extends EventDispatcher {
         return this._optionsContext;
     }
 
-    setOptionsContext(optionsContext) {
+    async setOptionsContext(optionsContext) {
         this._optionsContext = optionsContext;
+        await this.updateOptions();
     }
 
     async updateOptions() {
