@@ -821,6 +821,16 @@ class Display extends EventDispatcher {
             changeHistory = true;
         }
 
+        let {sentence=null, optionsContext=null, focusEntry=null, scrollX=null, scrollY=null} = state;
+        if (!(typeof optionsContext === 'object' && optionsContext !== null)) {
+            optionsContext = this.getOptionsContext();
+            state.optionsContext = optionsContext;
+            changeHistory = true;
+        }
+        let {url} = optionsContext;
+        if (typeof url !== 'string') { url = window.location.href; }
+        sentence = this._getValidSentenceData(sentence);
+
         source = this.postProcessQuery(source);
         let full = urlSearchParams.get('full');
         full = (full === null ? source : this.postProcessQuery(full));
@@ -835,6 +845,9 @@ class Display extends EventDispatcher {
             changeHistory = true;
         }
 
+        await this._setOptionsContextIfDifferent(optionsContext);
+        if (this._setContentToken !== token) { return true; }
+
         if (changeHistory) {
             this._historyStateUpdate(state, content);
         }
@@ -842,10 +855,6 @@ class Display extends EventDispatcher {
         eventArgs.source = source;
         eventArgs.content = content;
         this.trigger('contentUpdating', eventArgs);
-
-        let {sentence=null, url=null, focusEntry=null, scrollX=null, scrollY=null} = state;
-        if (typeof url !== 'string') { url = window.location.href; }
-        sentence = this._getValidSentenceData(sentence);
 
         this._definitions = definitions;
 
@@ -1485,5 +1494,10 @@ class Display extends EventDispatcher {
             }
         }
         return true;
+    }
+
+    async _setOptionsContextIfDifferent(optionsContext) {
+        if (deepEqual(this._optionsContext, optionsContext)) { return; }
+        await this.setOptionsContext(optionsContext);
     }
 }
