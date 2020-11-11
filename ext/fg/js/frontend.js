@@ -147,7 +147,6 @@ class Frontend {
             if (!yomichan.isExtensionUnloaded) {
                 throw e;
             }
-            this._showExtensionUnloaded(null);
         }
     }
 
