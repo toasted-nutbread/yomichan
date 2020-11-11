@@ -33,7 +33,6 @@ class Frontend {
         pageType,
         allowRootFramePopupProxy
     }) {
-        this._id = generateId(16);
         this._popup = null;
         this._disabledOverride = false;
         this._options = null;
@@ -386,7 +385,7 @@ class Frontend {
         const optionsContext = await this._getOptionsContext();
         if (this._updatePopupToken !== token) { return; }
         if (popup !== null) {
-            await popup.setOptionsContext(optionsContext, this._id);
+            await popup.setOptionsContext(optionsContext);
         }
         if (this._updatePopupToken !== token) { return; }
 
@@ -521,7 +520,6 @@ class Frontend {
             this._popup !== null ?
             this._popup.showContent(
                 {
-                    source: this._id,
                     optionsContext,
                     elementRect: textSource.getRect(),
                     writingMode: textSource.getWritingMode()
