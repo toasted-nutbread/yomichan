@@ -508,7 +508,7 @@ class Display extends EventDispatcher {
         }
     }
 
-    _onQueryParserSearch({type, definitions, sentence, inputInfo: {cause}, textSource}) {
+    _onQueryParserSearch({type, definitions, sentence, inputInfo: {cause}, textSource, optionsContext}) {
         const query = textSource.text();
         const history = (cause === 'click');
         const details = {
@@ -517,7 +517,7 @@ class Display extends EventDispatcher {
             params: this._createSearchParams(type, query, false),
             state: {
                 sentence,
-                url: window.location.href
+                optionsContext
             },
             content: {
                 definitions
@@ -571,7 +571,7 @@ class Display extends EventDispatcher {
                 state: {
                     focusEntry: 0,
                     sentence: state.sentence,
-                    url: state.url
+                    optionsContext: state.optionsContext
                 },
                 content: {
                     definitions
@@ -630,7 +630,7 @@ class Display extends EventDispatcher {
             state: {
                 focusEntry: 0,
                 sentence,
-                url: state.url
+                optionsContext: state.optionsContext
             },
             content: {
                 definitions
@@ -780,8 +780,7 @@ class Display extends EventDispatcher {
         }
     }
 
-    async _findDefinitions(isTerms, source, urlSearchParams) {
-        const optionsContext = this.getOptionsContext();
+    async _findDefinitions(isTerms, source, urlSearchParams, optionsContext) {
         if (isTerms) {
             const findDetails = {};
             if (urlSearchParams.get('wildcards') !== 'off') {
@@ -830,7 +829,7 @@ class Display extends EventDispatcher {
 
         let {definitions} = content;
         if (!Array.isArray(definitions)) {
-            definitions = await this._findDefinitions(isTerms, source, urlSearchParams);
+            definitions = await this._findDefinitions(isTerms, source, urlSearchParams, optionsContext);
             if (this._setContentToken !== token) { return true; }
             content.definitions = definitions;
             changeHistory = true;
