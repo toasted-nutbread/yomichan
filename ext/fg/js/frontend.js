@@ -39,14 +39,12 @@ class Frontend {
         this._pageZoomFactor = 1.0;
         this._contentScale = 1.0;
         this._lastShowPromise = Promise.resolve();
-        this._activeModifiers = new Set();
-        this._optionsUpdatePending = false;
         this._documentUtil = new DocumentUtil();
         this._textScanner = new TextScanner({
             node: window,
             ignoreElements: this._ignoreElements.bind(this),
             ignorePoint: this._ignorePoint.bind(this),
-            getOptionsContext: this._getUpToDateOptionsContext.bind(this),
+            getOptionsContext: this._getOptionsContext.bind(this),
             documentUtil: this._documentUtil,
             searchTerms: true,
             searchKanji: true
@@ -111,7 +109,6 @@ class Frontend {
         chrome.runtime.onMessage.addListener(this._onRuntimeMessage.bind(this));
 
         this._textScanner.on('clearSelection', this._onClearSelection.bind(this));
-        this._textScanner.on('activeModifiersChanged', this._onActiveModifiersChanged.bind(this));
         this._textScanner.on('searched', this._onSearched.bind(this));
 
         api.crossFrame.registerHandlers([
@@ -234,18 +231,6 @@ class Frontend {
             this._popup.clearAutoPlayTimer();
             this._isPointerOverPopup = false;
         }
-        this._updatePendingOptions();
-    }
-
-    async _onActiveModifiersChanged({modifiers}) {
-        modifiers = new Set(modifiers);
-        if (areSetsEqual(modifiers, this._activeModifiers)) { return; }
-        this._activeModifiers = modifiers;
-        if (this._popup !== null && await this._popup.isVisible()) {
-            this._optionsUpdatePending = true;
-            return;
-        }
-        await this.updateOptions();
     }
 
     _onSearched({type, definitions, sentence, inputInfo: {cause, empty}, textSource, optionsContext, error}) {
@@ -534,13 +519,6 @@ class Frontend {
         return this._lastShowPromise;
     }
 
-    async _updatePendingOptions() {
-        if (this._optionsUpdatePending) {
-            this._optionsUpdatePending = false;
-            await this.updateOptions();
-        }
-    }
-
     _updateTextScannerEnabled() {
         const enabled = (
             this._options.general.enable &&
@@ -607,11 +585,6 @@ class Frontend {
         await promise;
     }
 
-    async _getUpToDateOptionsContext() {
-        await this._updatePendingOptions();
-        return await this._getOptionsContext();
-    }
-
     _getPreventMiddleMouseValueForPageType(preventMiddleMouseOptions) {
         switch (this._pageType) {
             case 'web': return preventMiddleMouseOptions.onWebPages;
@@ -636,7 +609,6 @@ class Frontend {
         }
 
         const depth = this._depth;
-        const modifierKeys = [...this._activeModifiers];
-        return {depth, url, modifierKeys};
+        return {depth, url};
     }
 }
