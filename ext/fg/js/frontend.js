@@ -480,12 +480,12 @@ class Frontend {
         }
     }
 
-    async _showExtensionUnloaded(textSource) {
+    _showExtensionUnloaded(textSource) {
         if (textSource === null) {
             textSource = this._textScanner.getCurrentTextSource();
             if (textSource === null) { return; }
         }
-        this._showPopupContent(textSource, await this._getOptionsContext());
+        this._showPopupContent(textSource, null);
     }
 
     _showContent(textSource, focus, definitions, type, sentence, optionsContext) {
@@ -578,7 +578,7 @@ class Frontend {
             this._popup !== null &&
             await this._popup.isVisible()
         ) {
-            this._showPopupContent(textSource, await this._getOptionsContext());
+            this._showPopupContent(textSource, null);
         }
     }
 
