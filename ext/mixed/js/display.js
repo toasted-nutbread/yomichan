@@ -725,6 +725,7 @@ class Display extends EventDispatcher {
         data.ankiEnabled = `${options.anki.enable}`;
         data.audioEnabled = `${options.audio.enabled && options.audio.sources.length > 0}`;
         data.compactGlossaries = `${options.general.compactGlossaries}`;
+        data.compactTags = `${options.general.compactTags}`;
         data.enableSearchTags = `${options.scanning.enableSearchTags}`;
         data.showPitchAccentDownstepNotation = `${options.general.showPitchAccentDownstepNotation}`;
         data.showPitchAccentPositionNotation = `${options.general.showPitchAccentPositionNotation}`;
