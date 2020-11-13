@@ -49,7 +49,6 @@ class DisplayGenerator {
         const pitchesContainer = node.querySelector('.term-pitch-accent-group-list');
         const frequenciesContainer = node.querySelector('.frequencies');
         const definitionsContainer = node.querySelector('.term-definition-list');
-        const debugInfoContainer = node.querySelector('.debug-info');
         const bodyContainer = node.querySelector('.term-entry-body');
 
         const {termTags, expressions, type, reasons, frequencies} = details;
@@ -75,10 +74,6 @@ class DisplayGenerator {
         this._appendMultiple(frequenciesContainer, this._createFrequencyTag.bind(this), frequencies);
         this._appendMultiple(pitchesContainer, this._createPitches.bind(this), pitches);
         this._appendMultiple(definitionsContainer, this._createTermDefinitionItem.bind(this), definitions);
-
-        if (debugInfoContainer !== null) {
-            debugInfoContainer.textContent = JSON.stringify(details, null, 4);
-        }
 
         return node;
     }
