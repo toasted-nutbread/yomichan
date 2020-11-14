@@ -169,14 +169,14 @@ a {
     display: flex;
 }
 
-.navigation-header:not([data-has-previous=true]) .navigation-header-actions .action-button.action-previous:before,
-.navigation-header:not([data-has-next=true]) .navigation-header-actions .action-button.action-next:before {
+.navigation-header:not([data-has-previous=true]) .navigation-header-actions .action-button.action-previous::before,
+.navigation-header:not([data-has-next=true]) .navigation-header-actions .action-button.action-next::before {
     opacity: 0.25;
     -webkit-filter: grayscale(100%);
     filter: grayscale(100%);
 }
 
-.action-button.action-next:before {
+.action-button.action-next::before {
     transform: scaleX(-1);
 }
 
@@ -221,7 +221,7 @@ a {
     cursor: default;
 }
 
-.action-button.disabled:before {
+.action-button.disabled::before {
     -webkit-filter: grayscale(100%);
     filter: grayscale(100%);
     opacity: 0.25;
@@ -237,7 +237,7 @@ a {
     margin: -0.25em;
 }
 
-.actions:after {
+.actions::after {
     clear: both;
     content: '';
     display: block;
@@ -256,7 +256,7 @@ button.action-button {
     cursor: pointer;
 }
 
-.action-button[data-icon]:before {
+.action-button[data-icon]::before {
     content: "";
     width: 1.14285714em; /* 14px => 16px */
     height: 1.14285714em; /* 14px => 16px */
@@ -266,22 +266,22 @@ button.action-button {
     background-size: contain;
 }
 
-.action-button[data-icon=entry-current]:before {
+.action-button[data-icon=entry-current]::before {
     background-image: url("/mixed/img/entry-current.svg");
 }
-.action-button[data-icon=view-note]:before {
+.action-button[data-icon=view-note]::before {
     background-image: url("/mixed/img/view-note.svg");
 }
-.action-button[data-icon=add-term-kanji]:before {
+.action-button[data-icon=add-term-kanji]::before {
     background-image: url("/mixed/img/add-term-kanji.svg");
 }
-.action-button[data-icon=add-term-kana]:before {
+.action-button[data-icon=add-term-kana]::before {
     background-image: url("/mixed/img/add-term-kana.svg");
 }
-.action-button[data-icon=play-audio]:before {
+.action-button[data-icon=play-audio]::before {
     background-image: url("/mixed/img/play-audio.svg");
 }
-.action-button[data-icon=source-term]:before {
+.action-button[data-icon=source-term]::before {
     background-image: url("/mixed/img/source-term.svg");
 }
 
@@ -394,7 +394,7 @@ button.action-button {
     color: var(--light-text-color);
 }
 
-.term-reasons>.term-reason+.term-reason-separator+.term-reason:before {
+.term-reasons>.term-reason+.term-reason-separator+.term-reason::before {
     content: " \00AB  "; /* The two spaces is not a typo */
     white-space: pre-wrap;
     display: inline;
@@ -503,15 +503,15 @@ button.action-button {
     display: none;
 }
 
-.term-definition-disambiguation-list:before {
+.term-definition-disambiguation-list::before {
     content: "(";
 }
 
-.term-definition-disambiguation-list:after {
+.term-definition-disambiguation-list::after {
     content: " only) ";
 }
 
-.term-definition-disambiguation+.term-definition-disambiguation:before {
+.term-definition-disambiguation+.term-definition-disambiguation::before {
     content: ", ";
 }
 
@@ -543,7 +543,7 @@ button.action-button {
     display: inline;
 }
 
-:root[data-compact-glossaries=true] .term-glossary-list>li:not(:first-child):before {
+:root[data-compact-glossaries=true] .term-glossary-list>li:not(:first-child)::before {
     white-space: pre-wrap;
     content: " | ";
     display: inline;
@@ -627,15 +627,15 @@ button.action-button {
     color: var(--light-text-color);
 }
 
-.term-pitch-accent-disambiguation-list:before {
+.term-pitch-accent-disambiguation-list::before {
     content: "(";
 }
 
-.term-pitch-accent-disambiguation-list:after {
+.term-pitch-accent-disambiguation-list::after {
     content: " only)";
 }
 
-.term-pitch-accent-disambiguation+.term-pitch-accent-disambiguation:before {
+.term-pitch-accent-disambiguation+.term-pitch-accent-disambiguation::before {
     content: ", ";
 }
 
@@ -657,10 +657,10 @@ button.action-button {
     display: inline-block;
     position: relative;
 }
-.term-pitch-accent-character:before {
+.term-pitch-accent-character::before {
     border-color: var(--pitch-accent-annotation-color);
 }
-.term-pitch-accent-character[data-pitch='high']:before {
+.term-pitch-accent-character[data-pitch='high']::before {
     content: "";
     display: block;
     user-select: none;
@@ -673,7 +673,7 @@ button.action-button {
     border-top-width: 0.1em;
     border-top-style: solid;
 }
-.term-pitch-accent-character[data-pitch='high'][data-pitch-next='low']:before {
+.term-pitch-accent-character[data-pitch='high'][data-pitch-next='low']::before {
     right: -0.1em;
     height: 0.4em;
     border-right-width: 0.1em;
@@ -684,10 +684,10 @@ button.action-button {
     margin-right: 0.1em;
 }
 
-.term-pitch-accent-position:before {
+.term-pitch-accent-position::before {
     content: " [";
 }
-.term-pitch-accent-position:after {
+.term-pitch-accent-position::after {
     content: "]";
 }
 
@@ -785,7 +785,7 @@ button.action-button {
     color: var(--light-text-color);
 }
 
-.term-glossary-item[data-has-image=true][data-image-load-state=load-error] .term-glossary-image-container-overlay:after {
+.term-glossary-item[data-has-image=true][data-image-load-state=load-error] .term-glossary-image-container-overlay::after {
     content: "Image failed to load";
     display: table-cell;
     width: 100%;
@@ -828,11 +828,11 @@ button.action-button {
     font-size: 0;
 }
 
-.term-glossary-image-link-text:before {
+.term-glossary-image-link-text::before {
     content: "[";
 }
 
-.term-glossary-image-link-text:after {
+.term-glossary-image-link-text::after {
     content: "]";
 }
 
