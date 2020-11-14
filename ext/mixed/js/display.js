@@ -910,9 +910,7 @@ class Display extends EventDispatcher {
             container.appendChild(entry);
         }
 
-        if (typeof focusEntry === 'number') {
-            this._focusEntry(focusEntry, false);
-        }
+        this._focusEntry(typeof focusEntry === 'number' ? focusEntry : 0, false);
         if (typeof scrollX === 'number' || typeof scrollY === 'number') {
             let {x, y} = this._windowScroll;
             if (typeof scrollX === 'number') { x = scrollX; }
