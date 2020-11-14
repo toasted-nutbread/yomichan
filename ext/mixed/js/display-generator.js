@@ -138,6 +138,7 @@ class DisplayGenerator {
         const tagContainer = node.querySelector('.tags');
         const frequencyContainer = node.querySelector('.frequencies');
 
+        node.dataset.readingIsSame = `${!reading || reading === expression}`;
         node.dataset.frequency = termFrequency;
 
         this._appendFurigana(expressionContainer, furiganaSegments, this._appendKanjiLinks.bind(this));
