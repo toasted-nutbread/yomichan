@@ -1032,9 +1032,6 @@ class Display extends EventDispatcher {
     }
 
     _entrySetCurrent(index) {
-        index = Math.min(index, this._definitions.length - 1);
-        index = Math.max(index, 0);
-
         const entryPre = this._getEntry(this._index);
         if (entryPre !== null) {
             entryPre.classList.remove('entry-current');
@@ -1051,6 +1048,8 @@ class Display extends EventDispatcher {
     }
 
     _focusEntry(index, smooth) {
+        index = Math.max(Math.min(index, this._definitions.length - 1), 0);
+
         const entry = this._entrySetCurrent(index);
         let target = index === 0 || entry === null ? 0 : this._getElementTop(entry);
 
