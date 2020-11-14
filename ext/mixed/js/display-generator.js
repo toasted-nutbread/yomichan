@@ -471,18 +471,10 @@ class DisplayGenerator {
         }
     }
 
-    _isIterable(value) {
-        return (
-            value !== null &&
-            typeof value === 'object' &&
-            typeof value[Symbol.iterator] !== 'undefined'
-        );
-    }
-
-    _appendMultiple(container, createItem, detailsIterable, ...args) {
+    _appendMultiple(container, createItem, detailsArray, ...args) {
         let count = 0;
-        if (container !== null && this._isIterable(detailsIterable)) {
-            for (const details of detailsIterable) {
+        if (Array.isArray(detailsArray)) {
+            for (const details of detailsArray) {
                 const item = createItem(details, ...args);
                 if (item === null) { continue; }
                 container.appendChild(item);
