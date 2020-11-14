@@ -18,6 +18,24 @@
 /* Variables */
 :root {
     /* Layout */
+    --font-size-no-units: 14;
+    --font-size: calc(1px * var(--font-size-no-units));
+    --query-parser-font-size-no-units: 2;
+    --query-parser-font-size: calc(1em * var(--query-parser-font-size-no-units));
+    --expression-font-size-no-units: 2;
+    --expression-font-size: calc(1em * var(--expression-font-size-no-units));
+    --h2-font-size-no-units: 1.25;
+    --h2-font-size: calc(1em * var(--h2-font-size-no-units));
+
+    --line-height-no-units: 20;
+    --line-height: calc(var(--line-height-no-units) / var(--font-size-no-units));
+
+    --thin-border-size: calc(1em / var(--font-size-no-units));
+    --expression-thin-border-size: calc(1em / (var(--expression-font-size-no-units) * var(--font-size-no-units)));
+
+    --spinner-size-no-units: 32;
+    --action-button-size-no-units: 16;
+
     --entry-padding: 0.72em;
 
     /* Colors */
@@ -95,8 +113,8 @@
 }
 :root {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 14px;
-    line-height: 1.42857143; /* 14px => 20px */
+    font-size: var(--font-size);
+    line-height: var(--line-height);
 }
 body {
     margin: 0;
@@ -105,6 +123,7 @@ body {
     overflow-y: scroll; /* always show scroll bar */
     background-color: var(--background-color);
     color: var(--default-text-color);
+    font-size: inherit;
 }
 ol, ul {
     margin-top: 0;
@@ -117,14 +136,14 @@ ol, ul {
     bottom: 0.36em;
 }
 #spinner>img {
-    width: 2.28571428em; /* 14px => 32px */
-    height: 2.28571428em; /* 14px => 32px */
+    width: calc(1em * (var(--spinner-size-no-units) / var(--font-size-no-units)));
+    height: calc(1em * (var(--spinner-size-no-units) / var(--font-size-no-units)));
 }
 h2 {
-    font-size: 1.25em;
+    font-size: var(--h2-font-size);
     font-weight: normal;
     margin: 0.25em 0 0;
-    border-bottom: 0.05714285714285714em solid var(--light-border-color); /* 14px * 1.25em => 1px */
+    border-bottom: calc(1em / (var(--font-size-no-units) * var(--h2-font-size-no-units))) solid var(--light-border-color);
 }
 a {
     color: var(--popuplar-kanji-text-color);
@@ -141,7 +160,7 @@ a {
     height: 2.1em;
     box-sizing: border-box;
     padding: 0.25em 0.5em;
-    border-bottom: 0.07142857em solid var(--light-border-color); /* 14px => 1px */
+    border-bottom: var(--thin-border-size) solid var(--light-border-color);
     background-color: var(--background-color);
     z-index: 10;
 }
@@ -172,8 +191,12 @@ a {
 /* Search page */
 #query-parser-content {
     margin-top: 0.5em;
-    font-size: 2em;
+    font-size: var(--query-parser-font-size);
     white-space: pre-wrap;
+}
+#query-parser-content:not(:empty) {
+    padding-bottom: 0.25em;
+    border-bottom: var(--expression-thin-border-size) solid var(--light-border-color);
 }
 #query-parser-content[data-term-spacing=true] .query-parser-term {
     margin-right: 0.2em;
@@ -181,7 +204,6 @@ a {
 :root[data-yomichan-page=float] #query-parser-container {
     padding-left: var(--entry-padding);
     padding-right: var(--entry-padding);
-    border-bottom: 0.07142857142857142em solid var(--light-border-color); /* 14px => 1px */
 }
 
 
@@ -221,8 +243,8 @@ button.action-button {
 }
 .action-button[data-icon]::before {
     content: "";
-    width: 1.14285714em; /* 14px => 16px */
-    height: 1.14285714em; /* 14px => 16px */
+    width: calc(1em * (var(--action-button-size-no-units) / var(--font-size-no-units)));
+    height: calc(1em * (var(--action-button-size-no-units) / var(--font-size-no-units)));
     display: block;
     background-color: transparent;
     background-repeat: no-repeat;
@@ -320,7 +342,7 @@ button.action-button {
     padding-right: var(--entry-padding);
 }
 .term-expression .kanji-link {
-    border-bottom: 0.03571428em dashed var(--dark-border-color); /* 28px => 1px */
+    border-bottom: var(--expression-thin-border-size) dashed var(--dark-border-color);
     color: var(--default-text-color);
     text-decoration: none;
     cursor: pointer;
@@ -344,7 +366,7 @@ button.action-button {
     content: ":";
 }
 .entry+.entry {
-    border-top: 0.07142857em solid var(--light-border-color); /* 14px => 1px */
+    border-top: var(--thin-border-size) solid var(--light-border-color);
 }
 .term-reasons {
     display: inline-block;
@@ -363,7 +385,7 @@ button.action-button {
 }
 .term-expression-text {
     display: inline-block;
-    font-size: 2em;
+    font-size: var(--expression-font-size);
 }
 .term-expression-details {
     display: inline;
@@ -389,7 +411,7 @@ button.action-button {
     z-index: 1;
 }
 .entry[data-expression-multi=true] .term-expression-list>.term-expression:not(:last-of-type) .term-expression-details {
-    left: -2em;
+    left: calc(-1 * var(--expression-font-size));
 }
 .entry[data-expression-multi=true] .term-expression:hover .term-expression-details {
     visibility: visible;
@@ -504,7 +526,7 @@ button.action-button {
     display: none;
 }
 .term-pitch-accent-container {
-    border-bottom: 0.05714285714285714em solid var(--light-border-color); /* 14px * 1.25em => 1px */
+    border-bottom: var(--thin-border-size) solid var(--light-border-color);
     padding-bottom: 0.25em;
     margin-bottom: 0.25em;
 }
@@ -663,7 +685,7 @@ button.action-button {
     position: relative;
     vertical-align: top;
     line-height: 0;
-    font-size: 0.07142857em; /* 14px => 1px */
+    font-size: calc(1em / var(--font-size-no-units));
     overflow: hidden;
     background-color: var(--glossary-image-background-color);
 }
@@ -680,8 +702,8 @@ button.action-button {
     top: 0;
     width: 100%;
     height: 100%;
-    font-size: 14em; /* 1px => 14px; */
-    line-height: 1.42857143; /* 14px => 20px */
+    font-size: calc(1em * var(--font-size-no-units));
+    line-height: var(--line-height);
     display: table;
     table-layout: fixed;
     white-space: normal;
@@ -773,7 +795,7 @@ button.action-button {
     border-collapse: collapse;
 }
 .kanji-glyph-data>tbody>tr>* {
-    border-top: 0.07142857em solid var(--medium-border-color); /* 14px => 1px */
+    border-top: var(--thin-border-size) solid var(--medium-border-color);
     text-align: left;
     vertical-align: top;
     padding: 0.36em;
