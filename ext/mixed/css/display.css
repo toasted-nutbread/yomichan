@@ -15,9 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/*
- * Variables
- */
+/* Variables */
 
 :root {
     --background-color: #ffffff;
@@ -80,9 +78,7 @@
 }
 
 
-/*
- * Fonts
- */
+/* Fonts */
 
 @font-face {
     font-family: kanji-stroke-orders;
@@ -90,9 +86,7 @@
 }
 
 
-/*
- * General
- */
+/* General */
 
 :root[data-yomichan-page=float]:not([data-yomichan-theme]),
 :root[data-yomichan-page=float]:not([data-yomichan-theme]) body {
@@ -145,9 +139,7 @@ a {
 }
 
 
-/*
- * Navigation
- */
+/* Navigation */
 
 .navigation-header {
     top: 0;
@@ -189,9 +181,7 @@ a {
 }
 
 
-/*
- * Search page
- */
+/* Search page */
 
 #query-parser-content {
     margin-top: 0.5em;
@@ -214,9 +204,7 @@ a {
 }
 
 
-/*
- * Entries
- */
+/* Entries */
 
 .entry {
     padding-top: 0.72em;
@@ -583,9 +571,7 @@ button.action-button {
 }
 
 
-/*
- * Pitch accent styles
- */
+/* Pitch accent styles */
 
 .entry[data-pitch-accent-count='0'] .term-pitch-accent-container {
     display: none;
@@ -726,9 +712,7 @@ button.action-button {
 }
 
 
-/*
- * Pitch accent graph styles
- */
+/* Pitch accent graph styles */
 
 .term-pitch-accent-graph {
     display: block;
@@ -764,9 +748,7 @@ button.action-button {
 }
 
 
-/*
- * Glossary images
- */
+/* Glossary images */
 
 .term-glossary-image-container {
     display: inline-block;
@@ -886,9 +868,7 @@ button.action-button {
 }
 
 
-/*
- * Kanji
- */
+/* Kanji */
 
 .kanji-glyph {
     font-family: kanji-stroke-orders;
