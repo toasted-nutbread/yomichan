@@ -15,7 +15,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 class WindowScroll {
     constructor() {
         this._animationRequestId = null;
@@ -26,6 +25,14 @@ class WindowScroll {
         this._animationEndX = 0;
         this._animationEndY = 0;
         this._requestAnimationFrameCallback = this._onAnimationFrame.bind(this);
+    }
+
+    get x() {
+        return window.scrollX || window.pageXOffset;
+    }
+
+    get y() {
+        return window.scrollY || window.pageYOffset;
     }
 
     toY(y) {
@@ -60,6 +67,8 @@ class WindowScroll {
         this._animationRequestId = null;
     }
 
+    // Private
+
     _onAnimationFrame(time) {
         if (time >= this._animationEndTime) {
             window.scroll(this._animationEndX, this._animationEndY);
@@ -67,24 +76,16 @@ class WindowScroll {
             return;
         }
 
-        const t = WindowScroll.easeInOutCubic((time - this._animationStartTime) / (this._animationEndTime - this._animationStartTime));
+        const t = this._easeInOutCubic((time - this._animationStartTime) / (this._animationEndTime - this._animationStartTime));
         window.scroll(
-            WindowScroll.lerp(this._animationStartX, this._animationEndX, t),
-            WindowScroll.lerp(this._animationStartY, this._animationEndY, t)
+            this._lerp(this._animationStartX, this._animationEndX, t),
+            this._lerp(this._animationStartY, this._animationEndY, t)
         );
 
         this._animationRequestId = window.requestAnimationFrame(this._requestAnimationFrameCallback);
     }
 
-    get x() {
-        return window.scrollX || window.pageXOffset;
-    }
-
-    get y() {
-        return window.scrollY || window.pageYOffset;
-    }
-
-    static easeInOutCubic(t) {
+    _easeInOutCubic(t) {
         if (t < 0.5) {
             return (4.0 * t * t * t);
         } else {
@@ -93,7 +94,7 @@ class WindowScroll {
         }
     }
 
-    static lerp(start, end, percent) {
+    _lerp(start, end, percent) {
         return (end - start) * percent + start;
     }
 }
