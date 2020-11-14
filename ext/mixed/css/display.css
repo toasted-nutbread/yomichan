@@ -17,6 +17,10 @@
 
 /* Variables */
 :root {
+    /* Layout */
+    --entry-padding: 0.72em;
+
+    /* Colors */
     --background-color: #ffffff;
     --glossary-image-background-color: #eeeeee;
 
@@ -46,6 +50,7 @@
     --tag-pitch-accent-dictionary-background-color: #6640be;
 }
 :root[data-yomichan-theme=dark] {
+    /* Colors */
     --background-color: #1e1e1e;
     --glossary-image-background-color: #2f2f2f;
 
@@ -103,7 +108,7 @@ body {
 }
 ol, ul {
     margin-top: 0;
-    margin-bottom: 0.72em;
+    margin-bottom: var(--entry-padding);
 }
 #spinner {
     position: fixed;
@@ -174,8 +179,8 @@ a {
     margin-right: 0.2em;
 }
 :root[data-yomichan-page=float] #query-parser-container {
-    padding-left: 0.72em;
-    padding-right: 0.72em;
+    padding-left: var(--entry-padding);
+    padding-right: var(--entry-padding);
     border-bottom: 0.07142857142857142em solid var(--light-border-color); /* 14px => 1px */
 }
 
@@ -307,12 +312,12 @@ button.action-button {
 
 /* Entries */
 .entry {
-    padding-top: 0.72em;
-    padding-bottom: 0.72em;
+    padding-top: var(--entry-padding);
+    padding-bottom: var(--entry-padding);
 }
 :root[data-yomichan-page=float] .entry {
-    padding-left: 0.72em;
-    padding-right: 0.72em;
+    padding-left: var(--entry-padding);
+    padding-right: var(--entry-padding);
 }
 .term-expression .kanji-link {
     border-bottom: 0.03571428em dashed var(--dark-border-color); /* 28px => 1px */
