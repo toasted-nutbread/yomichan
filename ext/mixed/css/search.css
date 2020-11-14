@@ -93,7 +93,7 @@ h1 {
     padding: 0.25em 0 0;
     font-weight: normal;
     box-sizing: border-box;
-    border-bottom: var(--thin-border-size) solid var(--separator-color1);
+    border-bottom: calc(1em / (var(--font-size-no-units) * 2)) solid var(--separator-color1);
 }
 
 /* Material design select */
