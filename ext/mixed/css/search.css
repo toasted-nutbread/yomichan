@@ -229,17 +229,7 @@ label.toggle {
 }
 
 /* Content layout */
-.content {
-    flex: 1 0 auto;
-    flex-flow: row nowrap;
-    width: 100%;
-    display: flex;
-    position: relative;
-    align-items: stretch;
-    justify-content: center;
-}
-.content-center {
-    flex: 1 1 auto;
+.content-body {
     width: var(--main-content-size);
     padding: 0 var(--main-content-padding);
     max-width: var(--main-content-size);
