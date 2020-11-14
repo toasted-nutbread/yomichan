@@ -466,7 +466,7 @@ class Display extends EventDispatcher {
             this._closePopups();
             this._setEventListenersActive(false);
 
-            let asigned = false;
+            let assigned = false;
             const eventArgs = {type, urlSearchParams, token};
             this._historyHasChanged = true;
             this._contentType = type;
@@ -476,7 +476,7 @@ class Display extends EventDispatcher {
                 case 'kanji':
                     {
                         const isTerms = (type === 'terms');
-                        asigned = await this._setContentTermsOrKanji(token, isTerms, urlSearchParams, eventArgs);
+                        assigned = await this._setContentTermsOrKanji(token, isTerms, urlSearchParams, eventArgs);
                     }
                     break;
                 case 'unloaded':
@@ -485,14 +485,14 @@ class Display extends EventDispatcher {
                         eventArgs.content = content;
                         this.trigger('contentUpdating', eventArgs);
                         this._setContentExtensionUnloaded();
-                        asigned = true;
+                        assigned = true;
                     }
                     break;
             }
 
             const stale = (this._setContentToken !== token);
             if (!stale) {
-                if (!asigned) {
+                if (!assigned) {
                     type = 'clear';
                     this._contentType = type;
                     const {content} = this._history;
