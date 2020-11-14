@@ -92,9 +92,7 @@ class DisplayGenerator {
         const codepointsContainer = node.querySelector('.kanji-codepoints');
         const dictionaryIndicesContainer = node.querySelector('.kanji-dictionary-indices');
 
-        if (glyphContainer !== null) {
-            glyphContainer.textContent = details.character;
-        }
+        glyphContainer.textContent = details.character;
 
         this._appendMultiple(frequenciesContainer, this._createFrequencyTag.bind(this), details.frequencies);
         this._appendMultiple(tagContainer, this._createTag.bind(this), details.tags);
@@ -102,18 +100,10 @@ class DisplayGenerator {
         this._appendMultiple(chineseReadingsContainer, this._createKanjiReading.bind(this), details.onyomi);
         this._appendMultiple(japaneseReadingsContainer, this._createKanjiReading.bind(this), details.kunyomi);
 
-        if (statisticsContainer !== null) {
-            statisticsContainer.appendChild(this._createKanjiInfoTable(details.stats.misc));
-        }
-        if (classificationsContainer !== null) {
-            classificationsContainer.appendChild(this._createKanjiInfoTable(details.stats.class));
-        }
-        if (codepointsContainer !== null) {
-            codepointsContainer.appendChild(this._createKanjiInfoTable(details.stats.code));
-        }
-        if (dictionaryIndicesContainer !== null) {
-            dictionaryIndicesContainer.appendChild(this._createKanjiInfoTable(details.stats.index));
-        }
+        statisticsContainer.appendChild(this._createKanjiInfoTable(details.stats.misc));
+        classificationsContainer.appendChild(this._createKanjiInfoTable(details.stats.class));
+        codepointsContainer.appendChild(this._createKanjiInfoTable(details.stats.code));
+        dictionaryIndicesContainer.appendChild(this._createKanjiInfoTable(details.stats.index));
 
         return node;
     }
@@ -185,9 +175,7 @@ class DisplayGenerator {
     _createTermGlossaryItemText(glossary) {
         const node = this._templates.instantiate('term-glossary-item');
         const container = node.querySelector('.term-glossary');
-        if (container !== null) {
-            this._appendMultilineText(container, glossary);
-        }
+        this._appendMultilineText(container, glossary);
         return node;
     }
 
@@ -270,9 +258,7 @@ class DisplayGenerator {
     _createKanjiGlossaryItem(glossary) {
         const node = this._templates.instantiate('kanji-glossary-item');
         const container = node.querySelector('.kanji-glossary');
-        if (container !== null) {
-            this._appendMultilineText(container, glossary);
-        }
+        this._appendMultilineText(container, glossary);
         return node;
     }
 
@@ -284,15 +270,12 @@ class DisplayGenerator {
 
     _createKanjiInfoTable(details) {
         const node = this._templates.instantiate('kanji-info-table');
-
         const container = node.querySelector('.kanji-info-table-body');
 
-        if (container !== null) {
-            const count = this._appendMultiple(container, this._createKanjiInfoTableItem.bind(this), details);
-            if (count === 0) {
-                const n = this._createKanjiInfoTableItemEmpty();
-                container.appendChild(n);
-            }
+        const count = this._appendMultiple(container, this._createKanjiInfoTableItem.bind(this), details);
+        if (count === 0) {
+            const n = this._createKanjiInfoTableItemEmpty();
+            container.appendChild(n);
         }
 
         return node;
@@ -302,12 +285,8 @@ class DisplayGenerator {
         const node = this._templates.instantiate('kanji-info-table-item');
         const nameNode = node.querySelector('.kanji-info-table-item-header');
         const valueNode = node.querySelector('.kanji-info-table-item-value');
-        if (nameNode !== null) {
-            nameNode.textContent = details.notes || details.name;
-        }
-        if (valueNode !== null) {
-            valueNode.textContent = details.value;
-        }
+        nameNode.textContent = details.notes || details.name;
+        valueNode.textContent = details.value;
         return node;
     }
 
@@ -461,14 +440,10 @@ class DisplayGenerator {
         const node = this._templates.instantiate('tag-frequency');
 
         let n = node.querySelector('.term-frequency-dictionary-name');
-        if (n !== null) {
-            n.textContent = details.dictionary;
-        }
+        n.textContent = details.dictionary;
 
         n = node.querySelector('.term-frequency-value');
-        if (n !== null) {
-            n.textContent = `${details.frequency}`;
-        }
+        n.textContent = `${details.frequency}`;
 
         node.dataset.dictionary = details.dictionary;
         node.dataset.frequency = details.frequency;
