@@ -51,7 +51,7 @@ class DisplayGenerator {
         const definitionsContainer = node.querySelector('.term-definition-list');
         const bodyContainer = node.querySelector('.term-entry-body');
 
-        const {termTags, expressions, type, reasons, frequencies} = details;
+        const {expressions, type, reasons, frequencies} = details;
         const definitions = (type === 'term' ? [details] : details.definitions);
         const merged = (type === 'termMerged' || type === 'termMergedByGlossary');
         const pitches = DictionaryDataUtil.getPitchAccentInfos(details);
@@ -69,7 +69,7 @@ class DisplayGenerator {
             (pitches.length > 0 ? 1 : 0)
         }`;
 
-        this._appendMultiple(expressionsContainer, this._createTermExpression.bind(this), expressions, termTags);
+        this._appendMultiple(expressionsContainer, this._createTermExpression.bind(this), expressions);
         this._appendMultiple(reasonsContainer, this._createTermReason.bind(this), reasons);
         this._appendMultiple(frequenciesContainer, this._createFrequencyTag.bind(this), frequencies);
         this._appendMultiple(pitchesContainer, this._createPitches.bind(this), pitches);
@@ -125,36 +125,25 @@ class DisplayGenerator {
 
     // Private
 
-    _createTermExpression(details, termTags) {
+    _createTermExpression(details) {
+        const {termFrequency, furiganaSegments, expression, reading, termTags, frequencies} = details;
+
+        const searchQueries = [];
+        if (expression) { searchQueries.push(expression); }
+        if (reading) { searchQueries.push(reading); }
+
         const node = this._templates.instantiate('term-expression');
 
         const expressionContainer = node.querySelector('.term-expression-text');
         const tagContainer = node.querySelector('.tags');
         const frequencyContainer = node.querySelector('.frequencies');
 
-        if (details.termFrequency) {
-            node.dataset.frequency = details.termFrequency;
-        }
+        node.dataset.frequency = termFrequency;
 
-        if (expressionContainer !== null) {
-            let furiganaSegments = details.furiganaSegments;
-            if (!Array.isArray(furiganaSegments)) {
-                // This case should not occur
-                furiganaSegments = [{text: details.expression, furigana: details.reading}];
-            }
-            this._appendFurigana(expressionContainer, furiganaSegments, this._appendKanjiLinks.bind(this));
-        }
-
-        if (!Array.isArray(termTags)) {
-            // Fallback
-            termTags = details.termTags;
-        }
-        const searchQueries = [details.expression, details.reading]
-            .filter((x) => !!x)
-            .map((x) => ({query: x}));
+        this._appendFurigana(expressionContainer, furiganaSegments, this._appendKanjiLinks.bind(this));
         this._appendMultiple(tagContainer, this._createTag.bind(this), termTags);
         this._appendMultiple(tagContainer, this._createSearchTag.bind(this), searchQueries);
-        this._appendMultiple(frequencyContainer, this._createFrequencyTag.bind(this), details.frequencies);
+        this._appendMultiple(frequencyContainer, this._createFrequencyTag.bind(this), frequencies);
 
         return node;
     }
@@ -343,13 +332,10 @@ class DisplayGenerator {
         return node;
     }
 
-    _createSearchTag(details) {
+    _createSearchTag(text) {
         const node = this._templates.instantiate('tag-search');
-
-        node.textContent = details.query;
-
-        node.dataset.query = details.query;
-
+        node.textContent = text;
+        node.dataset.query = text;
         return node;
     }
 
