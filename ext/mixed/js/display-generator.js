@@ -91,7 +91,6 @@ class DisplayGenerator {
         const classificationsContainer = node.querySelector('.kanji-classifications');
         const codepointsContainer = node.querySelector('.kanji-codepoints');
         const dictionaryIndicesContainer = node.querySelector('.kanji-dictionary-indices');
-        const debugInfoContainer = node.querySelector('.debug-info');
 
         if (glyphContainer !== null) {
             glyphContainer.textContent = details.character;
@@ -114,10 +113,6 @@ class DisplayGenerator {
         }
         if (dictionaryIndicesContainer !== null) {
             dictionaryIndicesContainer.appendChild(this._createKanjiInfoTable(details.stats.index));
-        }
-
-        if (debugInfoContainer !== null) {
-            debugInfoContainer.textContent = JSON.stringify(details, null, 4);
         }
 
         return node;
