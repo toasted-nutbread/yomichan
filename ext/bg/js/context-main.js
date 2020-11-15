@@ -19,73 +19,86 @@
  * api
  */
 
-function showExtensionInfo(manifest) {
-    const node = document.getElementById('extension-info');
-    if (node === null) { return; }
+class DisplayController {
+    constructor() {
+    }
 
-    node.textContent = `${manifest.name} v${manifest.version}`;
-}
+    async prepare() {
+        const manifest = chrome.runtime.getManifest();
 
-function setupButtonEvents(selector, command, url) {
-    const nodes = document.querySelectorAll(selector);
-    for (const node of nodes) {
-        node.addEventListener('click', (e) => {
-            if (e.button !== 0) { return; }
-            api.commandExec(command, {mode: e.ctrlKey ? 'newTab' : 'existingOrNewTab'});
-            e.preventDefault();
-        }, false);
-        node.addEventListener('auxclick', (e) => {
-            if (e.button !== 1) { return; }
-            api.commandExec(command, {mode: 'newTab'});
-            e.preventDefault();
-        }, false);
+        this._showExtensionInfo(manifest);
+        this._setupEnvironment();
+        this._setupOptions();
+        this._setupButtonEvents('.action-open-search', 'search', chrome.runtime.getURL('/bg/search.html'));
+        this._setupButtonEvents('.action-open-options', 'options', chrome.runtime.getURL(manifest.options_ui.page));
+        this._setupButtonEvents('.action-open-help', 'help', 'https://foosoft.net/projects/yomichan/');
+    }
 
-        if (typeof url === 'string') {
-            node.href = url;
-            node.target = '_blank';
-            node.rel = 'noopener';
+    // Private
+
+    _showExtensionInfo(manifest) {
+        const node = document.getElementById('extension-info');
+        if (node === null) { return; }
+
+        node.textContent = `${manifest.name} v${manifest.version}`;
+    }
+
+    _setupButtonEvents(selector, command, url) {
+        const nodes = document.querySelectorAll(selector);
+        for (const node of nodes) {
+            node.addEventListener('click', (e) => {
+                if (e.button !== 0) { return; }
+                api.commandExec(command, {mode: e.ctrlKey ? 'newTab' : 'existingOrNewTab'});
+                e.preventDefault();
+            }, false);
+            node.addEventListener('auxclick', (e) => {
+                if (e.button !== 1) { return; }
+                api.commandExec(command, {mode: 'newTab'});
+                e.preventDefault();
+            }, false);
+
+            if (typeof url === 'string') {
+                node.href = url;
+                node.target = '_blank';
+                node.rel = 'noopener';
+            }
         }
     }
-}
 
-async function setupEnvironment() {
-    // Firefox mobile opens this page as a full webpage.
-    const {browser} = await api.getEnvironmentInfo();
-    document.documentElement.dataset.mode = (browser === 'firefox-mobile' ? 'full' : 'mini');
-}
-
-async function setupOptions() {
-    const optionsContext = {
-        depth: 0,
-        url: window.location.href
-    };
-    const options = await api.optionsGet(optionsContext);
-
-    const extensionEnabled = options.general.enable;
-    const onToggleChanged = () => api.commandExec('toggle');
-    for (const toggle of document.querySelectorAll('#enable-search,#enable-search2')) {
-        toggle.checked = extensionEnabled;
-        toggle.addEventListener('change', onToggleChanged, false);
+    async _setupEnvironment() {
+        // Firefox mobile opens this page as a full webpage.
+        const {browser} = await api.getEnvironmentInfo();
+        document.documentElement.dataset.mode = (browser === 'firefox-mobile' ? 'full' : 'mini');
     }
 
-    setTimeout(() => {
-        document.body.dataset.loaded = 'true';
-    }, 10);
+    async _setupOptions() {
+        const optionsContext = {
+            depth: 0,
+            url: window.location.href
+        };
+        const options = await api.optionsGet(optionsContext);
+
+        const extensionEnabled = options.general.enable;
+        const onToggleChanged = () => api.commandExec('toggle');
+        for (const toggle of document.querySelectorAll('#enable-search,#enable-search2')) {
+            toggle.checked = extensionEnabled;
+            toggle.addEventListener('change', onToggleChanged, false);
+        }
+
+        setTimeout(() => {
+            document.body.dataset.loaded = 'true';
+        }, 10);
+    }
 }
 
 (async () => {
     api.forwardLogsToBackend();
     await yomichan.backendReady();
 
-    const manifest = chrome.runtime.getManifest();
-
     api.logIndicatorClear();
-    showExtensionInfo(manifest);
-    setupEnvironment();
-    setupOptions();
-    setupButtonEvents('.action-open-search', 'search', chrome.runtime.getURL('/bg/search.html'));
-    setupButtonEvents('.action-open-options', 'options', chrome.runtime.getURL(manifest.options_ui.page));
-    setupButtonEvents('.action-open-help', 'help', 'https://foosoft.net/projects/yomichan/');
+
+    const displayController = new DisplayController();
+    displayController.prepare();
 
     yomichan.ready();
 })();
