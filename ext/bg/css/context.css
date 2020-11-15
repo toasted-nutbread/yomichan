@@ -245,10 +245,17 @@ body[data-loaded=true] .toggle-group {
     display: block;
     width: 16px;
     height: 16px;
-    background-position: center center;
-    background-size: 16px 16px;
-    background-repeat: no-repeat;
     box-sizing: content-box;
+    background-color: #333333;
+    mask-repeat: no-repeat;
+    mask-position: center center;
+    mask-mode: alpha;
+    mask-size: 16px 16px;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center center;
+    -webkit-mask-mode: alpha;
+    -webkit-mask-size: 16px 16px;
+    pointer-events: none;
 }
 .nav-button:hover {
     z-index: 1;
@@ -266,19 +273,26 @@ body[data-loaded=true] .toggle-group {
     outline: none;
 }
 .nav-button[data-icon=magnifying-glass]::after {
-    background-image: url(/mixed/img/magnifying-glass.svg);
+    mask-image: url(/mixed/img/magnifying-glass.svg);
+    -webkit-mask-image: url(/mixed/img/magnifying-glass.svg);
 }
 .nav-button[data-icon=cog]::after {
-    background-image: url(/mixed/img/cog.svg);
+    mask-image: url(/mixed/img/cog.svg);
+    -webkit-mask-image: url(/mixed/img/cog.svg);
 }
 .nav-button[data-icon=question-mark]::after {
-    background-image: url(/mixed/img/question-mark-circle.svg);
+    mask-image: url(/mixed/img/question-mark-circle.svg);
+    -webkit-mask-image: url(/mixed/img/question-mark-circle.svg);
 }
-.nav-button:first-of-type {
+.nav-button[data-icon=profile]::after {
+    mask-image: url(/mixed/img/profile.svg);
+    -webkit-mask-image: url(/mixed/img/profile.svg);
+}
+.nav-button:first-child {
     border-top-left-radius: 3px;
     border-bottom-left-radius: 3px;
 }
-.nav-button:last-of-type {
+.nav-button:last-child {
     border-top-right-radius: 3px;
     border-bottom-right-radius: 3px;
 }
