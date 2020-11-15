@@ -406,6 +406,10 @@ class Display extends EventDispatcher {
         return query;
     }
 
+    close() {
+        // NOP
+    }
+
     // Message handlers
 
     _onMessage({action, params}, sender, callback) {
