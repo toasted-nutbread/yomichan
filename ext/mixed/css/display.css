@@ -55,6 +55,9 @@
     --progress-bar-active-transition-start-delay: 0.0625s;
     --progress-bar-animation-duration: 2s;
 
+    --entry-current-indicator: calc(4em / var(--font-size-no-units));
+    --entry-current-indicator-transition-duration: 0.125s;
+
     /* Colors */
     --background-color: #ffffff;
     --glossary-image-background-color: #eeeeee;
@@ -101,6 +104,7 @@
 
     --progress-bar-track-color: #cccccc;
     --progress-bar-indicator-color: #0275d8;
+    --entry-current-indicator-color: #0275d8;
 }
 :root[data-yomichan-theme=dark] {
     /* Colors */
@@ -149,6 +153,7 @@
 
     --progress-bar-track-color: #3a3a3a;
     --progress-bar-indicator-color: #0275d8;
+    --entry-current-indicator-color: #0275d8;
 }
 
 
@@ -521,6 +526,26 @@ button.action-button {
 .entry {
     padding: var(--entry-vertical-padding) var(--entry-horizontal-padding);
     position: relative;
+}
+.entry>.entry-current-indicator {
+    display: block;
+    position: absolute;
+    left: calc(-1 * var(--main-content-horizontal-padding));
+    top: 0;
+    bottom: 0;
+    width: 0;
+    background-color: var(--entry-current-indicator-color);
+    visibility: hidden;
+    transition:
+        width var(--entry-current-indicator-transition-duration) linear,
+        visibility 0s linear var(--entry-current-indicator-transition-duration);
+}
+.entry.entry-current>.entry-current-indicator {
+    width: var(--entry-current-indicator);
+    visibility: visible;
+    transition:
+        width var(--entry-current-indicator-transition-duration) linear,
+        visibility 0s linear 0s;
 }
 .term-expression .kanji-link {
     border-bottom: var(--expression-thin-border-size) dashed var(--dark-border-color);
