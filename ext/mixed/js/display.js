@@ -932,6 +932,7 @@ class Display extends EventDispatcher {
                 this._displayGenerator.createTermEntry(definitions[i]) :
                 this._displayGenerator.createKanjiEntry(definitions[i])
             );
+            entry.dataset.index = `${i}`;
             container.appendChild(entry);
         }
 
