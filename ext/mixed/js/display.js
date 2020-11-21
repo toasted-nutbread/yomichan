@@ -87,7 +87,7 @@ class Display extends EventDispatcher {
             renderTemplate: this._renderTemplate.bind(this)
         });
         this._updateAdderButtonsPromise = Promise.resolve();
-        this._contentScrollElement = document.querySelector('#content');
+        this._contentScrollElement = document.querySelector('#content-scroll');
         this._contentScrollBodyElement = document.querySelector('#content-body');
         this._contentScrollFocusElement = document.querySelector('#content-scroll-focus');
         this._windowScroll = new WindowScroll(this._contentScrollElement);
