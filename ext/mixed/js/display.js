@@ -179,10 +179,6 @@ class Display extends EventDispatcher {
         return this._mode;
     }
 
-    get ownerFrameId() {
-        return this._ownerFrameId;
-    }
-
     async prepare() {
         const {documentElement} = document;
         this._audioSystem.prepare();
