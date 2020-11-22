@@ -27,44 +27,6 @@ class DisplayFloat extends Display {
     async prepare() {
         await super.prepare();
 
-        document.documentElement.addEventListener('mouseup', this._onMouseUp.bind(this), false);
-        document.documentElement.addEventListener('click', this._onClick.bind(this), false);
-        document.documentElement.addEventListener('auxclick', this._onClick.bind(this), false);
-
         this.initializeState();
-    }
-
-    // Private
-
-    _onMouseUp(e) {
-        switch (e.button) {
-            case 3: // Back
-                if (this._history.hasPrevious()) {
-                    e.preventDefault();
-                }
-                break;
-            case 4: // Forward
-                if (this._history.hasNext()) {
-                    e.preventDefault();
-                }
-                break;
-        }
-    }
-
-    _onClick(e) {
-        switch (e.button) {
-            case 3: // Back
-                if (this._history.hasPrevious()) {
-                    e.preventDefault();
-                    this._history.back();
-                }
-                break;
-            case 4: // Forward
-                if (this._history.hasNext()) {
-                    e.preventDefault();
-                    this._history.forward();
-                }
-                break;
-        }
     }
 }

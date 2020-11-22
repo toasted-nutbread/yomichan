@@ -184,6 +184,7 @@ class Display extends EventDispatcher {
     }
 
     async prepare() {
+        const {documentElement} = document;
         this._audioSystem.prepare();
         this._updateMode();
         this._setInteractive(true);
@@ -203,6 +204,11 @@ class Display extends EventDispatcher {
         window.addEventListener('focus', this._onWindowFocus.bind(this), false);
         this._updateFocusedElement();
         this._progressIndicatorVisible.on('change', this._onProgressIndicatorVisibleChanged.bind(this));
+        if (this._pageType === 'popup' && documentElement !== null) {
+            documentElement.addEventListener('mouseup', this._onDocumentElementMouseUp.bind(this), false);
+            documentElement.addEventListener('click', this._onDocumentElementClick.bind(this), false);
+            documentElement.addEventListener('auxclick', this._onDocumentElementClick.bind(this), false);
+        }
     }
 
     initializeState() {
@@ -804,6 +810,38 @@ class Display extends EventDispatcher {
         if (index < 0 || index >= this._definitions.length) { return; }
         const definition = this._definitions[index];
         console.log(definition);
+    }
+
+    _onDocumentElementMouseUp(e) {
+        switch (e.button) {
+            case 3: // Back
+                if (this._history.hasPrevious()) {
+                    e.preventDefault();
+                }
+                break;
+            case 4: // Forward
+                if (this._history.hasNext()) {
+                    e.preventDefault();
+                }
+                break;
+        }
+    }
+
+    _onDocumentElementClick(e) {
+        switch (e.button) {
+            case 3: // Back
+                if (this._history.hasPrevious()) {
+                    e.preventDefault();
+                    this._history.back();
+                }
+                break;
+            case 4: // Forward
+                if (this._history.hasNext()) {
+                    e.preventDefault();
+                    this._history.forward();
+                }
+                break;
+        }
     }
 
     _updateDocumentOptions(options) {
