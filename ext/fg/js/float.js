@@ -17,7 +17,6 @@
 
 /* global
  * Display
- * api
  */
 
 class DisplayFloat extends Display {
@@ -40,16 +39,6 @@ class DisplayFloat extends Display {
 
     onEscape() {
         this.close();
-    }
-
-    async getDocumentTitle() {
-        try {
-            const targetFrameId = 0;
-            const {title} = await api.crossFrame.invoke(targetFrameId, 'getDocumentInformation');
-            return title;
-        } catch (e) {
-            return '';
-        }
     }
 
     // Message handling

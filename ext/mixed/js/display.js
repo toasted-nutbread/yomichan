@@ -353,6 +353,9 @@ class Display extends EventDispatcher {
     }
 
     async getDocumentTitle() {
+        if (this._pageType === 'float') {
+            return await this._getRootFrameDocumentTitle();
+        }
         return document.title;
     }
 
@@ -1719,5 +1722,14 @@ class Display extends EventDispatcher {
         textarea.select();
         document.execCommand('copy');
         parent.removeChild(textarea);
+    }
+
+    async _getRootFrameDocumentTitle() {
+        try {
+            const {title} = await api.crossFrame.invoke(0, 'getDocumentInformation');
+            return title;
+        } catch (e) {
+            return '';
+        }
     }
 }
