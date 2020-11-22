@@ -34,10 +34,6 @@ class DisplayFloat extends Display {
         this.initializeState();
     }
 
-    onEscape() {
-        this.close();
-    }
-
     // Private
 
     _onMouseUp(e) {

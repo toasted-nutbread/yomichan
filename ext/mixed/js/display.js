@@ -227,7 +227,9 @@ class Display extends EventDispatcher {
     }
 
     onEscape() {
-        throw new Error('Override me');
+        if (this._pageType === 'popup') {
+            this.close();
+        }
     }
 
     onKeyDown(e) {
