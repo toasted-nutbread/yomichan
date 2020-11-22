@@ -37,8 +37,6 @@ class DisplayFloat extends Display {
         this.registerHotkeys([
             {key: 'C', modifiers: ['ctrl'], action: 'copyHostSelection'}
         ]);
-
-        this.autoPlayAudioDelay = 400;
     }
 
     async prepare() {

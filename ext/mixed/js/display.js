@@ -53,7 +53,7 @@ class Display extends EventDispatcher {
         this._clickScanPrevent = false;
         this._setContentToken = null;
         this._autoPlayAudioTimer = null;
-        this._autoPlayAudioDelay = 0;
+        this._autoPlayAudioDelay = 400;
         this._mediaLoader = new MediaLoader();
         this._displayGenerator = new DisplayGenerator({mediaLoader: this._mediaLoader});
         this._hotkeys = new Map();
