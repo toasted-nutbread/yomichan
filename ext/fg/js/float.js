@@ -22,9 +22,6 @@
 class DisplayFloat extends Display {
     constructor() {
         super('popup');
-        this.registerWindowMessageHandlers([
-            ['extensionUnloaded', {async: false, handler: this._onMessageExtensionUnloaded.bind(this)}]
-        ]);
     }
 
     async prepare() {
@@ -39,13 +36,6 @@ class DisplayFloat extends Display {
 
     onEscape() {
         this.close();
-    }
-
-    // Message handling
-
-    _onMessageExtensionUnloaded() {
-        if (yomichan.isExtensionUnloaded) { return; }
-        yomichan.triggerExtensionUnloaded();
     }
 
     // Private

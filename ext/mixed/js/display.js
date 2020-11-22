@@ -153,6 +153,9 @@ class Display extends EventDispatcher {
             ['setContentScale',    {async: false, handler: this._onMessageSetContentScale.bind(this)}],
             ['configure',          {async: true,  handler: this._onMessageConfigure.bind(this)}]
         ]);
+        this.registerWindowMessageHandlers([
+            ['extensionUnloaded', {async: false, handler: this._onMessageExtensionUnloaded.bind(this)}]
+        ]);
     }
 
     get autoPlayAudioDelay() {
@@ -487,6 +490,11 @@ class Display extends EventDispatcher {
         this._childrenSupported = childrenSupported;
         this._setContentScale(scale);
         await this.setOptionsContext(optionsContext);
+    }
+
+    _onMessageExtensionUnloaded() {
+        if (yomichan.isExtensionUnloaded) { return; }
+        yomichan.triggerExtensionUnloaded();
     }
 
     // Private
