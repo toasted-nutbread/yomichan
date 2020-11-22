@@ -48,8 +48,6 @@ class Display extends EventDispatcher {
         });
         this._styleNode = null;
         this._eventListeners = new EventListenerCollection();
-        this._persistentEventListeners = new EventListenerCollection();
-        this._interactive = false;
         this._eventListenersActive = false;
         this._clickScanPrevent = false;
         this._setContentToken = null;
@@ -183,7 +181,6 @@ class Display extends EventDispatcher {
         // State setup
         const {documentElement} = document;
         this._updateMode();
-        this._setInteractive(true);
         const {browser} = await api.getEnvironmentInfo();
         this._browser = browser;
 
@@ -209,6 +206,18 @@ class Display extends EventDispatcher {
             documentElement.addEventListener('mouseup', this._onDocumentElementMouseUp.bind(this), false);
             documentElement.addEventListener('click', this._onDocumentElementClick.bind(this), false);
             documentElement.addEventListener('auxclick', this._onDocumentElementClick.bind(this), false);
+        }
+
+        document.addEventListener('keydown', this.onKeyDown.bind(this), false);
+        document.addEventListener('wheel', this._onWheel.bind(this), {passive: false});
+        if (this._closeButton !== null) {
+            this._closeButton.addEventListener('click', this._onCloseButtonClick.bind(this), false);
+        }
+        if (this._navigationPreviousButton !== null) {
+            this._navigationPreviousButton.addEventListener('click', this._onSourceTermView.bind(this), false);
+        }
+        if (this._navigationNextButton !== null) {
+            this._navigationNextButton.addEventListener('click', this._onNextTermView.bind(this), false);
         }
 
         // Final preparation
@@ -865,31 +874,8 @@ class Display extends EventDispatcher {
         document.documentElement.dataset.yomichanTheme = themeName;
     }
 
-    _setInteractive(interactive) {
-        interactive = !!interactive;
-        if (this._interactive === interactive) { return; }
-        this._interactive = interactive;
-
-        if (interactive) {
-            this._persistentEventListeners.addEventListener(document, 'keydown', this.onKeyDown.bind(this), false);
-            this._persistentEventListeners.addEventListener(document, 'wheel', this._onWheel.bind(this), {passive: false});
-            if (this._closeButton !== null) {
-                this._persistentEventListeners.addEventListener(this._closeButton, 'click', this._onCloseButtonClick.bind(this));
-            }
-            if (this._navigationPreviousButton !== null) {
-                this._persistentEventListeners.addEventListener(this._navigationPreviousButton, 'click', this._onSourceTermView.bind(this));
-            }
-            if (this._navigationNextButton !== null) {
-                this._persistentEventListeners.addEventListener(this._navigationNextButton, 'click', this._onNextTermView.bind(this));
-            }
-        } else {
-            this._persistentEventListeners.removeAllEventListeners();
-        }
-        this._setEventListenersActive(this._eventListenersActive);
-    }
-
     _setEventListenersActive(active) {
-        active = !!active && this._interactive;
+        active = !!active;
         if (this._eventListenersActive === active) { return; }
         this._eventListenersActive = active;
 
