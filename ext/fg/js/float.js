@@ -26,7 +26,6 @@ class DisplayFloat extends Display {
         this._windowMessageHandlers = new Map([
             ['extensionUnloaded', {async: false, handler: this._onMessageExtensionUnloaded.bind(this)}]
         ]);
-        this._browser = null;
         this._copyTextarea = null;
 
         this.registerActions([
@@ -39,9 +38,6 @@ class DisplayFloat extends Display {
 
     async prepare() {
         await super.prepare();
-
-        const {browser} = await api.getEnvironmentInfo();
-        this._browser = browser;
 
         window.addEventListener('message', this._onWindowMessage.bind(this), false);
         document.documentElement.addEventListener('mouseup', this._onMouseUp.bind(this), false);

@@ -104,6 +104,7 @@ class Display extends EventDispatcher {
         this._ownerFrameId = null;
         this._childrenSupported = true;
         this._frameEndpoint = (pageType === 'popup' ? new FrameEndpoint() : null);
+        this._browser = null;
 
         this.registerActions([
             ['close',            () => { this.onEscape(); }],
@@ -180,6 +181,8 @@ class Display extends EventDispatcher {
         this._updateMode();
         this._setInteractive(true);
         await this._displayGenerator.prepare();
+        const {browser} = await api.getEnvironmentInfo();
+        this._browser = browser;
         this._queryParser.prepare();
         this._history.prepare();
         this._history.on('stateChanged', this._onStateChanged.bind(this));
