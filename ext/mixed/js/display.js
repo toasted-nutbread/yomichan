@@ -392,7 +392,9 @@ class Display extends EventDispatcher {
     }
 
     close() {
-        // NOP
+        if (this._pageType === 'popup') {
+            this._invokeOwner('closePopup');
+        }
     }
 
     blurElement(element) {
@@ -1638,5 +1640,12 @@ class Display extends EventDispatcher {
         const frontend = new Frontend(setupNestedPopupsOptions);
         this._frontend = frontend;
         await frontend.prepare();
+    }
+
+    async _invokeOwner(action, params={}) {
+        if (this._ownerFrameId === null) {
+            throw new Error('No owner frame');
+        }
+        return await api.crossFrame.invoke(this._ownerFrameId, action, params);
     }
 }

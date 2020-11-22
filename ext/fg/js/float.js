@@ -65,10 +65,6 @@ class DisplayFloat extends Display {
         }
     }
 
-    close() {
-        this._invokeOwner('closePopup');
-    }
-
     // Message handling
 
     _onWindowMessage(e) {
@@ -163,9 +159,5 @@ class DisplayFloat extends Display {
         textarea.select();
         document.execCommand('copy');
         parent.removeChild(textarea);
-    }
-
-    _invokeOwner(action, params={}) {
-        return api.crossFrame.invoke(this.ownerFrameId, action, params);
     }
 }
