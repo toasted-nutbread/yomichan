@@ -180,17 +180,23 @@ class Display extends EventDispatcher {
     }
 
     async prepare() {
+        // State setup
         const {documentElement} = document;
-        this._audioSystem.prepare();
         this._updateMode();
         this._setInteractive(true);
-        await this._displayGenerator.prepare();
         const {browser} = await api.getEnvironmentInfo();
         this._browser = browser;
+
+        // Prepare
+        await this._displayGenerator.prepare();
+        this._audioSystem.prepare();
         this._queryParser.prepare();
         this._history.prepare();
+
+        // Event setup
         this._history.on('stateChanged', this._onStateChanged.bind(this));
         this._queryParser.on('searched', this._onQueryParserSearch.bind(this));
+        this._progressIndicatorVisible.on('change', this._onProgressIndicatorVisibleChanged.bind(this));
         yomichan.on('extensionUnloaded', this._onExtensionUnloaded.bind(this));
         chrome.runtime.onMessage.addListener(this._onMessage.bind(this));
         api.crossFrame.registerHandlers([
@@ -198,13 +204,15 @@ class Display extends EventDispatcher {
         ]);
         window.addEventListener('message', this._onWindowMessage.bind(this), false);
         window.addEventListener('focus', this._onWindowFocus.bind(this), false);
-        this._updateFocusedElement();
-        this._progressIndicatorVisible.on('change', this._onProgressIndicatorVisibleChanged.bind(this));
+
         if (this._pageType === 'popup' && documentElement !== null) {
             documentElement.addEventListener('mouseup', this._onDocumentElementMouseUp.bind(this), false);
             documentElement.addEventListener('click', this._onDocumentElementClick.bind(this), false);
             documentElement.addEventListener('auxclick', this._onDocumentElementClick.bind(this), false);
         }
+
+        // Final preparation
+        this._updateFocusedElement();
     }
 
     initializeState() {
