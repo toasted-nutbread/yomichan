@@ -21,6 +21,7 @@
  * DisplayGenerator
  * DisplayHistory
  * DocumentUtil
+ * FrameEndpoint
  * Frontend
  * MediaLoader
  * PopupFactory
@@ -102,6 +103,7 @@ class Display extends EventDispatcher {
         this._parentFrameId = null;
         this._ownerFrameId = null;
         this._childrenSupported = true;
+        this._frameEndpoint = (pageType === 'popup' ? new FrameEndpoint() : null);
 
         this.registerActions([
             ['close',            () => { this.onEscape(); }],
@@ -194,6 +196,9 @@ class Display extends EventDispatcher {
 
     initializeState() {
         this._onStateChanged();
+        if (this._frameEndpoint !== null) {
+            this._frameEndpoint.signal();
+        }
     }
 
     setHistorySettings({clearable, useBrowserHistory}) {
@@ -373,7 +378,13 @@ class Display extends EventDispatcher {
     }
 
     authenticateMessageData(data) {
-        return data;
+        if (this._frameEndpoint === null) {
+            return data;
+        }
+        if (!this._frameEndpoint.authenticate(data)) {
+            throw new Error('Invalid authentication');
+        }
+        return data.data;
     }
 
     postProcessQuery(query) {

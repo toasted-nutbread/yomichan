@@ -17,14 +17,12 @@
 
 /* global
  * Display
- * FrameEndpoint
  * api
  */
 
 class DisplayFloat extends Display {
     constructor() {
         super('popup');
-        this._frameEndpoint = new FrameEndpoint();
         this._windowMessageHandlers = new Map([
             ['extensionUnloaded', {async: false, handler: this._onMessageExtensionUnloaded.bind(this)}]
         ]);
@@ -51,8 +49,6 @@ class DisplayFloat extends Display {
         document.documentElement.addEventListener('auxclick', this._onClick.bind(this), false);
 
         this.initializeState();
-
-        this._frameEndpoint.signal();
     }
 
     onEscape() {
@@ -67,13 +63,6 @@ class DisplayFloat extends Display {
         } catch (e) {
             return '';
         }
-    }
-
-    authenticateMessageData(data) {
-        if (!this._frameEndpoint.authenticate(data)) {
-            throw new Error('Invalid authentication');
-        }
-        return data.data;
     }
 
     close() {
