@@ -183,8 +183,6 @@ class Display extends EventDispatcher {
             ['popupMessage', {async: 'dynamic', handler: this._onDirectMessage.bind(this)}]
         ]);
         window.addEventListener('focus', this._onWindowFocus.bind(this), false);
-        document.documentElement.addEventListener('focusin', this._onDocumentFocusIn.bind(this), false);
-        document.documentElement.addEventListener('focusout', this._onDocumentFocusOut.bind(this), false);
         this._updateFocusedElement();
         this._progressIndicatorVisible.on('change', this._onProgressIndicatorVisibleChanged.bind(this));
     }
@@ -413,6 +411,11 @@ class Display extends EventDispatcher {
         // NOP
     }
 
+    blurElement(element) {
+        element.blur();
+        this._updateFocusedElement();
+    }
+
     // Message handlers
 
     _onMessage({action, params}, sender, callback) {
@@ -585,14 +588,6 @@ class Display extends EventDispatcher {
     }
 
     _onWindowFocus() {
-        this._updateFocusedElement();
-    }
-
-    _onDocumentFocusIn() {
-        this._updateFocusedElement();
-    }
-
-    _onDocumentFocusOut() {
         this._updateFocusedElement();
     }
 
@@ -1581,7 +1576,7 @@ class Display extends EventDispatcher {
             activeElement === document.documentElement ||
             activeElement === document.body
         ) {
-            target.focus();
+            target.focus({preventScroll: true});
         }
     }
 }
