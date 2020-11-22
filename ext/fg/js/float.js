@@ -23,7 +23,7 @@
 class DisplayFloat extends Display {
     constructor() {
         super('popup');
-        this._windowMessageHandlers = new Map([
+        this.registerWindowMessageHandlers([
             ['extensionUnloaded', {async: false, handler: this._onMessageExtensionUnloaded.bind(this)}]
         ]);
         this._copyTextarea = null;
@@ -39,7 +39,6 @@ class DisplayFloat extends Display {
     async prepare() {
         await super.prepare();
 
-        window.addEventListener('message', this._onWindowMessage.bind(this), false);
         document.documentElement.addEventListener('mouseup', this._onMouseUp.bind(this), false);
         document.documentElement.addEventListener('click', this._onClick.bind(this), false);
         document.documentElement.addEventListener('auxclick', this._onClick.bind(this), false);
@@ -62,18 +61,6 @@ class DisplayFloat extends Display {
     }
 
     // Message handling
-
-    _onWindowMessage(e) {
-        const data = e.data;
-        if (!this._frameEndpoint.authenticate(data)) { return; }
-
-        const {action, params} = data.data;
-        const messageHandler = this._windowMessageHandlers.get(action);
-        if (typeof messageHandler === 'undefined') { return; }
-
-        const callback = () => {}; // NOP
-        yomichan.invokeMessageHandler(messageHandler, params, callback);
-    }
 
     _onMessageExtensionUnloaded() {
         if (yomichan.isExtensionUnloaded) { return; }

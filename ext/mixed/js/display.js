@@ -61,6 +61,7 @@ class Display extends EventDispatcher {
         this._actions = new Map();
         this._messageHandlers = new Map();
         this._directMessageHandlers = new Map();
+        this._windowMessageHandlers = new Map();
         this._history = new DisplayHistory({clearable: true, useBrowserHistory: false});
         this._historyChangeIgnore = false;
         this._historyHasChanged = false;
@@ -192,6 +193,7 @@ class Display extends EventDispatcher {
         api.crossFrame.registerHandlers([
             ['popupMessage', {async: 'dynamic', handler: this._onDirectMessage.bind(this)}]
         ]);
+        window.addEventListener('message', this._onWindowMessage.bind(this), false);
         window.addEventListener('focus', this._onWindowFocus.bind(this), false);
         this._updateFocusedElement();
         this._progressIndicatorVisible.on('change', this._onProgressIndicatorVisibleChanged.bind(this));
@@ -380,6 +382,12 @@ class Display extends EventDispatcher {
         }
     }
 
+    registerWindowMessageHandlers(handlers) {
+        for (const [name, handlerInfo] of handlers) {
+            this._windowMessageHandlers.set(name, handlerInfo);
+        }
+    }
+
     authenticateMessageData(data) {
         if (this._frameEndpoint === null) {
             return data;
@@ -424,6 +432,21 @@ class Display extends EventDispatcher {
         const {async, handler} = handlerInfo;
         const result = handler(params);
         return {async, result};
+    }
+
+    _onWindowMessage({data}) {
+        try {
+            data = this.authenticateMessageData(data);
+        } catch (e) {
+            return;
+        }
+
+        const {action, params} = data;
+        const messageHandler = this._windowMessageHandlers.get(action);
+        if (typeof messageHandler === 'undefined') { return; }
+
+        const callback = () => {}; // NOP
+        yomichan.invokeMessageHandler(messageHandler, params, callback);
     }
 
     _onMessageSetMode({mode}) {
