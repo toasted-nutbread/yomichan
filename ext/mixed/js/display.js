@@ -106,38 +106,41 @@ class Display extends EventDispatcher {
         this._childrenSupported = true;
         this._frameEndpoint = (pageType === 'popup' ? new FrameEndpoint() : null);
         this._browser = null;
+        this._copyTextarea = null;
 
         this.registerActions([
-            ['close',            () => { this.onEscape(); }],
-            ['nextEntry',        () => { this._focusEntry(this._index + 1, true); }],
-            ['nextEntry3',       () => { this._focusEntry(this._index + 3, true); }],
-            ['previousEntry',    () => { this._focusEntry(this._index - 1, true); }],
-            ['previousEntry3',   () => { this._focusEntry(this._index - 3, true); }],
-            ['lastEntry',        () => { this._focusEntry(this._definitions.length - 1, true); }],
-            ['firstEntry',       () => { this._focusEntry(0, true); }],
-            ['historyBackward',  () => { this._sourceTermView(); }],
-            ['historyForward',   () => { this._nextTermView(); }],
-            ['addNoteKanji',     () => { this._noteTryAdd('kanji'); }],
-            ['addNoteTermKanji', () => { this._noteTryAdd('term-kanji'); }],
-            ['addNoteTermKana',  () => { this._noteTryAdd('term-kana'); }],
-            ['viewNote',         () => { this._noteTryView(); }],
-            ['playAudio',        () => { this._playAudioCurrent(); }]
+            ['close',             () => { this.onEscape(); }],
+            ['nextEntry',         () => { this._focusEntry(this._index + 1, true); }],
+            ['nextEntry3',        () => { this._focusEntry(this._index + 3, true); }],
+            ['previousEntry',     () => { this._focusEntry(this._index - 1, true); }],
+            ['previousEntry3',    () => { this._focusEntry(this._index - 3, true); }],
+            ['lastEntry',         () => { this._focusEntry(this._definitions.length - 1, true); }],
+            ['firstEntry',        () => { this._focusEntry(0, true); }],
+            ['historyBackward',   () => { this._sourceTermView(); }],
+            ['historyForward',    () => { this._nextTermView(); }],
+            ['addNoteKanji',      () => { this._noteTryAdd('kanji'); }],
+            ['addNoteTermKanji',  () => { this._noteTryAdd('term-kanji'); }],
+            ['addNoteTermKana',   () => { this._noteTryAdd('term-kana'); }],
+            ['viewNote',          () => { this._noteTryView(); }],
+            ['playAudio',         () => { this._playAudioCurrent(); }],
+            ['copyHostSelection', () => this._copyHostSelection()]
         ]);
         this.registerHotkeys([
-            {key: 'Escape',    modifiers: [],      action: 'close'},
-            {key: 'PageUp',    modifiers: ['alt'], action: 'previousEntry3'},
-            {key: 'PageDown',  modifiers: ['alt'], action: 'nextEntry3'},
-            {key: 'End',       modifiers: ['alt'], action: 'lastEntry'},
-            {key: 'Home',      modifiers: ['alt'], action: 'firstEntry'},
-            {key: 'ArrowUp',   modifiers: ['alt'], action: 'previousEntry'},
-            {key: 'ArrowDown', modifiers: ['alt'], action: 'nextEntry'},
-            {key: 'B',         modifiers: ['alt'], action: 'historyBackward'},
-            {key: 'F',         modifiers: ['alt'], action: 'historyForward'},
-            {key: 'K',         modifiers: ['alt'], action: 'addNoteKanji'},
-            {key: 'E',         modifiers: ['alt'], action: 'addNoteTermKanji'},
-            {key: 'R',         modifiers: ['alt'], action: 'addNoteTermKana'},
-            {key: 'P',         modifiers: ['alt'], action: 'playAudio'},
-            {key: 'V',         modifiers: ['alt'], action: 'viewNote'}
+            {key: 'Escape',    modifiers: [],       action: 'close'},
+            {key: 'PageUp',    modifiers: ['alt'],  action: 'previousEntry3'},
+            {key: 'PageDown',  modifiers: ['alt'],  action: 'nextEntry3'},
+            {key: 'End',       modifiers: ['alt'],  action: 'lastEntry'},
+            {key: 'Home',      modifiers: ['alt'],  action: 'firstEntry'},
+            {key: 'ArrowUp',   modifiers: ['alt'],  action: 'previousEntry'},
+            {key: 'ArrowDown', modifiers: ['alt'],  action: 'nextEntry'},
+            {key: 'B',         modifiers: ['alt'],  action: 'historyBackward'},
+            {key: 'F',         modifiers: ['alt'],  action: 'historyForward'},
+            {key: 'K',         modifiers: ['alt'],  action: 'addNoteKanji'},
+            {key: 'E',         modifiers: ['alt'],  action: 'addNoteTermKanji'},
+            {key: 'R',         modifiers: ['alt'],  action: 'addNoteTermKana'},
+            {key: 'P',         modifiers: ['alt'],  action: 'playAudio'},
+            {key: 'V',         modifiers: ['alt'],  action: 'viewNote'},
+            {key: 'C',         modifiers: ['ctrl'], action: 'copyHostSelection'}
         ]);
         this.registerMessageHandlers([
             ['setMode', {async: false, handler: this._onMessageSetMode.bind(this)}]
@@ -1673,5 +1676,48 @@ class Display extends EventDispatcher {
             throw new Error('No owner frame');
         }
         return await api.crossFrame.invoke(this._ownerFrameId, action, params);
+    }
+
+    _copyHostSelection() {
+        if (window.getSelection().toString()) { return false; }
+        this._copyHostSelectionInner();
+        return true;
+    }
+
+    async _copyHostSelectionInner() {
+        switch (this._browser) {
+            case 'firefox':
+            case 'firefox-mobile':
+                {
+                    let text;
+                    try {
+                        text = await this._invokeOwner('getSelectionText');
+                    } catch (e) {
+                        break;
+                    }
+                    this._copyText(text);
+                }
+                break;
+            default:
+                await this._invokeOwner('copySelection');
+                break;
+        }
+    }
+
+    _copyText(text) {
+        const parent = document.body;
+        if (parent === null) { return; }
+
+        let textarea = this._copyTextarea;
+        if (textarea === null) {
+            textarea = document.createElement('textarea');
+            this._copyTextarea = textarea;
+        }
+
+        textarea.value = text;
+        parent.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        parent.removeChild(textarea);
     }
 }
