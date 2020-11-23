@@ -134,7 +134,8 @@ class PopupFactory {
                 id,
                 parentPopupId,
                 frameId,
-                ownerFrameId
+                ownerFrameId,
+                childrenSupported
             }));
             const popup = new PopupProxy({
                 id,
@@ -184,8 +185,8 @@ class PopupFactory {
 
     // API message handlers
 
-    async _onApiGetOrCreatePopup({id, parentPopupId, frameId, ownerFrameId}) {
-        const popup = await this.getOrCreatePopup({id, parentPopupId, frameId, ownerFrameId});
+    async _onApiGetOrCreatePopup(details) {
+        const popup = await this.getOrCreatePopup(details);
         return {
             id: popup.id,
             depth: popup.depth,
