@@ -348,6 +348,7 @@ class Display extends EventDispatcher {
         const url = `${location.protocol}//${location.host}${location.pathname}?${urlSearchParams.toString()}`;
 
         if (history && this._historyHasChanged) {
+            this._updateHistoryState();
             this._history.pushState(state, content, url);
         } else {
             this._history.clear();
@@ -650,12 +651,6 @@ class Display extends EventDispatcher {
 
             const link = e.target;
             const {state} = this._history;
-
-            state.focusEntry = this._getClosestDefinitionIndex(link);
-            state.scrollX = this._windowScroll.x;
-            state.scrollY = this._windowScroll.y;
-            this._historyStateUpdate(state);
-
             const query = link.textContent;
             const definitions = await api.kanjiFind(query, this.getOptionsContext());
             const details = {
@@ -706,15 +701,9 @@ class Display extends EventDispatcher {
         const {state} = this._history;
         const {textSource, definitions} = termLookupResults;
 
-        const scannedElement = e.target;
         const sentenceExtent = this._options.anki.sentenceExt;
         const layoutAwareScan = this._options.scanning.layoutAwareScan;
         const sentence = this._documentUtil.extractSentence(textSource, sentenceExtent, layoutAwareScan);
-
-        state.focusEntry = this._getClosestDefinitionIndex(scannedElement);
-        state.scrollX = this._windowScroll.x;
-        state.scrollY = this._windowScroll.y;
-        this._historyStateUpdate(state);
 
         const query = textSource.text();
         const details = {
@@ -942,7 +931,7 @@ class Display extends EventDispatcher {
         if (this._setContentToken !== token) { return true; }
 
         if (changeHistory) {
-            this._historyStateUpdate(state, content);
+            this._replaceHistoryStateNoNavigate(state, content);
         }
 
         eventArgs.source = source;
@@ -1384,12 +1373,20 @@ class Display extends EventDispatcher {
         return isObject(this._history.state);
     }
 
-    _historyStateUpdate(state, content) {
+    _updateHistoryState() {
+        const {state, content} = this._history;
+        if (!isObject(state)) { return; }
+
+        state.focusEntry = this._index;
+        state.scrollX = this._windowScroll.x;
+        state.scrollY = this._windowScroll.y;
+        this._replaceHistoryStateNoNavigate(state, content);
+    }
+
+    _replaceHistoryStateNoNavigate(state, content) {
         const historyChangeIgnorePre = this._historyChangeIgnore;
         try {
             this._historyChangeIgnore = true;
-            if (typeof state === 'undefined') { state = this._history.state; }
-            if (typeof content === 'undefined') { content = this._history.content; }
             this._history.replaceState(state, content);
         } finally {
             this._historyChangeIgnore = historyChangeIgnorePre;
