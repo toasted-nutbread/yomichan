@@ -29,7 +29,6 @@ class PopupPreviewFrame {
         this._popupFactory = popupFactory;
         this._frontend = null;
         this._apiOptionsGetOld = null;
-        this._popupSetCustomOuterCssOld = null;
         this._popupShown = false;
         this._themeChangeTimeout = null;
         this._textSource = null;
@@ -82,10 +81,7 @@ class PopupPreviewFrame {
         await this._frontend.prepare();
         this._frontend.setDisabledOverride(true);
         this._frontend.canClearSelection = false;
-
-        const popup = this._frontend.popup;
-        this._popupSetCustomOuterCssOld = popup.setCustomOuterCss.bind(popup);
-        popup.setCustomOuterCss = this._popupSetCustomOuterCss.bind(this);
+        this._frontend.popup.on('customOuterCssChanged', this._onCustomOuterCssChanged.bind(this));
 
         // Update search
         this._updateSearch();
@@ -109,16 +105,14 @@ class PopupPreviewFrame {
         return options;
     }
 
-    async _popupSetCustomOuterCss(...args) {
+    _onCustomOuterCssChanged({node}) {
+        if (node === null) { return; }
+
+        const node2 = document.querySelector('#client-css');
+        if (node2 === null) { return; }
+
         // This simulates the stylesheet priorities when injecting using the web extension API.
-        const result = await this._popupSetCustomOuterCssOld(...args);
-
-        const node = document.querySelector('#client-css');
-        if (node !== null && result !== null) {
-            node.parentNode.insertBefore(result, node);
-        }
-
-        return result;
+        node2.parentNode.insertBefore(node, node2);
     }
 
     _onMessage(e) {

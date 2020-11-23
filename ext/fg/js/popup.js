@@ -190,7 +190,8 @@ class Popup extends EventDispatcher {
             useWebExtensionApi = false;
             parentNode = this._shadow;
         }
-        return await dynamicLoader.loadStyle('yomichan-popup-outer-user-stylesheet', 'code', css, useWebExtensionApi, parentNode);
+        const node = await dynamicLoader.loadStyle('yomichan-popup-outer-user-stylesheet', 'code', css, useWebExtensionApi, parentNode);
+        this.trigger('customOuterCssChanged', {node, useWebExtensionApi});
     }
 
     getFrameRect() {
