@@ -848,6 +848,14 @@ class Display extends EventDispatcher {
         }
     }
 
+    _onEntryClick(e) {
+        if (e.button !== 0) { return; }
+        const node = e.currentTarget;
+        const index = parseInt(node.dataset.index, 10);
+        if (!Number.isFinite(index)) { return; }
+        this._entrySetCurrent(index);
+    }
+
     _updateDocumentOptions(options) {
         const data = document.documentElement.dataset;
         data.ankiEnabled = `${options.anki.enable}`;
@@ -1752,6 +1760,7 @@ class Display extends EventDispatcher {
     }
 
     _addEntryEventListeners(entry) {
+        this._eventListeners.addEventListener(entry, 'click', this._onEntryClick.bind(this));
         this._addMultipleEventListeners(entry, '.action-add-note', 'click', this._onNoteAdd.bind(this));
         this._addMultipleEventListeners(entry, '.action-view-note', 'click', this._onNoteView.bind(this));
         this._addMultipleEventListeners(entry, '.action-play-audio', 'click', this._onAudioPlay.bind(this));
