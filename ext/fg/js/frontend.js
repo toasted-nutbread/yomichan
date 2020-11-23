@@ -322,11 +322,13 @@ class Frontend {
         });
         this._updateTextScannerEnabled();
 
-        const ignoreNodes = ['.scan-disable', '.scan-disable *'];
-        if (!this._options.scanning.enableOnPopupExpressions) {
-            ignoreNodes.push('.source-text', '.source-text *');
+        if (this._pageType !== 'web') {
+            const ignoreNodes = ['.scan-disable', '.scan-disable *'];
+            if (!scanningOptions.enableOnPopupExpressions) {
+                ignoreNodes.push('.source-text', '.source-text *');
+            }
+            this._textScanner.ignoreNodes = ignoreNodes.join(',');
         }
-        this._textScanner.ignoreNodes = ignoreNodes.join(',');
 
         this._updateContentScale();
 
