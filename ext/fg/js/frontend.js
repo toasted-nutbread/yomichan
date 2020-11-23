@@ -529,7 +529,7 @@ class Frontend {
     }
 
     _updateTextScannerEnabled() {
-        const enabled = (this._options.general.enable && !this._disabledOverride);
+        const enabled = (this._options !== null && this._options.general.enable && !this._disabledOverride);
         this._textScanner.setEnabled(enabled);
     }
 
