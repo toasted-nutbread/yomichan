@@ -24,16 +24,24 @@
 
 class Frontend {
     constructor({
-        frameId,
+        pageType,
         popupFactory,
         depth,
+        frameId,
         parentPopupId,
         parentFrameId,
         useProxyPopup,
-        pageType,
         allowRootFramePopupProxy,
         childrenSupported=true
     }) {
+        this._pageType = pageType;
+        this._popupFactory = popupFactory;
+        this._depth = depth;
+        this._frameId = frameId;
+        this._parentPopupId = parentPopupId;
+        this._parentFrameId = parentFrameId;
+        this._useProxyPopup = useProxyPopup;
+        this._allowRootFramePopupProxy = allowRootFramePopupProxy;
         this._childrenSupported = childrenSupported;
         this._popup = null;
         this._disabledOverride = false;
@@ -51,14 +59,6 @@ class Frontend {
             searchTerms: true,
             searchKanji: true
         });
-        this._parentPopupId = parentPopupId;
-        this._parentFrameId = parentFrameId;
-        this._useProxyPopup = useProxyPopup;
-        this._pageType = pageType;
-        this._depth = depth;
-        this._frameId = frameId;
-        this._popupFactory = popupFactory;
-        this._allowRootFramePopupProxy = allowRootFramePopupProxy;
         this._popupCache = new Map();
         this._popupEventListeners = new EventListenerCollection();
         this._updatePopupToken = null;
