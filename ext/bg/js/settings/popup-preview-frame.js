@@ -75,7 +75,8 @@ class PopupPreviewFrame {
             parentFrameId: null,
             useProxyPopup: false,
             pageType: 'web',
-            allowRootFramePopupProxy: false
+            allowRootFramePopupProxy: false,
+            childrenSupported: false
         });
         this._frontend.setOptionsContextOverride(this._optionsContext);
         await this._frontend.prepare();

@@ -53,7 +53,15 @@ class PopupFactory {
         ]);
     }
 
-    async getOrCreatePopup({frameId=null, ownerFrameId=null, id=null, parentPopupId=null, depth=null, popupWindow=false}) {
+    async getOrCreatePopup({
+        frameId=null,
+        ownerFrameId=null,
+        id=null,
+        parentPopupId=null,
+        depth=null,
+        popupWindow=false,
+        childrenSupported=false
+    }) {
         // Find by existing id
         if (id !== null) {
             const popup = this._popups.get(id);
@@ -99,7 +107,7 @@ class PopupFactory {
             if (id === null) {
                 id = generateId(16);
             }
-            const popup = new Popup(id, depth, frameId, ownerFrameId);
+            const popup = new Popup(id, depth, frameId, ownerFrameId, childrenSupported);
             if (parent !== null) {
                 if (parent.child !== null) {
                     throw new Error('Parent popup already has a child');

@@ -31,8 +31,10 @@ class Frontend {
         parentFrameId,
         useProxyPopup,
         pageType,
-        allowRootFramePopupProxy
+        allowRootFramePopupProxy,
+        childrenSupported=true
     }) {
+        this._childrenSupported = childrenSupported;
         this._popup = null;
         this._disabledOverride = false;
         this._options = null;
@@ -398,7 +400,8 @@ class Frontend {
         return await this._popupFactory.getOrCreatePopup({
             frameId: this._frameId,
             ownerFrameId: this._frameId,
-            depth: this._depth
+            depth: this._depth,
+            childrenSupported: this._childrenSupported
         });
     }
 
@@ -407,7 +410,8 @@ class Frontend {
             frameId: this._parentFrameId,
             ownerFrameId: this._frameId,
             depth: this._depth,
-            parentPopupId: this._parentPopupId
+            parentPopupId: this._parentPopupId,
+            childrenSupported: this._childrenSupported
         });
     }
 
@@ -428,7 +432,8 @@ class Frontend {
         const popup = await this._popupFactory.getOrCreatePopup({
             frameId: targetFrameId,
             ownerFrameId: this._frameId,
-            id: popupId
+            id: popupId,
+            childrenSupported: this._childrenSupported
         });
         popup.on('offsetNotFound', () => {
             this._allowRootFramePopupProxy = false;
@@ -441,7 +446,8 @@ class Frontend {
         return await this._popupFactory.getOrCreatePopup({
             ownerFrameId: this._frameId,
             depth: this._depth,
-            popupWindow: true
+            popupWindow: true,
+            childrenSupported: this._childrenSupported
         });
     }
 
