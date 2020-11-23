@@ -48,7 +48,6 @@ class Display extends EventDispatcher {
         });
         this._styleNode = null;
         this._eventListeners = new EventListenerCollection();
-        this._eventListenersActive = false;
         this._clickScanPrevent = false;
         this._setContentToken = null;
         this._autoPlayAudioTimer = null;
@@ -314,12 +313,6 @@ class Display extends EventDispatcher {
         this._updateNestedFrontend(options);
     }
 
-    addMultipleEventListeners(selector, type, listener, options) {
-        for (const node of this._container.querySelectorAll(selector)) {
-            this._eventListeners.addEventListener(node, type, listener, options);
-        }
-    }
-
     autoPlayAudio() {
         this.clearAutoPlayTimer();
 
@@ -535,7 +528,7 @@ class Display extends EventDispatcher {
             this._updateQueryParser();
 
             this._closePopups();
-            this._setEventListenersActive(false);
+            this._eventListeners.removeAllEventListeners();
 
             let assigned = false;
             const eventArgs = {type, urlSearchParams, token};
@@ -572,8 +565,6 @@ class Display extends EventDispatcher {
                     this.trigger('contentUpdating', eventArgs);
                     this._clearContent();
                 }
-
-                this._setEventListenersActive(true);
             }
 
             eventArgs.stale = stale;
@@ -874,27 +865,6 @@ class Display extends EventDispatcher {
         document.documentElement.dataset.yomichanTheme = themeName;
     }
 
-    _setEventListenersActive(active) {
-        active = !!active;
-        if (this._eventListenersActive === active) { return; }
-        this._eventListenersActive = active;
-
-        if (active) {
-            this.addMultipleEventListeners('.action-add-note', 'click', this._onNoteAdd.bind(this));
-            this.addMultipleEventListeners('.action-view-note', 'click', this._onNoteView.bind(this));
-            this.addMultipleEventListeners('.action-play-audio', 'click', this._onAudioPlay.bind(this));
-            this.addMultipleEventListeners('.kanji-link', 'click', this._onKanjiLookup.bind(this));
-            this.addMultipleEventListeners('.debug-log-link', 'click', this._onDebugLogClick.bind(this));
-            if (this._options !== null && this._options.scanning.enablePopupSearch) {
-                this.addMultipleEventListeners('.term-glossary-item, .tag', 'mouseup', this._onGlossaryMouseUp.bind(this));
-                this.addMultipleEventListeners('.term-glossary-item, .tag', 'mousedown', this._onGlossaryMouseDown.bind(this));
-                this.addMultipleEventListeners('.term-glossary-item, .tag', 'mousemove', this._onGlossaryMouseMove.bind(this));
-            }
-        } else {
-            this._eventListeners.removeAllEventListeners();
-        }
-    }
-
     async _findDefinitions(isTerms, source, urlSearchParams, optionsContext) {
         if (isTerms) {
             const findDetails = {};
@@ -990,12 +960,14 @@ class Display extends EventDispatcher {
                 if (this._setContentToken !== token) { return true; }
             }
 
+            const definition = definitions[i];
             const entry = (
                 isTerms ?
-                this._displayGenerator.createTermEntry(definitions[i]) :
-                this._displayGenerator.createKanjiEntry(definitions[i])
+                this._displayGenerator.createTermEntry(definition) :
+                this._displayGenerator.createKanjiEntry(definition)
             );
             entry.dataset.index = `${i}`;
+            this._addEntryEventListeners(entry);
             container.appendChild(entry);
         }
 
@@ -1770,6 +1742,25 @@ class Display extends EventDispatcher {
             return title;
         } catch (e) {
             return '';
+        }
+    }
+
+    _addMultipleEventListeners(container, selector, ...args) {
+        for (const node of container.querySelectorAll(selector)) {
+            this._eventListeners.addEventListener(node, ...args);
+        }
+    }
+
+    _addEntryEventListeners(entry) {
+        this._addMultipleEventListeners(entry, '.action-add-note', 'click', this._onNoteAdd.bind(this));
+        this._addMultipleEventListeners(entry, '.action-view-note', 'click', this._onNoteView.bind(this));
+        this._addMultipleEventListeners(entry, '.action-play-audio', 'click', this._onAudioPlay.bind(this));
+        this._addMultipleEventListeners(entry, '.kanji-link', 'click', this._onKanjiLookup.bind(this));
+        this._addMultipleEventListeners(entry, '.debug-log-link', 'click', this._onDebugLogClick.bind(this));
+        if (this._options !== null && this._options.scanning.enablePopupSearch) {
+            this._addMultipleEventListeners(entry, '.term-glossary-item,.tag', 'mouseup', this._onGlossaryMouseUp.bind(this));
+            this._addMultipleEventListeners(entry, '.term-glossary-item,.tag', 'mousedown', this._onGlossaryMouseDown.bind(this));
+            this._addMultipleEventListeners(entry, '.term-glossary-item,.tag', 'mousemove', this._onGlossaryMouseMove.bind(this));
         }
     }
 }
