@@ -23,7 +23,13 @@
  */
 
 class Popup extends EventDispatcher {
-    constructor(id, depth, frameId, ownerFrameId, childrenSupported) {
+    constructor({
+        id,
+        depth,
+        frameId,
+        ownerFrameId,
+        childrenSupported
+    }) {
         super();
         this._id = id;
         this._depth = depth;

@@ -98,7 +98,12 @@ class PopupFactory {
             if (id === null) {
                 id = generateId(16);
             }
-            const popup = new PopupWindow(id, depth, this._frameId, ownerFrameId);
+            const popup = new PopupWindow({
+                id,
+                depth,
+                frameId: this._frameId,
+                ownerFrameId
+            });
             this._popups.set(id, popup);
             return popup;
         } else if (frameId === this._frameId) {
@@ -106,7 +111,13 @@ class PopupFactory {
             if (id === null) {
                 id = generateId(16);
             }
-            const popup = new Popup(id, depth, frameId, ownerFrameId, childrenSupported);
+            const popup = new Popup({
+                id,
+                depth,
+                frameId,
+                ownerFrameId,
+                childrenSupported
+            });
             if (parent !== null) {
                 if (parent.child !== null) {
                     throw new Error('Parent popup already has a child');
@@ -119,8 +130,19 @@ class PopupFactory {
             return popup;
         } else {
             const useFrameOffsetForwarder = (parentPopupId === null);
-            ({id, depth, frameId} = await api.crossFrame.invoke(frameId, 'getOrCreatePopup', {id, parentPopupId, frameId, ownerFrameId}));
-            const popup = new PopupProxy(id, depth, frameId, ownerFrameId, useFrameOffsetForwarder ? this._frameOffsetForwarder : null);
+            ({id, depth, frameId} = await api.crossFrame.invoke(frameId, 'getOrCreatePopup', {
+                id,
+                parentPopupId,
+                frameId,
+                ownerFrameId
+            }));
+            const popup = new PopupProxy({
+                id,
+                depth,
+                frameId,
+                ownerFrameId,
+                frameOffsetForwarder: useFrameOffsetForwarder ? this._frameOffsetForwarder : null
+            });
             this._popups.set(id, popup);
             return popup;
         }
