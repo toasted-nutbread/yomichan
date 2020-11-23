@@ -21,13 +21,22 @@
  */
 
 class TextScanner extends EventDispatcher {
-    constructor({node, ignoreElements, ignorePoint, documentUtil, getOptionsContext, searchTerms=false, searchKanji=false, searchOnClick=false}) {
+    constructor({
+        node,
+        documentUtil,
+        getOptionsContext,
+        ignoreElements=null,
+        ignorePoint=null,
+        searchTerms=false,
+        searchKanji=false,
+        searchOnClick=false
+    }) {
         super();
         this._node = node;
-        this._ignoreElements = ignoreElements;
-        this._ignorePoint = ignorePoint;
         this._documentUtil = documentUtil;
         this._getOptionsContext = getOptionsContext;
+        this._ignoreElements = ignoreElements;
+        this._ignorePoint = ignorePoint;
         this._searchTerms = searchTerms;
         this._searchKanji = searchKanji;
         this._searchOnClick = searchOnClick;
@@ -287,7 +296,7 @@ class TextScanner extends EventDispatcher {
     }
 
     _onMouseOver(e) {
-        if (this._ignoreElements().includes(e.target)) {
+        if (this._ignoreElements !== null && this._ignoreElements().includes(e.target)) {
             this._scanTimerClear();
         }
     }
