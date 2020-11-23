@@ -65,8 +65,8 @@ class Display extends EventDispatcher {
         this._historyHasChanged = false;
         this._navigationHeader = document.querySelector('#navigation-header');
         this._contentType = 'clear';
-        this._defaultTitle = 'Yomichan Search';
-        this._defaultTitleMaxLength = 1000;
+        this._defaultTitle = document.title;
+        this._titleMaxLength = 1000;
         this._fullQuery = '';
         this._documentUtil = new DocumentUtil();
         this._progressIndicator = document.querySelector('#progress-indicator');
@@ -1074,18 +1074,19 @@ class Display extends EventDispatcher {
     }
 
     _setTitleText(text) {
-        // Chrome limits title to 1024 characters
-        const ellipsis = '...';
-        const maxLength = this._defaultTitleMaxLength - this._defaultTitle.length;
-        if (text.length > maxLength) {
-            text = `${text.substring(0, Math.max(0, maxLength - maxLength))}${ellipsis}`;
-        }
+        let title = '';
+        if (text.length > 0) {
+            // Chrome limits title to 1024 characters
+            const ellipsis = '...';
+            const separator = ' - ';
+            const maxLength = this._titleMaxLength - this._defaultTitle.length - separator.length;
+            if (text.length > maxLength) {
+                text = `${text.substring(0, Math.max(0, maxLength - ellipsis.length))}${ellipsis}`;
+            }
 
-        document.title = (
-            text.length === 0 ?
-            this._defaultTitle :
-            `${text} - ${this._defaultTitle}`
-        );
+            title = `${text}${separator}${this._defaultTitle}`;
+        }
+        document.title = title;
     }
 
     _updateNavigation(previous, next) {
