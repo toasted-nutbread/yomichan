@@ -84,8 +84,6 @@ class PopupPreviewFrame {
         this._frontend.canClearSelection = false;
 
         const popup = this._frontend.popup;
-        popup.setChildrenSupported(false);
-
         this._popupSetCustomOuterCssOld = popup.setCustomOuterCss.bind(popup);
         popup.setCustomOuterCss = this._popupSetCustomOuterCss.bind(this);
 

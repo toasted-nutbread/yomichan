@@ -48,8 +48,7 @@ class PopupFactory {
             ['clearAutoPlayTimer',   {async: false, handler: this._onApiClearAutoPlayTimer.bind(this)}],
             ['setContentScale',      {async: false, handler: this._onApiSetContentScale.bind(this)}],
             ['updateTheme',          {async: false, handler: this._onApiUpdateTheme.bind(this)}],
-            ['setCustomOuterCss',    {async: false, handler: this._onApiSetCustomOuterCss.bind(this)}],
-            ['setChildrenSupported', {async: false, handler: this._onApiSetChildrenSupported.bind(this)}]
+            ['setCustomOuterCss',    {async: false, handler: this._onApiSetCustomOuterCss.bind(this)}]
         ]);
     }
 
@@ -238,11 +237,6 @@ class PopupFactory {
     _onApiSetCustomOuterCss({id, css, useWebExtensionApi}) {
         const popup = this._getPopup(id);
         return popup.setCustomOuterCss(css, useWebExtensionApi);
-    }
-
-    _onApiSetChildrenSupported({id, value}) {
-        const popup = this._getPopup(id);
-        return popup.setChildrenSupported(value);
     }
 
     // Private functions

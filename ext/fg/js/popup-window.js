@@ -123,10 +123,6 @@ class PopupWindow extends EventDispatcher {
         // NOP
     }
 
-    async setChildrenSupported(_value) {
-        // NOP
-    }
-
     getFrameRect() {
         return new DOMRect(0, 0, 0, 0);
     }
