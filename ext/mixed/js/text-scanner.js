@@ -29,7 +29,8 @@ class TextScanner extends EventDispatcher {
         ignorePoint=null,
         searchTerms=false,
         searchKanji=false,
-        searchOnClick=false
+        searchOnClick=false,
+        searchOnClickOnly=false
     }) {
         super();
         this._node = node;
@@ -40,6 +41,7 @@ class TextScanner extends EventDispatcher {
         this._searchTerms = searchTerms;
         this._searchKanji = searchKanji;
         this._searchOnClick = searchOnClick;
+        this._searchOnClickOnly = searchOnClickOnly;
 
         this._isPrepared = false;
         this._ignoreNodes = null;
@@ -622,7 +624,9 @@ class TextScanner extends EventDispatcher {
 
     _hookEvents() {
         let eventListenerInfos;
-        if (this._arePointerEventsSupported()) {
+        if (this._searchOnClickOnly) {
+            eventListenerInfos = this._getMouseClickOnlyEventListeners();
+        } else if (this._arePointerEventsSupported()) {
             eventListenerInfos = this._getPointerEventListeners();
         } else {
             eventListenerInfos = this._getMouseEventListeners();
@@ -661,6 +665,11 @@ class TextScanner extends EventDispatcher {
         ];
     }
 
+    _getMouseClickOnlyEventListeners() {
+        return [
+            [this._node, 'click', this._onClick.bind(this)]
+        ];
+    }
     _getTouchEventListeners() {
         return [
             [this._node, 'auxclick', this._onAuxClick.bind(this)],
