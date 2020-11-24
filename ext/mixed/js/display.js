@@ -1625,7 +1625,7 @@ class Display extends EventDispatcher {
     }
 
     _copyHostSelection() {
-        if (window.getSelection().toString()) { return false; }
+        if (this._ownerFrameId === null || window.getSelection().toString()) { return false; }
         this._copyHostSelectionInner();
         return true;
     }
