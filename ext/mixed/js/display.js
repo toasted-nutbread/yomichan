@@ -649,18 +649,18 @@ class Display extends EventDispatcher {
             e.preventDefault();
             if (!this._historyHasState()) { return; }
 
-            const link = e.target;
-            const {state} = this._history;
-            const query = link.textContent;
-            const definitions = await api.kanjiFind(query, this.getOptionsContext());
+            const {state: {sentence}} = this._history;
+            const optionsContext = this.getOptionsContext();
+            const query = e.currentTarget.textContent;
+            const definitions = await api.kanjiFind(query, optionsContext);
             const details = {
                 focus: false,
                 history: true,
                 params: this._createSearchParams('kanji', query, false),
                 state: {
                     focusEntry: 0,
-                    sentence: state.sentence,
-                    optionsContext: state.optionsContext
+                    sentence,
+                    optionsContext
                 },
                 content: {
                     definitions
@@ -695,10 +695,10 @@ class Display extends EventDispatcher {
     async _onTermLookup(e) {
         if (!this._historyHasState()) { return; }
 
-        const termLookupResults = await this._termLookup(e);
-        if (!termLookupResults || !this._historyHasState()) { return; }
+        const optionsContext = this.getOptionsContext();
+        const termLookupResults = await this._termLookup(e, optionsContext);
+        if (termLookupResults === null) { return; }
 
-        const {state} = this._history;
         const {textSource, definitions} = termLookupResults;
 
         const sentenceExtent = this._options.anki.sentenceExt;
@@ -713,7 +713,7 @@ class Display extends EventDispatcher {
             state: {
                 focusEntry: 0,
                 sentence,
-                optionsContext: state.optionsContext
+                optionsContext
             },
             content: {
                 definitions
@@ -722,22 +722,22 @@ class Display extends EventDispatcher {
         this.setContent(details);
     }
 
-    async _termLookup(e) {
+    async _termLookup(e, optionsContext) {
         e.preventDefault();
 
         const {length: scanLength, deepDomScan: deepScan, layoutAwareScan} = this._options.scanning;
         const textSource = this._documentUtil.getRangeFromPoint(e.clientX, e.clientY, deepScan);
         if (textSource === null) {
-            return false;
+            return null;
         }
 
         let definitions, length;
         try {
             textSource.setEndOffset(scanLength, layoutAwareScan);
 
-            ({definitions, length} = await api.termsFind(textSource.text(), {}, this.getOptionsContext()));
+            ({definitions, length} = await api.termsFind(textSource.text(), {}, optionsContext));
             if (definitions.length === 0) {
-                return false;
+                return null;
             }
 
             textSource.setEndOffset(length, layoutAwareScan);
