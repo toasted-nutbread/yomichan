@@ -57,12 +57,21 @@ class DisplayGenerator {
         const pitches = DictionaryDataUtil.getPitchAccentInfos(details);
         const pitchCount = pitches.reduce((i, v) => i + v.pitches.length, 0);
 
+        const uniqueExpressions = new Set();
+        const uniqueReadings = new Set();
+        for (const {expression, reading} of expressions) {
+            uniqueExpressions.add(expression);
+            uniqueReadings.add(reading);
+        }
+
         node.dataset.format = type;
         node.dataset.expressionMulti = `${merged}`;
         node.dataset.expressionCount = `${expressions.length}`;
         node.dataset.definitionCount = `${definitions.length}`;
         node.dataset.pitchAccentDictionaryCount = `${pitches.length}`;
         node.dataset.pitchAccentCount = `${pitchCount}`;
+        node.dataset.uniqueExpressionCount = `${uniqueExpressions.size}`;
+        node.dataset.uniqueReadingCount = `${uniqueReadings.size}`;
 
         bodyContainer.dataset.sectionCount = `${
             (definitions.length > 0 ? 1 : 0) +
