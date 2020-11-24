@@ -446,16 +446,19 @@ class DisplayGenerator {
     }
 
     _createFrequencyTag(details) {
+        const {expression, reading, dictionary, frequency} = details;
         const node = this._templates.instantiate('tag-frequency');
 
-        let n = node.querySelector('.term-frequency-dictionary-name');
-        n.textContent = details.dictionary;
+        node.querySelector('.term-frequency-disambiguation-expression').textContent = expression;
+        node.querySelector('.term-frequency-disambiguation-reading').textContent = reading;
+        node.querySelector('.term-frequency-dictionary-name').textContent = dictionary;
+        node.querySelector('.term-frequency-value').textContent = frequency;
 
-        n = node.querySelector('.term-frequency-value');
-        n.textContent = `${details.frequency}`;
-
-        node.dataset.dictionary = details.dictionary;
-        node.dataset.frequency = details.frequency;
+        node.dataset.expression = expression;
+        node.dataset.reading = reading;
+        node.dataset.readingIsSame = `${reading === expression}`;
+        node.dataset.dictionary = dictionary;
+        node.dataset.frequency = frequency;
 
         return node;
     }
