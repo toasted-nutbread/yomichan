@@ -1573,7 +1573,7 @@ class Display extends EventDispatcher {
 
             try {
                 if (this._frontendSetupPromise === null) {
-                    this._frontendSetupPromise = this._setupNestedFrontend(isSearchPage);
+                    this._frontendSetupPromise = this._setupNestedFrontend();
                 }
                 await this._frontendSetupPromise;
             } catch (e) {
@@ -1587,12 +1587,12 @@ class Display extends EventDispatcher {
         this._frontend.setDisabledOverride(!isEnabled);
     }
 
-    async _setupNestedFrontend(isSearchPage) {
-        const setupNestedPopupsOptions = (
-            (isSearchPage) ?
-            {useProxyPopup: false} :
-            {useProxyPopup: true, parentPopupId: this._parentPopupId, parentFrameId: this._parentFrameId}
-        );
+    async _setupNestedFrontend() {
+        const setupNestedPopupsOptions = {
+            useProxyPopup: this._parentFrameId !== null,
+            parentPopupId: this._parentPopupId,
+            parentFrameId: this._parentFrameId
+        };
 
         const {frameId} = await api.frameInformationGet();
 
