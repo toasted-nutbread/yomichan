@@ -858,6 +858,11 @@ class Display extends EventDispatcher {
         await this._setOptionsContextIfDifferent(optionsContext);
         if (this._setContentToken !== token) { return; }
 
+        if (this._options === null) {
+            await this.updateOptions();
+            if (this._setContentToken !== token) { return; }
+        }
+
         if (changeHistory) {
             this._replaceHistoryStateNoNavigate(state, content);
         }
