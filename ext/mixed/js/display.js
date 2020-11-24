@@ -533,7 +533,7 @@ class Display extends EventDispatcher {
             this._closePopups();
             this._eventListeners.removeAllEventListeners();
 
-            let assigned = false;
+            let clear = true;
             const eventArgs = {type, urlSearchParams, token};
             this._historyHasChanged = true;
             this._contentType = type;
@@ -543,31 +543,29 @@ class Display extends EventDispatcher {
                 case 'kanji':
                     {
                         const isTerms = (type === 'terms');
-                        assigned = await this._setContentTermsOrKanji(token, isTerms, urlSearchParams, eventArgs);
+                        clear = !await this._setContentTermsOrKanji(token, isTerms, urlSearchParams, eventArgs);
                     }
                     break;
                 case 'unloaded':
                     {
+                        clear = false;
                         const {content} = this._history;
                         eventArgs.content = content;
                         this.trigger('contentUpdating', eventArgs);
                         this._setContentExtensionUnloaded();
-                        assigned = true;
                     }
                     break;
             }
 
             const stale = (this._setContentToken !== token);
-            if (!stale) {
-                if (!assigned) {
-                    type = 'clear';
-                    this._contentType = type;
-                    const {content} = this._history;
-                    eventArgs.type = type;
-                    eventArgs.content = content;
-                    this.trigger('contentUpdating', eventArgs);
-                    this._clearContent();
-                }
+            if (clear) {
+                type = 'clear';
+                this._contentType = type;
+                const {content} = this._history;
+                eventArgs.type = type;
+                eventArgs.content = content;
+                this.trigger('contentUpdating', eventArgs);
+                this._clearContent();
             }
 
             eventArgs.stale = stale;
