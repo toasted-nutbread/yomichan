@@ -522,6 +522,12 @@ class Display extends EventDispatcher {
         const token = {}; // Unique identifier token
         this._setContentToken = token;
         try {
+            // Clear
+            this._closePopups();
+            this._eventListeners.removeAllEventListeners();
+            this._mediaLoader.unloadAll();
+
+            // Prepare
             const urlSearchParams = new URLSearchParams(location.search);
             let type = urlSearchParams.get('type');
             if (type === null) { type = 'terms'; }
@@ -530,14 +536,12 @@ class Display extends EventDispatcher {
             this._queryParserVisibleOverride = (fullVisible === null ? null : (fullVisible !== 'false'));
             this._updateQueryParser();
 
-            this._closePopups();
-            this._eventListeners.removeAllEventListeners();
-
             let clear = true;
-            const eventArgs = {type, urlSearchParams, token};
             this._historyHasChanged = true;
             this._contentType = type;
-            this._mediaLoader.unloadAll();
+            const eventArgs = {type, urlSearchParams, token};
+
+            // Set content
             switch (type) {
                 case 'terms':
                 case 'kanji':
@@ -565,7 +569,7 @@ class Display extends EventDispatcher {
                     break;
             }
 
-            const stale = (this._setContentToken !== token);
+            // Clear
             if (clear) {
                 type = 'clear';
                 this._contentType = type;
@@ -576,6 +580,7 @@ class Display extends EventDispatcher {
                 this._clearContent();
             }
 
+            const stale = (this._setContentToken !== token);
             eventArgs.stale = stale;
             this.trigger('contentUpdated', eventArgs);
         } catch (e) {
