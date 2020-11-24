@@ -1043,17 +1043,17 @@ class Display extends EventDispatcher {
     }
 
     _setTitleText(text) {
-        let title = '';
+        let title = this._defaultTitle;
         if (text.length > 0) {
             // Chrome limits title to 1024 characters
             const ellipsis = '...';
             const separator = ' - ';
-            const maxLength = this._titleMaxLength - this._defaultTitle.length - separator.length;
+            const maxLength = this._titleMaxLength - title.length - separator.length;
             if (text.length > maxLength) {
                 text = `${text.substring(0, Math.max(0, maxLength - ellipsis.length))}${ellipsis}`;
             }
 
-            title = `${text}${separator}${this._defaultTitle}`;
+            title = `${text}${separator}${title}`;
         }
         document.title = title;
     }
