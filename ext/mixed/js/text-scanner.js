@@ -44,6 +44,7 @@ class TextScanner extends EventDispatcher {
         this._searchOnClickOnly = searchOnClickOnly;
 
         this._isPrepared = false;
+        this._includeSelector = null;
         this._excludeSelector = null;
 
         this._inputInfoCurrent = null;
@@ -85,6 +86,14 @@ class TextScanner extends EventDispatcher {
 
     set canClearSelection(value) {
         this._canClearSelection = value;
+    }
+
+    get includeSelector() {
+        return this._includeSelector;
+    }
+
+    set includeSelector(value) {
+        this._includeSelector = value;
     }
 
     get excludeSelector() {
@@ -190,14 +199,7 @@ class TextScanner extends EventDispatcher {
         clonedTextSource.setEndOffset(length, layoutAwareScan);
 
         if (this._excludeSelector !== null) {
-            length = clonedTextSource.text().length;
-            while (
-                length > 0 &&
-                DocumentUtil.anyNodeMatchesSelector(clonedTextSource.getNodesInRange(), this._excludeSelector)
-            ) {
-                --length;
-                clonedTextSource.setEndOffset(length, layoutAwareScan);
-            }
+            this._constrainTextSource(clonedTextSource, this._includeSelector, this._excludeSelector, layoutAwareScan);
         }
 
         return clonedTextSource.text();
@@ -890,5 +892,21 @@ class TextScanner extends EventDispatcher {
         // Workaround for Firefox bug not detecting certain 'touch' events as 'pen' events.
         const cachedPointerType = this._pointerIdTypeMap.get(e.pointerId);
         return (typeof cachedPointerType !== 'undefined' ? cachedPointerType : e.pointerType);
+    }
+
+    _constrainTextSource(textSource, includeSelector, excludeSelector, layoutAwareScan) {
+        let length = textSource.text().length;
+        while (length > 0) {
+            const nodes = textSource.getNodesInRange();
+            if (
+                (includeSelector !== null && !DocumentUtil.everyNodeMatchesSelector(nodes, includeSelector)) ||
+                (excludeSelector !== null && DocumentUtil.anyNodeMatchesSelector(nodes, excludeSelector))
+            ) {
+                --length;
+                textSource.setEndOffset(length, layoutAwareScan);
+            } else {
+                break;
+            }
+        }
     }
 }

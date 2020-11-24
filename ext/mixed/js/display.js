@@ -1740,8 +1740,8 @@ class Display extends EventDispatcher {
             preventMiddleMouse: false
         });
 
-        const excludeSelectors = ['.scan-disable', '.scan-disable *', '.source-text', '.source-text *'];
-        this._definitionTextScanner.excludeSelector = excludeSelectors.join(',');
+        const includeSelector = '.term-glossary-item,.term-glossary-item *,.tag,.tag *';
+        this._definitionTextScanner.includeSelector = includeSelector;
 
         this._definitionTextScanner.setEnabled(true);
     }
