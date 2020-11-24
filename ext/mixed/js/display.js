@@ -930,11 +930,13 @@ class Display extends EventDispatcher {
         this._updateNavigation(false, false);
         this._setNoContentVisible(false);
         this._setTitleText('');
+        this._setFullQuery('');
     }
 
     _clearContent() {
         this._container.textContent = '';
         this._setTitleText('');
+        this._setFullQuery('');
     }
 
     _setNoContentVisible(visible) {
