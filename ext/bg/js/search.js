@@ -62,7 +62,7 @@ class DisplaySearch extends Display {
     async prepare() {
         await super.prepare();
         await this.updateOptions();
-        yomichan.on('optionsUpdated', () => this.updateOptions());
+        yomichan.on('optionsUpdated', this._onOptionsUpdated.bind(this));
 
         this.on('contentUpdating', this._onContentUpdating.bind(this));
         this.on('modeChange', this._onModeChange.bind(this));
@@ -126,15 +126,6 @@ class DisplaySearch extends Display {
         }
     }
 
-    async updateOptions() {
-        await super.updateOptions();
-        if (!this._isPrepared) { return; }
-        const query = this._queryInput.value;
-        if (query) {
-            this._onSearchQueryUpdated(query, false);
-        }
-    }
-
     postProcessQuery(query) {
         if (this._wanakanaEnabled) {
             try {
@@ -147,6 +138,14 @@ class DisplaySearch extends Display {
     }
 
     // Private
+
+    async _onOptionsUpdated() {
+        await this.updateOptions();
+        const query = this._queryInput.value;
+        if (query) {
+            this._onSearchQueryUpdated(query, false);
+        }
+    }
 
     _onContentUpdating({type, content, source}) {
         let animate = false;
