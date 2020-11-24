@@ -648,6 +648,9 @@ button.action-button {
     bottom: -1.9em;
     white-space: nowrap;
 }
+.entry[data-expression-multi=true] .term-special-tags>.frequencies {
+    display: none;
+}
 
 
 /* Definitions */
