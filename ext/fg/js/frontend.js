@@ -323,11 +323,11 @@ class Frontend {
         this._updateTextScannerEnabled();
 
         if (this._pageType !== 'web') {
-            const ignoreNodes = ['.scan-disable', '.scan-disable *'];
+            const excludeSelectors = ['.scan-disable', '.scan-disable *'];
             if (!scanningOptions.enableOnPopupExpressions) {
-                ignoreNodes.push('.source-text', '.source-text *');
+                excludeSelectors.push('.source-text', '.source-text *');
             }
-            this._textScanner.ignoreNodes = ignoreNodes.join(',');
+            this._textScanner.excludeSelector = excludeSelectors.join(',');
         }
 
         this._updateContentScale();

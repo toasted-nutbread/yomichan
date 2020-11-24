@@ -44,7 +44,7 @@ class TextScanner extends EventDispatcher {
         this._searchOnClickOnly = searchOnClickOnly;
 
         this._isPrepared = false;
-        this._ignoreNodes = null;
+        this._excludeSelector = null;
 
         this._inputInfoCurrent = null;
         this._scanTimerPromise = null;
@@ -87,12 +87,12 @@ class TextScanner extends EventDispatcher {
         this._canClearSelection = value;
     }
 
-    get ignoreNodes() {
-        return this._ignoreNodes;
+    get excludeSelector() {
+        return this._excludeSelector;
     }
 
-    set ignoreNodes(value) {
-        this._ignoreNodes = value;
+    set excludeSelector(value) {
+        this._excludeSelector = value;
     }
 
     prepare() {
@@ -189,11 +189,11 @@ class TextScanner extends EventDispatcher {
 
         clonedTextSource.setEndOffset(length, layoutAwareScan);
 
-        if (this._ignoreNodes !== null) {
+        if (this._excludeSelector !== null) {
             length = clonedTextSource.text().length;
             while (
                 length > 0 &&
-                DocumentUtil.anyNodeMatchesSelector(clonedTextSource.getNodesInRange(), this._ignoreNodes)
+                DocumentUtil.anyNodeMatchesSelector(clonedTextSource.getNodesInRange(), this._excludeSelector)
             ) {
                 --length;
                 clonedTextSource.setEndOffset(length, layoutAwareScan);

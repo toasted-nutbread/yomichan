@@ -1740,8 +1740,8 @@ class Display extends EventDispatcher {
             preventMiddleMouse: false
         });
 
-        const ignoreNodes = ['.scan-disable', '.scan-disable *', '.source-text', '.source-text *'];
-        this._definitionTextScanner.ignoreNodes = ignoreNodes.join(',');
+        const excludeSelectors = ['.scan-disable', '.scan-disable *', '.source-text', '.source-text *'];
+        this._definitionTextScanner.excludeSelector = excludeSelectors.join(',');
 
         this._definitionTextScanner.setEnabled(true);
     }
