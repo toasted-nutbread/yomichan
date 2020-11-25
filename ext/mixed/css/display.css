@@ -420,17 +420,21 @@ button.sidebar-button.danger:hover .sidebar-button-icon {
 
 
 /* Action buttons */
-.action-button.disabled {
+.action-button {
+    display: block;
+}
+.action-button[hidden] {
+    display: block;
+    visibility: hidden;
+}
+.action-button:disabled {
     pointer-events: none;
     cursor: default;
 }
-.action-button.disabled::before {
+.action-button:disabled::before {
     -webkit-filter: grayscale(100%);
     filter: grayscale(100%);
     opacity: 0.25;
-}
-.action-button.pending {
-    visibility: hidden;
 }
 .actions {
     display: flex;
