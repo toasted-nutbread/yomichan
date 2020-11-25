@@ -562,12 +562,12 @@ button.action-button {
     text-decoration: none;
     cursor: pointer;
 }
-.term-expression[data-frequency=popular]>.term-expression-text,
-.term-expression[data-frequency=popular]>.term-expression-text .kanji-link {
+.term-expression[data-frequency=popular] .term-expression-text,
+.term-expression[data-frequency=popular] .term-expression-text .kanji-link {
     color: var(--popuplar-kanji-text-color);
 }
-.term-expression[data-frequency=rare]>.term-expression-text,
-.term-expression[data-frequency=rare]>.term-expression-text .kanji-link {
+.term-expression[data-frequency=rare] .term-expression-text,
+.term-expression[data-frequency=rare] .term-expression-text .kanji-link {
     color: var(--very-light-text-color);
 }
 .entry-header2,
