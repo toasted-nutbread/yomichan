@@ -115,7 +115,7 @@
     --progress-bar-indicator-color: var(--accent-color);
     --entry-current-indicator-color: var(--accent-color);
 }
-:root[data-yomichan-theme=dark] {
+:root[data-theme=dark] {
     /* Colors */
     --background-color: #1e1e1e;
     --glossary-image-background-color: #2f2f2f;
@@ -179,8 +179,8 @@
 
 
 /* General */
-:root[data-yomichan-page=float]:not([data-yomichan-theme]),
-:root[data-yomichan-page=float]:not([data-yomichan-theme]) body {
+:root[data-yomichan-page=float]:not([data-theme]),
+:root[data-yomichan-page=float]:not([data-theme]) body {
     background-color: transparent;
 }
 :root {
@@ -227,25 +227,25 @@ a {
 
 
 /* Scrollbars */
-:root:not([data-yomichan-theme=light]) .scrollbar {
+:root:not([data-theme=light]) .scrollbar {
     scrollbar-color: var(--scrollbar-thumb-color) var(--scrollbar-track-color);
 }
-:root:not([data-yomichan-theme=light]) .scrollbar::-webkit-scrollbar {
+:root:not([data-theme=light]) .scrollbar::-webkit-scrollbar {
     width: auto;
 }
-:root:not([data-yomichan-theme=light]) .scrollbar::-webkit-scrollbar-button {
+:root:not([data-theme=light]) .scrollbar::-webkit-scrollbar-button {
     height: 0;
 }
-:root:not([data-yomichan-theme=light]) .scrollbar::-webkit-scrollbar-thumb {
+:root:not([data-theme=light]) .scrollbar::-webkit-scrollbar-thumb {
     background-color: var(--scrollbar-thumb-color);
 }
-:root:not([data-yomichan-theme=light]) .scrollbar::-webkit-scrollbar-track {
+:root:not([data-theme=light]) .scrollbar::-webkit-scrollbar-track {
     background-color: var(--scrollbar-thumb-color);
 }
-:root:not([data-yomichan-theme=light]) .scrollbar::-webkit-scrollbar-track-piece {
+:root:not([data-theme=light]) .scrollbar::-webkit-scrollbar-track-piece {
     background-color: var(--scrollbar-track-color);
 }
-:root:not([data-yomichan-theme=light]) .scrollbar::-webkit-scrollbar-corner {
+:root:not([data-theme=light]) .scrollbar::-webkit-scrollbar-corner {
     background-color: var(--scrollbar-track-color);
 }
 

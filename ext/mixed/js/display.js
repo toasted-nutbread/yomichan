@@ -796,7 +796,7 @@ class Display extends EventDispatcher {
     }
 
     _updateTheme(themeName) {
-        document.documentElement.dataset.yomichanTheme = themeName;
+        document.documentElement.dataset.theme = themeName;
     }
 
     async _findDefinitions(isTerms, source, wildcardsEnabled, optionsContext) {
