@@ -361,6 +361,7 @@ class Popup extends EventDispatcher {
         await this._inject();
 
         const optionsGeneral = this._options.general;
+        const {popupDisplayMode} = optionsGeneral;
         const frame = this._frame;
         const frameRect = frame.getBoundingClientRect();
 
@@ -383,11 +384,10 @@ class Popup extends EventDispatcher {
             this._getPositionForVerticalText(...getPositionArgs)
         );
 
-        const fullWidth = (optionsGeneral.popupDisplayMode === 'full-width');
-        frame.classList.toggle('yomichan-popup-full-width', fullWidth);
-        frame.classList.toggle('yomichan-popup-above', !below);
+        frame.dataset.popupDisplayMode = popupDisplayMode;
+        frame.dataset.below = `${below}`;
 
-        if (optionsGeneral.popupDisplayMode === 'full-width') {
+        if (popupDisplayMode === 'full-width') {
             x = viewport.left;
             y = below ? viewport.bottom - height : viewport.top;
             width = viewport.right - viewport.left;
