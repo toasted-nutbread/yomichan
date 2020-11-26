@@ -15,7 +15,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 iframe.yomichan-popup {
     all: initial;
     background-color: #fff;
@@ -27,25 +26,20 @@ iframe.yomichan-popup {
     z-index: 2147483647;
     box-sizing: border-box;
 }
-
 iframe.yomichan-popup[data-outer-theme=dark],
 iframe.yomichan-popup[data-outer-theme=auto][data-site-color=dark] {
     background-color: #1e1e1e;
     border: 1px solid #666;
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
-
 iframe.yomichan-popup[data-popup-display-mode=full-width] {
     border-left: none;
     border-right: none;
-    box-sizing: border-box;
     resize: none;
 }
-
 iframe.yomichan-popup[data-popup-display-mode=full-width][data-below=true] {
     border-bottom: none;
 }
-
 iframe.yomichan-popup[data-popup-display-mode=full-width]:not([data-below=true]) {
     border-top: none;
 }
