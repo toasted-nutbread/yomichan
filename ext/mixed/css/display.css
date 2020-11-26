@@ -179,8 +179,8 @@
 
 
 /* General */
-:root[data-yomichan-page=float]:not([data-theme]),
-:root[data-yomichan-page=float]:not([data-theme]) body {
+:root[data-page-type=popup]:not([data-theme]),
+:root[data-page-type=popup]:not([data-theme]) body {
     background-color: transparent;
 }
 :root {
