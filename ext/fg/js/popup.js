@@ -49,7 +49,7 @@ class Popup extends EventDispatcher {
         this._frameSizeContentScale = null;
         this._frameClient = null;
         this._frame = document.createElement('iframe');
-        this._frame.className = 'yomichan-float';
+        this._frame.className = 'yomichan-popup';
         this._frame.style.width = '0';
         this._frame.style.height = '0';
 
@@ -384,8 +384,8 @@ class Popup extends EventDispatcher {
         );
 
         const fullWidth = (optionsGeneral.popupDisplayMode === 'full-width');
-        frame.classList.toggle('yomichan-float-full-width', fullWidth);
-        frame.classList.toggle('yomichan-float-above', !below);
+        frame.classList.toggle('yomichan-popup-full-width', fullWidth);
+        frame.classList.toggle('yomichan-popup-above', !below);
 
         if (optionsGeneral.popupDisplayMode === 'full-width') {
             x = viewport.left;

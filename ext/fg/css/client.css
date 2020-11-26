@@ -16,7 +16,7 @@
  */
 
 
-iframe.yomichan-float {
+iframe.yomichan-popup {
     all: initial;
     background-color: #fff;
     border: 1px solid #999;
@@ -28,24 +28,24 @@ iframe.yomichan-float {
     box-sizing: border-box;
 }
 
-iframe.yomichan-float[data-outer-theme=dark],
-iframe.yomichan-float[data-outer-theme=auto][data-site-color=dark] {
+iframe.yomichan-popup[data-outer-theme=dark],
+iframe.yomichan-popup[data-outer-theme=auto][data-site-color=dark] {
     background-color: #1e1e1e;
     border: 1px solid #666;
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
-iframe.yomichan-float.yomichan-float-full-width {
+iframe.yomichan-popup.yomichan-popup-full-width {
     border-left: none;
     border-right: none;
     box-sizing: border-box;
     resize: none;
 }
 
-iframe.yomichan-float.yomichan-float-full-width:not(.yomichan-float-above) {
+iframe.yomichan-popup.yomichan-popup-full-width:not(.yomichan-popup-above) {
     border-bottom: none;
 }
 
-iframe.yomichan-float.yomichan-float-full-width.yomichan-float-above {
+iframe.yomichan-popup.yomichan-popup-full-width.yomichan-popup-above {
     border-top: none;
 }
