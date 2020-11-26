@@ -72,8 +72,10 @@
     --default-text-color: #333333;
     --light-text-color: #777777;
     --very-light-text-color: #999999;
-    --popuplar-kanji-text-color: var(--accent-color);
-
+    --kanji-text-color: var(--default-text-color);
+    --kanji-popular-text-color: var(--accent-color);
+    --kanji-rare-text-color: var(--very-light-text-color);
+    --kanji-furigana-text-color: inherit;
     --reason-text-color: var(--light-text-color);
 
     --light-border-color: #eeeeee;
@@ -126,8 +128,10 @@
     --default-text-color: #d4d4d4;
     --light-text-color: #888888;
     --very-light-text-color: #666666;
-    --popuplar-kanji-text-color: var(--accent-color);
-
+    --kanji-text-color: var(--default-text-color);
+    --kanji-popular-text-color: var(--accent-color);
+    --kanji-rare-text-color: var(--very-light-text-color);
+    --kanji-furigana-text-color: inherit;
     --reason-text-color: var(--light-text-color);
 
     --light-border-color: #2f2f2f;
@@ -586,17 +590,20 @@ button.action-button {
 }
 .term-expression .kanji-link {
     border-bottom: var(--expression-thin-border-size) dashed var(--kanji-border-color);
-    color: var(--default-text-color);
+    color: var(--kanji-text-color);
     text-decoration: none;
     cursor: pointer;
 }
 .term-expression[data-frequency=popular] .term-expression-text,
 .term-expression[data-frequency=popular] .term-expression-text .kanji-link {
-    color: var(--popuplar-kanji-text-color);
+    color: var(--kanji-popular-text-color);
 }
 .term-expression[data-frequency=rare] .term-expression-text,
 .term-expression[data-frequency=rare] .term-expression-text .kanji-link {
-    color: var(--very-light-text-color);
+    color: var(--kanji-rare-text-color);
+}
+.term-expression-text>ruby>rt {
+    color: var(--kanji-furigana-text-color);
 }
 .entry-header2,
 .entry-header3 {
