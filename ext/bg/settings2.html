@@ -170,24 +170,6 @@
                 <label class="toggle"><input type="checkbox" data-setting="general.showGuide"><span class="toggle-body"><span class="toggle-track"></span><span class="toggle-knob"></span></span></label>
             </div>
         </div></div>
-        <div class="settings-item"><div class="settings-item-inner">
-            <div class="settings-item-left">
-                <div class="settings-item-label">Compact glossaries</div>
-                <div class="settings-item-description">Display dictionary term glossaries using a more compact layout.</div>
-            </div>
-            <div class="settings-item-right">
-                <label class="toggle"><input type="checkbox" data-setting="general.compactGlossaries"><span class="toggle-body"><span class="toggle-track"></span><span class="toggle-knob"></span></span></label>
-            </div>
-        </div></div>
-        <div class="settings-item"><div class="settings-item-inner">
-            <div class="settings-item-left">
-                <div class="settings-item-label">Compact tags</div>
-                <div class="settings-item-description">Show fewer repeated tags for term glossaries.</div>
-            </div>
-            <div class="settings-item-right">
-                <label class="toggle"><input type="checkbox" data-setting="general.compactTags"><span class="toggle-body"><span class="toggle-track"></span><span class="toggle-knob"></span></span></label>
-            </div>
-        </div></div>
         <div class="settings-item">
             <div class="settings-item-inner settings-item-inner-wrappable">
                 <div class="settings-item-left">
@@ -313,14 +295,6 @@
                 <label class="toggle"><input type="checkbox"><span class="toggle-body"><span class="toggle-track"></span><span class="toggle-knob"></span></span></label>
             </div>
         </div></div>
-        <div class="settings-item"><div class="settings-item-inner">
-            <div class="settings-item-left">
-                <div class="settings-item-label">Show scannable tags for expressions and their readings</div>
-            </div>
-            <div class="settings-item-right">
-                <label class="toggle"><input type="checkbox" data-setting="scanning.enableSearchTags"><span class="toggle-body"><span class="toggle-track"></span><span class="toggle-knob"></span></span></label>
-            </div>
-        </div></div>
         <div class="settings-item advanced-only">
             <div class="settings-item-inner">
                 <div class="settings-item-left">
@@ -403,15 +377,6 @@
                 </p>
             </div>
         </div>
-        <div class="settings-item advanced-only"><div class="settings-item-inner">
-            <div class="settings-item-left">
-                <div class="settings-item-label">Show debug information</div>
-                <div class="settings-item-description">Debugging information will be shown in popup search results.</div>
-            </div>
-            <div class="settings-item-right">
-                <label class="toggle"><input type="checkbox" data-setting="general.debugInfo"><span class="toggle-body"><span class="toggle-track"></span><span class="toggle-knob"></span></span></label>
-            </div>
-        </div></div>
     </div>
 
     <h2 id="popup-appearance">Popup Appearance</h2>
@@ -439,6 +404,45 @@
                         </select>
                     </div>
                 </div>
+            </div>
+        </div></div>
+        <div class="settings-item"><div class="settings-item-inner">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Glossary layout</div>
+                <div class="settings-item-description">Configure how term glossaries are displayed.</div>
+            </div>
+            <div class="settings-item-right">
+                <select data-setting="general.glossaryLayoutMode">
+                    <option value="default">Default</option>
+                    <option value="compact">Compact</option>
+                </select>
+            </div>
+        </div></div>
+        <div class="settings-item"><div class="settings-item-inner">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Compact tags</div>
+                <div class="settings-item-description">Show fewer repeated tags for term glossaries.</div>
+            </div>
+            <div class="settings-item-right">
+                <label class="toggle"><input type="checkbox" data-setting="general.compactTags"><span class="toggle-body"><span class="toggle-track"></span><span class="toggle-knob"></span></span></label>
+            </div>
+        </div></div>
+        <div class="settings-item advanced-only"><div class="settings-item-inner">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Show tags for expressions and their readings</div>
+                <div class="settings-item-description">These tags can be scanned if the options for popup content scanning are enabled.</div>
+            </div>
+            <div class="settings-item-right">
+                <label class="toggle"><input type="checkbox" data-setting="scanning.enableSearchTags"><span class="toggle-body"><span class="toggle-track"></span><span class="toggle-knob"></span></span></label>
+            </div>
+        </div></div>
+        <div class="settings-item advanced-only"><div class="settings-item-inner">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Show debug information</div>
+                <div class="settings-item-description">A link to log debugging information will be shown in the search results.</div>
+            </div>
+            <div class="settings-item-right">
+                <label class="toggle"><input type="checkbox" data-setting="general.debugInfo"><span class="toggle-body"><span class="toggle-track"></span><span class="toggle-knob"></span></span></label>
             </div>
         </div></div>
         <div class="settings-item advanced-only">
