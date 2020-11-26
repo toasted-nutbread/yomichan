@@ -178,6 +178,7 @@ class Popup extends EventDispatcher {
 
     setContentScale(scale) {
         this._contentScale = scale;
+        this._frame.style.fontSize = `${scale}px`;
         this._invokeSafe('setContentScale', {scale});
     }
 
