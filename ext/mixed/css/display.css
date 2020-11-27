@@ -734,10 +734,6 @@ button.action-button {
     padding: 0;
     list-style-type: none;
 }
-.term-definition-item::marker,
-.term-glossary-item::marker {
-    color: var(--light-text-color);
-}
 .term-definition-list:not([data-count="0"]):not([data-count="1"]) {
     padding-left: 1.4em;
     list-style-type: decimal;
@@ -750,6 +746,10 @@ button.action-button {
 .term-glossary-list:not([data-count="0"]):not([data-count="1"]) {
     padding-left: 1.4em;
     list-style-type: circle;
+}
+.term-definition-item::marker,
+.term-glossary-item::marker {
+    color: var(--light-text-color);
 }
 .term-definition-disambiguation-list[data-count="0"] {
     display: none;
@@ -824,10 +824,6 @@ button.action-button {
     padding: 0;
     list-style-type: none;
 }
-.term-pitch-accent-group::marker,
-.term-pitch-accent::marker {
-    color: var(--light-text-color);
-}
 .term-pitch-accent-group-list:not([data-count="0"]):not([data-count="1"]) {
     padding-left: 1.4em;
     list-style-type: decimal;
@@ -842,6 +838,10 @@ button.action-button {
     padding-left: 1.4em;
     list-style-type: circle;
     display: block;
+}
+.term-pitch-accent-group::marker,
+.term-pitch-accent::marker {
+    color: var(--light-text-color);
 }
 .term-pitch-accent {
     display: inline;
