@@ -567,13 +567,6 @@ button.action-button {
     margin-right: 0.375em;
 }
 
-:root:not([data-enable-search-tags=true]) .tag[data-category=search] {
-    display: none;
-}
-:root[data-compact-tags=true] .tag[data-redundant=true] {
-    display: none;
-}
-
 
 /* Entries */
 .entry {
@@ -783,37 +776,6 @@ button.action-button {
 }
 
 
-/* Conditional styles */
-:root:not([data-debug=true]) .debug-info {
-    display: none;
-}
-:root[data-anki-enabled=false] .action-view-note,
-:root[data-anki-enabled=false] .action-add-note {
-    display: none;
-}
-:root[data-audio-enabled=false] .action-play-audio {
-    display: none;
-}
-:root[data-glossary-layout-mode=compact] .term-definition-tag-list,
-:root[data-glossary-layout-mode=compact] .term-definition-disambiguation-list:not([data-count="0"]) {
-    display: inline;
-}
-:root[data-glossary-layout-mode=compact] .term-glossary-list {
-    display: inline;
-    list-style: none;
-    padding-left: 0;
-}
-:root[data-glossary-layout-mode=compact] .term-glossary-list>li {
-    display: inline;
-}
-:root[data-glossary-layout-mode=compact] .term-glossary-list>li:not(:first-child)::before {
-    white-space: pre-wrap;
-    content: var(--compact-list-separator);
-    display: inline;
-    color: var(--light-text-color);
-}
-
-
 /* Pitch accent styles */
 .entry[data-pitch-accent-count='0'] .term-pitch-accent-container {
     display: none;
@@ -923,35 +885,6 @@ button.action-button {
     height: 0;
     padding: 0 0.25em;
     vertical-align: middle;
-}
-
-:root[data-show-pitch-accent-downstep-notation=true] .term-pitch-accent-disambiguation-list[data-expression-count="0"],
-:root[data-show-pitch-accent-downstep-notation=true] .term-pitch-accent-disambiguation[data-type=reading] {
-    display: none;
-}
-:root[data-show-pitch-accent-downstep-notation=false] .term-pitch-accent-characters {
-    display: none;
-}
-:root[data-show-pitch-accent-position-notation=false] .term-pitch-accent-position {
-    display: none;
-}
-:root[data-show-pitch-accent-graph=false] .term-pitch-accent-details {
-    display: none;
-}
-
-:root[data-glossary-layout-mode=compact] .term-pitch-accent-list {
-    display: inline;
-    list-style: none;
-    padding-left: 0;
-}
-:root[data-glossary-layout-mode=compact] .term-pitch-accent-list>li.term-pitch-accent {
-    display: inline;
-}
-:root[data-glossary-layout-mode=compact] .term-pitch-accent-list>li:not(:first-child)::before {
-    white-space: pre-wrap;
-    content: var(--compact-list-separator);
-    display: inline;
-    color: var(--light-text-color);
 }
 
 
@@ -1065,32 +998,6 @@ button.action-button {
 }
 .term-glossary-image-link-text::after {
     content: "]";
-}
-
-:root[data-glossary-layout-mode=compact] .term-glossary-image-container {
-    display: none;
-    position: absolute;
-    left: 0;
-    top: 100%;
-    z-index: 1;
-}
-:root[data-glossary-layout-mode=compact] .entry:nth-last-of-type(1):not(:nth-of-type(1)) .term-glossary-image-container {
-    bottom: 100%;
-    top: auto;
-}
-:root[data-glossary-layout-mode=compact] .term-glossary-image-link {
-    position: relative;
-    display: inline-block;
-}
-:root[data-glossary-layout-mode=compact] .term-glossary-image-link:hover .term-glossary-image-container,
-:root[data-glossary-layout-mode=compact] .term-glossary-image-link:focus .term-glossary-image-container {
-    display: block;
-}
-:root:not([data-glossary-layout-mode=compact]) .term-glossary-image-link-text {
-    display: none;
-}
-:root:not([data-glossary-layout-mode=compact]) .term-glossary-image-description {
-    display: block;
 }
 
 
@@ -1219,4 +1126,97 @@ button.action-button {
     height: 0;
     pointer-events: none;
     z-index: 10;
+}
+
+
+/* Conditional styles */
+:root:not([data-enable-search-tags=true]) .tag[data-category=search] {
+    display: none;
+}
+:root[data-compact-tags=true] .tag[data-redundant=true] {
+    display: none;
+}
+
+:root:not([data-debug=true]) .debug-info {
+    display: none;
+}
+:root[data-anki-enabled=false] .action-view-note,
+:root[data-anki-enabled=false] .action-add-note {
+    display: none;
+}
+:root[data-audio-enabled=false] .action-play-audio {
+    display: none;
+}
+:root[data-glossary-layout-mode=compact] .term-definition-tag-list,
+:root[data-glossary-layout-mode=compact] .term-definition-disambiguation-list:not([data-count="0"]) {
+    display: inline;
+}
+:root[data-glossary-layout-mode=compact] .term-glossary-list {
+    display: inline;
+    list-style: none;
+    padding-left: 0;
+}
+:root[data-glossary-layout-mode=compact] .term-glossary-list>li {
+    display: inline;
+}
+:root[data-glossary-layout-mode=compact] .term-glossary-list>li:not(:first-child)::before {
+    white-space: pre-wrap;
+    content: var(--compact-list-separator);
+    display: inline;
+    color: var(--light-text-color);
+}
+
+:root[data-show-pitch-accent-downstep-notation=true] .term-pitch-accent-disambiguation-list[data-expression-count="0"],
+:root[data-show-pitch-accent-downstep-notation=true] .term-pitch-accent-disambiguation[data-type=reading] {
+    display: none;
+}
+:root[data-show-pitch-accent-downstep-notation=false] .term-pitch-accent-characters {
+    display: none;
+}
+:root[data-show-pitch-accent-position-notation=false] .term-pitch-accent-position {
+    display: none;
+}
+:root[data-show-pitch-accent-graph=false] .term-pitch-accent-details {
+    display: none;
+}
+
+:root[data-glossary-layout-mode=compact] .term-pitch-accent-list {
+    display: inline;
+    list-style: none;
+    padding-left: 0;
+}
+:root[data-glossary-layout-mode=compact] .term-pitch-accent-list>li.term-pitch-accent {
+    display: inline;
+}
+:root[data-glossary-layout-mode=compact] .term-pitch-accent-list>li:not(:first-child)::before {
+    white-space: pre-wrap;
+    content: var(--compact-list-separator);
+    display: inline;
+    color: var(--light-text-color);
+}
+
+:root[data-glossary-layout-mode=compact] .term-glossary-image-container {
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 100%;
+    z-index: 1;
+}
+:root[data-glossary-layout-mode=compact] .entry:nth-last-of-type(1):not(:nth-of-type(1)) .term-glossary-image-container {
+    bottom: 100%;
+    top: auto;
+}
+:root[data-glossary-layout-mode=compact] .term-glossary-image-link {
+    position: relative;
+    display: inline-block;
+}
+:root[data-glossary-layout-mode=compact] .term-glossary-image-link:hover .term-glossary-image-container,
+:root[data-glossary-layout-mode=compact] .term-glossary-image-link:focus .term-glossary-image-container {
+    display: block;
+}
+:root:not([data-glossary-layout-mode=compact]) .term-glossary-image-link-text {
+    display: none;
+}
+:root:not([data-glossary-layout-mode=compact]) .term-glossary-image-description {
+    display: block;
 }
