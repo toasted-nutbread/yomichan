@@ -928,6 +928,20 @@ button.action-button {
     display: none;
 }
 
+:root[data-glossary-layout-mode=compact] .term-pitch-accent-list {
+    display: inline;
+    list-style: none;
+    padding-left: 0;
+}
+:root[data-glossary-layout-mode=compact] .term-pitch-accent-list>li.term-pitch-accent {
+    display: inline;
+}
+:root[data-glossary-layout-mode=compact] .term-pitch-accent-list>li:not(:first-child)::before {
+    white-space: pre-wrap;
+    content: var(--compact-list-separator);
+    display: inline;
+}
+
 
 /* Pitch accent graph styles */
 .term-pitch-accent-graph {
