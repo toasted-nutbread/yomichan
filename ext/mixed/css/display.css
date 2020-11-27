@@ -67,6 +67,8 @@
     --tag-border-style: none;
     --tag-font-weight: bold;
 
+    --compact-list-separator: " | ";
+
     --animation-duration: 0.125s;
 
     /* Colors */
@@ -801,7 +803,7 @@ button.action-button {
 }
 :root[data-glossary-layout-mode=compact] .term-glossary-list>li:not(:first-child)::before {
     white-space: pre-wrap;
-    content: " | ";
+    content: var(--compact-list-separator);
     display: inline;
 }
 
