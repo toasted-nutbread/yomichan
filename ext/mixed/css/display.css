@@ -77,8 +77,7 @@
     --accent-color: #0275d8;
     --link-color: var(--accent-color);
 
-    --dark-text-color: #000000;
-    --default-text-color: #333333;
+    --default-text-color: #000000;
     --light-text-color: #777777;
     --very-light-text-color: #999999;
     --kanji-text-color: var(--default-text-color);
@@ -134,7 +133,6 @@
     --accent-color: #0275d8;
     --link-color: var(--accent-color);
 
-    --dark-text-color: #d8d8d8;
     --default-text-color: #d4d4d4;
     --light-text-color: #888888;
     --very-light-text-color: #666666;
@@ -735,6 +733,9 @@ button.action-button {
     margin: 0;
     padding: 0;
     list-style-type: none;
+}
+.term-definition-item::marker,
+.term-glossary-item::marker {
     color: var(--light-text-color);
 }
 .term-definition-list:not([data-count="0"]):not([data-count="1"]) {
@@ -749,9 +750,6 @@ button.action-button {
 .term-glossary-list:not([data-count="0"]):not([data-count="1"]) {
     padding-left: 1.4em;
     list-style-type: circle;
-}
-.term-glossary {
-    color: var(--dark-text-color);
 }
 .term-definition-disambiguation-list[data-count="0"] {
     display: none;
@@ -808,6 +806,7 @@ button.action-button {
     white-space: pre-wrap;
     content: var(--compact-list-separator);
     display: inline;
+    color: var(--light-text-color);
 }
 
 
@@ -824,6 +823,9 @@ button.action-button {
     margin: 0;
     padding: 0;
     list-style-type: none;
+}
+.term-pitch-accent-group::marker,
+.term-pitch-accent::marker {
     color: var(--light-text-color);
 }
 .term-pitch-accent-group-list:not([data-count="0"]):not([data-count="1"]) {
@@ -844,7 +846,6 @@ button.action-button {
 .term-pitch-accent {
     display: inline;
     line-height: 1.5em;
-    color: var(--dark-text-color);
 }
 .term-pitch-accent-list:not([data-count="0"]):not([data-count="1"])>.term-pitch-accent {
     display: list-item;
@@ -943,6 +944,7 @@ button.action-button {
     white-space: pre-wrap;
     content: var(--compact-list-separator);
     display: inline;
+    color: var(--light-text-color);
 }
 
 
@@ -1129,14 +1131,13 @@ button.action-button {
     margin: 0;
     padding: 0;
     list-style-type: none;
-    color: var(--light-text-color);
 }
 .kanji-glossary-list:not([data-count="0"]):not([data-count="1"]) {
     padding-left: 1.4em;
     list-style-type: decimal;
 }
-.kanji-glossary {
-    color: var(--dark-text-color);
+.kanji-glossary-item::marker {
+    color: var(--light-text-color);
 }
 
 
