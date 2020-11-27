@@ -1156,10 +1156,10 @@ button.action-button {
     list-style: none;
     padding-left: 0;
 }
-:root[data-glossary-layout-mode=compact] .term-glossary-list>li {
+:root[data-glossary-layout-mode=compact] .term-glossary-item {
     display: inline;
 }
-:root[data-glossary-layout-mode=compact] .term-glossary-list>li:not(:first-child)::before {
+:root[data-glossary-layout-mode=compact] .term-glossary-item:not(:first-child)::before {
     white-space: pre-wrap;
     content: var(--compact-list-separator);
     display: inline;
@@ -1185,10 +1185,10 @@ button.action-button {
     list-style: none;
     padding-left: 0;
 }
-:root[data-glossary-layout-mode=compact] .term-pitch-accent-list>li.term-pitch-accent {
+:root[data-glossary-layout-mode=compact] .term-pitch-accent {
     display: inline;
 }
-:root[data-glossary-layout-mode=compact] .term-pitch-accent-list>li:not(:first-child)::before {
+:root[data-glossary-layout-mode=compact] .term-pitch-accent:not(:first-child)::before {
     white-space: pre-wrap;
     content: var(--compact-list-separator);
     display: inline;
