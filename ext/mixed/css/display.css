@@ -68,6 +68,8 @@
     --tag-font-weight: bold;
 
     --compact-list-separator: " | ";
+    --list-padding1: 1.4em;
+    --list-padding2: var(--list-padding1);
 
     --animation-duration: 0.125s;
 
@@ -731,21 +733,23 @@ button.action-button {
 /* Definitions */
 .term-definition-list {
     margin: 0;
-    padding: 0;
-    list-style-type: none;
-}
-.term-definition-list:not([data-count="0"]):not([data-count="1"]) {
-    padding-left: 1.4em;
+    padding: 0 0 0 var(--list-padding1);
     list-style-type: decimal;
+}
+.term-definition-list[data-count="0"],
+.term-definition-list[data-count="1"] {
+    padding-left: 0;
+    list-style-type: none;
 }
 .term-glossary-list {
     margin: 0;
-    padding: 0;
-    list-style-type: none;
-}
-.term-glossary-list:not([data-count="0"]):not([data-count="1"]) {
-    padding-left: 1.4em;
+    padding: 0 0 0 var(--list-padding2);
     list-style-type: circle;
+}
+.term-glossary-list[data-count="0"],
+.term-glossary-list[data-count="1"] {
+    padding-left: 0;
+    list-style-type: none;
 }
 .term-definition-item::marker,
 .term-glossary-item::marker {
@@ -821,34 +825,37 @@ button.action-button {
 }
 .term-pitch-accent-group-list {
     margin: 0;
-    padding: 0;
-    list-style-type: none;
-}
-.term-pitch-accent-group-list:not([data-count="0"]):not([data-count="1"]) {
-    padding-left: 1.4em;
+    padding: 0 0 0 var(--list-padding1);
     list-style-type: decimal;
+}
+.term-pitch-accent-group-list[data-count="0"],
+.term-pitch-accent-group-list[data-count="1"] {
+    padding-left: 0;
+    list-style-type: none;
 }
 .term-pitch-accent-list {
     margin: 0;
-    padding: 0;
-    list-style-type: none;
-    display: inline;
-}
-.term-pitch-accent-list:not([data-count="0"]):not([data-count="1"]) {
-    padding-left: 1.4em;
+    padding: 0 0 0 var(--list-padding2);
     list-style-type: circle;
     display: block;
+}
+.term-pitch-accent-list[data-count="0"],
+.term-pitch-accent-list[data-count="1"] {
+    padding-left: 0;
+    list-style-type: none;
+    display: inline;
 }
 .term-pitch-accent-group::marker,
 .term-pitch-accent::marker {
     color: var(--light-text-color);
 }
 .term-pitch-accent {
-    display: inline;
-    line-height: 1.5em;
-}
-.term-pitch-accent-list:not([data-count="0"]):not([data-count="1"])>.term-pitch-accent {
     display: list-item;
+    line-height: 1.5;
+}
+.term-pitch-accent-list[data-count="0"] .term-pitch-accent,
+.term-pitch-accent-list[data-count="1"] .term-pitch-accent {
+    display: inline;
 }
 .term-pitch-accent-group-tag-list {
     margin-right: 0.375em;
@@ -1129,12 +1136,13 @@ button.action-button {
 }
 .kanji-glossary-list {
     margin: 0;
-    padding: 0;
-    list-style-type: none;
-}
-.kanji-glossary-list:not([data-count="0"]):not([data-count="1"]) {
-    padding-left: 1.4em;
+    padding: 0 0 0 var(--list-padding1);
     list-style-type: decimal;
+}
+.kanji-glossary-list[data-count="0"],
+.kanji-glossary-list[data-count="1"] {
+    padding-left: 0;
+    list-style-type: none;
 }
 .kanji-glossary-item::marker {
     color: var(--light-text-color);
