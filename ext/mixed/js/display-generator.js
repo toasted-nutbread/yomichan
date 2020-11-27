@@ -338,7 +338,16 @@ class DisplayGenerator {
         const tag = this._createTag({notes: '', name: dictionary, category: 'pitch-accent-dictionary'});
         node.querySelector('.term-pitch-accent-group-tag-list').appendChild(tag);
 
+        let hasTags = false;
+        for (const {tags} of pitches) {
+            if (tags.length > 0) {
+                hasTags = true;
+                break;
+            }
+        }
+
         const n = node.querySelector('.term-pitch-accent-list');
+        n.dataset.hasTags = `${hasTags}`;
         this._appendMultiple(n, this._createPitch.bind(this), pitches);
 
         return node;
