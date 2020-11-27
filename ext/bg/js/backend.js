@@ -1559,7 +1559,8 @@ class Backend {
             }
         );
 
-        const fileName = this._generateAnkiNoteMediaFileName('yomichan_audio', '.mp3', timestamp, definitionDetails);
+        let fileName = this._generateAnkiNoteMediaFileName('yomichan_audio', '.mp3', timestamp, definitionDetails);
+        fileName = fileName.replace(/\]/g, '');
         await ankiConnect.storeMediaFile(fileName, data);
 
         return fileName;
@@ -1617,7 +1618,6 @@ class Backend {
         fileName += `_${this._ankNoteDateToString(new Date(timestamp))}`;
         fileName += extension;
 
-        fileName = fileName.replace(/\]/g, '');
         fileName = this._replaceInvalidFileNameCharacters(fileName);
 
         return fileName;
