@@ -600,18 +600,21 @@ button.action-button {
         width var(--entry-current-indicator-transition-duration) linear,
         visibility 0s linear 0s;
 }
-.term-expression .kanji-link {
+.kanji-link {
     border-bottom: var(--expression-thin-border-size) dashed var(--kanji-border-color);
     color: var(--kanji-text-color);
     text-decoration: none;
     cursor: pointer;
 }
+.term-expression-text {
+    color: var(--kanji-text-color);
+}
 .term-expression[data-frequency=popular] .term-expression-text,
-.term-expression[data-frequency=popular] .term-expression-text .kanji-link {
+.term-expression[data-frequency=popular] .kanji-link {
     color: var(--kanji-popular-text-color);
 }
 .term-expression[data-frequency=rare] .term-expression-text,
-.term-expression[data-frequency=rare] .term-expression-text .kanji-link {
+.term-expression[data-frequency=rare] .kanji-link {
     color: var(--kanji-rare-text-color);
 }
 .term-expression-text>ruby>rt {
