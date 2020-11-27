@@ -518,6 +518,7 @@ button.action-button {
     color: var(--tag-text-color);
     background-color: var(--tag-default-background-color);
     border: var(--tag-border-size) var(--tag-border-style) var(--tag-border-color);
+    margin-right: 0.375em;
 }
 .tag[data-category=name] {
     background-color: var(--tag-name-background-color);
@@ -551,9 +552,6 @@ button.action-button {
 }
 .tag-inner {
     display: block;
-}
-.tag-list>.tag {
-    margin-right: 0.375em;
 }
 
 
@@ -829,9 +827,6 @@ button.action-button {
 }
 .term-pitch-accent-tag-list:not([data-count="0"]) {
     margin-right: 0.375em;
-}
-.term-special-tags>.pitches {
-    display: inline;
 }
 .term-pitch-accent-character {
     display: inline-block;
