@@ -458,16 +458,15 @@ class Backend {
         return results;
     }
 
-    async _onApiInjectAnkiNoteMedia({expression, reading, timestamp, audioDetails, screenshotDetails, clipboardDetails}, sender) {
+    async _onApiInjectAnkiNoteMedia({timestamp, definitionDetails, audioDetails, screenshotDetails, clipboardDetails}, sender) {
         if (isObject(screenshotDetails)) {
             const {id: tabId, windowId} = (sender && sender.tab ? sender.tab : {});
             screenshotDetails = Object.assign({}, screenshotDetails, {tabId, windowId});
         }
         return await this._injectAnkNoteMedia(
             this._anki,
-            expression,
-            reading,
             timestamp,
+            definitionDetails,
             audioDetails,
             screenshotDetails,
             clipboardDetails
@@ -1497,15 +1496,15 @@ class Backend {
         return await this._audioDownloader.downloadAudio(sources, expression, reading, details);
     }
 
-    async _injectAnkNoteMedia(ankiConnect, expression, reading, timestamp, audioDetails, screenshotDetails, clipboardDetails) {
+    async _injectAnkNoteMedia(ankiConnect, timestamp, definitionDetails, audioDetails, screenshotDetails, clipboardDetails) {
         const screenshotFileName = (
             screenshotDetails !== null ?
-            await this._injectAnkNoteScreenshot(ankiConnect, expression, reading, timestamp, screenshotDetails) :
+            await this._injectAnkNoteScreenshot(ankiConnect, timestamp, definitionDetails, screenshotDetails) :
             null
         );
         const clipboardImageFileName = (
             clipboardDetails !== null && clipboardDetails.image ?
-            await this._injectAnkNoteClipboardImage(ankiConnect, expression, reading, timestamp) :
+            await this._injectAnkNoteClipboardImage(ankiConnect, timestamp, definitionDetails) :
             null
         );
         let clipboardText = null;
@@ -1518,24 +1517,21 @@ class Backend {
         }
         const audioFileName = (
             audioDetails !== null ?
-            await this._injectAnkNoteAudio(ankiConnect, expression, reading, timestamp, audioDetails) :
+            await this._injectAnkNoteAudio(ankiConnect, timestamp, definitionDetails, audioDetails) :
             null
         );
         return {screenshotFileName, clipboardImageFileName, clipboardText, audioFileName};
     }
 
-    async _injectAnkNoteAudio(ankiConnect, expression, reading, timestamp, details) {
+    async _injectAnkNoteAudio(ankiConnect, timestamp, definitionDetails, details) {
         try {
+            const {type, expression, reading} = definitionDetails;
+            if (type === 'kanji') {
+                throw new Error('Cannot inject audio for kanji');
+            }
             if (!reading && !expression) {
                 throw new Error('Invalid reading and expression');
             }
-
-            let fileName = 'yomichan';
-            if (reading) { fileName += `_${reading}`; }
-            if (expression) { fileName += `_${expression}`; }
-            fileName += '.mp3';
-            fileName = fileName.replace(/\]/g, '');
-            fileName = this._replaceInvalidFileNameCharacters(fileName);
 
             const {sources, customSourceUrl} = details;
             const data = await this._downloadDefinitionAudio(
@@ -1550,6 +1546,7 @@ class Backend {
                 }
             );
 
+            const fileName = this._generateAnkiNoteMediaFileName('yomichan_audio', '.mp3', timestamp, definitionDetails);
             await ankiConnect.storeMediaFile(fileName, data);
 
             return fileName;
@@ -1558,10 +1555,8 @@ class Backend {
         }
     }
 
-    async _injectAnkNoteScreenshot(ankiConnect, expression, reading, timestamp, details) {
+    async _injectAnkNoteScreenshot(ankiConnect, timestamp, definitionDetails, details) {
         try {
-            const now = new Date(timestamp);
-
             const {windowId, tabId, ownerFrameId, format, quality} = details;
             const dataUrl = await this._getScreenshot(windowId, tabId, ownerFrameId, format, quality);
 
@@ -1569,9 +1564,7 @@ class Backend {
             const extension = this._mediaUtility.getFileExtensionFromImageMediaType(mediaType);
             if (extension === null) { throw new Error('Unknown image media type'); }
 
-            let fileName = `yomichan_browser_screenshot_${reading}_${this._ankNoteDateToString(now)}.${extension}`;
-            fileName = this._replaceInvalidFileNameCharacters(fileName);
-
+            const fileName = this._generateAnkiNoteMediaFileName('yomichan_browser_screenshot', extension, timestamp, definitionDetails);
             await ankiConnect.storeMediaFile(fileName, data);
 
             return fileName;
@@ -1580,10 +1573,8 @@ class Backend {
         }
     }
 
-    async _injectAnkNoteClipboardImage(ankiConnect, expression, reading, timestamp) {
+    async _injectAnkNoteClipboardImage(ankiConnect, timestamp, definitionDetails) {
         try {
-            const now = new Date(timestamp);
-
             const dataUrl = await this._clipboardReader.getImage();
             if (dataUrl === null) {
                 throw new Error('No clipboard image');
@@ -1593,15 +1584,41 @@ class Backend {
             const extension = this._mediaUtility.getFileExtensionFromImageMediaType(mediaType);
             if (extension === null) { throw new Error('Unknown image media type'); }
 
-            let fileName = `yomichan_clipboard_image_${reading}_${this._ankNoteDateToString(now)}.${extension}`;
-            fileName = this._replaceInvalidFileNameCharacters(fileName);
-
+            const fileName = this._generateAnkiNoteMediaFileName('yomichan_clipboard_image', extension, timestamp, definitionDetails);
             await ankiConnect.storeMediaFile(fileName, data);
 
             return fileName;
         } catch (e) {
             return null;
         }
+    }
+
+    _generateAnkiNoteMediaFileName(prefix, extension, timestamp, definitionDetails) {
+        let fileName = prefix;
+
+        switch (definitionDetails.type) {
+            case 'kanji':
+                {
+                    const {character} = definitionDetails;
+                    if (character) { fileName += `_${character}`; }
+                }
+                break;
+            default:
+                {
+                    const {reading, expression} = definitionDetails;
+                    if (reading) { fileName += `_${reading}`; }
+                    if (expression) { fileName += `_${expression}`; }
+                }
+                break;
+        }
+
+        fileName += `_${this._ankNoteDateToString(new Date(timestamp))}`;
+        fileName += extension;
+
+        fileName = fileName.replace(/\]/g, '');
+        fileName = this._replaceInvalidFileNameCharacters(fileName);
+
+        return fileName;
     }
 
     _replaceInvalidFileNameCharacters(fileName) {
