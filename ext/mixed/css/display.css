@@ -33,7 +33,6 @@
     --thin-border-size: calc(1em / var(--font-size-no-units));
     --expression-thin-border-size: calc(1em / (var(--expression-font-size-no-units) * var(--font-size-no-units)));
 
-    --spinner-size-no-units: 32;
     --action-button-size-no-units: 16;
 
     --list-margin: 0.72em;
@@ -217,16 +216,6 @@ body {
 ol, ul {
     margin-top: 0;
     margin-bottom: var(--list-padding);
-}
-#spinner {
-    position: fixed;
-    z-index: 1;
-    right: 0.36em;
-    bottom: 0.36em;
-}
-#spinner>img {
-    width: calc(1em * (var(--spinner-size-no-units) / var(--font-size-no-units)));
-    height: calc(1em * (var(--spinner-size-no-units) / var(--font-size-no-units)));
 }
 h2 {
     font-size: var(--h2-font-size);
