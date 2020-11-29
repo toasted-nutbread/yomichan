@@ -247,6 +247,10 @@ const JapaneseUtil = (() => {
 
         // Conversion functions
 
+        convertToKana(text) {
+            return this._getWanakana().toKana(text);
+        }
+
         convertKatakanaToHiragana(text) {
             let result = '';
             const offset = (HIRAGANA_CONVERSION_RANGE[0] - KATAKANA_CONVERSION_RANGE[0]);

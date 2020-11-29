@@ -130,7 +130,7 @@ class DisplaySearch extends Display {
     postProcessQuery(query) {
         if (this._wanakanaEnabled) {
             try {
-                query = wanakana.toKana(query);
+                query = this._japaneseUtil.convertToKana(query);
             } catch (e) {
                 // NOP
             }
