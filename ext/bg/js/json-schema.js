@@ -619,6 +619,14 @@ class JsonSchemaValidator {
             case 'array':
                 value = this._populateArrayDefaults(value, schema, info);
                 break;
+            default:
+                if (!this.isValid(value, schema)) {
+                    const schemaDefault = this._getDefaultSchemaValue(schema);
+                    if (this.isValid(schemaDefault, schema)) {
+                        value = schemaDefault;
+                    }
+                }
+                break;
         }
 
         return value;
