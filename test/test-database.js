@@ -25,15 +25,8 @@ require('fake-indexeddb/auto');
 
 const chrome = {
     runtime: {
-        onMessage: {
-            addListener() { /* NOP */ },
-            removeListener() { /* NOP */ }
-        },
-        getURL(path2) {
+        getURL: (path2) => {
             return url.pathToFileURL(path.join(__dirname, '..', 'ext', path2.replace(/^\//, ''))).href;
-        },
-        sendMessage() {
-            // NOP
         }
     }
 };
@@ -104,10 +97,7 @@ const vm = new VM({
     fetch,
     indexedDB: global.indexedDB,
     IDBKeyRange: global.IDBKeyRange,
-    JSZip,
-    addEventListener() {
-        // NOP
-    }
+    JSZip
 });
 vm.context.window = vm.context;
 
