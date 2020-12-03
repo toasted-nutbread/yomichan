@@ -15,92 +15,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const fs = require('fs');
-const url = require('url');
 const path = require('path');
 const assert = require('assert');
-const {JSZip, createDictionaryArchive, testMain} = require('../dev/util');
-const {VM} = require('../dev/vm');
-require('fake-indexeddb/auto');
-
-const chrome = {
-    runtime: {
-        getURL: (path2) => {
-            return url.pathToFileURL(path.join(__dirname, '..', 'ext', path2.replace(/^\//, ''))).href;
-        }
-    }
-};
-
-class Image {
-    constructor() {
-        this._src = '';
-        this._loadCallbacks = [];
-    }
-
-    get src() {
-        return this._src;
-    }
-
-    set src(value) {
-        this._src = value;
-        this._delayTriggerLoad();
-    }
-
-    get naturalWidth() {
-        return 100;
-    }
-
-    get naturalHeight() {
-        return 100;
-    }
-
-    addEventListener(eventName, callback) {
-        if (eventName === 'load') {
-            this._loadCallbacks.push(callback);
-        }
-    }
-
-    removeEventListener(eventName, callback) {
-        if (eventName === 'load') {
-            const index = this._loadCallbacks.indexOf(callback);
-            if (index >= 0) {
-                this._loadCallbacks.splice(index, 1);
-            }
-        }
-    }
-
-    async _delayTriggerLoad() {
-        await Promise.resolve();
-        for (const callback of this._loadCallbacks) {
-            callback();
-        }
-    }
-}
-
-async function fetch(url2) {
-    const filePath = url.fileURLToPath(url2);
-    await Promise.resolve();
-    const content = fs.readFileSync(filePath, {encoding: null});
-    return {
-        ok: true,
-        status: 200,
-        statusText: 'OK',
-        text: async () => Promise.resolve(content.toString('utf8')),
-        json: async () => Promise.resolve(JSON.parse(content.toString('utf8')))
-    };
-}
+const {createDictionaryArchive, testMain} = require('../dev/util');
+const {DatabaseVM} = require('../dev/database-vm');
 
 
-const vm = new VM({
-    chrome,
-    Image,
-    fetch,
-    indexedDB: global.indexedDB,
-    IDBKeyRange: global.IDBKeyRange,
-    JSZip
-});
-vm.context.window = vm.context;
-
+const vm = new DatabaseVM();
 vm.execute([
     'mixed/js/core.js',
     'mixed/js/cache-map.js',
@@ -145,7 +66,7 @@ function clearDatabase(timeout) {
         }, timeout);
 
         (async () => {
-            const indexedDB = global.indexedDB;
+            const indexedDB = vm.indexedDB;
             for (const {name} of await indexedDB.databases()) {
                 await new Promise((resolve2, reject2) => {
                     const request = indexedDB.deleteDatabase(name);
