@@ -388,15 +388,16 @@ async function testFindTermsBySequenceBulk1(database, mainDictionary) {
         {
             inputs: [
                 {
-                    sequenceList: [1, 2, 3, 4, 5, 6]
+                    sequenceList: [1, 2, 3, 4, 5]
                 }
             ],
             expectedResults: {
-                total: 32,
+                total: 33,
                 expressions: [
                     ['打', 2],
                     ['打つ', 17],
-                    ['打ち込む', 13]
+                    ['打ち込む', 13],
+                    ['画像', 1]
                 ],
                 readings: [
                     ['だ', 1],
@@ -404,7 +405,8 @@ async function testFindTermsBySequenceBulk1(database, mainDictionary) {
                     ['うつ', 15],
                     ['ぶつ', 2],
                     ['うちこむ', 9],
-                    ['ぶちこむ', 4]
+                    ['ぶちこむ', 4],
+                    ['がぞう', 1]
                 ]
             }
         },
@@ -447,12 +449,13 @@ async function testFindTermsBySequenceBulk1(database, mainDictionary) {
                 }
             ],
             expectedResults: {
-                total: 15,
+                total: 17,
                 expressions: [
-                    ['打つ', 15]
+                    ['打つ', 17]
                 ],
                 readings: [
-                    ['うつ', 15]
+                    ['うつ', 15],
+                    ['ぶつ', 2]
                 ]
             }
         },
@@ -463,12 +466,13 @@ async function testFindTermsBySequenceBulk1(database, mainDictionary) {
                 }
             ],
             expectedResults: {
-                total: 2,
+                total: 13,
                 expressions: [
-                    ['打つ', 2]
+                    ['打ち込む', 13]
                 ],
                 readings: [
-                    ['ぶつ', 2]
+                    ['うちこむ', 9],
+                    ['ぶちこむ', 4]
                 ]
             }
         },
@@ -479,28 +483,12 @@ async function testFindTermsBySequenceBulk1(database, mainDictionary) {
                 }
             ],
             expectedResults: {
-                total: 9,
+                total: 1,
                 expressions: [
-                    ['打ち込む', 9]
+                    ['画像', 1]
                 ],
                 readings: [
-                    ['うちこむ', 9]
-                ]
-            }
-        },
-        {
-            inputs: [
-                {
-                    sequenceList: [6]
-                }
-            ],
-            expectedResults: {
-                total: 4,
-                expressions: [
-                    ['打ち込む', 4]
-                ],
-                readings: [
-                    ['ぶちこむ', 4]
+                    ['がぞう', 1]
                 ]
             }
         },
