@@ -477,6 +477,7 @@
         {"kanaIn": "てる", "kanaOut": "て", "rulesIn": ["v1"], "rulesOut": ["iru"]},
         {"kanaIn": "でいる", "kanaOut": "で", "rulesIn": ["v1"], "rulesOut": ["iru"]},
         {"kanaIn": "でおる", "kanaOut": "で", "rulesIn": ["v5"], "rulesOut": ["iru"]},
+        {"kanaIn": "でる", "kanaOut": "で", "rulesIn": ["v1"], "rulesOut": ["iru"]},
         {"kanaIn": "とる", "kanaOut": "て", "rulesIn": ["v5"], "rulesOut": ["iru"]},
         {"kanaIn": "ないでいる", "kanaOut": "ない", "rulesIn": ["v1"], "rulesOut": ["adj-i"]}
     ]
