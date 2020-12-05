@@ -462,10 +462,10 @@ class DisplayGenerator {
         const {expression, reading, dictionary, frequency} = details;
         const node = this._templates.instantiate('tag-frequency');
 
-        node.querySelector('.term-frequency-disambiguation-expression').textContent = expression;
-        node.querySelector('.term-frequency-disambiguation-reading').textContent = reading;
-        node.querySelector('.term-frequency-dictionary-name').textContent = dictionary;
-        node.querySelector('.term-frequency-value').textContent = frequency;
+        node.querySelector('.tag-frequency-disambiguation-expression').textContent = expression;
+        node.querySelector('.tag-frequency-disambiguation-reading').textContent = reading;
+        node.querySelector('.tag-frequency-dictionary-name').textContent = dictionary;
+        node.querySelector('.tag-frequency-value').textContent = frequency;
 
         node.dataset.expression = expression;
         node.dataset.reading = reading;
