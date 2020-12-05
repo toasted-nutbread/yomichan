@@ -480,5 +480,8 @@
         {"kanaIn": "でる", "kanaOut": "で", "rulesIn": ["v1"], "rulesOut": ["iru"]},
         {"kanaIn": "とる", "kanaOut": "て", "rulesIn": ["v5"], "rulesOut": ["iru"]},
         {"kanaIn": "ないでいる", "kanaOut": "ない", "rulesIn": ["v1"], "rulesOut": ["adj-i"]}
+    ],
+    "-ki": [
+        {"kanaIn": "き", "kanaOut": "い", "rulesIn": [], "rulesOut": ["adj-i"]}
     ]
 }
