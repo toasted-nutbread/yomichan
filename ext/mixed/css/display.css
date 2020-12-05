@@ -553,6 +553,27 @@ button.action-button {
 .tag-inner {
     display: block;
 }
+.tag-frequency-separator::before {
+    content: ":";
+}
+.tag-frequency-disambiguation-separator::before {
+    content: ":";
+}
+.tag-frequency-disambiguation::before {
+    content: "(";
+}
+.tag-frequency-disambiguation::after {
+    content: ") ";
+}
+.frequencies .tag[data-reading-is-same=true] .tag-frequency-disambiguation-separator,
+.frequencies .tag[data-reading-is-same=true] .tag-frequency-disambiguation-reading,
+.entry[data-unique-expression-count="1"] .tag-frequency-disambiguation-separator,
+.entry[data-unique-expression-count="1"] .tag-frequency-disambiguation-expression,
+.entry[data-unique-reading-count="1"] .tag-frequency-disambiguation-separator,
+.entry[data-unique-reading-count="1"] .tag-frequency-disambiguation-reading,
+.entry[data-unique-expression-count="1"][data-unique-reading-count="1"] .tag-frequency-disambiguation {
+    display: none;
+}
 
 
 /* Entries */
@@ -643,27 +664,6 @@ button.action-button {
 }
 .term-expression-list>.term-expression:not(:last-of-type)>.term-expression-text-container>.term-expression-text::after {
     content: "\3001";
-}
-.tag-frequency-separator::before {
-    content: ":";
-}
-.tag-frequency-disambiguation-separator::before {
-    content: ":";
-}
-.tag-frequency-disambiguation::before {
-    content: "(";
-}
-.tag-frequency-disambiguation::after {
-    content: ") ";
-}
-.frequencies .tag[data-reading-is-same=true] .tag-frequency-disambiguation-separator,
-.frequencies .tag[data-reading-is-same=true] .tag-frequency-disambiguation-reading,
-.entry[data-unique-expression-count="1"] .tag-frequency-disambiguation-separator,
-.entry[data-unique-expression-count="1"] .tag-frequency-disambiguation-expression,
-.entry[data-unique-reading-count="1"] .tag-frequency-disambiguation-separator,
-.entry[data-unique-reading-count="1"] .tag-frequency-disambiguation-reading,
-.entry[data-unique-expression-count="1"][data-unique-reading-count="1"] .tag-frequency-disambiguation {
-    display: none;
 }
 
 
