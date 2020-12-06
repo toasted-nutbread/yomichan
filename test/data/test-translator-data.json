@@ -1,0 +1,173 @@
+{
+    "optionsPresets": {
+        "kanji": {
+            "enabledDictionaryMap": [
+                [
+                    "${title}",
+                    {
+                        "priority": 0
+                    }
+                ]
+            ]
+        },
+        "default": {
+            "wildcard": null,
+            "mainDictionary": "${title}",
+            "alphanumeric": false,
+            "convertHalfWidthCharacters": false,
+            "convertNumericCharacters": false,
+            "convertAlphabeticCharacters": false,
+            "convertHiraganaToKatakana": false,
+            "convertKatakanaToHiragana": false,
+            "collapseEmphaticSequences": false,
+            "enabledDictionaryMap": [
+                [
+                    "${title}",
+                    {
+                        "priority": 0,
+                        "allowSecondarySearches": false
+                    }
+                ]
+            ]
+        }
+    },
+    "tests": [
+        {
+            "comment": "Basic kanji test 1",
+            "func": "findKanji",
+            "text": "打",
+            "options": "kanji"
+        },
+        {
+            "comment": "Basic kanji test 2",
+            "func": "findKanji",
+            "text": "込",
+            "options": "kanji"
+        },
+        {
+            "comment": "Missing kanji test",
+            "func": "findKanji",
+            "text": "画",
+            "options": "kanji"
+        },
+        {
+            "comment": "Find term using expression text 1",
+            "func": "findTerms",
+            "mode": "split",
+            "text": "打",
+            "options": "default"
+        },
+        {
+            "comment": "Find term using expression text 2",
+            "func": "findTerms",
+            "mode": "split",
+            "text": "打つ",
+            "options": "default"
+        },
+        {
+            "comment": "Find term using expression text 3",
+            "func": "findTerms",
+            "mode": "split",
+            "text": "打ち込む",
+            "options": "default"
+        },
+        {
+            "comment": "Find term using expression text 4",
+            "func": "findTerms",
+            "mode": "split",
+            "text": "画像",
+            "options": "default"
+        },
+        {
+            "comment": "Find term using reading 1",
+            "func": "findTerms",
+            "mode": "split",
+            "text": "だ",
+            "options": "default"
+        },
+        {
+            "comment": "Find term using reading 2",
+            "func": "findTerms",
+            "mode": "split",
+            "text": "ダース",
+            "options": "default"
+        },
+        {
+            "comment": "Find term using reading 3",
+            "func": "findTerms",
+            "mode": "split",
+            "text": "うつ",
+            "options": "default"
+        },
+        {
+            "comment": "Find term using reading 4",
+            "func": "findTerms",
+            "mode": "split",
+            "text": "ぶつ",
+            "options": "default"
+        },
+        {
+            "comment": "Find term using reading 5",
+            "func": "findTerms",
+            "mode": "split",
+            "text": "うちこむ",
+            "options": "default"
+        },
+        {
+            "comment": "Find term using reading 6",
+            "func": "findTerms",
+            "mode": "split",
+            "text": "ぶちこむ",
+            "options": "default"
+        },
+        {
+            "comment": "Find term using reading 7",
+            "func": "findTerms",
+            "mode": "split",
+            "text": "がぞう",
+            "options": "default"
+        },
+        {
+            "comment": "Missing term 1",
+            "func": "findTerms",
+            "mode": "split",
+            "text": "為る",
+            "options": "default"
+        },
+        {
+            "comment": "Missing term ２",
+            "func": "findTerms",
+            "mode": "split",
+            "text": "する",
+            "options": "default"
+        },
+        {
+            "comment": "Search using different modes",
+            "func": "findTerms",
+            "mode": "simple",
+            "text": "打ち込む",
+            "options": "default"
+        },
+        {
+            "comment": "Search using different modes",
+            "func": "findTerms",
+            "mode": "group",
+            "text": "打ち込む",
+            "options": "default"
+        },
+        {
+            "comment": "Search using different modes",
+            "func": "findTerms",
+            "mode": "merge",
+            "text": "打ち込む",
+            "options": "default"
+        },
+        {
+            "comment": "Search inflected term",
+            "func": "findTerms",
+            "mode": "split",
+            "text": "打ち込んでいませんでした",
+            "options": "default"
+        }
+    ]
+}
