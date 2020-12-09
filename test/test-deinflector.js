@@ -491,10 +491,12 @@ function testDeinflections() {
                 {term: '為る', source: '為なかった',     rule: 'vs', reasons: ['negative', 'past']},
                 {term: '為る', source: '為ませんでした', rule: 'vs', reasons: ['polite past negative']},
                 {term: '為る', source: '為なくて',       rule: 'vs', reasons: ['negative', '-te']},
-                // ['potential', 'negative']
+                {term: '為る', source: '為られない',     rule: 'vs', reasons: ['potential or passive', 'negative']},
                 {term: '為る', source: '為れない',       rule: 'vs', reasons: ['passive', 'negative']},
                 {term: '為る', source: '為せない',       rule: 'vs', reasons: ['causative', 'negative']},
+                {term: '為る', source: '為させない',     rule: 'vs', reasons: ['causative', 'negative']},
                 {term: '為る', source: '為せられない',   rule: 'vs', reasons: ['causative', 'potential or passive', 'negative']},
+                {term: '為る', source: '為させられない', rule: 'vs', reasons: ['causative', 'potential or passive', 'negative']},
                 {term: '為る', source: '為るな',         rule: 'vs', reasons: ['imperative negative']},
 
                 {term: '為る', source: '為れば',         rule: 'vs', reasons: ['-ba']},
@@ -533,10 +535,12 @@ function testDeinflections() {
                 {term: 'する', source: 'しなかった',     rule: 'vs', reasons: ['negative', 'past']},
                 {term: 'する', source: 'しませんでした', rule: 'vs', reasons: ['polite past negative']},
                 {term: 'する', source: 'しなくて',       rule: 'vs', reasons: ['negative', '-te']},
-                // ['potential', 'negative']
+                {term: 'する', source: 'せられない',     rule: 'vs', reasons: ['potential or passive', 'negative']},
                 {term: 'する', source: 'されない',       rule: 'vs', reasons: ['passive', 'negative']},
                 {term: 'する', source: 'させない',       rule: 'vs', reasons: ['causative', 'negative']},
+                {term: 'する', source: 'せさせない',     rule: 'vs', reasons: ['causative', 'negative']},
                 {term: 'する', source: 'させられない',   rule: 'vs', reasons: ['causative', 'potential or passive', 'negative']},
+                {term: 'する', source: 'せさせられない', rule: 'vs', reasons: ['causative', 'potential or passive', 'negative']},
                 {term: 'する', source: 'するな',         rule: 'vs', reasons: ['imperative negative']},
 
                 {term: 'する', source: 'すれば',         rule: 'vs', reasons: ['-ba']},
