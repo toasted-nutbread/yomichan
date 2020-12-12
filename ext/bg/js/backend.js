@@ -791,7 +791,8 @@ class Backend {
     }
 
     _onCommandHelp() {
-        chrome.tabs.create({url: 'https://foosoft.net/projects/yomichan/'});
+        const url = chrome.runtime.getURL('/bg/info.html');
+        chrome.tabs.create({url});
     }
 
     _onCommandOptions(params) {
