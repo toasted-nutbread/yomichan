@@ -56,13 +56,13 @@ function getOperatingSystemDisplayName(os) {
         await yomichan.prepare();
 
         const {userAgent} = navigator;
-        const {version} = manifest;
+        const {name, version} = manifest;
         const {browser, platform: {os}} = await api.getEnvironmentInfo();
 
         const thisVersionLink = document.querySelector('#release-notes-this-version-link');
         thisVersionLink.href = thisVersionLink.dataset.hrefFormat.replace(/\{version\}/g, version);
 
-        document.querySelector('#version').textContent = `${version}`;
+        document.querySelector('#version').textContent = `${name} ${version}`;
         document.querySelector('#browser').textContent = getBrowserDisplayName(browser);
         document.querySelector('#platform').textContent = getOperatingSystemDisplayName(os);
         document.querySelector('#language').textContent = `${language}`;
