@@ -433,8 +433,8 @@ class DictionaryController {
             for (const progress of progressContainers) { progress.hidden = true; }
             if (statusFooter !== null) { statusFooter.setTaskActive(progressSelector, false); }
             this._setButtonsEnabled(true);
-            storageController.updateStats();
             this._isDeleting = false;
+            if (storageController !== null) { storageController.updateStats(); }
         }
     }
 
