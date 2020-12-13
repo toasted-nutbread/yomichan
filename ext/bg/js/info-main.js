@@ -50,6 +50,7 @@ function getOperatingSystemDisplayName(os) {
         document.querySelector('#content-scroll-focus').focus();
 
         const manifest = chrome.runtime.getManifest();
+        const language = chrome.i18n.getUILanguage();
 
         api.forwardLogsToBackend();
         await yomichan.prepare();
@@ -64,6 +65,7 @@ function getOperatingSystemDisplayName(os) {
         document.querySelector('#version').textContent = `${version}`;
         document.querySelector('#browser').textContent = getBrowserDisplayName(browser);
         document.querySelector('#platform').textContent = getOperatingSystemDisplayName(os);
+        document.querySelector('#language').textContent = `${language}`;
         document.querySelector('#user-agent').textContent = userAgent;
 
         (async () => {
