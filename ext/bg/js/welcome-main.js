@@ -24,7 +24,6 @@
  * SettingsController
  * SettingsDisplayController
  * StatusFooter
- * StorageController
  * api
  */
 
