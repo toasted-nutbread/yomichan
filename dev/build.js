@@ -82,10 +82,16 @@ function applyModifications(manifest, modifications) {
             switch (action) {
                 case 'set':
                     {
-                        const {value: newValue} = modification;
-                        const value = getObjectProperties(manifest, path2, path2.length - 1);
-                        const last = path2[path2.length - 1];
-                        value[last] = clone(newValue);
+                        const {value, before, after} = modification;
+                        const object = getObjectProperties(manifest, path2, path2.length - 1);
+                        const key = path2[path2.length - 1];
+
+                        let {index} = modification;
+                        if (typeof index !== 'number') { index = -1; }
+                        if (typeof before === 'string') { index = getObjectKeyIndex(object, before); }
+                        if (typeof after === 'string') { index = getObjectKeyIndex(object, after); }
+
+                        setObjectKeyAtIndex(object, key, value, index);
                     }
                     break;
                 case 'replace':
@@ -165,7 +171,7 @@ function getObjectKeyIndex(object, key) {
 }
 
 function setObjectKeyAtIndex(object, key, value, index) {
-    if (index < 0 || Object.prototype.hasOwnProperty.call(object, key)) {
+    if (index < 0 || typeof key === 'number' || Object.prototype.hasOwnProperty.call(object, key)) {
         object[key] = value;
         return;
     }
