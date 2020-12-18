@@ -28,6 +28,7 @@ function clone(value) {
 }
 
 async function createZip(directory, excludeFiles, outputFileName, sevenZipExes=[], onUpdate=null) {
+    fs.unlinkSync(outputFileName);
     for (const exe of sevenZipExes) {
         try {
             const excludeArguments = excludeFiles.map((excludeFilePath) => `-x!${excludeFilePath}`);
