@@ -805,17 +805,8 @@ class Display extends EventDispatcher {
 
     _onTagClick(e) {
         const node = e.currentTarget;
-        let {title: content} = node;
-        if (!content) {
-            const inner = node.querySelector('.tag-inner');
-            const {dataset: {category}} = node;
-            content = (inner !== null ? inner.textContent : '');
-            if (category) {
-                if (content.length > 0) { content += ' '; }
-                content += `(${category})`;
-            }
-        }
-        this._showTagNotification(content);
+        const {dataset: {details}} = node;
+        this._showTagNotification(details);
     }
 
     _showTagNotification(content) {
