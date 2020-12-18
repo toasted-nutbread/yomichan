@@ -149,6 +149,14 @@ function applyModifications(manifest, modifications) {
                         }
                     }
                     break;
+                case 'add':
+                    {
+                        const {items} = modification;
+                        const value = getObjectProperties(manifest, path2, path2.length);
+                        const itemsNew = items.map((v) => clone(v));
+                        value.push(...itemsNew);
+                    }
+                    break;
             }
         }
     }
