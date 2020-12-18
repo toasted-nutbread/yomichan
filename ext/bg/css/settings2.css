@@ -2459,6 +2459,12 @@ code.anki-field-marker {
     display: none;
 }
 
+:root[data-manifest-version='2'] [data-show-for-manifest-version]:not([data-show-for-manifest-version~='2']),
+:root[data-manifest-version='3'] [data-show-for-manifest-version]:not([data-show-for-manifest-version~='3']),
+:root[data-manifest-version='2'] [data-hide-for-manifest-version~='2'],
+:root[data-manifest-version='3'] [data-hide-for-manifest-version~='3'] {
+    display: none;
+}
 
 /* Media-specific styles */
 @media (max-width: 800px), (hover: none) and (max-width: 1100px) {
