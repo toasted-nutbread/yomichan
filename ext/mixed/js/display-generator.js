@@ -117,6 +117,10 @@ class DisplayGenerator {
         return node;
     }
 
+    createEmptyFooterNotification() {
+        return this._templates.instantiate('footer-notification');
+    }
+
     // Private
 
     _createTermExpression(details) {
