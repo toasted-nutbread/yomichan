@@ -519,6 +519,7 @@ button.action-button {
     background-color: var(--tag-default-background-color);
     border: var(--tag-border-size) var(--tag-border-style) var(--tag-border-color);
     margin-right: 0.375em;
+    cursor: pointer;
 }
 .tag[data-category=name] {
     background-color: var(--tag-name-background-color);
