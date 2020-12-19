@@ -34,6 +34,8 @@
     --expression-thin-border-size: calc(1em / (var(--expression-font-size-no-units) * var(--font-size-no-units)));
 
     --action-button-size-no-units: 16;
+    --action-button-size: calc(1em * (var(--action-button-size-no-units) / var(--font-size-no-units)));
+    --action-button-padding: 0.3em;
 
     --list-margin: 0.72em;
     --main-content-vertical-padding: 0em;
@@ -479,7 +481,7 @@ button.sidebar-button.danger:hover .sidebar-button-icon {
     opacity: 1;
     border: 0;
     margin: 0;
-    padding: 0.3em;
+    padding: var(--action-button-padding);
     background: transparent;
     font-size: inherit;
     transition:
@@ -512,8 +514,8 @@ button.action-button {
 }
 .action-button::before {
     content: "";
-    width: calc(1em * (var(--action-button-size-no-units) / var(--font-size-no-units)));
-    height: calc(1em * (var(--action-button-size-no-units) / var(--font-size-no-units)));
+    width: var(--action-button-size);
+    height: var(--action-button-size);
     display: block;
     background-color: transparent;
     background-repeat: no-repeat;
@@ -740,7 +742,7 @@ button.action-button {
 /* Old entry indicator */
 .entry-current-indicator-icon {
     display: block;
-    padding: 0.3em;
+    padding: var(--action-button-padding);
 }
 .entry-current-indicator-icon[hidden],
 .entry:not(.entry-current) .entry-current-indicator-icon,
@@ -750,8 +752,8 @@ button.action-button {
 }
 .entry-current-indicator-icon::before {
     content: "";
-    width: calc(1em * (var(--action-button-size-no-units) / var(--font-size-no-units)));
-    height: calc(1em * (var(--action-button-size-no-units) / var(--font-size-no-units)));
+    width: var(--action-button-size);
+    height: var(--action-button-size);
     display: block;
     background-color: transparent;
     background-repeat: no-repeat;
