@@ -17,10 +17,11 @@
 
 const fs = require('fs');
 const path = require('path');
+const assert = require('assert');
 const readline = require('readline');
 const childProcess = require('child_process');
 const util = require('./util');
-const {getAllFiles, getDefaultManifestAndVariants, createManifestString, getArgs} = util;
+const {getAllFiles, getDefaultManifestAndVariants, createManifestString, getArgs, testMain} = util;
 
 
 function clone(value) {
@@ -272,11 +273,11 @@ function createVariantManifest(manifest, variant, variantMap) {
     return modifiedManifest;
 }
 
-async function build(manifest, buildDir, extDir, manifestPath, variantMap, variantNames) {
+async function build(manifest, buildDir, extDir, manifestPath, variantMap, variantNames, dryRun) {
     const sevenZipExes = ['7za', '7z'];
 
     // Create build directory
-    if (!fs.existsSync(buildDir)) {
+    if (!fs.existsSync(buildDir) && !dryRun) {
         fs.mkdirSync(buildDir, {recursive: true});
     }
 
@@ -305,13 +306,16 @@ async function build(manifest, buildDir, extDir, manifestPath, variantMap, varia
 
         const fileNameSafe = path.basename(fileName);
         const fullFileName = path.join(buildDir, fileNameSafe);
-        fs.writeFileSync(manifestPath, createManifestString(modifiedManifest));
-        await createZip(extDir, excludeFiles, fullFileName, sevenZipExes, onUpdate);
+        ensureFilesExist(extDir, excludeFiles);
+        if (!dryRun) {
+            fs.writeFileSync(manifestPath, createManifestString(modifiedManifest));
+            await createZip(extDir, excludeFiles, fullFileName, sevenZipExes, onUpdate);
 
-        if (Array.isArray(fileCopies)) {
-            for (const fileName2 of fileCopies) {
-                const fileName2Safe = path.basename(fileName2);
-                fs.copyFileSync(fullFileName, path.join(buildDir, fileName2Safe));
+            if (Array.isArray(fileCopies)) {
+                for (const fileName2 of fileCopies) {
+                    const fileName2Safe = path.basename(fileName2);
+                    fs.copyFileSync(fullFileName, path.join(buildDir, fileName2Safe));
+                }
             }
         }
 
@@ -319,15 +323,23 @@ async function build(manifest, buildDir, extDir, manifestPath, variantMap, varia
     }
 }
 
+function ensureFilesExist(directory, files) {
+    for (const file of files) {
+        assert.ok(fs.existsSync(path.join(directory, file)));
+    }
+}
 
-async function main() {
-    const argv = process.argv.slice(2);
+
+async function main(argv) {
     const args = getArgs(argv, new Map([
         ['all', false],
         ['default', false],
         ['manifest', null],
+        ['dry-run', false],
         [null, []]
     ]));
+
+    const dryRun = args.get('dry-run');
 
     const {manifest, variants} = getDefaultManifestAndVariants();
 
@@ -343,7 +355,7 @@ async function main() {
 
     try {
         const variantNames = (argv.length === 0 || args.get('all') ? variants.map(({name}) => name) : args.get(null));
-        await build(manifest, buildDir, extDir, manifestPath, variantMap, variantNames);
+        await build(manifest, buildDir, extDir, manifestPath, variantMap, variantNames, dryRun);
     } finally {
         // Restore manifest
         let restoreManifest = manifest;
@@ -354,9 +366,18 @@ async function main() {
             }
         }
         process.stdout.write('Restoring manifest...\n');
-        fs.writeFileSync(manifestPath, createManifestString(restoreManifest));
+        if (!dryRun) {
+            fs.writeFileSync(manifestPath, createManifestString(restoreManifest));
+        }
     }
 }
 
 
-if (require.main === module) { main(); }
+if (require.main === module) {
+    testMain(main, process.argv.slice(2));
+}
+
+
+module.exports = {
+    main
+};
