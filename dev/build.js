@@ -281,7 +281,10 @@ async function build(manifest, buildDir, extDir, manifestPath, variantMap, varia
         fs.mkdirSync(buildDir, {recursive: true});
     }
 
+    const dontLogOnUpdate = !process.stdout.isTTY;
     const onUpdate = (metadata) => {
+        if (dontLogOnUpdate) { return; }
+
         let message = `Progress: ${metadata.percent.toFixed(2)}%`;
         if (metadata.currentFile) {
             message += ` (${metadata.currentFile})`;
