@@ -28,37 +28,39 @@ function clone(value) {
     return JSON.parse(JSON.stringify(value));
 }
 
-async function createZip(directory, excludeFiles, outputFileName, sevenZipExes=[], onUpdate=null) {
+async function createZip(directory, excludeFiles, outputFileName, sevenZipExes, onUpdate, dryRun) {
     try {
         fs.unlinkSync(outputFileName);
     } catch (e) {
         // NOP
     }
 
-    for (const exe of sevenZipExes) {
-        try {
-            const excludeArguments = excludeFiles.map((excludeFilePath) => `-x!${excludeFilePath}`);
-            childProcess.execFileSync(
-                exe,
-                [
-                    'a',
-                    outputFileName,
-                    '.',
-                    ...excludeArguments
-                ],
-                {
-                    cwd: directory
-                }
-            );
-            return;
-        } catch (e) {
-            // NOP
+    if (!dryRun) {
+        for (const exe of sevenZipExes) {
+            try {
+                const excludeArguments = excludeFiles.map((excludeFilePath) => `-x!${excludeFilePath}`);
+                childProcess.execFileSync(
+                    exe,
+                    [
+                        'a',
+                        outputFileName,
+                        '.',
+                        ...excludeArguments
+                    ],
+                    {
+                        cwd: directory
+                    }
+                );
+                return;
+            } catch (e) {
+                // NOP
+            }
         }
     }
-    return await createJSZip(directory, excludeFiles, outputFileName, onUpdate);
+    return await createJSZip(directory, excludeFiles, outputFileName, onUpdate, dryRun);
 }
 
-async function createJSZip(directory, excludeFiles, outputFileName, onUpdate) {
+async function createJSZip(directory, excludeFiles, outputFileName, onUpdate, dryRun) {
     const JSZip = util.JSZip;
     const files = getAllFiles(directory, directory);
     removeItemsFromArray(files, excludeFiles);
@@ -82,7 +84,9 @@ async function createJSZip(directory, excludeFiles, outputFileName, onUpdate) {
     }, onUpdate);
     process.stdout.write('\n');
 
-    fs.writeFileSync(outputFileName, data, {encoding: null, flag: 'w'});
+    if (!dryRun) {
+        fs.writeFileSync(outputFileName, data, {encoding: null, flag: 'w'});
+    }
 }
 
 function removeItemsFromArray(array, removeItems) {
@@ -278,7 +282,7 @@ function createVariantManifest(manifest, variant, variantMap) {
     return modifiedManifest;
 }
 
-async function build(manifest, buildDir, extDir, manifestPath, variantMap, variantNames, dryRun) {
+async function build(manifest, buildDir, extDir, manifestPath, variantMap, variantNames, dryRun, dryRunBuildZip) {
     const sevenZipExes = ['7za', '7z'];
 
     // Create build directory
@@ -317,8 +321,13 @@ async function build(manifest, buildDir, extDir, manifestPath, variantMap, varia
         ensureFilesExist(extDir, excludeFiles);
         if (!dryRun) {
             fs.writeFileSync(manifestPath, createManifestString(modifiedManifest));
-            await createZip(extDir, excludeFiles, fullFileName, sevenZipExes, onUpdate);
+        }
 
+        if (!dryRun || dryRunBuildZip) {
+            await createZip(extDir, excludeFiles, fullFileName, sevenZipExes, onUpdate, dryRun);
+        }
+
+        if (!dryRun) {
             if (Array.isArray(fileCopies)) {
                 for (const fileName2 of fileCopies) {
                     const fileName2Safe = path.basename(fileName2);
@@ -344,10 +353,12 @@ async function main(argv) {
         ['default', false],
         ['manifest', null],
         ['dry-run', false],
+        ['dry-run-build-zip', false],
         [null, []]
     ]));
 
     const dryRun = args.get('dry-run');
+    const dryRunBuildZip = args.get('dry-run-build-zip');
 
     const {manifest, variants} = getDefaultManifestAndVariants();
 
@@ -363,7 +374,7 @@ async function main(argv) {
 
     try {
         const variantNames = (argv.length === 0 || args.get('all') ? variants.map(({name}) => name) : args.get(null));
-        await build(manifest, buildDir, extDir, manifestPath, variantMap, variantNames, dryRun);
+        await build(manifest, buildDir, extDir, manifestPath, variantMap, variantNames, dryRun, dryRunBuildZip);
     } finally {
         // Restore manifest
         let restoreManifest = manifest;
