@@ -463,14 +463,33 @@ button.sidebar-button.danger:hover .sidebar-button-icon {
 
 
 /* Action buttons */
+.actions {
+    display: flex;
+    flex-flow: row nowrap;
+    float: right;
+    margin: -0.25em;
+}
+.actions::after {
+    clear: both;
+    content: '';
+    display: block;
+}
 .action-button {
     display: block;
     opacity: 1;
+    border: 0;
+    margin: 0;
+    padding: 0.3em;
+    background: transparent;
+    font-size: inherit;
     transition:
         opacity var(--animation-duration) linear,
         visibility 0s linear 0s,
         filter var(--animation-duration) linear,
         -webkit-filter var(--animation-duration) linear;
+}
+button.action-button {
+    cursor: pointer;
 }
 .action-button[hidden] {
     display: block;
@@ -490,27 +509,6 @@ button.sidebar-button.danger:hover .sidebar-button-icon {
 }
 .action-button:disabled:not([hidden]) {
     opacity: 0.25;
-}
-.actions {
-    display: flex;
-    float: right;
-    margin: -0.25em;
-}
-.actions::after {
-    clear: both;
-    content: '';
-    display: block;
-}
-.action-button {
-    display: inline-block;
-    border: 0;
-    margin: 0;
-    padding: 0.3em;
-    background: transparent;
-    font-size: inherit;
-}
-button.action-button {
-    cursor: pointer;
 }
 .action-button::before {
     content: "";
@@ -705,6 +703,29 @@ button.action-button {
     transition:
         width var(--entry-current-indicator-transition-duration) linear,
         visibility 0s linear 0s;
+}
+
+
+/* Old entry indicator */
+.entry-current-indicator-icon {
+    display: block;
+    padding: 0.3em;
+}
+.entry-current-indicator-icon[hidden],
+.entry:not(.entry-current) .entry-current-indicator-icon,
+:root:not([data-popup-current-indicator-mode=asterisk]) .entry-current-indicator-icon,
+:root[data-popup-current-indicator-mode=asterisk] .entry-current-indicator {
+    display: none;
+}
+.entry-current-indicator-icon::before {
+    content: "";
+    width: calc(1em * (var(--action-button-size-no-units) / var(--font-size-no-units)));
+    height: calc(1em * (var(--action-button-size-no-units) / var(--font-size-no-units)));
+    display: block;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-image: url("/mixed/img/entry-current.svg");
 }
 
 
