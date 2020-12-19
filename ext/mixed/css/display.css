@@ -705,6 +705,37 @@ button.action-button {
         visibility 0s linear 0s;
 }
 
+:root[data-popup-current-indicator-mode=bar-right] .entry-current-indicator,
+:root[data-popup-current-indicator-mode=dot-right] .entry-current-indicator {
+    left: auto;
+    right: 0;
+}
+
+.entry-current-indicator-inner {
+    display: none;
+    pointer-events: auto;
+    width: 100%;
+    height: 0;
+    top: 0;
+    background-color: var(--entry-current-indicator-color);
+    transition:
+        height var(--entry-current-indicator-transition-duration) linear;
+}
+.entry.entry-current .entry-current-indicator-inner {
+    height: var(--entry-current-indicator-width);
+    transition:
+        height var(--entry-current-indicator-transition-duration) linear;
+}
+:root[data-popup-current-indicator-mode=dot-left] .entry-current-indicator,
+:root[data-popup-current-indicator-mode=dot-right] .entry-current-indicator {
+    background-color: transparent;
+}
+:root[data-popup-current-indicator-mode=dot-left] .entry-current-indicator-inner,
+:root[data-popup-current-indicator-mode=dot-right] .entry-current-indicator-inner {
+    display: block;
+    position: sticky;
+}
+
 
 /* Old entry indicator */
 .entry-current-indicator-icon {
