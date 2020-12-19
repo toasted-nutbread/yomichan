@@ -619,26 +619,6 @@ button.action-button {
     padding: var(--entry-vertical-padding) var(--entry-horizontal-padding);
     position: relative;
 }
-.entry>.entry-current-indicator {
-    display: block;
-    position: absolute;
-    left: calc(-1 * var(--main-content-horizontal-padding));
-    top: 0;
-    bottom: 0;
-    width: 0;
-    background-color: var(--entry-current-indicator-color);
-    visibility: hidden;
-    transition:
-        width var(--entry-current-indicator-transition-duration) linear,
-        visibility 0s linear var(--entry-current-indicator-transition-duration);
-}
-.entry.entry-current>.entry-current-indicator {
-    width: var(--entry-current-indicator-width);
-    visibility: visible;
-    transition:
-        width var(--entry-current-indicator-transition-duration) linear,
-        visibility 0s linear 0s;
-}
 .kanji-link {
     border-bottom: var(--expression-thin-border-size) dashed var(--kanji-border-color);
     color: var(--kanji-text-color);
@@ -702,6 +682,29 @@ button.action-button {
 }
 .term-expression-list>.term-expression:not(:last-of-type)>.term-expression-text-container>.term-expression-text::after {
     content: "\3001";
+}
+
+
+/* Entry indicator */
+.entry>.entry-current-indicator {
+    display: block;
+    position: absolute;
+    left: calc(-1 * var(--main-content-horizontal-padding));
+    top: 0;
+    bottom: 0;
+    width: 0;
+    background-color: var(--entry-current-indicator-color);
+    visibility: hidden;
+    transition:
+        width var(--entry-current-indicator-transition-duration) linear,
+        visibility 0s linear var(--entry-current-indicator-transition-duration);
+}
+.entry.entry-current>.entry-current-indicator {
+    width: var(--entry-current-indicator-width);
+    visibility: visible;
+    transition:
+        width var(--entry-current-indicator-transition-duration) linear,
+        visibility 0s linear 0s;
 }
 
 
