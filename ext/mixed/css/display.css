@@ -686,7 +686,7 @@ button.action-button {
 
 
 /* Entry indicator */
-.entry>.entry-current-indicator {
+.entry-current-indicator {
     display: block;
     position: absolute;
     left: calc(-1 * var(--main-content-horizontal-padding));
@@ -699,7 +699,7 @@ button.action-button {
         width var(--entry-current-indicator-transition-duration) linear,
         visibility 0s linear var(--entry-current-indicator-transition-duration);
 }
-.entry.entry-current>.entry-current-indicator {
+.entry.entry-current .entry-current-indicator {
     width: var(--entry-current-indicator-width);
     visibility: visible;
     transition:
