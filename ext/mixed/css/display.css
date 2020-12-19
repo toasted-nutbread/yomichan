@@ -73,6 +73,9 @@
     --list-padding1: 1.4em;
     --list-padding2: var(--list-padding1);
 
+    --entry-current-indicator-triangle-size-no-units: 6;
+    --entry-current-indicator-triangle-size: calc(1em * (var(--entry-current-indicator-triangle-size-no-units) / var(--font-size-no-units)));
+
     --animation-duration: 0.125s;
 
     /* Colors */
@@ -625,8 +628,14 @@ button.action-button {
     text-decoration: none;
     cursor: pointer;
 }
+.term-expression-text-container {
+    display: inline-block;
+}
 .term-expression-text {
     color: var(--kanji-text-color);
+    font-size: var(--expression-font-size);
+    display: inline-block;
+    position: relative;
 }
 .entry[data-expression-multi=true] .term-expression[data-frequency=popular] .term-expression-text,
 .entry[data-expression-multi=true] .term-expression[data-frequency=popular] .kanji-link {
@@ -663,13 +672,6 @@ button.action-button {
 }
 .term-expression {
     display: inline;
-}
-.term-expression-text-container {
-    display: inline-block;
-}
-.term-expression-text {
-    display: inline;
-    font-size: var(--expression-font-size);
 }
 .term-expression-details {
     display: inline;
@@ -735,7 +737,56 @@ button.action-button {
     display: block;
     position: sticky;
 }
-:root[data-popup-current-indicator-mode=none] .entry-current-indicator {
+:root[data-popup-current-indicator-mode=none] .entry-current-indicator,
+:root[data-popup-current-indicator-mode=asterisk] .entry-current-indicator,
+:root[data-popup-current-indicator-mode=triangle] .entry-current-indicator {
+    display: none;
+}
+
+
+/* Triangle entry indicator */
+.term-expression-current-indicator {
+    pointer-events: none;
+    position: absolute;
+    font-size: calc(1em / var(--expression-font-size-no-units));
+    left: calc(-1 * var(--main-content-horizontal-padding));
+    top: 0;
+    bottom: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+        opacity var(--entry-current-indicator-transition-duration) linear,
+        visibility 0s linear var(--entry-current-indicator-transition-duration);
+}
+.entry.entry-current .term-expression-current-indicator {
+    opacity: 1;
+    visibility: visible;
+    transition:
+        opacity var(--entry-current-indicator-transition-duration) linear,
+        visibility 0s linear 0s;
+}
+.term-expression-current-indicator::after {
+    content: '';
+    display: block;
+    position: absolute;
+    width: var(--entry-current-indicator-triangle-size);
+    height: calc(2 * var(--entry-current-indicator-triangle-size));
+    left: calc(-1 * var(--entry-horizontal-padding));
+    top: calc(50% - var(--entry-current-indicator-triangle-size));
+    background-color: var(--entry-current-indicator-color);
+    mask-repeat: no-repeat;
+    mask-position: center center;
+    mask-mode: alpha;
+    mask-size: contain;
+    mask-image: url(/mixed/img/material-right-arrow.svg);
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center center;
+    -webkit-mask-mode: alpha;
+    -webkit-mask-size: contain;
+    -webkit-mask-image: url(/mixed/img/material-right-arrow.svg);
+}
+.term-expression:not(:first-of-type) .term-expression-current-indicator,
+:root:not([data-popup-current-indicator-mode=triangle]) .term-expression-current-indicator {
     display: none;
 }
 
@@ -747,8 +798,7 @@ button.action-button {
 }
 .entry-current-indicator-icon[hidden],
 .entry:not(.entry-current) .entry-current-indicator-icon,
-:root:not([data-popup-current-indicator-mode=asterisk]) .entry-current-indicator-icon,
-:root[data-popup-current-indicator-mode=asterisk] .entry-current-indicator {
+:root:not([data-popup-current-indicator-mode=asterisk]) .entry-current-indicator-icon {
     display: none;
 }
 .entry-current-indicator-icon::before {
