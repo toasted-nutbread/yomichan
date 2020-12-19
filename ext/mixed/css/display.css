@@ -706,13 +706,11 @@ button.action-button {
         width var(--entry-current-indicator-transition-duration) linear,
         visibility 0s linear 0s;
 }
-
 :root[data-popup-current-indicator-mode=bar-right] .entry-current-indicator,
 :root[data-popup-current-indicator-mode=dot-right] .entry-current-indicator {
     left: auto;
     right: 0;
 }
-
 .entry-current-indicator-inner {
     display: none;
     pointer-events: auto;
@@ -736,6 +734,9 @@ button.action-button {
 :root[data-popup-current-indicator-mode=dot-right] .entry-current-indicator-inner {
     display: block;
     position: sticky;
+}
+:root[data-popup-current-indicator-mode=none] .entry-current-indicator {
+    display: none;
 }
 
 

@@ -269,7 +269,7 @@
                                     },
                                     "popupCurrentIndicatorMode": {
                                         "type": "string",
-                                        "enum": ["asterisk", "bar-left", "bar-right", "dot-left", "dot-right"],
+                                        "enum": ["none", "asterisk", "bar-left", "bar-right", "dot-left", "dot-right"],
                                         "default": "bar-left"
                                     }
                                 }
