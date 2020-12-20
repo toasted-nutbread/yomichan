@@ -1912,6 +1912,14 @@ body.preview-sidebar-visible .fab-container-item.fab-container-item-popup-previe
     margin-left: 1em;
 }
 
+.dictionary-title {
+    color: inherit;
+    transition: color var(--animation-duration) ease-in-out;
+}
+.dictionary-item[data-enabled=false] .dictionary-title {
+    color: var(--text-color-light);
+}
+
 .dictionary-list {
     display: flex;
     flex-flow: column nowrap;
