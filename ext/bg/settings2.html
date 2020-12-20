@@ -1562,7 +1562,7 @@
 
 
 <!-- Dictionary modals -->
-<div id="dictionaries" class="modal-container" tabindex="-1" role="dialog"><div class="modal-content modal-content-full">
+<div id="dictionaries" class="modal-container" tabindex="-1" role="dialog"><div class="modal-content">
     <div class="modal-header"><div class="modal-title">Dictionaries</div></div>
     <div class="modal-body">
         <div class="settings-item">
@@ -2232,25 +2232,6 @@
             This dictionary is outdated and may not support new extension features.
             Re-import the dictionary to enable support for the latest features.
         </div></div>
-        <div class="settings-item">
-            <div class="settings-item-inner">
-                <div class="settings-item-left">
-                    <div class="settings-item-label">
-                        Prefix wildcard searches supported
-                        <a class="more-toggle more-only" data-parent-distance="4">(?)</a>
-                    </div>
-                </div>
-                <div class="settings-item-right">
-                    <label class="toggle"><input type="checkbox" class="dictionary-prefix-wildcard-searches-supported" disabled readonly><span class="toggle-body"><span class="toggle-track"></span><span class="toggle-knob"></span></span></label>
-                </div>
-            </div>
-            <div class="settings-item-children more" hidden>
-                <p class="warning-text">
-                    Changing this value requires the dictionary to be re-imported.
-                </p>
-                <p><a class="more-toggle" data-parent-distance="3">Hide&hellip;</a></p>
-            </div>
-        </div>
         <div class="settings-item"><div class="settings-item-inner settings-item-inner-wrappable">
             <div class="settings-item-left">
                 <div class="settings-item-label">Priority</div>
@@ -2259,10 +2240,31 @@
                 <input type="number" step="1" class="short-height dictionary-priority">
             </div>
         </div></div>
-        <div class="settings-item dictionary-details" hidden><div class="settings-item-children">
-            <div class="dictionary-details-table"></div>
-            <div class="dictionary-counts"></div>
-        </div></div>
+        <div class="dictionary-details" hidden>
+            <div class="settings-item">
+                <div class="settings-item-inner">
+                    <div class="settings-item-left">
+                        <div class="settings-item-label">
+                            Prefix wildcard searches supported
+                            <a class="more-toggle more-only" data-parent-distance="4">(?)</a>
+                        </div>
+                    </div>
+                    <div class="settings-item-right">
+                        <label class="toggle"><input type="checkbox" class="dictionary-prefix-wildcard-searches-supported" disabled readonly><span class="toggle-body"><span class="toggle-track"></span><span class="toggle-knob"></span></span></label>
+                    </div>
+                </div>
+                <div class="settings-item-children more" hidden>
+                    <p class="warning-text">
+                        Changing this value requires the dictionary to be re-imported.
+                    </p>
+                    <p><a class="more-toggle" data-parent-distance="3">Hide&hellip;</a></p>
+                </div>
+            </div>
+            <div class="settings-item"><div class="settings-item-children">
+                <div class="dictionary-details-table"></div>
+                <div class="dictionary-counts"></div>
+            </div></div>
+        </div>
 
     </div>
 </div></template>

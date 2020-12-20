@@ -122,7 +122,7 @@ class DictionaryEntry {
         const {detail: {menu}} = e;
         const showDetails = menu.querySelector('.popup-menu-item[data-menu-action="showDetails"]');
         const hideDetails = menu.querySelector('.popup-menu-item[data-menu-action="hideDetails"]');
-        const hasDetails = (this._detailsContainer !== null && (this._hasDetails || this._hasCounts));
+        const hasDetails = (this._detailsContainer !== null);
         const detailsVisible = (hasDetails && !this._detailsContainer.hidden);
         if (showDetails !== null) {
             showDetails.hidden = detailsVisible;
