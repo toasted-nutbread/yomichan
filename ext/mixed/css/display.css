@@ -298,6 +298,7 @@ a {
     justify-content: flex-start;
 }
 .content-body {
+    height: 0;
     flex: 1 1 auto;
     position: relative;
 }
@@ -360,6 +361,11 @@ a {
     flex-flow: column nowrap;
     width: var(--sidebar-width);
     height: 100%;
+}
+.content-sidebar-top-pre {
+    flex: 0 0 auto;
+    display: flex;
+    flex-flow: column nowrap;
 }
 .content-sidebar-top {
     flex: 1 1 auto;
