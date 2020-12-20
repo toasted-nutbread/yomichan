@@ -91,9 +91,6 @@ class DictionaryEntry {
         if (detailsToggleLink !== null && this._detailsContainer !== null) {
             this._eventListeners.addEventListener(detailsToggleLink, 'click', this._onDetailsToggleLinkClicked.bind(this), false);
         }
-        if (priorityInput !== null) {
-            this._eventListeners.addEventListener(priorityInput, 'settingChanged', this._onPriorityChanged.bind(this), false);
-        }
     }
 
     cleanup() {
@@ -152,11 +149,6 @@ class DictionaryEntry {
     _onDetailsToggleLinkClicked(e) {
         e.preventDefault();
         this._detailsContainer.hidden = !this._detailsContainer.hidden;
-    }
-
-    _onPriorityChanged(e) {
-        const {detail: {value}} = e;
-        this._node.style.order = `${-value}`;
     }
 
     _setupDetails(detailsTable) {
