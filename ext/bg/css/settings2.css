@@ -1388,7 +1388,7 @@ button.icon-button:active {
 .icon-button-icon.icon-button-icon-light {
     background-color: var(--button-icon-color-light);
 }
-.icon-button-icon[data-icon=right-arrow] {
+.icon-button-icon[data-icon=material-right-arrow] {
     mask-image: url(/mixed/img/material-right-arrow.svg);
     -webkit-mask-image: url(/mixed/img/material-right-arrow.svg);
     mask-size: var(--material-arrow-dimension1) var(--material-arrow-dimension2);
