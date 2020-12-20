@@ -265,7 +265,7 @@ h3 {
     flex: 0 0 auto;
 }
 .heading-sub-text {
-    font-size: 0.88888888em;
+    font-size: calc(1em / 1.125);
     color: var(--text-color-light);
 }
 .heading-link-light {
