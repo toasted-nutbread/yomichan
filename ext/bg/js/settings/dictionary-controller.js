@@ -74,6 +74,7 @@ class DictionaryEntry {
         }
         if (enabledCheckbox !== null) {
             enabledCheckbox.dataset.setting = ObjectPropertyAccessor.getPathString(['dictionaries', title, 'enabled']);
+            this._eventListeners.addEventListener(enabledCheckbox, 'settingChanged', this._onEnabledChanged.bind(this), false);
         }
         if (priorityInput !== null) {
             priorityInput.dataset.setting = ObjectPropertyAccessor.getPathString(['dictionaries', title, 'priority']);
@@ -149,6 +150,11 @@ class DictionaryEntry {
     _onDetailsToggleLinkClicked(e) {
         e.preventDefault();
         this._detailsContainer.hidden = !this._detailsContainer.hidden;
+    }
+
+    _onEnabledChanged(e) {
+        const {detail: {value}} = e;
+        this._node.dataset.enabled = `${value}`;
     }
 
     _setupDetails(detailsTable) {
