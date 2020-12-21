@@ -1591,6 +1591,51 @@ button.icon-button:active {
     background: transparent linear-gradient(to right, var(--dim-background-color), transparent) repeat-y;
 }
 
+.modal-header-button-container {
+    margin-top: calc(-1 * var(--modal-padding-vertical-half));
+    margin-bottom: calc(-1 * var(--modal-padding-vertical-half));
+}
+.modal-header-button-group {
+    display: block;
+    position: relative;
+    width: var(--icon-button-size);
+    height: var(--icon-button-size);
+}
+.modal-header-button {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+button.icon-button.modal-header-button>.icon-button-inner>.icon {
+    background-color: var(--button-icon-color-light);
+    transition: background-color var(--animation-duration) ease-in-out;
+}
+button.icon-button.modal-header-button:hover>.icon-button-inner>.icon,
+button.icon-button.modal-header-button:active>.icon-button-inner>.icon {
+    background-color: var(--button-icon-color);
+}
+.modal-header-button[data-modal-action=expand],
+.modal-header-button[data-modal-action=collapse] {
+    visibility: visible;
+    opacity: 1;
+    z-index: 1;
+    transition:
+        opacity var(--animation-duration2) ease-in-out 0s,
+        visibility 0s ease-in-out 0s;
+}
+.modal-content.modal-content-full .modal-header-button[data-modal-action=expand],
+.modal-content:not(.modal-content-full) .modal-header-button[data-modal-action=collapse] {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 0;
+    transition:
+        opacity var(--animation-duration2) ease-in-out 0s,
+        visibility 0s ease-in-out var(--animation-duration2);
+}
+
 
 /* Popup menu */
 .popup-menu-container {
