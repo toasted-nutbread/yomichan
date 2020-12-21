@@ -1446,7 +1446,11 @@ button.icon-button:active {
     flex: 0 1 auto;
     border-radius: 0.5em;
     transform: translate(0, var(--modal-transition-offset));
-    transition: transform 0s linear var(--animation-duration2);
+    transition:
+        transform 0s linear var(--animation-duration2),
+        width var(--animation-duration2) ease-in-out,
+        height var(--animation-duration2) ease-in-out,
+        border-radius var(--animation-duration2) ease-in-out;
     box-shadow: var(--shadow-vertical);
     display: flex;
     flex-flow: column nowrap;
@@ -1462,15 +1466,18 @@ button.icon-button:active {
     max-height: 100%;
 }
 .modal-content.modal-content-full {
-    max-width: var(--main-content-size);
-    width: 100%;
+    width: var(--main-content-size);
     height: 100%;
     transform: translate(0, 0);
     border-radius: 0;
 }
 .modal-container.modal-container-open .modal-content {
     transform: translate(0, 0);
-    transition: transform var(--animation-duration2) ease-out;
+    transition:
+        transform var(--animation-duration2) ease-out,
+        width var(--animation-duration2) ease-in-out,
+        height var(--animation-duration2) ease-in-out,
+        border-radius var(--animation-duration2) ease-in-out;
 }
 .modal-header {
     flex: 0 0 auto;
