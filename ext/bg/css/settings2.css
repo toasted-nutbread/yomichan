@@ -1475,9 +1475,14 @@ button.icon-button:active {
 .modal-header {
     flex: 0 0 auto;
     padding: var(--modal-padding-vertical) var(--modal-padding-horizontal) var(--modal-padding-vertical-half);
+    display: flex;
+    width: 100%;
+    align-items: center;
+    box-sizing: border-box;
 }
 .modal-title {
     font-size: 1.125em;
+    flex: 1 1 auto;
 }
 .modal-footer {
     flex: 0 0 auto;
