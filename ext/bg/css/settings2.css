@@ -315,6 +315,8 @@ h3 {
 .icon[data-icon=material-right-arrow]    { --icon-image: url(/mixed/img/material-right-arrow.svg); }
 .icon[data-icon=exclamation-point-short] { --icon-image: url(/mixed/img/exclamation-point-short.svg); }
 .icon[data-icon=magnifying-glass]        { --icon-image: url(/mixed/img/magnifying-glass.svg); }
+.icon[data-icon=collapse]                { --icon-image: url(/mixed/img/collapse.svg); }
+.icon[data-icon=expand]                  { --icon-image: url(/mixed/img/expand.svg); }
 
 
 /* Content layout */
