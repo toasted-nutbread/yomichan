@@ -614,13 +614,6 @@ h3 {
 .settings-item:not([hidden]) {
     display: block;
 }
-.settings-item-button {
-    cursor: pointer;
-}
-a.settings-item-button {
-    color: var(--text-color-default);
-    text-decoration: none;
-}
 .settings-item-outer {
     display: block;
     width: 100%;
@@ -697,6 +690,17 @@ a.settings-item-button {
 }
 :root:not([data-advanced=true]) .advanced-only {
     display: none;
+}
+.settings-item.settings-item-button,
+a.settings-item.settings-item-button {
+    cursor: pointer;
+    color: var(--text-color-default);
+    text-decoration: none;
+}
+.settings-item.settings-item-button>.settings-item-inner,
+.settings-item.settings-item-button>.settings-item-inner>.settings-item-left,
+.settings-item.settings-item-button>.settings-item-inner>.settings-item-right {
+    margin-top: 0;
 }
 
 
