@@ -409,9 +409,8 @@ const JapaneseUtil = (() => {
                 return [{furigana: '', text: expression}];
             }
 
-            let isAmbiguous = false;
             const segmentize = (reading2, groups) => {
-                if (groups.length === 0 || isAmbiguous) {
+                if (groups.length === 0) {
                     return [];
                 }
 
@@ -435,7 +434,6 @@ const JapaneseUtil = (() => {
                         if (segs !== null) {
                             if (foundSegments !== null) {
                                 // more than one way to segmentize the tail, mark as ambiguous
-                                isAmbiguous = true;
                                 return null;
                             }
                             foundSegments = [{text: group.text, furigana: readingUsed}].concat(segs);
@@ -465,7 +463,7 @@ const JapaneseUtil = (() => {
             }
 
             const segments = segmentize(reading, groups);
-            if (segments !== null && !isAmbiguous) {
+            if (segments !== null) {
                 return segments;
             }
 
