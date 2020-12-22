@@ -461,7 +461,7 @@ const JapaneseUtil = (() => {
             }
 
             if (stemLength !== source.length) {
-                output.push({text: source.substring(stemLength), furigana: ''});
+                output.push(this._createFuriganaSegment(source.substring(stemLength), ''));
             }
 
             return output;
