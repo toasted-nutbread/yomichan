@@ -409,17 +409,17 @@ const JapaneseUtil = (() => {
                 return [this._createFuriganaSegment(expression, '')];
             }
 
-            const segmentize = (reading2, groups) => {
-                const groupCount = groups.length;
-                if (groupCount === 0) {
+            const segmentize = (reading2, groups, groupsStart) => {
+                const groupCount = groups.length - groupsStart;
+                if (groupCount <= 0) {
                     return [];
                 }
 
-                const {isKana, text} = groups[0];
+                const {isKana, text} = groups[groupsStart];
                 if (isKana) {
                     if (this.convertKatakanaToHiragana(reading2).startsWith(this.convertKatakanaToHiragana(text))) {
                         const readingLeft = reading2.substring(text.length);
-                        const segments = segmentize(readingLeft, groups.splice(1));
+                        const segments = segmentize(readingLeft, groups, groupsStart + 1);
                         if (segments !== null) {
                             const furigana = reading2.startsWith(text) ? '' : reading2.substring(0, text.length);
                             segments.unshift(this._createFuriganaSegment(text, furigana));
@@ -432,7 +432,7 @@ const JapaneseUtil = (() => {
                     for (let i = reading2.length; i >= text.length; --i) {
                         const readingUsed = reading2.substring(0, i);
                         const readingLeft = reading2.substring(i);
-                        const segments = segmentize(readingLeft, groups.slice(1));
+                        const segments = segmentize(readingLeft, groups, groupsStart + 1);
                         if (segments !== null) {
                             if (result !== null) {
                                 // more than one way to segmentize the tail, mark as ambiguous
@@ -465,7 +465,7 @@ const JapaneseUtil = (() => {
                 }
             }
 
-            const segments = segmentize(reading, groups);
+            const segments = segmentize(reading, groups, 0);
             if (segments !== null) {
                 return segments;
             }
