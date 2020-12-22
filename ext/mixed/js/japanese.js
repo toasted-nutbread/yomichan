@@ -418,32 +418,34 @@ const JapaneseUtil = (() => {
                 if (isKana) {
                     if (this.convertKatakanaToHiragana(reading2).startsWith(this.convertKatakanaToHiragana(text))) {
                         const readingLeft = reading2.substring(text.length);
-                        const segs = segmentize(readingLeft, groups.splice(1));
-                        if (segs !== null) {
+                        const segments = segmentize(readingLeft, groups.splice(1));
+                        if (segments !== null) {
                             const furigana = reading2.startsWith(text) ? '' : reading2.substring(0, text.length);
-                            return [this._createFuriganaSegment(text, furigana)].concat(segs);
+                            segments.unshift(this._createFuriganaSegment(text, furigana));
+                            return segments;
                         }
                     }
                     return null;
                 } else {
-                    let foundSegments = null;
+                    let result = null;
                     for (let i = reading2.length; i >= text.length; --i) {
                         const readingUsed = reading2.substring(0, i);
                         const readingLeft = reading2.substring(i);
-                        const segs = segmentize(readingLeft, groups.slice(1));
-                        if (segs !== null) {
-                            if (foundSegments !== null) {
+                        const segments = segmentize(readingLeft, groups.slice(1));
+                        if (segments !== null) {
+                            if (result !== null) {
                                 // more than one way to segmentize the tail, mark as ambiguous
                                 return null;
                             }
-                            foundSegments = [this._createFuriganaSegment(text, readingUsed)].concat(segs);
+                            segments.unshift(this._createFuriganaSegment(text, readingUsed));
+                            result = segments;
                         }
                         // there is only one way to segmentize the last non-kana group
                         if (groups.length === 1) {
                             break;
                         }
                     }
-                    return foundSegments;
+                    return result;
                 }
             };
 
