@@ -416,7 +416,7 @@ const JapaneseUtil = (() => {
                 }
 
                 const group = groups[0];
-                if (group.mode === 'kana') {
+                if (group.isKana) {
                     if (this.convertKatakanaToHiragana(reading2).startsWith(this.convertKatakanaToHiragana(group.text))) {
                         const readingLeft = reading2.substring(group.text.length);
                         const segs = segmentize(readingLeft, groups.splice(1));
@@ -449,15 +449,17 @@ const JapaneseUtil = (() => {
             };
 
             const groups = [];
-            let modePrev = null;
+            let groupPre = null;
+            let isKanaPre = null;
             for (const c of expression) {
                 const codePoint = c.codePointAt(0);
-                const modeCurr = this.isCodePointKanji(codePoint) || codePoint === ITERATION_MARK_CODE_POINT ? 'kanji' : 'kana';
-                if (modeCurr === modePrev) {
-                    groups[groups.length - 1].text += c;
+                const isKana = !(this.isCodePointKanji(codePoint) || codePoint === ITERATION_MARK_CODE_POINT);
+                if (isKana === isKanaPre) {
+                    groupPre.text += c;
                 } else {
-                    groups.push({mode: modeCurr, text: c});
-                    modePrev = modeCurr;
+                    groupPre = {isKana, text: c};
+                    groups.push(groupPre);
+                    isKanaPre = isKana;
                 }
             }
 
