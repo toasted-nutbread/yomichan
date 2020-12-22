@@ -437,7 +437,6 @@ const JapaneseUtil = (() => {
                 } else {
                     let result = null;
                     for (let i = reading2.length; i >= textLength; --i) {
-                        const readingUsed = reading2.substring(0, i);
                         const segments = segmentize(
                             reading2.substring(i),
                             reading2Normalized.substring(i),
@@ -449,7 +448,7 @@ const JapaneseUtil = (() => {
                                 // more than one way to segmentize the tail, mark as ambiguous
                                 return null;
                             }
-                            segments.unshift(this._createFuriganaSegment(text, readingUsed));
+                            segments.unshift(this._createFuriganaSegment(text, reading2.substring(0, i)));
                             result = segments;
                         }
                         // there is only one way to segmentize the last non-kana group
