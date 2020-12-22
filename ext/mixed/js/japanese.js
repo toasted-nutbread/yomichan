@@ -410,7 +410,8 @@ const JapaneseUtil = (() => {
             }
 
             const segmentize = (reading2, groups) => {
-                if (groups.length === 0) {
+                const groupCount = groups.length;
+                if (groupCount === 0) {
                     return [];
                 }
 
@@ -441,7 +442,7 @@ const JapaneseUtil = (() => {
                             result = segments;
                         }
                         // there is only one way to segmentize the last non-kana group
-                        if (groups.length === 1) {
+                        if (groupCount === 1) {
                             break;
                         }
                     }
