@@ -417,17 +417,18 @@ const JapaneseUtil = (() => {
 
                 const group = groups[groupsStart];
                 const {isKana, text} = group;
+                const textLength = text.length;
                 if (isKana) {
                     const {textNormalized} = group;
                     if (reading2Normalized.startsWith(textNormalized)) {
                         const segments = segmentize(
-                            reading2.substring(text.length),
-                            reading2Normalized.substring(text.length),
+                            reading2.substring(textLength),
+                            reading2Normalized.substring(textLength),
                             groups,
                             groupsStart + 1
                         );
                         if (segments !== null) {
-                            const furigana = reading2.startsWith(text) ? '' : reading2.substring(0, text.length);
+                            const furigana = reading2.startsWith(text) ? '' : reading2.substring(0, textLength);
                             segments.unshift(this._createFuriganaSegment(text, furigana));
                             return segments;
                         }
@@ -435,7 +436,7 @@ const JapaneseUtil = (() => {
                     return null;
                 } else {
                     let result = null;
-                    for (let i = reading2.length; i >= text.length; --i) {
+                    for (let i = reading2.length; i >= textLength; --i) {
                         const readingUsed = reading2.substring(0, i);
                         const segments = segmentize(
                             reading2.substring(i),
