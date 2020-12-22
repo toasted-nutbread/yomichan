@@ -353,6 +353,22 @@ function testDistributeFurigana() {
             [
                 {text: 'かいぬ', furigana: ''}
             ]
+        ],
+        // Mismatched kana readings
+        [
+            ['有り難う', 'アリガトウ'],
+            [
+                {text: '有', furigana: 'ア'},
+                {text: 'り', furigana: 'リ'},
+                {text: '難', furigana: 'ガト'},
+                {text: 'う', furigana: 'ウ'}
+            ]
+        ],
+        [
+            ['ありがとう', 'アリガトウ'],
+            [
+                {text: 'ありがとう', furigana: 'アリガトウ'}
+            ]
         ]
     ];
 

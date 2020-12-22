@@ -421,7 +421,8 @@ const JapaneseUtil = (() => {
                         const readingLeft = reading2.substring(group.text.length);
                         const segs = segmentize(readingLeft, groups.splice(1));
                         if (segs) {
-                            return [{text: group.text, furigana: ''}].concat(segs);
+                            const furigana = reading2.startsWith(group.text) ? '' : reading2.substring(0, group.text.length);
+                            return [{text: group.text, furigana}].concat(segs);
                         }
                     }
                 } else {
