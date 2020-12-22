@@ -545,7 +545,8 @@ const JapaneseUtil = (() => {
                             // More than one way to segmentize the tail; mark as ambiguous
                             return null;
                         }
-                        segments.unshift(this._createFuriganaSegment(text, reading.substring(0, i)));
+                        const furigana = reading.substring(0, i);
+                        segments.unshift(this._createFuriganaSegment(text, furigana));
                         result = segments;
                     }
                     // There is only one way to segmentize the last non-kana group
