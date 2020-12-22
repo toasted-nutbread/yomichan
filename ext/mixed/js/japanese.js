@@ -414,20 +414,20 @@ const JapaneseUtil = (() => {
                     return [];
                 }
 
-                const group = groups[0];
-                if (group.isKana) {
-                    if (this.convertKatakanaToHiragana(reading2).startsWith(this.convertKatakanaToHiragana(group.text))) {
-                        const readingLeft = reading2.substring(group.text.length);
+                const {isKana, text} = groups[0];
+                if (isKana) {
+                    if (this.convertKatakanaToHiragana(reading2).startsWith(this.convertKatakanaToHiragana(text))) {
+                        const readingLeft = reading2.substring(text.length);
                         const segs = segmentize(readingLeft, groups.splice(1));
                         if (segs !== null) {
-                            const furigana = reading2.startsWith(group.text) ? '' : reading2.substring(0, group.text.length);
-                            return [{text: group.text, furigana}].concat(segs);
+                            const furigana = reading2.startsWith(text) ? '' : reading2.substring(0, text.length);
+                            return [{text, furigana}].concat(segs);
                         }
                     }
                     return null;
                 } else {
                     let foundSegments = null;
-                    for (let i = reading2.length; i >= group.text.length; --i) {
+                    for (let i = reading2.length; i >= text.length; --i) {
                         const readingUsed = reading2.substring(0, i);
                         const readingLeft = reading2.substring(i);
                         const segs = segmentize(readingLeft, groups.slice(1));
@@ -436,7 +436,7 @@ const JapaneseUtil = (() => {
                                 // more than one way to segmentize the tail, mark as ambiguous
                                 return null;
                             }
-                            foundSegments = [{text: group.text, furigana: readingUsed}].concat(segs);
+                            foundSegments = [{text, furigana: readingUsed}].concat(segs);
                         }
                         // there is only one way to segmentize the last non-kana group
                         if (groups.length === 1) {
