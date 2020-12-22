@@ -440,8 +440,6 @@ const JapaneseUtil = (() => {
         }
 
         distributeFuriganaInflected(expression, reading, source) {
-            const output = [];
-
             let stemLength = 0;
             const shortest = Math.min(source.length, expression.length);
             const sourceHiragana = this.convertKatakanaToHiragana(source);
@@ -456,15 +454,13 @@ const JapaneseUtil = (() => {
                 0,
                 offset === 0 ? reading.length : reading.length - expression.length + stemLength
             );
-            for (const segment of this.distributeFurigana(stemExpression, stemReading)) {
-                output.push(segment);
-            }
+            const result = this.distributeFurigana(stemExpression, stemReading);
 
             if (stemLength !== source.length) {
-                output.push(this._createFuriganaSegment(source.substring(stemLength), ''));
+                result.push(this._createFuriganaSegment(source.substring(stemLength), ''));
             }
 
-            return output;
+            return result;
         }
 
         // Miscellaneous
