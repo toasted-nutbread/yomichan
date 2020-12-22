@@ -409,17 +409,23 @@ const JapaneseUtil = (() => {
                 return [this._createFuriganaSegment(expression, '')];
             }
 
-            const segmentize = (reading2, groups, groupsStart) => {
+            const segmentize = (reading2, reading2Normalized, groups, groupsStart) => {
                 const groupCount = groups.length - groupsStart;
                 if (groupCount <= 0) {
                     return [];
                 }
 
-                const {isKana, text} = groups[groupsStart];
+                const group = groups[groupsStart];
+                const {isKana, text} = group;
                 if (isKana) {
-                    if (this.convertKatakanaToHiragana(reading2).startsWith(this.convertKatakanaToHiragana(text))) {
-                        const readingLeft = reading2.substring(text.length);
-                        const segments = segmentize(readingLeft, groups, groupsStart + 1);
+                    const {textNormalized} = group;
+                    if (reading2Normalized.startsWith(textNormalized)) {
+                        const segments = segmentize(
+                            reading2.substring(text.length),
+                            reading2Normalized.substring(text.length),
+                            groups,
+                            groupsStart + 1
+                        );
                         if (segments !== null) {
                             const furigana = reading2.startsWith(text) ? '' : reading2.substring(0, text.length);
                             segments.unshift(this._createFuriganaSegment(text, furigana));
@@ -431,8 +437,12 @@ const JapaneseUtil = (() => {
                     let result = null;
                     for (let i = reading2.length; i >= text.length; --i) {
                         const readingUsed = reading2.substring(0, i);
-                        const readingLeft = reading2.substring(i);
-                        const segments = segmentize(readingLeft, groups, groupsStart + 1);
+                        const segments = segmentize(
+                            reading2.substring(i),
+                            reading2Normalized.substring(i),
+                            groups,
+                            groupsStart + 1
+                        );
                         if (segments !== null) {
                             if (result !== null) {
                                 // more than one way to segmentize the tail, mark as ambiguous
@@ -459,13 +469,19 @@ const JapaneseUtil = (() => {
                 if (isKana === isKanaPre) {
                     groupPre.text += c;
                 } else {
-                    groupPre = {isKana, text: c};
+                    groupPre = {isKana, text: c, textNormalized: null};
                     groups.push(groupPre);
                     isKanaPre = isKana;
                 }
             }
+            for (const group of groups) {
+                if (group.isKana) {
+                    group.textNormalized = this.convertKatakanaToHiragana(group.text);
+                }
+            }
 
-            const segments = segmentize(reading, groups, 0);
+            const readingNormalized = this.convertKatakanaToHiragana(reading);
+            const segments = segmentize(reading, readingNormalized, groups, 0);
             if (segments !== null) {
                 return segments;
             }
