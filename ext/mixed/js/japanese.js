@@ -406,7 +406,7 @@ const JapaneseUtil = (() => {
         distributeFurigana(expression, reading) {
             if (!reading || reading === expression) {
                 // Same
-                return [{furigana: '', text: expression}];
+                return [this._createFuriganaSegment(expression, '')];
             }
 
             const segmentize = (reading2, groups) => {
@@ -421,7 +421,7 @@ const JapaneseUtil = (() => {
                         const segs = segmentize(readingLeft, groups.splice(1));
                         if (segs !== null) {
                             const furigana = reading2.startsWith(text) ? '' : reading2.substring(0, text.length);
-                            return [{text, furigana}].concat(segs);
+                            return [this._createFuriganaSegment(text, furigana)].concat(segs);
                         }
                     }
                     return null;
@@ -436,7 +436,7 @@ const JapaneseUtil = (() => {
                                 // more than one way to segmentize the tail, mark as ambiguous
                                 return null;
                             }
-                            foundSegments = [{text, furigana: readingUsed}].concat(segs);
+                            foundSegments = [this._createFuriganaSegment(text, readingUsed)].concat(segs);
                         }
                         // there is only one way to segmentize the last non-kana group
                         if (groups.length === 1) {
@@ -468,7 +468,7 @@ const JapaneseUtil = (() => {
             }
 
             // Fallback
-            return [{furigana: reading, text: expression}];
+            return [this._createFuriganaSegment(expression, reading)];
         }
 
         distributeFuriganaInflected(expression, reading, source) {
@@ -533,6 +533,10 @@ const JapaneseUtil = (() => {
         }
 
         // Private
+
+        _createFuriganaSegment(text, furigana) {
+            return {text, furigana};
+        }
 
         _getWanakana() {
             const wanakana = this._wanakana;
