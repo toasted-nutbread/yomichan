@@ -32,6 +32,7 @@ class DocumentFocusController {
     }
 
     blurElement(element) {
+        if (document.activeElement !== element) { return; }
         element.blur();
         this._updateFocusedElement(false);
     }
