@@ -492,10 +492,11 @@ textarea {
     box-sizing: border-box;
     padding: var(--textarea-padding);
     font-family: 'Courier New', Courier, monospace;
+    font-size: var(--font-size);
     background-color: var(--input-background-color);
     border-radius: var(--text-input-border-radius);
     line-height: var(--textarea-line-height);
-    border: 1px solid var(--input-background-color);
+    border: calc(1em / var(--font-size-no-units)) solid var(--input-background-color);
 }
 select:invalid,
 textarea:invalid,
@@ -518,7 +519,7 @@ select:focus,
 textarea:focus,
 input[type=text]:focus,
 input[type=number]:focus {
-    box-shadow: 0 0 0 2px var(--input-outline-color);
+    box-shadow: 0 0 0 calc(2em / var(--font-size-no-units)) var(--input-outline-color);
     outline: none;
 }
 select:invalid:focus,
@@ -529,7 +530,7 @@ select[data-invalid=true]:focus,
 textarea[data-invalid=true]:focus,
 input[type=text][data-invalid=true]:focus,
 input[type=number][data-invalid=true]:focus {
-    box-shadow: 0 0 0 2px var(--danger-color);
+    box-shadow: 0 0 0 calc(2em / var(--font-size-no-units)) var(--danger-color);
     outline: none;
 }
 input[type=text].input-with-suffix-button,
@@ -750,7 +751,7 @@ button.icon-button:active {
     right: 0;
     bottom: 0;
     background-color: var(--button-icon-color);
-    --icon-size: 16px 16px;
+    --icon-size: calc(16em / var(--font-size-no-units)) calc(16em / var(--font-size-no-units));
 }
 .icon-button>.icon-button-inner>.icon.icon-button-icon-light {
     background-color: var(--button-icon-color-light);
