@@ -136,6 +136,8 @@
     --notification-text-color: #ffffff;
     --notification-background-color: #333333;
     --notification-shadow-color: rgba(0, 0, 0, 0.5);
+
+    --action-button-active-color: var(--scrollbar-thumb-color);
 }
 :root[data-theme=dark] {
     /* Colors */
@@ -196,6 +198,8 @@
     --notification-text-color: #2f2f2f;
     --notification-background-color: #e1e1e1;
     --notification-shadow-color: rgba(255, 255, 255, 0.25);
+
+    --action-button-active-color: var(--scrollbar-thumb-color);
 }
 
 
@@ -541,7 +545,8 @@ button.sidebar-button.danger:hover .sidebar-button-icon {
     content: '';
     display: block;
 }
-.action-button {
+button.action-button {
+    cursor: pointer;
     display: block;
     opacity: 1;
     border: 0;
@@ -553,12 +558,10 @@ button.sidebar-button.danger:hover .sidebar-button-icon {
         opacity var(--animation-duration) linear,
         visibility 0s linear 0s,
         filter var(--animation-duration) linear,
-        -webkit-filter var(--animation-duration) linear;
+        -webkit-filter var(--animation-duration) linear,
+        background-color var(--animation-duration) linear;
 }
-button.action-button {
-    cursor: pointer;
-}
-.action-button[hidden] {
+button.action-button[hidden] {
     display: block;
     visibility: hidden;
     opacity: 0;
@@ -566,18 +569,26 @@ button.action-button {
         opacity var(--animation-duration) linear,
         visibility 0s linear var(--animation-duration),
         filter var(--animation-duration) linear,
-        -webkit-filter var(--animation-duration) linear;
+        -webkit-filter var(--animation-duration) linear,
+        background-color var(--animation-duration) linear;
 }
-.action-button:disabled {
+button.action-button:disabled {
     pointer-events: none;
     cursor: default;
     -webkit-filter: grayscale(100%);
     filter: grayscale(100%);
+    background-color: transparent;
 }
-.action-button:disabled:not([hidden]) {
+button.action-button:disabled:not([hidden]) {
     opacity: 0.25;
 }
-.action-button::before {
+button.action-button:hover {
+    background-color: transparent;
+}
+button.action-button:active {
+    background-color: var(--action-button-active-color);
+}
+button.action-button::before {
     content: "";
     width: var(--action-button-size);
     height: var(--action-button-size);
@@ -586,22 +597,22 @@ button.action-button {
     background-repeat: no-repeat;
     background-size: contain;
 }
-.action-button[data-icon=view-note]::before {
+button.action-button[data-icon=view-note]::before {
     background-image: url("/mixed/img/view-note.svg");
 }
-.action-button[data-icon=add-term-kanji]::before {
+button.action-button[data-icon=add-term-kanji]::before {
     background-image: url("/mixed/img/add-term-kanji.svg");
 }
-.action-button[data-icon=add-term-kana]::before {
+button.action-button[data-icon=add-term-kana]::before {
     background-image: url("/mixed/img/add-term-kana.svg");
 }
-.action-button[data-icon=play-audio]::before {
+button.action-button[data-icon=play-audio]::before {
     background-image: url("/mixed/img/play-audio.svg");
 }
-.action-button[data-icon=source-term]::before {
+button.action-button[data-icon=source-term]::before {
     background-image: url("/mixed/img/source-term.svg");
 }
-.entry[data-type=term][data-expression-multi=true] .actions>.action-play-audio {
+.entry[data-type=term][data-expression-multi=true] .actions>button.action-button.action-play-audio {
     display: none;
 }
 
