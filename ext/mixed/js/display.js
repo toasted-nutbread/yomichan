@@ -170,6 +170,10 @@ class Display extends EventDispatcher {
         ]);
     }
 
+    get displayGenerator() {
+        return this._displayGenerator;
+    }
+
     get autoPlayAudioDelay() {
         return this._autoPlayAudioDelay;
     }
