@@ -58,7 +58,7 @@
     --input-height: 32px;
     --input-height-short: 24px;
     --input-half-width: calc(var(--input-width-large) / 2 - var(--padding) / 2);
-    --thin-border-size: 1px;
+    --thin-border-size: calc(1em / var(--font-size-no-units));
     --icon-button-size: 36px;
     --fab-button-size: 56px;
     --fab-button-padding: 16px;

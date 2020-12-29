@@ -24,7 +24,6 @@
     --accent-color-transparent25
     --accent-color-transparent5
     --animation-duration
-    --animation-duration-half
     --animation-duration2
     --button-border-color
     --button-icon-color
@@ -46,8 +45,6 @@
     --disabled-color-light
     --disabled-color-lighter
     --icon-button-size
-    --icon-image
-    --icon-size
     --input-background-color
     --input-background-color-dark
     --input-background-color-darker
@@ -57,7 +54,6 @@
     --input-width-large
     --material-arrow-dimension1
     --material-arrow-dimension2
-    --padding
     --radio-size
     --selectable-indicator-color
     --shadow-color
@@ -453,7 +449,7 @@ select {
     -webkit-appearance: none;
     background-image: url(/mixed/img/material-down-arrow.svg);
     background-repeat: no-repeat;
-    background-position: right var(--padding) center;
+    background-position: right calc(10em / var(--font-size-no-units)) center;
     background-color: var(--input-background-color);
     background-size: var(--material-arrow-dimension2) var(--material-arrow-dimension1);
     cursor: pointer;
@@ -496,7 +492,7 @@ textarea {
     background-color: var(--input-background-color);
     border-radius: var(--text-input-border-radius);
     line-height: var(--textarea-line-height);
-    border: calc(1em / var(--font-size-no-units)) solid var(--input-background-color);
+    border: var(--thin-border-size) solid var(--input-background-color);
 }
 select:invalid,
 textarea:invalid,
@@ -513,7 +509,7 @@ textarea,
 input[type=text],
 input[type=number] {
     box-shadow: none;
-    transition: box-shadow var(--animation-duration-half) linear;
+    transition: box-shadow calc(var(--animation-duration) / 2) linear;
 }
 select:focus,
 textarea:focus,
