@@ -1449,7 +1449,9 @@ button.icon-button:active {
     z-index: 100;
     opacity: 0;
     visibility: hidden;
-    transition: opacity var(--animation-duration2) ease-in, visibility 0s linear var(--animation-duration2);
+    transition:
+        opacity var(--animation-duration2) ease-in,
+        visibility 0s linear var(--animation-duration2);
 }
 .modal-container:not(.modal-container-open):not(.modal-container-opening):not(.modal-container-closing) {
     display: none;
@@ -1457,7 +1459,9 @@ button.icon-button:active {
 .modal-container.modal-container-open {
     opacity: 1;
     visibility: visible;
-    transition: opacity var(--animation-duration2) ease-out, visibility 0s linear;
+    transition:
+        opacity var(--animation-duration2) ease-out,
+        visibility 0s linear;
 }
 .modal-content {
     max-width: 100%;
@@ -1756,12 +1760,16 @@ button.popup-menu-item:disabled {
     border-radius: var(--settings-group-border-radius) var(--settings-group-border-radius) 0 0;
     transform: none;
     opacity: 1;
-    transition: transform var(--animation-duration) ease-out, opacity var(--animation-duration) ease-out;
+    transition:
+        transform var(--animation-duration) ease-out,
+        opacity var(--animation-duration) ease-out;
 }
 .status-footer-container:not(.status-footer-container-open) .status-footer {
     transform: translate(0, 100%);
     opacity: 0;
-    transition: transform var(--animation-duration) ease-in, opacity var(--animation-duration) ease-in;
+    transition:
+        transform var(--animation-duration) ease-in,
+        opacity var(--animation-duration) ease-in;
 }
 .status-footer-container:not(.status-footer-container-open):not(.status-footer-container-opening):not(.status-footer-container-closing) {
     display: none;
