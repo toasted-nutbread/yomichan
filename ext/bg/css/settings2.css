@@ -46,10 +46,10 @@
     --settings-group-wrap: nowrap;
     --show-preview-label-height: 40px;
 
-    --font-size-default-no-units: 14;
-    --font-size-default: calc(1px * var(--font-size-default-no-units));
+    --font-size-no-units: 14;
+    --font-size: calc(1px * var(--font-size-no-units));
     --font-size-small: 12px;
-    --line-height-default: calc(20 / var(--font-size-default-no-units));
+    --line-height-default: calc(20 / var(--font-size-no-units));
     --outline-item-height: 40px;
     --outline-item-icon-size: 32px;
     --input-width: 100px;
@@ -167,7 +167,7 @@ body {
     margin: 0;
     padding: 0;
     border: none;
-    font-size: var(--font-size-default);
+    font-size: var(--font-size);
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     color: var(--text-color-default);
     line-height: var(--line-height-default);
