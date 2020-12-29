@@ -116,10 +116,10 @@
     --disabled-color-light: #dddddd;
     --disabled-color-lighter: #eeeeee;
     --dim-background-color: rgba(0, 0, 0, 0.5);
-    --checkbox-checked: var(--accent-color);
-    --checkbox-unchecked: #666666;
+    --checkbox-checked-color: var(--accent-color);
+    --checkbox-unchecked-color: #666666;
     --checkbox-check-color: var(--background-color-light);
-    --checkbox-disabled: #aaaaaa;
+    --checkbox-disabled-color: var(--disabled-color);
     --toggle-track-color: #cccccc;
     --toggle-knob-color: var(--background-color-light);
     --selectable-indicator-color: rgba(160, 160, 160, 0.25);

@@ -31,10 +31,10 @@
     --button-shadow-params
     --button-text-color
     --checkbox-check-color
-    --checkbox-checked
-    --checkbox-disabled
+    --checkbox-checked-color
+    --checkbox-disabled-color
     --checkbox-size
-    --checkbox-unchecked
+    --checkbox-unchecked-color
     --danger-color
     --danger-color-light
     --danger-color-lighter
@@ -164,13 +164,13 @@ label.checkbox {
 .checkbox-fill {
     mask-image: url(/mixed/img/checkbox-fill.svg);
     -webkit-mask-image: url(/mixed/img/checkbox-fill.svg);
-    background-color: var(--checkbox-unchecked);
+    background-color: var(--checkbox-unchecked-color);
     opacity: 0;
 }
 .checkbox-border {
     mask-image: url(/mixed/img/checkbox-border.svg);
     -webkit-mask-image: url(/mixed/img/checkbox-border.svg);
-    background-color: var(--checkbox-unchecked);
+    background-color: var(--checkbox-unchecked-color);
     opacity: 1;
 }
 .checkbox-check {
@@ -180,11 +180,11 @@ label.checkbox {
     opacity: 0;
 }
 .checkbox>input[type=checkbox]:checked+.checkbox-body>.checkbox-fill {
-    background-color: var(--checkbox-checked);
+    background-color: var(--checkbox-checked-color);
     opacity: 1;
 }
 .checkbox>input[type=checkbox]:checked+.checkbox-body>.checkbox-border {
-    background-color: var(--checkbox-checked);
+    background-color: var(--checkbox-checked-color);
     opacity: 1;
 }
 .checkbox>input[type=checkbox]:checked+.checkbox-body>.checkbox-check {
@@ -195,11 +195,11 @@ label.checkbox {
     opacity: 0;
 }
 .checkbox>input[type=checkbox]:disabled+.checkbox-body>.checkbox-border {
-    background-color: var(--checkbox-disabled);
+    background-color: var(--checkbox-disabled-color);
     opacity: 1;
 }
 .checkbox>input[type=checkbox]:disabled+.checkbox-body>.checkbox-check {
-    background-color: var(--checkbox-disabled);
+    background-color: var(--checkbox-disabled-color);
 }
 
 
