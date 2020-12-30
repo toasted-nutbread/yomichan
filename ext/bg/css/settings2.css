@@ -131,7 +131,7 @@
     --modal-padding-vertical-half: calc(var(--modal-padding-vertical) * 0.5);
     --modal-button-spacing: 0.625em;
 
-    --text-input-border-radius: 0.25em;
+    --input-border-radius: 0.25em;
     --textarea-line-height: 1.25em;
     --textarea-padding: 0.5em;
 }
@@ -1524,7 +1524,7 @@ select.profile-condition-operator {
 .anki-card-field-name-container[data-invalid=true],
 .anki-card-field-name-container[data-order-matches=false][data-index='0'] {
     background-color: var(--danger-color-lightest);
-    border-radius: var(--text-input-border-radius);
+    border-radius: var(--input-border-radius);
 }
 .anki-card-field-name {
     flex: 1 1 auto;
@@ -1640,7 +1640,7 @@ code.anki-field-marker {
     font-family: 'Courier New', Courier, monospace;
     background-color: var(--input-background-color);
     border: none;
-    border-radius: var(--text-input-border-radius);
+    border-radius: var(--input-border-radius);
     line-height: var(--textarea-line-height);
     overflow: auto;
     white-space: pre;

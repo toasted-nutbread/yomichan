@@ -31,7 +31,7 @@
     --input-width: 100px;
     --input-width-large: 200px;
     --input-height: 32px;
-    --text-input-border-radius: 0.25em;
+    --input-border-radius: 0.25em;
     --textarea-line-height: 1.25em;
     --textarea-padding: 0.5em;
 
@@ -464,7 +464,7 @@ select {
     height: var(--input-height);
     line-height: var(--input-height);
     border: 0;
-    border-radius: 0.25em;
+    border-radius: var(--input-border-radius);
     box-sizing: border-box;
     padding: 0 0.5em;
     appearance: none;
@@ -490,7 +490,7 @@ input[type=number] {
     line-height: var(--input-height);
     background-color: var(--input-background-color);
     border: none;
-    border-radius: var(--text-input-border-radius);
+    border-radius: var(--input-border-radius);
     box-sizing: border-box;
     padding: 0 0.5em;
     appearance: textfield;
@@ -513,7 +513,7 @@ textarea {
     font-family: 'Courier New', Courier, monospace;
     font-size: var(--font-size);
     background-color: var(--input-background-color);
-    border-radius: var(--text-input-border-radius);
+    border-radius: var(--input-border-radius);
     line-height: var(--textarea-line-height);
     border: var(--thin-border-size) solid var(--input-background-color);
 }
