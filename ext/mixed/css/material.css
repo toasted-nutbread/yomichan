@@ -43,7 +43,6 @@
     --shadow-color: rgba(0, 0, 0, 0.185);
     --shadow-color-off: rgba(0, 0, 0, 0);
     --shadow-color-light: rgba(0, 0, 0, 0.085);
-    --shadow-vertical: 0 1px 4px 0 var(--shadow-color), 0 2px 2px 0 var(--shadow-color);
 
     --thin-border-size: calc(1em / var(--font-size-no-units));
 
@@ -273,7 +272,9 @@ label.toggle {
     height: 1em;
     background-color: var(--toggle-knob-color);
     border-radius: 0.5em;
-    box-shadow: var(--shadow-vertical);
+    box-shadow:
+        0 0.0625em 0.25em 0 var(--shadow-color),
+        0 0.125em 0.125em 0 var(--shadow-color);
     transition: transform var(--animation-duration) ease-in-out,
                 background-color var(--animation-duration) ease-in-out;
 }
