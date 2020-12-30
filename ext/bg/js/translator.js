@@ -807,11 +807,12 @@ class Translator {
 
     _getFrequencyData(expression, reading, dictionary, data) {
         let frequency = data;
-        if (data !== null && typeof data === 'object') {
+        const hasReading = (data !== null && typeof data === 'object');
+        if (hasReading) {
             if (data.reading !== reading) { return null; }
             frequency = data.frequency;
         }
-        return {expression, reading, dictionary, frequency};
+        return {expression, reading, dictionary, frequency, hasReading};
     }
 
     async _getPitchData(expression, reading, dictionary, data) {
