@@ -527,6 +527,7 @@ class Display extends EventDispatcher {
 
     _onMessageSetOptionsContext({optionsContext}) {
         this.setOptionsContext(optionsContext);
+        this.searchLast();
     }
 
     _onMessageSetContent({details}) {
