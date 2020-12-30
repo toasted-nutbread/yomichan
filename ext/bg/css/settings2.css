@@ -117,7 +117,7 @@ body {
     border: none;
     font-size: var(--font-size);
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    color: var(--text-color-default);
+    color: var(--text-color);
     line-height: var(--line-height-default);
     height: 100%;
     overflow: hidden;
@@ -362,7 +362,7 @@ h3 {
     visibility: hidden;
 }
 .sidebar-top-link:not(:hover) {
-    color: var(--text-color-default);
+    color: var(--text-color);
 }
 .sidebar-top-icon {
     display: inline-block;
@@ -393,7 +393,7 @@ h3 {
 .outline-item,
 .outline-item:hover {
     text-decoration: none;
-    color: var(--text-color-default);
+    color: var(--text-color);
 }
 .outline-item:hover {
     background-color: var(--outline-item-background-color-hover);
@@ -605,7 +605,7 @@ h3 {
 .settings-item.settings-item-button,
 a.settings-item.settings-item-button {
     cursor: pointer;
-    color: var(--text-color-default);
+    color: var(--text-color);
     text-decoration: none;
     background-color: transparent;
     transition: background-color var(--animation-duration) ease-in-out;
@@ -949,7 +949,7 @@ button.popup-menu-item {
     padding: 0.625em 1.5em;
     border-radius: 0;
     background-color: transparent;
-    color: var(--text-color-default);
+    color: var(--text-color);
     border: none;
     width: 100%;
     text-align: left;

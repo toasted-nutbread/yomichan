@@ -43,7 +43,7 @@ body {
     padding: 0;
     margin: 0;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    color: var(--text-color-default);
+    color: var(--text-color);
     height: 100%;
     overflow: hidden;
 }
@@ -76,7 +76,7 @@ h1 {
     border: 0;
 }
 #search-textbox {
-    color: var(--text-color-default);
+    color: var(--text-color);
     flex: 1 1 auto;
     box-sizing: border-box;
     padding: var(--textarea-padding);
@@ -93,7 +93,7 @@ h1 {
     resize: vertical;
     font-size: var(--font-size);
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    color: var(--text-color-default);
+    color: var(--text-color);
     white-space: pre-wrap;
     z-index: 1;
 }

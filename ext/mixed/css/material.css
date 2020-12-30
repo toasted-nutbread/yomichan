@@ -44,7 +44,7 @@
 
     --thin-border-size: calc(1em / var(--font-size-no-units));
 
-    --text-color-default: #222222;
+    --text-color: #222222;
     --background-color: #f8f9fa;
     --background-color-light: #ffffff;
 
@@ -76,7 +76,7 @@
     --input-background-color: #f2f2f2;
     --input-background-color-dark: #dddddd;
     --input-background-color-darker: #cccccc;
-    --input-outline-color: var(--text-color-default);
+    --input-outline-color: var(--text-color);
 
     --button-text-color: #ffffff;
     --button-border-color: #cccccc;
@@ -94,7 +94,7 @@
     --selectable-indicator-color: rgba(160, 160, 160, 0.25);
 }
 :root[data-theme=dark] {
-    --text-color-default: #d4d4d4;
+    --text-color: #d4d4d4;
     --background-color: #1e1e1e;
     --background-color-light: #0a0a0a;
 
@@ -125,7 +125,7 @@
     --input-background-color: #2f2f2f;
     --input-background-color-dark: #383838;
     --input-background-color-darker: #484848;
-    --input-outline-color: var(--text-color-default);
+    --input-outline-color: var(--text-color);
 
     --button-text-color: #000000;
     --button-border-color: #333333;
@@ -527,7 +527,7 @@ select {
     background-color: var(--input-background-color);
     background-size: var(--material-arrow-dimension2) var(--material-arrow-dimension1);
     cursor: pointer;
-    color: var(--text-color-default);
+    color: var(--text-color);
     font-size: var(--input-font-size);
 }
 select::-ms-expand {
@@ -541,7 +541,7 @@ input[type=number] {
     width: var(--input-width);
     height: var(--input-height);
     line-height: var(--input-height);
-    color: var(--text-color-default);
+    color: var(--text-color);
     font-size: var(--input-font-size);
     background-color: var(--input-background-color);
     border: none;
@@ -566,7 +566,7 @@ textarea {
     box-sizing: border-box;
     padding: var(--textarea-padding);
     font-family: 'Courier New', Courier, monospace;
-    color: var(--text-color-default);
+    color: var(--text-color);
     font-size: var(--input-font-size);
     background-color: var(--input-background-color);
     border-radius: var(--input-border-radius);
