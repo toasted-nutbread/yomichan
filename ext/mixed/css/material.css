@@ -23,7 +23,7 @@
     --animation-duration: 0.125s;
     --animation-duration2: calc(var(--animation-duration) * 2);
 
-    --button-shadow: 0 1px 2px 0;
+    --button-shadow-params: 0 1px 2px 0;
 
     --checkbox-size: 16px;
     --icon-button-size: 36px;
@@ -573,7 +573,7 @@ button {
     font-family: inherit;
     cursor: pointer;
     background-color: transparent;
-    box-shadow: var(--button-shadow) var(--shadow-color-off);
+    box-shadow: var(--button-shadow-params) var(--shadow-color-off);
     transition: background-color var(--animation-duration) ease-in, box-shadow var(--animation-duration) ease-in, border-color var(--animation-duration) ease-in;
     -webkit-tap-highlight-color: transparent;
 }
@@ -584,10 +584,10 @@ button:hover {
     transition: background-color var(--animation-duration) ease-out, box-shadow var(--animation-duration) ease-out, border-color var(--animation-duration) ease-out;
 }
 button:hover:not(:disabled) {
-    box-shadow: var(--button-shadow) var(--shadow-color-light);
+    box-shadow: var(--button-shadow-params) var(--shadow-color-light);
 }
 button:active:not(:disabled) {
-    box-shadow: var(--button-shadow) var(--shadow-color);
+    box-shadow: var(--button-shadow-params) var(--shadow-color);
 }
 
 /* Standard button */
