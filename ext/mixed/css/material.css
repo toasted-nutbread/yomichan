@@ -23,8 +23,6 @@
     --animation-duration: 0.125s;
     --animation-duration2: calc(var(--animation-duration) * 2);
 
-    --button-shadow-params: 0 1px 2px 0;
-
     --checkbox-size: 16px;
     --icon-button-size: 36px;
     --radio-size: 20px;
@@ -43,6 +41,7 @@
     --shadow-color: rgba(0, 0, 0, 0.185);
     --shadow-color-off: rgba(0, 0, 0, 0);
     --shadow-color-light: rgba(0, 0, 0, 0.085);
+    --button-shadow-params: 0 0.0625em 0.125em 0;
 
     --thin-border-size: calc(1em / var(--font-size-no-units));
 
