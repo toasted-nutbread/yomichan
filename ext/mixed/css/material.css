@@ -60,6 +60,7 @@
     --accent-color-transparent0: rgba(28, 116, 233, 0);
     --accent-color-transparent5: rgba(28, 116, 233, 0.05);
     --accent-color-transparent25: rgba(28, 116, 233, 0.25);
+
     --danger-color: #c83c28;
     --danger-color-light: #dd6755;
     --danger-color-lighter: #e68d7f;
@@ -100,6 +101,22 @@
     --shadow-color: rgba(255, 255, 255, 0.185);
     --shadow-color-off: rgba(255, 255, 255, 0);
     --shadow-color-light: rgba(255, 255, 255, 0.085);
+
+    --accent-color: #4a91ed;
+    --accent-color-light: #1a73e8;
+    --accent-color-lighter: #135dbe;
+    --accent-color-lightest: #0e4690;
+    --accent-color-transparent0: rgb(78, 172, 253, 0);
+    --accent-color-transparent5: rgb(78, 172, 253, 0.05);
+    --accent-color-transparent25: rgb(78, 172, 253, 0.25);
+
+    --danger-color: #dd6755;
+    --danger-color-light: #c83c28;
+    --danger-color-lighter: #9e301f;
+    --danger-color-lightest: #732317;
+    --danger-color-transparent0: rgba(221, 103, 85, 0);
+    --danger-color-transparent5: rgba(221, 103, 85, 0.05);
+    --danger-color-transparent25: rgba(221, 103, 85, 0.25);
 
     --disabled-color: #444444;
     --disabled-color-light: #585858;
