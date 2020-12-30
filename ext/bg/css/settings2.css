@@ -23,17 +23,11 @@
     --main-content-padding: 10px;
     --sidebar-size: 200px;
     --preview-sidebar-expanded-width: 400px;
-    --shadow-color: rgba(0, 0, 0, 0.185);
-    --shadow-color-off: rgba(0, 0, 0, 0);
-    --shadow-color-light: rgba(0, 0, 0, 0.085);
     --shadow-vertical: 0 1px 4px 0 var(--shadow-color), 0 2px 2px 0 var(--shadow-color);
     --shadow-vertical-strong: 0 1px 3px 1px var(--shadow-color), 0 2px 4px 3px var(--shadow-color);
     --shadow-vertical-top: 0 -1px 4px 0 var(--shadow-color), 0 -2px 2px 0 var(--shadow-color);
     --shadow-left: -1px 0 4px 0 var(--shadow-color), -2px 0 2px 0 var(--shadow-color);
     --shadow-right: 1px 0 4px 0 var(--shadow-color), 2px 0 2px 0 var(--shadow-color);
-    --animation-duration: 0s;
-    --animation-duration2: calc(var(--animation-duration) * 2);
-    --animation-duration-half: calc(var(--animation-duration) / 2);
     --settings-group-horizontal-margin: 0;
     --settings-group-inner-vertical-margin: 0.75em;
     --settings-group-inner-vertical-padding: 0.85em;
@@ -52,21 +46,11 @@
     --line-height-default: calc(20 / var(--font-size-no-units));
     --outline-item-height: 40px;
     --outline-item-icon-size: 32px;
-    --input-width: 100px;
-    --input-width-large: 200px;
     --input-short: 80px;
-    --input-height: 32px;
     --input-height-short: 24px;
     --input-half-width: calc(var(--input-width-large) / 2 - var(--padding) / 2);
-    --thin-border-size: calc(1em / var(--font-size-no-units));
-    --icon-button-size: 36px;
     --fab-button-size: 56px;
     --fab-button-padding: 16px;
-    --checkbox-size: 16px;
-    --toggle-size: 16px;
-    --radio-size: 20px;
-    --material-arrow-dimension1: 5px;
-    --material-arrow-dimension2: 10px;
     --modal-width: 600px;
     --modal-height: 400px;
     --modal-width-small: 400px;
@@ -77,13 +61,6 @@
     --menu-item-hover-color: #bbbbbb;
     --menu-item-active-color: #aaaaaa;
 
-    --text-color-default: #222222;
-    --background-color: #f8f9fa;
-    --background-color-light: #ffffff;
-    --input-background-color: #f2f2f2;
-    --input-background-color-dark: #dddddd;
-    --input-background-color-darker: #cccccc;
-    --input-outline-color: var(--text-color-default);
     --link-color: var(--accent-color);
     --link-color-hover: var(--accent-color-dark);
     --text-color-light: #666666;
@@ -92,51 +69,18 @@
     --separator-color2: #eeeeee;
     --outline-item-background-color: rgba(13, 13, 13, 0.0);
     --outline-item-background-color-hover: rgba(13, 13, 13, 0.15);
-    --button-text-color: #ffffff;
-    --button-border-color: var(--separator-color1);
-    --accent-color: #1a73e8;
-    --accent-color-light: #4a91ed;
-    --accent-color-lighter: #8db9f4;
-    --accent-color-lightest: #a7c9f6;
-    --accent-color-dark: #1060c0;
-    --accent-color-transparent0: rgba(28, 116, 233, 0);
-    --accent-color-transparent5: rgba(28, 116, 233, 0.05);
-    --accent-color-transparent25: rgba(28, 116, 233, 0.25);
-    --danger-color: #c83c28;
-    --danger-color-light: #dd6755;
-    --danger-color-lighter: #e68d7f;
-    --danger-color-lightest: #eeb3aa;
-    --danger-color-transparent0: rgba(200, 60, 40, 0);
-    --danger-color-transparent5: rgba(200, 60, 40, 0.05);
-    --danger-color-transparent25: rgba(200, 60, 40, 0.25);
     --warning-color: #96751c;
     --warning-color-light: hsl(44, 80%, 65%);
-    --disabled-color: #aaaaaa;
-    --disabled-color-light: #dddddd;
-    --disabled-color-lighter: #eeeeee;
     --dim-background-color: rgba(0, 0, 0, 0.5);
-    --checkbox-checked-color: var(--accent-color);
-    --checkbox-unchecked-color: #666666;
-    --checkbox-check-color: var(--background-color-light);
-    --checkbox-disabled-color: var(--disabled-color);
-    --toggle-track-color: #cccccc;
-    --toggle-knob-color: var(--background-color-light);
-    --selectable-indicator-color: rgba(160, 160, 160, 0.25);
     --content-dimmer-color: rgba(0, 0, 0, 0.1);
-    --button-icon-color: #333333;
-    --button-icon-color-light: #666666;
 
     --modal-padding-horizontal: 1em;
     --modal-padding-vertical: 0.625em;
     --modal-padding-vertical-half: calc(var(--modal-padding-vertical) * 0.5);
     --modal-button-spacing: 0.625em;
-
-    --input-border-radius: 0.25em;
-    --textarea-line-height: 1.25em;
-    --textarea-padding: 0.5em;
 }
-:root[data-loaded=true] {
-    --animation-duration: 0.125s;
+:root:not([data-loaded=true]) {
+    --animation-duration: 0s;
 }
 
 @media (max-width: 700px) {

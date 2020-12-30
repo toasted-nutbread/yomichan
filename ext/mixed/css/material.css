@@ -45,6 +45,7 @@
 
     --thin-border-size: calc(1em / var(--font-size-no-units));
 
+    --text-color-default: #222222;
     --background-color: #f8f9fa;
     --background-color-light: #ffffff;
 
@@ -71,6 +72,7 @@
     --input-background-color: #f2f2f2;
     --input-background-color-dark: #dddddd;
     --input-background-color-darker: #cccccc;
+    --input-outline-color: var(--text-color-default);
 
     --button-text-color: #ffffff;
     --button-border-color: #cccccc;
@@ -84,8 +86,6 @@
 
     --toggle-track-color: #cccccc;
     --toggle-knob-color: var(--background-color-light);
-
-    --input-outline-color: #222222;
 
     --selectable-indicator-color: rgba(160, 160, 160, 0.25);
 }
