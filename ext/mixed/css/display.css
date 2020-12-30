@@ -463,7 +463,8 @@ button.sidebar-button:active,
 button.sidebar-button:focus {
     box-shadow: none;
 }
-button.sidebar-button:hover:not(:disabled) {
+button.sidebar-button:hover:not(:disabled),
+button.sidebar-button:focus:not(:disabled) {
     background-color: var(--sidebar-button-background-color-hover);
 }
 button.sidebar-button:active:not(:disabled) {
@@ -472,7 +473,8 @@ button.sidebar-button:active:not(:disabled) {
 button.sidebar-button.danger {
     background-color: var(--sidebar-button-danger-background-color);
 }
-button.sidebar-button.danger:hover:not(:disabled) {
+button.sidebar-button.danger:hover:not(:disabled),
+button.sidebar-button.danger:focus:not(:disabled) {
     background-color: var(--sidebar-button-danger-background-color-hover);
 }
 button.sidebar-button.danger:active:not(:disabled) {
@@ -496,7 +498,8 @@ button.sidebar-button.danger:active:not(:disabled) {
 button.sidebar-button:disabled .sidebar-button-icon {
     background-color: var(--sidebar-button-disabled-icon-color);
 }
-button.sidebar-button.danger:hover .sidebar-button-icon {
+button.sidebar-button.danger:hover .sidebar-button-icon,
+button.sidebar-button.danger:focus .sidebar-button-icon {
     background-color: var(--sidebar-button-danger-icon-color);
 }
 .sidebar-button-icon[data-icon=cross] {
