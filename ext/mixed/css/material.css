@@ -15,59 +15,82 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/*
-    Variables:
-    --accent-color
-    --accent-color-light
-    --accent-color-lighter
-    --accent-color-transparent0
-    --accent-color-transparent25
-    --accent-color-transparent5
-    --animation-duration
-    --animation-duration2
-    --button-border-color
-    --button-icon-color
-    --button-icon-color-light
-    --button-shadow-params
-    --button-text-color
-    --checkbox-check-color
-    --checkbox-checked-color
-    --checkbox-disabled-color
-    --checkbox-size
-    --checkbox-unchecked-color
-    --danger-color
-    --danger-color-light
-    --danger-color-lighter
-    --danger-color-transparent0
-    --danger-color-transparent25
-    --danger-color-transparent5
-    --disabled-color
-    --disabled-color-light
-    --disabled-color-lighter
-    --icon-button-size
-    --input-background-color
-    --input-background-color-dark
-    --input-background-color-darker
-    --input-height
-    --input-outline-color
-    --input-width
-    --input-width-large
-    --material-arrow-dimension1
-    --material-arrow-dimension2
-    --radio-size
-    --selectable-indicator-color
-    --shadow-color
-    --shadow-color-light
-    --shadow-color-off
-    --shadow-vertical
-    --text-input-border-radius
-    --textarea-line-height
-    --textarea-padding
-    --thin-border-size
-    --toggle-knob-color
-    --toggle-size
-    --toggle-track-color
-*/
+/* Variables */
+:root {
+    --font-size-no-units: 14;
+    --font-size: calc(1px * var(--font-size-no-units));
+
+    --animation-duration: 0.125s;
+    --animation-duration2: calc(var(--animation-duration) * 2);
+
+    --button-shadow: 0 1px 2px 0;
+
+    --checkbox-size: 16px;
+    --icon-button-size: 36px;
+    --radio-size: 20px;
+    --toggle-size: 16px;
+
+    --input-width: 100px;
+    --input-width-large: 200px;
+    --input-height: 32px;
+    --text-input-border-radius: 0.25em;
+    --textarea-line-height: 1.25em;
+    --textarea-padding: 0.5em;
+
+    --material-arrow-dimension1: 5px;
+    --material-arrow-dimension2: 10px;
+
+    --shadow-color: rgba(0, 0, 0, 0.185);
+    --shadow-color-off: rgba(0, 0, 0, 0);
+    --shadow-color-light: rgba(0, 0, 0, 0.085);
+    --shadow-vertical: 0 1px 4px 0 var(--shadow-color), 0 2px 2px 0 var(--shadow-color);
+
+    --thin-border-size: calc(1em / var(--font-size-no-units));
+
+    --background-color-light: #ffffff;
+
+    --accent-color: #1a73e8;
+    --accent-color-light: #4a91ed;
+    --accent-color-lighter: #8db9f4;
+    --accent-color-lightest: #a7c9f6;
+    --accent-color-dark: #1060c0;
+    --accent-color-transparent0: rgba(28, 116, 233, 0);
+    --accent-color-transparent5: rgba(28, 116, 233, 0.05);
+    --accent-color-transparent25: rgba(28, 116, 233, 0.25);
+    --danger-color: #c83c28;
+    --danger-color-light: #dd6755;
+    --danger-color-lighter: #e68d7f;
+    --danger-color-lightest: #eeb3aa;
+    --danger-color-transparent0: rgba(200, 60, 40, 0);
+    --danger-color-transparent5: rgba(200, 60, 40, 0.05);
+    --danger-color-transparent25: rgba(200, 60, 40, 0.25);
+
+    --disabled-color: #aaaaaa;
+    --disabled-color-light: #dddddd;
+    --disabled-color-lighter: #eeeeee;
+
+    --input-background-color: #f2f2f2;
+    --input-background-color-dark: #dddddd;
+    --input-background-color-darker: #cccccc;
+
+    --button-text-color: #ffffff;
+    --button-border-color: #cccccc;
+    --button-icon-color: #333333;
+    --button-icon-color-light: #666666;
+
+    --checkbox-checked-color: var(--accent-color);
+    --checkbox-unchecked-color: #666666;
+    --checkbox-check-color: var(--background-color-light);
+    --checkbox-disabled-color: var(--disabled-color);
+
+    --toggle-track-color: #cccccc;
+    --toggle-knob-color: var(--background-color-light);
+
+    --input-outline-color: #222222;
+
+    --selectable-indicator-color: rgba(160, 160, 160, 0.25);
+}
+
 
 /* Icons */
 .icon {
@@ -549,7 +572,7 @@ button {
     font-family: inherit;
     cursor: pointer;
     background-color: transparent;
-    box-shadow: var(--button-shadow-params) var(--shadow-color-off);
+    box-shadow: var(--button-shadow) var(--shadow-color-off);
     transition: background-color var(--animation-duration) ease-in, box-shadow var(--animation-duration) ease-in, border-color var(--animation-duration) ease-in;
     -webkit-tap-highlight-color: transparent;
 }
@@ -560,10 +583,10 @@ button:hover {
     transition: background-color var(--animation-duration) ease-out, box-shadow var(--animation-duration) ease-out, border-color var(--animation-duration) ease-out;
 }
 button:hover:not(:disabled) {
-    box-shadow: var(--button-shadow-params) var(--shadow-color-light);
+    box-shadow: var(--button-shadow) var(--shadow-color-light);
 }
 button:active:not(:disabled) {
-    box-shadow: var(--button-shadow-params) var(--shadow-color);
+    box-shadow: var(--button-shadow) var(--shadow-color);
 }
 
 /* Standard button */
