@@ -23,20 +23,20 @@
     --animation-duration: 0.125s;
     --animation-duration2: calc(var(--animation-duration) * 2);
 
-    --checkbox-size: 16px;
-    --icon-button-size: 36px;
-    --radio-size: 20px;
-    --toggle-size: 16px;
+    --checkbox-size: calc(16em / var(--font-size-no-units));
+    --icon-button-size: calc(36em / var(--font-size-no-units));
+    --radio-size: calc(20em / var(--font-size-no-units));
+    --toggle-size: calc(16em / var(--font-size-no-units));
 
-    --input-width: 100px;
-    --input-width-large: 200px;
-    --input-height: 32px;
+    --input-width: calc(100em / var(--font-size-no-units));
+    --input-width-large: calc(200em / var(--font-size-no-units));
+    --input-height: calc(32em / var(--font-size-no-units));
     --input-border-radius: 0.25em;
     --textarea-line-height: 1.25em;
     --textarea-padding: 0.5em;
 
-    --material-arrow-dimension1: 5px;
-    --material-arrow-dimension2: 10px;
+    --material-arrow-dimension1: calc(5em / var(--font-size-no-units));
+    --material-arrow-dimension2: calc(10em / var(--font-size-no-units));
 
     --shadow-color: rgba(0, 0, 0, 0.185);
     --shadow-color-off: rgba(0, 0, 0, 0);
@@ -45,6 +45,7 @@
 
     --thin-border-size: calc(1em / var(--font-size-no-units));
 
+    --background-color: #f8f9fa;
     --background-color-light: #ffffff;
 
     --accent-color: #1a73e8;
