@@ -28,9 +28,11 @@
     --radio-size: calc(20em / var(--font-size-no-units));
     --toggle-size: calc(16em / var(--font-size-no-units));
 
-    --input-width: calc(100em / var(--font-size-no-units));
-    --input-width-large: calc(200em / var(--font-size-no-units));
-    --input-height: calc(32em / var(--font-size-no-units));
+    --input-font-size-no-units: 1;
+    --input-font-size: calc(1em * var(--input-font-size-no-units));
+    --input-width: calc(100em / (var(--font-size-no-units) * var(--input-font-size-no-units)));
+    --input-width-large: calc(200em / (var(--font-size-no-units) * var(--input-font-size-no-units)));
+    --input-height: calc(32em / (var(--font-size-no-units) * var(--input-font-size-no-units)));
     --input-border-radius: 0.25em;
     --textarea-line-height: 1.25em;
     --textarea-padding: 0.5em;
@@ -38,9 +40,6 @@
     --material-arrow-dimension1: calc(5em / var(--font-size-no-units));
     --material-arrow-dimension2: calc(10em / var(--font-size-no-units));
 
-    --shadow-color: rgba(0, 0, 0, 0.185);
-    --shadow-color-off: rgba(0, 0, 0, 0);
-    --shadow-color-light: rgba(0, 0, 0, 0.085);
     --button-shadow-params: 0 0.0625em 0.125em 0;
 
     --thin-border-size: calc(1em / var(--font-size-no-units));
@@ -48,6 +47,10 @@
     --text-color-default: #222222;
     --background-color: #f8f9fa;
     --background-color-light: #ffffff;
+
+    --shadow-color: rgba(0, 0, 0, 0.185);
+    --shadow-color-off: rgba(0, 0, 0, 0);
+    --shadow-color-light: rgba(0, 0, 0, 0.085);
 
     --accent-color: #1a73e8;
     --accent-color-light: #4a91ed;
@@ -88,6 +91,36 @@
     --toggle-knob-color: var(--background-color-light);
 
     --selectable-indicator-color: rgba(160, 160, 160, 0.25);
+}
+:root[data-theme=dark] {
+    --text-color-default: #d4d4d4;
+    --background-color: #1e1e1e;
+    --background-color-light: #0a0a0a;
+
+    --shadow-color: rgba(255, 255, 255, 0.185);
+    --shadow-color-off: rgba(255, 255, 255, 0);
+    --shadow-color-light: rgba(255, 255, 255, 0.085);
+
+    --disabled-color: #444444;
+    --disabled-color-light: #585858;
+    --disabled-color-lighter: #777777;
+
+    --input-background-color: #2f2f2f;
+    --input-background-color-dark: #383838;
+    --input-background-color-darker: #484848;
+    --input-outline-color: var(--text-color-default);
+
+    --button-text-color: #000000;
+    --button-border-color: #333333;
+    --button-icon-color: #cccccc;
+    --button-icon-color-light: #999999;
+
+    --checkbox-unchecked-color: #999999;
+
+    --toggle-track-color: #cccccc;
+    --toggle-knob-color: #ffffff;
+
+    --selectable-indicator-color: rgba(100, 100, 100, 0.25);
 }
 
 
@@ -477,6 +510,8 @@ select {
     background-color: var(--input-background-color);
     background-size: var(--material-arrow-dimension2) var(--material-arrow-dimension1);
     cursor: pointer;
+    color: var(--text-color-default);
+    font-size: var(--input-font-size);
 }
 select::-ms-expand {
     display: none;
@@ -489,6 +524,8 @@ input[type=number] {
     width: var(--input-width);
     height: var(--input-height);
     line-height: var(--input-height);
+    color: var(--text-color-default);
+    font-size: var(--input-font-size);
     background-color: var(--input-background-color);
     border: none;
     border-radius: var(--input-border-radius);
@@ -512,7 +549,8 @@ textarea {
     box-sizing: border-box;
     padding: var(--textarea-padding);
     font-family: 'Courier New', Courier, monospace;
-    font-size: var(--font-size);
+    color: var(--text-color-default);
+    font-size: var(--input-font-size);
     background-color: var(--input-background-color);
     border-radius: var(--input-border-radius);
     line-height: var(--textarea-line-height);

@@ -82,6 +82,11 @@
 :root:not([data-loaded=true]) {
     --animation-duration: 0s;
 }
+:root[data-theme=dark] {
+    --separator-color1: #333333;
+    --separator-color2: #222222;
+}
+
 
 @media (max-width: 700px) {
     :root {
