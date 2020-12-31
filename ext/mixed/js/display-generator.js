@@ -47,7 +47,6 @@ class DisplayGenerator {
         const expressionsContainer = node.querySelector('.term-expression-list');
         const reasonsContainer = node.querySelector('.term-reasons');
         const pitchesContainer = node.querySelector('.term-pitch-accent-group-list');
-        const frequenciesContainer = node.querySelector('.frequencies');
         const definitionsContainer = node.querySelector('.term-definition-list');
         const bodyContainer = node.querySelector('.term-entry-body');
 
@@ -80,7 +79,6 @@ class DisplayGenerator {
 
         this._appendMultiple(expressionsContainer, this._createTermExpression.bind(this), expressions);
         this._appendMultiple(reasonsContainer, this._createTermReason.bind(this), reasons);
-        this._appendMultiple(frequenciesContainer, this._createTermFrequencyTag.bind(this), frequencies);
         this._appendMultiple(pitchesContainer, this._createPitches.bind(this), pitches);
         this._appendMultiple(definitionsContainer, this._createTermDefinitionItem.bind(this), definitions);
 
@@ -91,7 +89,6 @@ class DisplayGenerator {
         const node = this._templates.instantiate('kanji-entry');
 
         const glyphContainer = node.querySelector('.kanji-glyph');
-        const frequenciesContainer = node.querySelector('.frequencies');
         const tagContainer = node.querySelector('.tags');
         const glossaryContainer = node.querySelector('.kanji-glossary-list');
         const chineseReadingsContainer = node.querySelector('.kanji-readings-chinese');
@@ -103,7 +100,6 @@ class DisplayGenerator {
 
         glyphContainer.textContent = details.character;
 
-        this._appendMultiple(frequenciesContainer, this._createKanjiFrequencyTag.bind(this), details.frequencies);
         this._appendMultiple(tagContainer, this._createTag.bind(this), details.tags);
         this._appendMultiple(glossaryContainer, this._createKanjiGlossaryItem.bind(this), details.glossary);
         this._appendMultiple(chineseReadingsContainer, this._createKanjiReading.bind(this), details.onyomi);
@@ -128,7 +124,7 @@ class DisplayGenerator {
     // Private
 
     _createTermExpression(details) {
-        const {termFrequency, furiganaSegments, expression, reading, termTags, frequencies} = details;
+        const {termFrequency, furiganaSegments, expression, reading, termTags} = details;
 
         const searchQueries = [];
         if (expression) { searchQueries.push(expression); }
@@ -138,7 +134,6 @@ class DisplayGenerator {
 
         const expressionContainer = node.querySelector('.term-expression-text');
         const tagContainer = node.querySelector('.tags');
-        const frequencyContainer = node.querySelector('.frequencies');
 
         node.dataset.readingIsSame = `${!reading || reading === expression}`;
         node.dataset.frequency = termFrequency;
@@ -146,7 +141,6 @@ class DisplayGenerator {
         this._appendFurigana(expressionContainer, furiganaSegments, this._appendKanjiLinks.bind(this));
         this._appendMultiple(tagContainer, this._createTag.bind(this), termTags);
         this._appendMultiple(tagContainer, this._createSearchTag.bind(this), searchQueries);
-        this._appendMultiple(frequencyContainer, this._createTermFrequencyTag.bind(this), frequencies);
 
         return node;
     }
@@ -465,40 +459,6 @@ class DisplayGenerator {
 
         path = svg.querySelector('.term-pitch-accent-graph-line-tail');
         path.setAttribute('d', `M${pathPoints.join(' L')}`);
-    }
-
-    _createTermFrequencyTag(details) {
-        const {expression, reading, dictionary, frequency} = details;
-        const node = this._templates.instantiate('term-tag-frequency');
-
-        node.querySelector('.tag-frequency-disambiguation-expression').textContent = expression;
-        node.querySelector('.tag-frequency-disambiguation-reading').textContent = reading;
-        node.querySelector('.tag-frequency-dictionary-name').textContent = dictionary;
-        node.querySelector('.tag-frequency-value').textContent = frequency;
-
-        node.dataset.expression = expression;
-        node.dataset.reading = reading;
-        node.dataset.readingIsSame = `${reading === expression}`;
-        node.dataset.dictionary = dictionary;
-        node.dataset.frequency = frequency;
-        node.dataset.details = `${dictionary}: ${frequency}`;
-
-        return node;
-    }
-
-    _createKanjiFrequencyTag(details) {
-        const {character, dictionary, frequency} = details;
-        const node = this._templates.instantiate('kanji-tag-frequency');
-
-        node.querySelector('.tag-frequency-dictionary-name').textContent = dictionary;
-        node.querySelector('.tag-frequency-value').textContent = frequency;
-
-        node.dataset.character = character;
-        node.dataset.dictionary = dictionary;
-        node.dataset.frequency = frequency;
-        node.dataset.details = `${dictionary}: ${frequency}`;
-
-        return node;
     }
 
     _appendKanjiLinks(container, text) {

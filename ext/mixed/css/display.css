@@ -693,27 +693,6 @@ button.action-button[data-icon=source-term]::before {
 .tag-inner {
     display: block;
 }
-.tag-frequency-separator::before {
-    content: ':';
-}
-.tag-frequency-disambiguation-separator::before {
-    content: ':';
-}
-.tag-frequency-disambiguation::before {
-    content: '(';
-}
-.tag-frequency-disambiguation::after {
-    content: ') ';
-}
-.frequencies .tag[data-reading-is-same=true] .tag-frequency-disambiguation-separator,
-.frequencies .tag[data-reading-is-same=true] .tag-frequency-disambiguation-reading,
-.entry[data-unique-expression-count='1'] .tag-frequency-disambiguation-separator,
-.entry[data-unique-expression-count='1'] .tag-frequency-disambiguation-expression,
-.entry[data-unique-reading-count='1'] .tag-frequency-disambiguation-separator,
-.entry[data-unique-reading-count='1'] .tag-frequency-disambiguation-reading,
-.entry[data-unique-expression-count='1'][data-unique-reading-count='1'] .tag-frequency-disambiguation {
-    display: none;
-}
 
 
 /* Entries */
@@ -949,16 +928,6 @@ button.action-button[data-icon=source-term]::before {
     bottom: -0.5em;
     white-space: nowrap;
 }
-.entry[data-expression-multi=true] .term-expression-list .term-expression-details>.frequencies {
-    display: block;
-    position: absolute;
-    left: 0;
-    bottom: -1.9em;
-    white-space: nowrap;
-}
-.entry[data-expression-multi=true] .term-expression-list .term-expression-details>.frequencies .tag-frequency-disambiguation {
-    display: none;
-}
 
 
 /* Definitions */
@@ -1007,9 +976,6 @@ button.action-button[data-icon=source-term]::before {
     font-size: 0;
     opacity: 0;
     white-space: pre-wrap;
-}
-.term-special-tags>.frequencies {
-    display: inline;
 }
 .term-entry-body[data-section-count='0'] .term-entry-body-section-header,
 .term-entry-body[data-section-count='1'] .term-entry-body-section-header {
@@ -1581,12 +1547,6 @@ button.footer-notification-close-button:active {
     content: var(--compact-list-separator);
     display: inline;
     color: var(--text-color-light);
-}
-:root[data-glossary-layout-mode=compact] .entry:not([data-expression-multi=true]) .term-special-tags {
-    display: none;
-}
-:root[data-glossary-layout-mode=compact] .term-expression-details>.frequencies {
-    display: inline;
 }
 
 :root[data-glossary-layout-mode=compact] .term-pitch-accent-container {
