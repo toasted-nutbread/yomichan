@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020  Yomichan Authors
+ * Copyright (C) 2020-2021  Yomichan Authors
  * Author: Yomichan Authors
  *
  * This program is free software: you can redistribute it and/or modify
