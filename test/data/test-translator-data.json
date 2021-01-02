@@ -20,7 +20,9 @@
             "convertHiraganaToKatakana": false,
             "convertKatakanaToHiragana": false,
             "collapseEmphaticSequences": false,
-            "textReplacements": [null],
+            "textReplacements": [
+                null
+            ],
             "enabledDictionaryMap": [
                 [
                     "${title}",
@@ -16875,6 +16877,52 @@
                     }
                 ]
             }
+        },
+        {
+            "comment": "Ignore text inside parentheses",
+            "func": "findTerms",
+            "mode": "split",
+            "text": "打(う)ち込(こ)む",
+            "options": [
+                "default",
+                {
+                    "alphanumeric": true,
+                    "textReplacements": [
+                        null,
+                        [
+                            {
+                                "pattern": "\\(([^)]*)(?:\\)|$)",
+                                "flags": "g",
+                                "replacement": ""
+                            }
+                        ]
+                    ]
+                }
+            ],
+            "expected": null
+        },
+        {
+            "comment": "Remove parentheses around text",
+            "func": "findTerms",
+            "mode": "split",
+            "text": "(打)(ち)(込)(む)",
+            "options": [
+                "default",
+                {
+                    "alphanumeric": true,
+                    "textReplacements": [
+                        null,
+                        [
+                            {
+                                "pattern": "\\(([^)]*)(?:\\)|$)",
+                                "flags": "g",
+                                "replacement": "$1"
+                            }
+                        ]
+                    ]
+                }
+            ],
+            "expected": null
         }
     ]
 }
