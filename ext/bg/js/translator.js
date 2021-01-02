@@ -1340,7 +1340,7 @@ class Translator {
             const index = match.index;
             const actualReplacement = this._applyMatchReplacement(replacement, match);
             const actualReplacementLength = actualReplacement.length;
-            const delta = actualReplacementLength - matchText.length;
+            const delta = actualReplacementLength - (matchText.length > 0 ? matchText.length : -1);
 
             text = `${text.substring(0, index)}${actualReplacement}${text.substring(index + matchText.length)}`;
             pattern.lastIndex += delta;
