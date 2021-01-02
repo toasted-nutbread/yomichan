@@ -1658,6 +1658,7 @@ class Backend {
                 collapseEmphaticSequences
             }
         } = options;
+        const textReplacements = [null];
         return {
             wildcard,
             mainDictionary,
@@ -1668,6 +1669,7 @@ class Backend {
             convertHiraganaToKatakana,
             convertKatakanaToHiragana,
             collapseEmphaticSequences,
+            textReplacements,
             enabledDictionaryMap
         };
     }

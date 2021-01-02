@@ -68,6 +68,13 @@ class Translator {
      *     convertHiraganaToKatakana: (enum: 'false', 'true', 'variant'),
      *     convertKatakanaToHiragana: (enum: 'false', 'true', 'variant'),
      *     collapseEmphaticSequences: (enum: 'false', 'true', 'full'),
+     *     textReplacements: [
+     *       (null or [
+     *         {pattern: (RegExp), replacement: (string)}
+     *         ...
+     *       ])
+     *       ...
+     *     ],
      *     enabledDictionaryMap: (Map of [
      *       (string),
      *       {
@@ -884,8 +891,7 @@ class Translator {
     }
 
     _getTextReplacementsFromOptions(options) {
-        // TODO
-        return [null];
+        return options.textReplacements;
     }
 
     _getSecondarySearchDictionaryMap(enabledDictionaryMap) {
