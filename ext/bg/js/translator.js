@@ -309,7 +309,7 @@ class Translator {
 
     _getAllDeinflections(text, options) {
         const textOptionVariantArray = [
-            this._getTextReplacementsFromOptions(options),
+            this._getTextReplacementsVariants(options),
             this._getTextOptionEntryVariants(options.convertHalfWidthCharacters),
             this._getTextOptionEntryVariants(options.convertNumericCharacters),
             this._getTextOptionEntryVariants(options.convertAlphabeticCharacters),
@@ -890,7 +890,7 @@ class Translator {
         return collapseEmphaticOptions;
     }
 
-    _getTextReplacementsFromOptions(options) {
+    _getTextReplacementsVariants(options) {
         return options.textReplacements;
     }
 
