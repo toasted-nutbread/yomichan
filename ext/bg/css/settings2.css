@@ -1732,6 +1732,83 @@ code.anki-field-marker {
     height: calc(0.425em * 4 + 1em * var(--line-height-default) * 3);
 }
 
+#translation-text-replacement-list-empty {
+    display: none;
+}
+#translation-text-replacement-list:empty+#translation-text-replacement-list-empty {
+    display: block;
+}
+.translation-text-replacement-entry {
+    display: grid;
+    grid-template-columns: auto auto 1fr auto;
+    grid-template-rows: auto;
+    grid-template-areas:
+        "index pattern-label     pattern     button"
+        ".     replacement-label replacement button";
+    column-gap: 0.25em;
+    row-gap: 0.25em;
+    align-items: stretch;
+    justify-items: stretch;
+}
+.translation-text-replacement-entry+.translation-text-replacement-entry {
+    margin-top: 0.5em;
+}
+.translation-text-replacement-index {
+    grid-area: index;
+    align-self: center;
+    justify-self: start;
+    padding-right: 0.5em;
+}
+.translation-text-replacement-pattern-label {
+    grid-area: pattern-label;
+    align-self: center;
+    justify-self: start;
+    padding-right: 0.5em;
+}
+.translation-text-replacement-replacement-label {
+    grid-area: replacement-label;
+    align-self: center;
+    justify-self: start;
+    padding-right: 0.5em;
+}
+.translation-text-replacement-pattern-container {
+    grid-area: pattern;
+    align-self: stretch;
+    justify-self: stretch;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: stretch;
+}
+.translation-text-replacement-replacement-container {
+    grid-area: replacement;
+    align-self: stretch;
+    justify-self: stretch;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: stretch;
+}
+input.translation-text-replacement-pattern {
+    width: 100%;
+}
+input.translation-text-replacement-replacement {
+    width: 100%;
+}
+.translation-text-replacement-checkbox-container {
+    white-space: nowrap;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    padding-left: 0.5em;
+}
+.translation-text-replacement-checkbox-label {
+    padding-left: 0.5em;
+}
+.translation-text-replacement-button {
+    grid-area: button;
+    align-self: center;
+    justify-self: start;
+}
+
 
 /* Generic layouts */
 .margin-above {
