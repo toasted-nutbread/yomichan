@@ -133,6 +133,10 @@ class TranslationTextReplacementsEntry {
         this._index = index;
         this._eventListeners = new EventListenerCollection();
         this._patternInput = null;
+        this._replacementInput = null;
+        this._ignoreCaseToggle = null;
+        this._testInput = null;
+        this._testOutput = null;
     }
 
     prepare() {
@@ -140,16 +144,26 @@ class TranslationTextReplacementsEntry {
         const replacementInput = this._node.querySelector('.translation-text-replacement-replacement');
         const ignoreCaseToggle = this._node.querySelector('.translation-text-replacement-pattern-ignore-case');
         const menuButton = this._node.querySelector('.translation-text-replacement-button');
+        const testInput = this._node.querySelector('.translation-text-replacement-test-input');
+        const testOutput = this._node.querySelector('.translation-text-replacement-test-output');
 
         this._patternInput = patternInput;
+        this._replacementInput = replacementInput;
+        this._ignoreCaseToggle = ignoreCaseToggle;
+        this._testInput = testInput;
+        this._testOutput = testOutput;
 
         const pathBase = `translation.textReplacements.groups[0][${this._index}]`;
         patternInput.dataset.setting = `${pathBase}.pattern`;
         replacementInput.dataset.setting = `${pathBase}.replacement`;
         ignoreCaseToggle.dataset.setting = `${pathBase}.ignoreCase`;
 
+        this._eventListeners.addEventListener(menuButton, 'menuOpened', this._onMenuOpened.bind(this), false);
         this._eventListeners.addEventListener(menuButton, 'menuClosed', this._onMenuClosed.bind(this), false);
         this._eventListeners.addEventListener(patternInput, 'settingChanged', this._onPatternChanged.bind(this), false);
+        this._eventListeners.addEventListener(ignoreCaseToggle, 'settingChanged', this._updateTestInput.bind(this), false);
+        this._eventListeners.addEventListener(replacementInput, 'settingChanged', this._updateTestInput.bind(this), false);
+        this._eventListeners.addEventListener(testInput, 'input', this._updateTestInput.bind(this), false);
     }
 
     cleanup() {
@@ -161,16 +175,29 @@ class TranslationTextReplacementsEntry {
 
     // Private
 
+    _onMenuOpened({detail: {menu}}) {
+        const testVisible = this._isTestVisible();
+        menu.querySelector('[data-menu-action=showTest]').hidden = testVisible;
+        menu.querySelector('[data-menu-action=hideTest]').hidden = !testVisible;
+    }
+
     _onMenuClosed({detail: {action}}) {
         switch (action) {
             case 'remove':
                 this._parent.deleteGroup(this._index);
+                break;
+            case 'showTest':
+                this._setTestVisible(true);
+                break;
+            case 'hideTest':
+                this._setTestVisible(false);
                 break;
         }
     }
 
     _onPatternChanged({detail: {value}}) {
         this._validatePattern(value);
+        this._updateTestInput();
     }
 
     _validatePattern(value) {
@@ -183,5 +210,32 @@ class TranslationTextReplacementsEntry {
         }
 
         this._patternInput.dataset.invalid = `${!okay}`;
+    }
+
+    _isTestVisible() {
+        return this._node.dataset.testVisible === 'true';
+    }
+
+    _setTestVisible(visible) {
+        this._node.dataset.testVisible = `${visible}`;
+        this._updateTestInput();
+    }
+
+    _updateTestInput() {
+        if (!this._isTestVisible()) { return; }
+
+        const ignoreCase = this._ignoreCaseToggle.checked;
+        const pattern = this._patternInput.value;
+        let regex;
+        try {
+            regex = new RegExp(pattern, ignoreCase ? 'gi' : 'g');
+        } catch (e) {
+            return;
+        }
+
+        const replacement = this._replacementInput.value;
+        const input = this._testInput.value;
+        const output = input.replace(regex, replacement);
+        this._testOutput.value = output;
     }
 }

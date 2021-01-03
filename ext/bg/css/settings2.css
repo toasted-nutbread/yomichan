@@ -1744,7 +1744,8 @@ code.anki-field-marker {
     grid-template-rows: auto;
     grid-template-areas:
         "index pattern-label     pattern     button"
-        ".     replacement-label replacement button";
+        ".     replacement-label replacement button"
+        ".     test-label        test        .";
     column-gap: 0.25em;
     row-gap: 0.25em;
     align-items: stretch;
@@ -1787,11 +1788,10 @@ code.anki-field-marker {
     flex-flow: row nowrap;
     align-items: stretch;
 }
-input.translation-text-replacement-pattern {
-    width: 100%;
-}
+input.translation-text-replacement-pattern,
 input.translation-text-replacement-replacement {
-    width: 100%;
+    flex: 1 1 auto;
+    width: auto;
 }
 .translation-text-replacement-checkbox-container {
     white-space: nowrap;
@@ -1807,6 +1807,36 @@ input.translation-text-replacement-replacement {
     grid-area: button;
     align-self: center;
     justify-self: start;
+}
+.translation-text-replacement-test-label {
+    grid-area: test-label;
+    align-self: center;
+    justify-self: start;
+    padding-right: 0.5em;
+}
+.translation-text-replacement-test-container {
+    grid-area: test;
+    align-self: stretch;
+    justify-self: stretch;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: stretch;
+}
+input.translation-text-replacement-test-input,
+input.translation-text-replacement-test-output {
+    flex: 1 1 auto;
+    width: auto;
+}
+.translation-text-replacement-test-label-inner {
+    grid-area: button;
+    align-self: center;
+    justify-self: start;
+    flex: 0 0 auto;
+    padding: 0 0.5em;
+    white-space: nowrap;
+}
+.translation-text-replacement-entry:not([data-test-visible=true]) .translation-text-replacement-test-node {
+    display: none;
 }
 
 
