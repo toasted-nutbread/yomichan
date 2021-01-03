@@ -39,8 +39,8 @@ y-test {
     border-radius: 4px;
 }
 
-.test:before,
-y-test:before {
+.test::before,
+y-test::before {
     content: 'Test ' counter(test-id);
     display: block;
     counter-increment: test-id;

@@ -823,8 +823,7 @@ button.action-button[data-icon=source-term]::before {
 }
 .entry.entry-current .entry-current-indicator-inner {
     height: var(--entry-current-indicator-width);
-    transition:
-        height var(--entry-current-indicator-transition-duration) linear;
+    transition: height var(--entry-current-indicator-transition-duration) linear;
 }
 :root[data-popup-current-indicator-mode=dot-left] .entry-current-indicator,
 :root[data-popup-current-indicator-mode=dot-right] .entry-current-indicator {
@@ -834,8 +833,7 @@ button.action-button[data-icon=source-term]::before {
 :root[data-popup-current-indicator-mode=dot-right] .entry-current-indicator-inner {
     display: block;
     position: sticky;
-    transition:
-        height var(--entry-current-indicator-transition-duration) linear;
+    transition: height var(--entry-current-indicator-transition-duration) linear;
 }
 :root[data-popup-current-indicator-mode=none] .entry-current-indicator,
 :root[data-popup-current-indicator-mode=asterisk] .entry-current-indicator,

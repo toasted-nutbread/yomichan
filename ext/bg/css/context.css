@@ -215,7 +215,7 @@ body[data-loaded=true] .toggle-group {
 }
 .toggle-off:active,
 .toggle-handle:active {
-    background-color:#d4d4d4;
+    background-color: #d4d4d4;
     background-image: none;
     box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
     border-color: #8c8c8c;

@@ -130,9 +130,15 @@ ul {
     margin: 0;
     padding: 0 0 0 1.5em;
 }
-p+p,  p+ol,  p+ul,
-ol+p, ol+ol, ol+ul,
-ul+p, ul+ol, ul+ul,
+p+p,
+p+ol,
+p+ul,
+ol+p,
+ol+ol,
+ol+ul,
+ul+p,
+ul+ol,
+ul+ul,
 li {
     margin: 0.425em 0;
 }
@@ -809,7 +815,7 @@ select.short-height {
     margin-right: calc(var(--modal-padding-horizontal) * -1);
 }
 .modal-body .settings-item+.settings-item {
-    border-top: none
+    border-top: none;
 }
 .modal-body .settings-item-left {
     padding-left: var(--modal-padding-horizontal);
@@ -1267,7 +1273,7 @@ body.preview-sidebar-visible .fab-container-item.fab-container-item-popup-previe
 }
 .dictionary-details-table {
     display: table;
-    width: 100%
+    width: 100%;
 }
 .dictionary-details-entry {
     display: table-row;
@@ -1335,7 +1341,7 @@ body.preview-sidebar-visible .fab-container-item.fab-container-item-popup-previe
     flex: 0 0 auto;
     min-width: 4em;
     text-align: center;
-    align-self: stretch
+    align-self: stretch;
 }
 .profile-entry-cell:nth-child(5) {
     flex: 0 0 auto;
@@ -1429,10 +1435,10 @@ input[type=text].profile-entry-name-input {
     margin-right: 0.25em;
 }
 .profile-condition-prefix::after {
-    content: 'if'
+    content: 'if';
 }
 .profile-condition:nth-child(n+2)>.profile-condition-prefix::after {
-    content: 'and'
+    content: 'and';
 }
 select.profile-condition-type,
 select.profile-condition-operator {

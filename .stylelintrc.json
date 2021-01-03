@@ -31,6 +31,24 @@
         "max-empty-lines": 2,
         "selector-type-no-unknown": null,
         "no-descending-specificity": null,
-        "no-duplicate-selectors": null
+        "no-duplicate-selectors": null,
+        "selector-combinator-space-before": "never",
+        "selector-combinator-space-after": "never",
+        "selector-list-comma-newline-after": "always-multi-line",
+        "rule-empty-line-before": null,
+        "block-opening-brace-space-before": [
+            "always",
+            {
+                "ignoreSelectors": "/^\\.icon/"
+            }
+        ],
+        "block-opening-brace-space-after": "always-single-line",
+        "color-hex-length": null,
+        "declaration-colon-space-before": "never",
+        "declaration-colon-space-after": "always-single-line",
+        "length-zero-no-unit": null,
+        "selector-pseudo-element-colon-notation": "double",
+        "custom-property-empty-line-before": null,
+        "at-rule-empty-line-before": null
     }
 }
