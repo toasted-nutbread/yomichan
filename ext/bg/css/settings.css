@@ -77,10 +77,10 @@ html:root:not([data-options-general-result-output-mode=merge]) #dictionary-main-
     width: auto;
 }
 .condition>.profile-condition-prefix:after {
-    content: "IF";
+    content: 'IF';
 }
 .condition:nth-child(n+2)>.profile-condition-prefix:after {
-    content: "AND";
+    content: 'AND';
 }
 
 .profile-condition-prefix {

@@ -332,7 +332,7 @@ label.toggle {
 .toggle-body>.toggle-knob::after {
     position: absolute;
     display: block;
-    content: "";
+    content: '';
     left: -0.75em;
     top: -0.75em;
     right: -0.75em;
@@ -463,7 +463,7 @@ label.radio {
 .radio-body::after {
     position: absolute;
     display: block;
-    content: "";
+    content: '';
     left: -0.75em;
     top: -0.75em;
     right: -0.75em;
@@ -804,7 +804,7 @@ button.icon-button:active {
 .icon-button>.icon-button-inner::after {
     position: absolute;
     display: block;
-    content: "";
+    content: '';
     left: 0;
     top: 0;
     right: 0;

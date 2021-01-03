@@ -116,7 +116,7 @@ body {
     padding: 0;
     border: none;
     font-size: var(--font-size);
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     color: var(--text-color);
     line-height: var(--line-height-default);
     height: 100%;
@@ -1128,7 +1128,7 @@ button.fab-button:active {
 .fab-button-background {
     position: absolute;
     display: block;
-    content: "";
+    content: '';
     left: 0;
     top: 0;
     right: 0;
@@ -1426,10 +1426,10 @@ input[type=text].profile-entry-name-input {
     margin-right: 0.25em;
 }
 .profile-condition-prefix::after {
-    content: "if"
+    content: 'if'
 }
 .profile-condition:nth-child(n+2)>.profile-condition-prefix::after {
-    content: "and"
+    content: 'and'
 }
 select.profile-condition-type,
 select.profile-condition-operator {
@@ -1743,9 +1743,9 @@ code.anki-field-marker {
     grid-template-columns: auto auto 1fr auto;
     grid-template-rows: auto;
     grid-template-areas:
-        "index pattern-label     pattern     button"
-        ".     replacement-label replacement button"
-        ".     test-label        test        .";
+        'index pattern-label     pattern     button'
+        '.     replacement-label replacement button'
+        '.     test-label        test        .';
     column-gap: 0.25em;
     row-gap: 0.25em;
     align-items: stretch;

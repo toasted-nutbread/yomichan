@@ -70,7 +70,7 @@
     --tag-border-style: none;
     --tag-font-weight: bold;
 
-    --compact-list-separator: " | ";
+    --compact-list-separator: ' | ';
     --list-padding1: 1.4em;
     --list-padding2: var(--list-padding1);
 
@@ -218,7 +218,7 @@
     background-color: transparent;
 }
 :root {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: var(--font-size);
     line-height: var(--line-height);
     height: 100%;
@@ -615,7 +615,7 @@ button.action-button:active {
     box-shadow: none;
 }
 button.action-button::before {
-    content: "";
+    content: '';
     width: var(--action-button-size);
     height: var(--action-button-size);
     display: block;
@@ -624,19 +624,19 @@ button.action-button::before {
     background-size: contain;
 }
 button.action-button[data-icon=view-note]::before {
-    background-image: url("/mixed/img/view-note.svg");
+    background-image: url('/mixed/img/view-note.svg');
 }
 button.action-button[data-icon=add-term-kanji]::before {
-    background-image: url("/mixed/img/add-term-kanji.svg");
+    background-image: url('/mixed/img/add-term-kanji.svg');
 }
 button.action-button[data-icon=add-term-kana]::before {
-    background-image: url("/mixed/img/add-term-kana.svg");
+    background-image: url('/mixed/img/add-term-kana.svg');
 }
 button.action-button[data-icon=play-audio]::before {
-    background-image: url("/mixed/img/play-audio.svg");
+    background-image: url('/mixed/img/play-audio.svg');
 }
 button.action-button[data-icon=source-term]::before {
-    background-image: url("/mixed/img/source-term.svg");
+    background-image: url('/mixed/img/source-term.svg');
 }
 .entry[data-type=term][data-expression-multi=true] .actions>button.action-button.action-play-audio {
     display: none;
@@ -694,24 +694,24 @@ button.action-button[data-icon=source-term]::before {
     display: block;
 }
 .tag-frequency-separator::before {
-    content: ":";
+    content: ':';
 }
 .tag-frequency-disambiguation-separator::before {
-    content: ":";
+    content: ':';
 }
 .tag-frequency-disambiguation::before {
-    content: "(";
+    content: '(';
 }
 .tag-frequency-disambiguation::after {
-    content: ") ";
+    content: ') ';
 }
 .frequencies .tag[data-reading-is-same=true] .tag-frequency-disambiguation-separator,
 .frequencies .tag[data-reading-is-same=true] .tag-frequency-disambiguation-reading,
-.entry[data-unique-expression-count="1"] .tag-frequency-disambiguation-separator,
-.entry[data-unique-expression-count="1"] .tag-frequency-disambiguation-expression,
-.entry[data-unique-reading-count="1"] .tag-frequency-disambiguation-separator,
-.entry[data-unique-reading-count="1"] .tag-frequency-disambiguation-reading,
-.entry[data-unique-expression-count="1"][data-unique-reading-count="1"] .tag-frequency-disambiguation {
+.entry[data-unique-expression-count='1'] .tag-frequency-disambiguation-separator,
+.entry[data-unique-expression-count='1'] .tag-frequency-disambiguation-expression,
+.entry[data-unique-reading-count='1'] .tag-frequency-disambiguation-separator,
+.entry[data-unique-reading-count='1'] .tag-frequency-disambiguation-reading,
+.entry[data-unique-expression-count='1'][data-unique-reading-count='1'] .tag-frequency-disambiguation {
     display: none;
 }
 
@@ -762,7 +762,7 @@ button.action-button[data-icon=source-term]::before {
     display: none;
 }
 .term-reasons>.term-reason+.term-reason-separator+.term-reason::before {
-    content: " \00AB  "; /* The two spaces is not a typo */
+    content: ' \00AB  '; /* The two spaces is not a typo */
     white-space: pre-wrap;
     display: inline;
 }
@@ -782,7 +782,7 @@ button.action-button[data-icon=source-term]::before {
     display: none;
 }
 .term-expression-list>.term-expression:not(:last-of-type)>.term-expression-text-container>.term-expression-text::after {
-    content: "\3001";
+    content: '\3001';
 }
 
 
@@ -906,14 +906,14 @@ button.action-button[data-icon=source-term]::before {
     display: none;
 }
 .entry-current-indicator-icon::before {
-    content: "";
+    content: '';
     width: var(--action-button-size);
     height: var(--action-button-size);
     display: block;
     background-color: transparent;
     background-repeat: no-repeat;
     background-size: contain;
-    background-image: url("/mixed/img/entry-current.svg");
+    background-image: url('/mixed/img/entry-current.svg');
 }
 
 
@@ -969,8 +969,8 @@ button.action-button[data-icon=source-term]::before {
     padding: 0 0 0 var(--list-padding1);
     list-style-type: decimal;
 }
-.term-definition-list[data-count="0"],
-.term-definition-list[data-count="1"] {
+.term-definition-list[data-count='0'],
+.term-definition-list[data-count='1'] {
     padding-left: 0;
     list-style-type: none;
 }
@@ -979,8 +979,8 @@ button.action-button[data-icon=source-term]::before {
     padding: 0 0 0 var(--list-padding2);
     list-style-type: circle;
 }
-.term-glossary-list[data-count="0"],
-.term-glossary-list[data-count="1"] {
+.term-glossary-list[data-count='0'],
+.term-glossary-list[data-count='1'] {
     padding-left: 0;
     list-style-type: none;
 }
@@ -991,17 +991,17 @@ button.action-button[data-icon=source-term]::before {
 .term-definition-disambiguation-list {
     color: var(--text-color-light);
 }
-.term-definition-disambiguation-list[data-count="0"] {
+.term-definition-disambiguation-list[data-count='0'] {
     display: none;
 }
 .term-definition-disambiguation-list::before {
-    content: "(";
+    content: '(';
 }
 .term-definition-disambiguation-list::after {
-    content: " only) ";
+    content: ' only) ';
 }
 .term-definition-disambiguation+.term-definition-disambiguation::before {
-    content: ", ";
+    content: ', ';
 }
 .term-glossary-separator,
 .term-reason-separator {
@@ -1013,8 +1013,8 @@ button.action-button[data-icon=source-term]::before {
 .term-special-tags>.frequencies {
     display: inline;
 }
-.term-entry-body[data-section-count="0"] .term-entry-body-section-header,
-.term-entry-body[data-section-count="1"] .term-entry-body-section-header {
+.term-entry-body[data-section-count='0'] .term-entry-body-section-header,
+.term-entry-body[data-section-count='1'] .term-entry-body-section-header {
     display: none;
 }
 
@@ -1033,8 +1033,8 @@ button.action-button[data-icon=source-term]::before {
     padding: 0 0 0 var(--list-padding1);
     list-style-type: decimal;
 }
-.term-pitch-accent-group-list[data-count="0"],
-.term-pitch-accent-group-list[data-count="1"] {
+.term-pitch-accent-group-list[data-count='0'],
+.term-pitch-accent-group-list[data-count='1'] {
     padding-left: 0;
     list-style-type: none;
 }
@@ -1044,8 +1044,8 @@ button.action-button[data-icon=source-term]::before {
     list-style-type: circle;
     display: block;
 }
-.term-pitch-accent-list[data-count="0"],
-.term-pitch-accent-list[data-count="1"] {
+.term-pitch-accent-list[data-count='0'],
+.term-pitch-accent-list[data-count='1'] {
     padding-left: 0;
     list-style-type: none;
     display: inline;
@@ -1058,8 +1058,8 @@ button.action-button[data-icon=source-term]::before {
     display: list-item;
     line-height: 1.5;
 }
-.term-pitch-accent-list[data-count="0"] .term-pitch-accent,
-.term-pitch-accent-list[data-count="1"] .term-pitch-accent {
+.term-pitch-accent-list[data-count='0'] .term-pitch-accent,
+.term-pitch-accent-list[data-count='1'] .term-pitch-accent {
     display: inline;
 }
 .term-pitch-accent-group-tag-list {
@@ -1070,18 +1070,18 @@ button.action-button[data-icon=source-term]::before {
     color: var(--text-color-light);
 }
 .term-pitch-accent-disambiguation-list::before {
-    content: "(";
+    content: '(';
 }
 .term-pitch-accent-disambiguation-list::after {
-    content: " only)";
+    content: ' only)';
 }
 .term-pitch-accent-disambiguation+.term-pitch-accent-disambiguation::before {
-    content: ", ";
+    content: ', ';
 }
-.term-pitch-accent-disambiguation-list[data-count="0"] {
+.term-pitch-accent-disambiguation-list[data-count='0'] {
     display: none;
 }
-.term-pitch-accent-tag-list:not([data-count="0"]) {
+.term-pitch-accent-tag-list:not([data-count='0']) {
     margin-right: 0.375em;
 }
 .term-pitch-accent-character {
@@ -1092,7 +1092,7 @@ button.action-button[data-icon=source-term]::before {
     border-color: var(--pitch-accent-annotation-color);
 }
 .term-pitch-accent-character[data-pitch='high']::before {
-    content: "";
+    content: '';
     display: block;
     user-select: none;
     pointer-events: none;
@@ -1115,10 +1115,10 @@ button.action-button[data-icon=source-term]::before {
     margin-right: 0.1em;
 }
 .term-pitch-accent-position::before {
-    content: " [";
+    content: ' [';
 }
 .term-pitch-accent-position::after {
-    content: "]";
+    content: ']';
 }
 .term-pitch-accent-details {
     display: inline-block;
@@ -1196,7 +1196,7 @@ button.action-button[data-icon=source-term]::before {
     color: var(--text-color-light);
 }
 .term-glossary-item[data-has-image=true][data-image-load-state=load-error] .term-glossary-image-container-overlay::after {
-    content: "Image failed to load";
+    content: 'Image failed to load';
     display: table-cell;
     width: 100%;
     height: 100%;
@@ -1227,17 +1227,17 @@ button.action-button[data-icon=source-term]::before {
     image-rendering: crisp-edges;
 }
 .term-glossary-image-aspect-ratio-sizer {
-    content: "";
+    content: '';
     display: inline-block;
     width: 0;
     vertical-align: top;
     font-size: 0;
 }
 .term-glossary-image-link-text::before {
-    content: "[";
+    content: '[';
 }
 .term-glossary-image-link-text::after {
-    content: "]";
+    content: ']';
 }
 
 
@@ -1292,8 +1292,8 @@ button.action-button[data-icon=source-term]::before {
     padding: 0 0 0 var(--list-padding1);
     list-style-type: decimal;
 }
-.kanji-glossary-list[data-count="0"],
-.kanji-glossary-list[data-count="1"] {
+.kanji-glossary-list[data-count='0'],
+.kanji-glossary-list[data-count='1'] {
     padding-left: 0;
     list-style-type: none;
 }
@@ -1346,7 +1346,7 @@ button.action-button[data-icon=source-term]::before {
 }
 .progress-bar-indeterminant::before,
 .progress-bar-indeterminant::after {
-    content: "";
+    content: '';
     display: block;
     position: absolute;
     left: 0;
@@ -1567,7 +1567,7 @@ button.footer-notification-close-button:active {
     display: none;
 }
 :root[data-glossary-layout-mode=compact] .term-definition-tag-list,
-:root[data-glossary-layout-mode=compact] .term-definition-disambiguation-list:not([data-count="0"]) {
+:root[data-glossary-layout-mode=compact] .term-definition-disambiguation-list:not([data-count='0']) {
     display: inline;
 }
 :root[data-glossary-layout-mode=compact] .term-glossary-list {
@@ -1596,7 +1596,7 @@ button.footer-notification-close-button:active {
     padding-bottom: 0;
     margin-bottom: 0;
 }
-:root[data-show-pitch-accent-downstep-notation=true] .term-pitch-accent-disambiguation-list[data-expression-count="0"],
+:root[data-show-pitch-accent-downstep-notation=true] .term-pitch-accent-disambiguation-list[data-expression-count='0'],
 :root[data-show-pitch-accent-downstep-notation=true] .term-pitch-accent-disambiguation[data-type=reading] {
     display: none;
 }

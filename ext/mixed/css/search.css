@@ -42,7 +42,7 @@ body {
     margin: 0;
     padding: 0;
     margin: 0;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     color: var(--text-color);
     height: 100%;
     overflow: hidden;
@@ -84,7 +84,7 @@ h1 {
     max-height: calc(var(--textarea-line-height) * 10 + var(--textarea-padding) * 2);
     resize: vertical;
     font-size: var(--font-size);
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     color: var(--text-color);
     white-space: pre-wrap;
     z-index: 1;
