@@ -1545,33 +1545,12 @@ class Display extends EventDispatcher {
     async _createNote(definition, mode, context, options, templates, injectMedia) {
         const {
             general: {resultOutputMode, glossaryLayoutMode, compactTags},
-            anki: {tags, checkForDuplicates, duplicateScope, kanji, terms, screenshot: {format, quality}},
-            audio: {sources, customSourceUrl}
+            anki: {tags, checkForDuplicates, duplicateScope, kanji, terms}
         } = options;
         const modeOptions = (mode === 'kanji') ? kanji : terms;
 
         if (injectMedia) {
-            const timestamp = Date.now();
-            const ownerFrameId = this._ownerFrameId;
-            const {fields} = modeOptions;
-            const definitionDetails = this._getDefinitionDetailsForNote(definition);
-            const audioDetails = (mode !== 'kanji' && this._ankiNoteBuilder.containsMarker(fields, 'audio') ? {sources, customSourceUrl} : null);
-            const screenshotDetails = (this._ankiNoteBuilder.containsMarker(fields, 'screenshot') ? {ownerFrameId, format, quality} : null);
-            const clipboardDetails = {
-                image: this._ankiNoteBuilder.containsMarker(fields, 'clipboard-image'),
-                text: this._ankiNoteBuilder.containsMarker(fields, 'clipboard-text')
-            };
-            const {screenshotFileName, clipboardImageFileName, clipboardText, audioFileName} = await api.injectAnkiNoteMedia(
-                timestamp,
-                definitionDetails,
-                audioDetails,
-                screenshotDetails,
-                clipboardDetails
-            );
-            if (screenshotFileName !== null) { definition.screenshotFileName = screenshotFileName; }
-            if (clipboardImageFileName !== null) { definition.clipboardImageFileName = clipboardImageFileName; }
-            if (audioFileName !== null) { definition.audioFileName = audioFileName; }
-            if (clipboardText !== null) { definition.clipboardText = clipboardText; }
+            await this._injectAnkiNoteMedia(definition, mode, options);
         }
 
         return await this._ankiNoteBuilder.createNote({
@@ -1587,6 +1566,37 @@ class Display extends EventDispatcher {
             compactTags,
             modeOptions
         });
+    }
+
+    async _injectAnkiNoteMedia(definition, mode, options) {
+        const {
+            anki: {kanji, terms, screenshot: {format, quality}},
+            audio: {sources, customSourceUrl}
+        } = options;
+        const isModeKanji = (mode === 'kanji');
+        const modeOptions = isModeKanji ? kanji : terms;
+
+        const timestamp = Date.now();
+        const ownerFrameId = this._ownerFrameId;
+        const {fields} = modeOptions;
+        const definitionDetails = this._getDefinitionDetailsForNote(definition);
+        const audioDetails = (!isModeKanji && this._ankiNoteBuilder.containsMarker(fields, 'audio') ? {sources, customSourceUrl} : null);
+        const screenshotDetails = (this._ankiNoteBuilder.containsMarker(fields, 'screenshot') ? {ownerFrameId, format, quality} : null);
+        const clipboardDetails = {
+            image: this._ankiNoteBuilder.containsMarker(fields, 'clipboard-image'),
+            text: this._ankiNoteBuilder.containsMarker(fields, 'clipboard-text')
+        };
+        const {screenshotFileName, clipboardImageFileName, clipboardText, audioFileName} = await api.injectAnkiNoteMedia(
+            timestamp,
+            definitionDetails,
+            audioDetails,
+            screenshotDetails,
+            clipboardDetails
+        );
+        if (screenshotFileName !== null) { definition.screenshotFileName = screenshotFileName; }
+        if (clipboardImageFileName !== null) { definition.clipboardImageFileName = clipboardImageFileName; }
+        if (audioFileName !== null) { definition.audioFileName = audioFileName; }
+        if (clipboardText !== null) { definition.clipboardText = clipboardText; }
     }
 
     _getDefinitionDetailsForNote(definition) {
