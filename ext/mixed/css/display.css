@@ -441,11 +441,6 @@ a {
 :root[data-popup-action-bar-location=bottom] .content-sidebar-bottom {
     flex-flow: row nowrap;
 }
-:root[data-popup-action-bar-location=top] button.sidebar-button,
-:root[data-popup-action-bar-location=bottom] button.sidebar-button {
-    width: var(--sidebar-width) !important;
-    height: 100% !important;
-}
 
 
 /* Sidebar buttons */
@@ -463,6 +458,11 @@ button.sidebar-button {
     font-size: inherit;
     border-radius: 0;
     box-shadow: none;
+}
+:root[data-popup-action-bar-location=top] button.sidebar-button,
+:root[data-popup-action-bar-location=bottom] button.sidebar-button {
+    width: var(--sidebar-width);
+    height: 100%;
 }
 button.sidebar-button:disabled {
     cursor: default;
@@ -1247,7 +1247,7 @@ button.action-button[data-icon=source-term]::before {
     position: relative;
 }
 .kanji-glyph {
-    font-family: kanji-stroke-orders;
+    font-family: kanji-stroke-orders, sans-serif;
     font-size: 8.5em;
     line-height: 1;
     padding: 0.01em;

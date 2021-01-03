@@ -67,7 +67,7 @@
     --text-color-lighter: #888888;
     --separator-color1: #cccccc;
     --separator-color2: #eeeeee;
-    --outline-item-background-color: rgba(13, 13, 13, 0.0);
+    --outline-item-background-color: rgba(13, 13, 13, 0);
     --outline-item-background-color-hover: rgba(13, 13, 13, 0.15);
     --warning-color: #96751c;
     --warning-color-light: hsl(44, 80%, 65%);
@@ -326,8 +326,9 @@ h3 {
 }
 .sidebar:hover {
     max-width: var(--sidebar-size);
-    transition: max-width var(--animation-duration) ease-out 0.5s,
-                box-shadow var(--animation-duration) ease-out;
+    transition:
+        max-width var(--animation-duration) ease-out 0.5s,
+        box-shadow var(--animation-duration) ease-out;
 }
 .sidebar-inner {
     width: 100%;
@@ -455,9 +456,10 @@ h3 {
     width: 100%;
     min-width: 100%;
     max-width: 100%;
-    transition: width var(--animation-duration) ease-in-out,
-                max-width var(--animation-duration) ease-in-out,
-                box-shadow var(--animation-duration) ease-in-out;
+    transition:
+        width var(--animation-duration) ease-in-out,
+        max-width var(--animation-duration) ease-in-out,
+        box-shadow var(--animation-duration) ease-in-out;
 }
 .preview-sidebar-inner {
     width: 100%;
@@ -1094,8 +1096,9 @@ button.popup-menu-item:disabled {
     width: 100%;
     min-width: 100%;
     max-width: 100%;
-    transition: width var(--animation-duration) ease-in-out,
-                max-width var(--animation-duration) ease-in-out;
+    transition:
+        width var(--animation-duration) ease-in-out,
+        max-width var(--animation-duration) ease-in-out;
 }
 .fab-container-right-inner2 {
     display: flex;

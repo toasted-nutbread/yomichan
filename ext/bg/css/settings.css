@@ -276,7 +276,6 @@ html:root:not([data-options-general-result-output-mode=merge]) #dictionary-main-
     width: 100%;
     min-height: 34px;
     line-height: 18px;
-    height: 96px;
     resize: vertical;
     font-family: 'Courier New', Courier, monospace;
     white-space: pre;
