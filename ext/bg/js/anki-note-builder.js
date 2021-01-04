@@ -26,7 +26,6 @@ class AnkiNoteBuilder {
     }
 
     async createNote({
-        anki=null,
         definition,
         mode,
         context,
@@ -38,15 +37,8 @@ class AnkiNoteBuilder {
         glossaryLayoutMode='default',
         compactTags=false,
         modeOptions: {fields, deck, model},
-        audioDetails=null,
-        screenshotDetails=null,
-        clipboardDetails=null,
         errors=null
     }) {
-        if (anki !== null) {
-            await this._injectMedia(anki, definition, fields, mode, audioDetails, screenshotDetails, clipboardDetails);
-        }
-
         let duplicateScopeDeckName = null;
         let duplicateScopeCheckChildren = false;
         if (duplicateScope === 'deck-root') {
