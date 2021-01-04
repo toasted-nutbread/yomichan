@@ -1545,12 +1545,15 @@ class Display extends EventDispatcher {
     async _createNote(definition, mode, context, options, templates, injectMedia) {
         const {
             general: {resultOutputMode, glossaryLayoutMode, compactTags},
-            anki: {tags, checkForDuplicates, duplicateScope, kanji, terms}
+            anki: ankiOptions
         } = options;
-        const modeOptions = (mode === 'kanji') ? kanji : terms;
+        const {tags, checkForDuplicates, duplicateScope} = ankiOptions;
+        const modeOptions = (mode === 'kanji') ? ankiOptions.kanji : ankiOptions.terms;
+        const {deck: deckName, model: modelName} = modeOptions;
+        const fields = Object.entries(modeOptions.fields);
 
         if (injectMedia) {
-            await this._injectAnkiNoteMedia(definition, mode, options);
+            await this._injectAnkiNoteMedia(definition, mode, options, fields);
         }
 
         return await this._ankiNoteBuilder.createNote({
@@ -1558,29 +1561,28 @@ class Display extends EventDispatcher {
             mode,
             context,
             templates,
+            deckName,
+            modelName,
+            fields,
             tags,
             checkForDuplicates,
             duplicateScope,
             resultOutputMode,
             glossaryLayoutMode,
-            compactTags,
-            modeOptions
+            compactTags
         });
     }
 
-    async _injectAnkiNoteMedia(definition, mode, options) {
+    async _injectAnkiNoteMedia(definition, mode, options, fields) {
         const {
-            anki: {kanji, terms, screenshot: {format, quality}},
+            anki: {screenshot: {format, quality}},
             audio: {sources, customSourceUrl}
         } = options;
-        const isModeKanji = (mode === 'kanji');
-        const modeOptions = isModeKanji ? kanji : terms;
 
         const timestamp = Date.now();
         const ownerFrameId = this._ownerFrameId;
-        const {fields} = modeOptions;
         const definitionDetails = this._getDefinitionDetailsForNote(definition);
-        const audioDetails = (!isModeKanji && this._ankiNoteBuilder.containsMarker(fields, 'audio') ? {sources, customSourceUrl} : null);
+        const audioDetails = (mode !== 'kanji' && this._ankiNoteBuilder.containsMarker(fields, 'audio') ? {sources, customSourceUrl} : null);
         const screenshotDetails = (this._ankiNoteBuilder.containsMarker(fields, 'screenshot') ? {ownerFrameId, format, quality} : null);
         const clipboardDetails = {
             image: this._ankiNoteBuilder.containsMarker(fields, 'clipboard-image'),
