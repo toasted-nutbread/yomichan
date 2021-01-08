@@ -285,7 +285,7 @@ function promiseAnimationFrame(timeout=null) {
                 cancelAnimationFrame(frameRequest);
                 frameRequest = null;
             }
-            resolve({time: timeout, timeout: true});
+            resolve({time: performance.now(), timeout: true});
         };
 
         // eslint-disable-next-line no-undef
