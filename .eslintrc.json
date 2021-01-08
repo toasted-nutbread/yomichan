@@ -105,7 +105,6 @@
                 "hasOwn": "readonly",
                 "stringReverse": "readonly",
                 "promiseTimeout": "readonly",
-                "parseUrl": "readonly",
                 "escapeRegExp": "readonly",
                 "deferPromise": "readonly",
                 "clone": "readonly",

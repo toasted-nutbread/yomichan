@@ -71,14 +71,6 @@ function stringReverse(string) {
     return string.split('').reverse().join('').replace(/([\uDC00-\uDFFF])([\uD800-\uDBFF])/g, '$2$1');
 }
 
-function parseUrl(url) {
-    const parsedUrl = new URL(url);
-    const baseUrl = `${parsedUrl.origin}${parsedUrl.pathname}`;
-    const queryParams = Array.from(parsedUrl.searchParams.entries())
-        .reduce((a, [k, v]) => Object.assign({}, a, {[k]: v}), {});
-    return {baseUrl, queryParams};
-}
-
 const clone = (() => {
     // eslint-disable-next-line no-shadow
     function clone(value) {
