@@ -730,8 +730,10 @@ class Backend {
 
         const isTabMatch = (url2) => {
             if (url2 === null || !url2.startsWith(baseUrl)) { return false; }
-            const {baseUrl: baseUrl2, queryParams: queryParams2} = parseUrl(url2);
-            return baseUrl2 === baseUrl && (queryParams2.mode === mode || (!queryParams2.mode && mode === 'existingOrNewTab'));
+            const parsedUrl = new URL(url2);
+            const baseUrl2 = `${parsedUrl.origin}${parsedUrl.pathname}`;
+            const mode2 = parsedUrl.searchParams.get('mode');
+            return baseUrl2 === baseUrl && (mode2 === mode || (!mode2 && mode === 'existingOrNewTab'));
         };
 
         const openInTab = async () => {
