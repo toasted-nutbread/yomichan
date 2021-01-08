@@ -102,7 +102,6 @@
                 "errorToJson": "readonly",
                 "jsonToError": "readonly",
                 "isObject": "readonly",
-                "hasOwn": "readonly",
                 "stringReverse": "readonly",
                 "promiseTimeout": "readonly",
                 "escapeRegExp": "readonly",

@@ -58,10 +58,6 @@ function isObject(value) {
     return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-function hasOwn(object, property) {
-    return Object.prototype.hasOwnProperty.call(object, property);
-}
-
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
 function escapeRegExp(string) {
     return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&');
