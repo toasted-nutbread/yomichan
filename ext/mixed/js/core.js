@@ -19,9 +19,9 @@
  * Error handling
  */
 
-function errorToJson(error) {
+function serializeError(error) {
     try {
-        if (isObject(error)) {
+        if (typeof error === 'object' && error !== null) {
             return {
                 name: error.name,
                 message: error.message,
@@ -38,14 +38,14 @@ function errorToJson(error) {
     };
 }
 
-function jsonToError(jsonError) {
-    if (jsonError.hasValue) {
-        return jsonError.value;
+function deserializeError(serializedError) {
+    if (serializedError.hasValue) {
+        return serializedError.value;
     }
-    const error = new Error(jsonError.message);
-    error.name = jsonError.name;
-    error.stack = jsonError.stack;
-    error.data = jsonError.data;
+    const error = new Error(serializedError.message);
+    error.name = serializedError.name;
+    error.stack = serializedError.stack;
+    error.data = serializedError.data;
     return error;
 }
 
