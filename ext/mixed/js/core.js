@@ -313,6 +313,7 @@ class EventDispatcher {
         for (const callback of callbacks) {
             callback(details);
         }
+        return true;
     }
 
     on(eventName, callback) {
