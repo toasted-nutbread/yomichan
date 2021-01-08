@@ -362,6 +362,7 @@ class EventListenerCollection {
             case 'addEventListener': return this.addEventListener(object, ...args);
             case 'addListener': return this.addListener(object, ...args);
             case 'on': return this.on(object, ...args);
+            default: throw new Error(`Invalid type: ${type}`);
         }
     }
 
