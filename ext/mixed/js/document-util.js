@@ -64,6 +64,93 @@ class DocumentUtil {
     }
 
     extractSentence(source, extent, layoutAwareScan) {
+        const quoteArray = [
+            ['「', '」'],
+            ['『', '』'],
+            ['\'', '\''],
+            ['"', '"']
+        ];
+        const terminatorSet = new Set(['…', '。', '．', '.', '？', '?', '！', '!']);
+        const startQuoteMap = new Map();
+        const endQuoteMap = new Map();
+        for (const [char1, char2] of quoteArray) {
+            startQuoteMap.set(char1, char2);
+            endQuoteMap.set(char2, char1);
+        }
+
+        // Scan text
+        source = source.clone();
+        const startLength = source.setStartOffset(extent, layoutAwareScan);
+        const endLength = source.setEndOffset(extent * 2 - startLength, layoutAwareScan, true);
+        const text = source.text();
+        const textLength = text.length;
+        const textEndAnchor = textLength - endLength;
+        let pos1 = startLength;
+        let pos2 = textEndAnchor;
+
+        // Move backward
+        let quoteStack = [];
+        for (; pos1 > 0; --pos1) {
+            const c = text[pos1 - 1];
+            if (c === '\n') { break; }
+
+            if (quoteStack.length === 0 && terminatorSet.has(c)) {
+                break;
+            }
+
+            let otherQuote = startQuoteMap.get(c);
+            if (typeof otherQuote !== 'undefined') {
+                if (quoteStack.length === 0) {
+                    break;
+                } else if (quoteStack[0] === c) {
+                    quoteStack.pop();
+                }
+            } else {
+                otherQuote = endQuoteMap.get(c);
+                if (typeof otherQuote !== 'undefined') {
+                    quoteStack.unshift(otherQuote);
+                }
+            }
+        }
+
+        // Move forward
+        quoteStack = [];
+        for (; pos2 < textLength; ++pos2) {
+            const c = text[pos2];
+            if (c === '\n') { break; }
+
+            if (quoteStack.length === 0 && terminatorSet.has(c)) {
+                ++pos2;
+                break;
+            }
+
+            let otherQuote = endQuoteMap.get(c);
+            if (typeof otherQuote !== 'undefined') {
+                if (quoteStack.length === 0) {
+                    break;
+                } else if (quoteStack[0] === c) {
+                    quoteStack.pop();
+                }
+            } else {
+                otherQuote = startQuoteMap.get(c);
+                if (typeof otherQuote !== 'undefined') {
+                    quoteStack.unshift(otherQuote);
+                }
+            }
+        }
+
+        // Trim whitespace
+        for (; pos1 < startLength && this._isWhitespace(text[pos1]); ++pos1) { /* NOP */ }
+        for (; pos2 > textEndAnchor && this._isWhitespace(text[pos2 - 1]); --pos2) { /* NOP */ }
+
+        // Result
+        return {
+            text: text.substring(pos1, pos2),
+            offset: startLength - pos1
+        };
+    }
+
+    extractSentence2(source, extent, layoutAwareScan) {
         const quotesFwd = {'「': '」', '『': '』', "'": "'", '"': '"'};
         const quotesBwd = {'」': '「', '』': '『', "'": "'", '"': '"'};
         const terminators = '…。．.？?！!';
