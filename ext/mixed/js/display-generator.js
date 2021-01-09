@@ -49,6 +49,7 @@ class DisplayGenerator {
         const pitchesContainer = node.querySelector('.term-pitch-accent-group-list');
         const frequencyGroupListContainer = node.querySelector('.frequency-group-list');
         const definitionsContainer = node.querySelector('.term-definition-list');
+        const termTagsContainer = node.querySelector('.term-tags');
 
         const {expressions, type, reasons, frequencies} = details;
         const definitions = (type === 'term' ? [details] : details.definitions);
@@ -56,6 +57,7 @@ class DisplayGenerator {
         const pitches = DictionaryDataUtil.getPitchAccentInfos(details);
         const pitchCount = pitches.reduce((i, v) => i + v.pitches.length, 0);
         const groupedFrequencies = DictionaryDataUtil.groupTermFrequencies(frequencies);
+        const termTags = DictionaryDataUtil.groupTermTags(details);
 
         const uniqueExpressions = new Set();
         const uniqueReadings = new Set();
@@ -80,6 +82,7 @@ class DisplayGenerator {
         this._appendMultiple(frequencyGroupListContainer, this._createFrequencyGroup.bind(this), groupedFrequencies, false);
         this._appendMultiple(pitchesContainer, this._createPitches.bind(this), pitches);
         this._appendMultiple(definitionsContainer, this._createTermDefinitionItem.bind(this), definitions);
+        this._appendMultiple(termTagsContainer, this._createTermTag.bind(this), termTags, expressions.length);
 
         return node;
     }
@@ -318,6 +321,16 @@ class DisplayGenerator {
         node.dataset.category = details.category;
         if (details.redundant) { node.dataset.redundant = 'true'; }
 
+        return node;
+    }
+
+    _createTermTag(details, totalExpressionCount) {
+        const {tag, expressions} = details;
+        const node = this._createTag(tag);
+        node.dataset.disambiguation = `${JSON.stringify(expressions)}`;
+        node.dataset.totalExpressionCount = `${totalExpressionCount}`;
+        node.dataset.matchedExpressionCount = `${expressions.length}`;
+        node.dataset.unmatchedExpressionCount = `${Math.max(0, totalExpressionCount - expressions.length)}`;
         return node;
     }
 
