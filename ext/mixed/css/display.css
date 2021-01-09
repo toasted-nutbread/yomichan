@@ -990,11 +990,95 @@ button.action-button[data-icon=source-term]::before {
     margin-top: 0.5em;
 }
 .entry[data-definition-count='0'] .entry-body-section[data-section-type=definitions],
+.entry[data-frequency-count='0'] .entry-body-section[data-section-type=frequencies],
 .entry[data-pitch-accent-count='0'] .entry-body-section[data-section-type=pitch-accents] {
     display: none;
 }
 .entry[data-pitch-accent-count='0'][data-frequency-count='0'] .entry-body-section[data-section-type=definitions]>h5 {
     display: none;
+}
+
+
+/* Frequencies */
+.frequency-group-list {
+    margin: 0;
+    padding: 0 0 0 var(--list-padding1);
+    list-style-type: decimal;
+}
+.frequency-group-list[data-count='0'],
+.frequency-group-list[data-count='1'] {
+    padding-left: 0;
+    list-style-type: none;
+}
+.frequency-list {
+    margin: 0;
+    padding: 0 0 0 var(--list-padding2);
+    list-style-type: circle;
+}
+.frequency-list[data-count='0'],
+.frequency-list[data-count='1'] {
+    padding-left: 0;
+    list-style-type: none;
+}
+.frequency-group-item::marker,
+.frequency-item::marker {
+    color: var(--text-color-light);
+}
+.frequency-disambiguation {
+    color: var(--text-color-light);
+}
+.frequency-separator::before {
+    content: '';
+}
+.frequency-disambiguation-separator::before {
+    content: ':';
+}
+.frequency-disambiguation::before {
+    content: '(';
+}
+.frequency-disambiguation::after {
+    content: ' only) ';
+}
+.entry[data-unique-expression-count='1'] .frequency-item[data-has-reading=false] .frequency-disambiguation,
+.entry[data-unique-reading-count='1'][data-unique-expression-count='1'] .frequency-disambiguation,
+.frequency-item[data-reading-is-same=true] .frequency-disambiguation-separator,
+.frequency-item[data-reading-is-same=true] .frequency-disambiguation-reading,
+.frequency-item[data-has-reading=false] .frequency-disambiguation-separator,
+.frequency-item[data-has-reading=false] .frequency-disambiguation-reading,
+.entry[data-unique-expression-count='1'] .frequency-disambiguation-separator,
+.entry[data-unique-expression-count='1'] .frequency-disambiguation-expression,
+.entry[data-unique-reading-count='1'] .frequency-disambiguation-separator,
+.entry[data-unique-reading-count='1'] .frequency-disambiguation-reading {
+    display: none;
+}
+:root[data-glossary-layout-mode=compact] .frequency-group-list,
+:root[data-glossary-layout-mode=compact] .frequency-list,
+.frequency-list[data-count='1'] {
+    display: inline;
+    list-style: none;
+    padding-left: 0;
+}
+:root[data-glossary-layout-mode=compact] .frequency-group-item {
+    display: inline-block;
+    margin-right: 1em;
+}
+:root[data-glossary-layout-mode=compact] .entry-body-section[data-section-type=frequencies] {
+    margin-right: -1em;
+}
+:root[data-glossary-layout-mode=compact] .frequency-item,
+.frequency-list[data-count='1'] .frequency-item {
+    display: inline-block;
+}
+:root[data-glossary-layout-mode=compact] .frequency-item:not(:first-child)::before,
+.frequency-list[data-count='1'] .frequency-item:not(:first-child)::before {
+    white-space: pre-wrap;
+    content: var(--compact-list-separator);
+    display: inline;
+    color: var(--text-color-light);
+}
+:root[data-glossary-layout-mode=compact] .frequency-tag-list,
+.frequency-group-item[data-count='1'] .frequency-tag-list {
+    display: inline;
 }
 
 

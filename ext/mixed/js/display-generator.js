@@ -47,6 +47,7 @@ class DisplayGenerator {
         const expressionsContainer = node.querySelector('.term-expression-list');
         const reasonsContainer = node.querySelector('.term-reasons');
         const pitchesContainer = node.querySelector('.term-pitch-accent-group-list');
+        const frequencyGroupListContainer = node.querySelector('.frequency-group-list');
         const definitionsContainer = node.querySelector('.term-definition-list');
         const bodyContainer = node.querySelector('.term-entry-body');
 
@@ -55,6 +56,7 @@ class DisplayGenerator {
         const merged = (type === 'termMerged' || type === 'termMergedByGlossary');
         const pitches = DictionaryDataUtil.getPitchAccentInfos(details);
         const pitchCount = pitches.reduce((i, v) => i + v.pitches.length, 0);
+        const groupedFrequencies = DictionaryDataUtil.groupTermFrequencies(frequencies);
 
         const uniqueExpressions = new Set();
         const uniqueReadings = new Set();
@@ -79,6 +81,7 @@ class DisplayGenerator {
 
         this._appendMultiple(expressionsContainer, this._createTermExpression.bind(this), expressions);
         this._appendMultiple(reasonsContainer, this._createTermReason.bind(this), reasons);
+        this._appendMultiple(frequencyGroupListContainer, this._createFrequencyGroup.bind(this), groupedFrequencies, false);
         this._appendMultiple(pitchesContainer, this._createPitches.bind(this), pitches);
         this._appendMultiple(definitionsContainer, this._createTermDefinitionItem.bind(this), definitions);
 
@@ -89,6 +92,7 @@ class DisplayGenerator {
         const node = this._templates.instantiate('kanji-entry');
 
         const glyphContainer = node.querySelector('.kanji-glyph');
+        const frequencyGroupListContainer = node.querySelector('.frequency-group-list');
         const tagContainer = node.querySelector('.tags');
         const glossaryContainer = node.querySelector('.kanji-glossary-list');
         const chineseReadingsContainer = node.querySelector('.kanji-readings-chinese');
@@ -99,7 +103,9 @@ class DisplayGenerator {
         const dictionaryIndicesContainer = node.querySelector('.kanji-dictionary-indices');
 
         glyphContainer.textContent = details.character;
+        const groupedFrequencies = DictionaryDataUtil.groupKanjiFrequencies(details.frequencies);
 
+        this._appendMultiple(frequencyGroupListContainer, this._createFrequencyGroup.bind(this), groupedFrequencies, true);
         this._appendMultiple(tagContainer, this._createTag.bind(this), details.tags);
         this._appendMultiple(glossaryContainer, this._createKanjiGlossaryItem.bind(this), details.glossary);
         this._appendMultiple(chineseReadingsContainer, this._createKanjiReading.bind(this), details.onyomi);
@@ -459,6 +465,58 @@ class DisplayGenerator {
 
         path = svg.querySelector('.term-pitch-accent-graph-line-tail');
         path.setAttribute('d', `M${pathPoints.join(' L')}`);
+    }
+
+    _createFrequencyGroup(details, kanji) {
+        const {dictionary, frequencyData} = details;
+        const node = this._templates.instantiate('frequency-group-item');
+
+        const tagList = node.querySelector('.frequency-tag-list');
+        const tag = this._createTag({notes: '', name: dictionary, category: 'frequency'});
+        tagList.appendChild(tag);
+
+        const frequencyListContainer = node.querySelector('.frequency-list');
+        const createItem = (kanji ? this._createKanjiFrequency.bind(this) : this._createTermFrequency.bind(this));
+        this._appendMultiple(frequencyListContainer, createItem, frequencyData, dictionary);
+
+        node.dataset.count = `${frequencyData.length}`;
+
+        return node;
+    }
+
+    _createTermFrequency(details, dictionary) {
+        const {expression, reading, frequencies} = details;
+        const node = this._templates.instantiate('term-frequency-item');
+
+        const frequency = frequencies.join(', ');
+
+        node.querySelector('.frequency-disambiguation-expression').textContent = expression;
+        node.querySelector('.frequency-disambiguation-reading').textContent = (reading !== null ? reading : '');
+        node.querySelector('.frequency-value').textContent = frequency;
+
+        node.dataset.expression = expression;
+        node.dataset.reading = reading;
+        node.dataset.hasReading = `${reading !== null}`;
+        node.dataset.readingIsSame = `${reading === expression}`;
+        node.dataset.dictionary = dictionary;
+        node.dataset.frequency = `${frequency}`;
+
+        return node;
+    }
+
+    _createKanjiFrequency(details, dictionary) {
+        const {character, frequencies} = details;
+        const node = this._templates.instantiate('kanji-frequency-item');
+
+        const frequency = frequencies.join(', ');
+
+        node.querySelector('.frequency-value').textContent = frequency;
+
+        node.dataset.character = character;
+        node.dataset.dictionary = dictionary;
+        node.dataset.frequency = `${frequency}`;
+
+        return node;
     }
 
     _appendKanjiLinks(container, text) {
