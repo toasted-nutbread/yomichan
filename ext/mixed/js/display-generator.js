@@ -122,6 +122,45 @@ class DisplayGenerator {
         return this._templates.instantiate('footer-notification');
     }
 
+    createTagFooterNotificationDetails(tagNode) {
+        const node = this._templates.instantiateFragment('footer-notification-tag-details');
+
+        const details = tagNode.dataset.details;
+        node.querySelector('.tag-details').textContent = details;
+
+        let disambiguation = null;
+        try {
+            let a = tagNode.dataset.disambiguation;
+            if (typeof a !== 'undefined') {
+                a = JSON.parse(a);
+                if (Array.isArray(a)) { disambiguation = a; }
+            }
+        } catch (e) {
+            // NOP
+        }
+
+        if (disambiguation !== null) {
+            const disambiguationContainer = node.querySelector('.tag-details-disambiguation-list');
+            const copyAttributes = ['totalExpressionCount', 'matchedExpressionCount', 'unmatchedExpressionCount'];
+            for (const attribute of copyAttributes) {
+                const value = tagNode.dataset[attribute];
+                if (typeof value === 'undefined') { continue; }
+                disambiguationContainer.dataset[attribute] = value;
+            }
+            for (const {expression, reading} of disambiguation) {
+                const segments = this._japaneseUtil.distributeFurigana(expression, reading);
+                const disambiguationItem = document.createElement('span');
+                disambiguationItem.className = 'tag-details-disambiguation';
+                this._appendFurigana(disambiguationItem, segments, (container, text) => {
+                    container.appendChild(document.createTextNode(text));
+                });
+                disambiguationContainer.appendChild(disambiguationItem);
+            }
+        }
+
+        return node;
+    }
+
     createProfileListItem() {
         return this._templates.instantiate('profile-list-item');
     }
