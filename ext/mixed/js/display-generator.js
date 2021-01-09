@@ -49,7 +49,6 @@ class DisplayGenerator {
         const pitchesContainer = node.querySelector('.term-pitch-accent-group-list');
         const frequencyGroupListContainer = node.querySelector('.frequency-group-list');
         const definitionsContainer = node.querySelector('.term-definition-list');
-        const bodyContainer = node.querySelector('.term-entry-body');
 
         const {expressions, type, reasons, frequencies} = details;
         const definitions = (type === 'term' ? [details] : details.definitions);
@@ -73,11 +72,8 @@ class DisplayGenerator {
         node.dataset.pitchAccentCount = `${pitchCount}`;
         node.dataset.uniqueExpressionCount = `${uniqueExpressions.size}`;
         node.dataset.uniqueReadingCount = `${uniqueReadings.size}`;
-
-        bodyContainer.dataset.sectionCount = `${
-            (definitions.length > 0 ? 1 : 0) +
-            (pitches.length > 0 ? 1 : 0)
-        }`;
+        node.dataset.frequencyCount = `${frequencies.length}`;
+        node.dataset.groupedFrequencyCount = `${groupedFrequencies.length}`;
 
         this._appendMultiple(expressionsContainer, this._createTermExpression.bind(this), expressions);
         this._appendMultiple(reasonsContainer, this._createTermReason.bind(this), reasons);
