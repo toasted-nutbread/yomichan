@@ -755,7 +755,7 @@ button.action-button[data-icon=source-term]::before {
     display: inline;
 }
 .term-expression {
-    display: inline;
+    display: inline-block;
 }
 .term-expression-details {
     display: inline;
