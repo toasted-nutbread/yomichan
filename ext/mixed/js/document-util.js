@@ -24,6 +24,20 @@
 class DocumentUtil {
     constructor() {
         this._transparentColorPattern = /rgba\s*\([^)]*,\s*0(?:\.0+)?\s*\)/;
+
+        const quoteArray = [
+            ['「', '」'],
+            ['『', '』'],
+            ['\'', '\''],
+            ['"', '"']
+        ];
+        this._terminatorSet = new Set(['…', '。', '．', '.', '？', '?', '！', '!']);
+        this._startQuoteMap = new Map();
+        this._endQuoteMap = new Map();
+        for (const [char1, char2] of quoteArray) {
+            this._startQuoteMap.set(char1, char2);
+            this._endQuoteMap.set(char2, char1);
+        }
     }
 
     getRangeFromPoint(x, y, deepContentScan) {
@@ -64,19 +78,9 @@ class DocumentUtil {
     }
 
     extractSentence(source, extent, layoutAwareScan) {
-        const quoteArray = [
-            ['「', '」'],
-            ['『', '』'],
-            ['\'', '\''],
-            ['"', '"']
-        ];
-        const terminatorSet = new Set(['…', '。', '．', '.', '？', '?', '！', '!']);
-        const startQuoteMap = new Map();
-        const endQuoteMap = new Map();
-        for (const [char1, char2] of quoteArray) {
-            startQuoteMap.set(char1, char2);
-            endQuoteMap.set(char2, char1);
-        }
+        const terminatorSet = this._terminatorSet;
+        const startQuoteMap = this._startQuoteMap;
+        const endQuoteMap = this._endQuoteMap;
 
         // Scan text
         source = source.clone();
