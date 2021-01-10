@@ -32,11 +32,11 @@ class DocumentUtil {
             ['"', '"']
         ];
         this._terminatorSet = new Set(['…', '。', '．', '.', '？', '?', '！', '!']);
-        this._startQuoteMap = new Map();
-        this._endQuoteMap = new Map();
+        this._forwardQuoteMap = new Map();
+        this._backwardQuoteMap = new Map();
         for (const [char1, char2] of quoteArray) {
-            this._startQuoteMap.set(char1, char2);
-            this._endQuoteMap.set(char2, char1);
+            this._forwardQuoteMap.set(char1, char2);
+            this._backwardQuoteMap.set(char2, char1);
         }
     }
 
@@ -79,8 +79,8 @@ class DocumentUtil {
 
     extractSentence(source, layoutAwareScan, extent) {
         const terminatorSet = this._terminatorSet;
-        const startQuoteMap = this._startQuoteMap;
-        const endQuoteMap = this._endQuoteMap;
+        const forwardQuoteMap = this._forwardQuoteMap;
+        const backwardQuoteMap = this._backwardQuoteMap;
 
         // Scan text
         source = source.clone();
@@ -102,7 +102,7 @@ class DocumentUtil {
                 break;
             }
 
-            let otherQuote = startQuoteMap.get(c);
+            let otherQuote = forwardQuoteMap.get(c);
             if (typeof otherQuote !== 'undefined') {
                 if (quoteStack.length === 0) {
                     break;
@@ -110,7 +110,7 @@ class DocumentUtil {
                     quoteStack.pop();
                 }
             } else {
-                otherQuote = endQuoteMap.get(c);
+                otherQuote = backwardQuoteMap.get(c);
                 if (typeof otherQuote !== 'undefined') {
                     quoteStack.unshift(otherQuote);
                 }
@@ -128,7 +128,7 @@ class DocumentUtil {
                 break;
             }
 
-            let otherQuote = endQuoteMap.get(c);
+            let otherQuote = backwardQuoteMap.get(c);
             if (typeof otherQuote !== 'undefined') {
                 if (quoteStack.length === 0) {
                     break;
@@ -136,7 +136,7 @@ class DocumentUtil {
                     quoteStack.pop();
                 }
             } else {
-                otherQuote = startQuoteMap.get(c);
+                otherQuote = forwardQuoteMap.get(c);
                 if (typeof otherQuote !== 'undefined') {
                     quoteStack.unshift(otherQuote);
                 }
