@@ -1125,29 +1125,15 @@
         </div>
     </div>
     <div class="settings-group advanced-only">
-        <div class="settings-item">
-            <div class="settings-item-inner settings-item-inner-wrappable">
-                <div class="settings-item-left">
-                    <div class="settings-item-label">
-                        Sentence scanning extent
-                        <a class="more-toggle more-only" data-parent-distance="4">(?)</a>
-                    </div>
-                </div>
-                <div class="settings-item-right">
-                    <input type="number" data-setting="sentenceParsing.scanExtent" min="0" step="1">
-                </div>
+        <div class="settings-item"><div class="settings-item-inner settings-item-inner-wrappable">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Sentence scanning extent</div>
+                <div class="settings-item-description">Adjust how many characters are bidirectionally scanned to form a sentence.</div>
             </div>
-            <div class="settings-item-children more" hidden>
-                <p>
-                    This option controls the maximum scanning distance used to determine the bounds of a sentence,
-                    in number of characters.
-                    Sentence scanning is bidirectional and begins from both the start and end of the source term.
-                </p>
-                <p>
-                    <a class="more-toggle" data-parent-distance="3">Less&hellip;</a>
-                </p>
+            <div class="settings-item-right">
+                <input type="number" data-setting="sentenceParsing.scanExtent" min="0" step="1">
             </div>
-        </div>
+        </div></div>
     </div>
 
     <!-- Translation -->
