@@ -147,7 +147,7 @@ class AnkiNoteBuilder {
         });
     }
 
-    _stringReplaceAsync(str, regex, replacer) {
+    async _stringReplaceAsync(str, regex, replacer) {
         let match;
         let index = 0;
         const parts = [];
@@ -156,10 +156,10 @@ class AnkiNoteBuilder {
             index = regex.lastIndex;
         }
         if (parts.length === 0) {
-            return Promise.resolve(str);
+            return str;
         }
         parts.push(str.substring(index));
-        return Promise.all(parts).then((v) => v.join(''));
+        return (await Promise.all(parts)).join('');
     }
 
     async _renderTemplate(template, data, marker) {
