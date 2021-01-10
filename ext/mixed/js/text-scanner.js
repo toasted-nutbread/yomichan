@@ -749,6 +749,9 @@ class TextScanner extends EventDispatcher {
     async _findTerms(textSource, optionsContext) {
         const scanLength = this._scanLength;
         const sentenceScanExtent = this._sentenceScanExtent;
+        const sentenceTerminatorMap = this._sentenceTerminatorMap;
+        const sentenceForwardQuoteMap = this._sentenceForwardQuoteMap;
+        const sentenceBackwardQuoteMap = this._sentenceBackwardQuoteMap;
         const layoutAwareScan = this._layoutAwareScan;
         const searchText = this.getTextSourceContent(textSource, scanLength, layoutAwareScan);
         if (searchText.length === 0) { return null; }
@@ -757,13 +760,23 @@ class TextScanner extends EventDispatcher {
         if (definitions.length === 0) { return null; }
 
         textSource.setEndOffset(length, layoutAwareScan);
-        const sentence = this._documentUtil.extractSentence(textSource, layoutAwareScan, sentenceScanExtent);
+        const sentence = this._documentUtil.extractSentence(
+            textSource,
+            layoutAwareScan,
+            sentenceScanExtent,
+            sentenceTerminatorMap,
+            sentenceForwardQuoteMap,
+            sentenceBackwardQuoteMap
+        );
 
         return {definitions, sentence, type: 'terms'};
     }
 
     async _findKanji(textSource, optionsContext) {
         const sentenceScanExtent = this._sentenceScanExtent;
+        const sentenceTerminatorMap = this._sentenceTerminatorMap;
+        const sentenceForwardQuoteMap = this._sentenceForwardQuoteMap;
+        const sentenceBackwardQuoteMap = this._sentenceBackwardQuoteMap;
         const layoutAwareScan = this._layoutAwareScan;
         const searchText = this.getTextSourceContent(textSource, 1, layoutAwareScan);
         if (searchText.length === 0) { return null; }
@@ -772,7 +785,14 @@ class TextScanner extends EventDispatcher {
         if (definitions.length === 0) { return null; }
 
         textSource.setEndOffset(1, layoutAwareScan);
-        const sentence = this._documentUtil.extractSentence(textSource, layoutAwareScan, sentenceScanExtent);
+        const sentence = this._documentUtil.extractSentence(
+            textSource,
+            layoutAwareScan,
+            sentenceScanExtent,
+            sentenceTerminatorMap,
+            sentenceForwardQuoteMap,
+            sentenceBackwardQuoteMap
+        );
 
         return {definitions, sentence, type: 'kanji'};
     }
