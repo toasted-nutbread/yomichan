@@ -50,8 +50,22 @@ class AnkiNoteBuilder {
             duplicateScopeCheckChildren = true;
         }
 
+        const data = this._createNoteData(definition, mode, context, resultOutputMode, glossaryLayoutMode, compactTags);
+        const formattedFieldValuePromises = [];
+        for (const [, fieldValue] of fields) {
+            const formattedFieldValuePromise = this._formatField(fieldValue, data, templates, errors);
+            formattedFieldValuePromises.push(formattedFieldValuePromise);
+        }
+
+        const formattedFieldValues = await Promise.all(formattedFieldValuePromises);
         const noteFields = {};
-        const note = {
+        for (let i = 0, ii = fields.length; i < ii; ++i) {
+            const fieldName = fields[i][0];
+            const formattedFieldValue = formattedFieldValues[i];
+            noteFields[fieldName] = formattedFieldValue;
+        }
+
+        return {
             fields: noteFields,
             tags,
             deckName,
@@ -65,22 +79,6 @@ class AnkiNoteBuilder {
                 }
             }
         };
-
-        const data = this._createNoteData(definition, mode, context, resultOutputMode, glossaryLayoutMode, compactTags);
-        const formattedFieldValuePromises = [];
-        for (const [, fieldValue] of fields) {
-            const formattedFieldValuePromise = this._formatField(fieldValue, data, templates, errors);
-            formattedFieldValuePromises.push(formattedFieldValuePromise);
-        }
-
-        const formattedFieldValues = await Promise.all(formattedFieldValuePromises);
-        for (let i = 0, ii = fields.length; i < ii; ++i) {
-            const fieldName = fields[i][0];
-            const formattedFieldValue = formattedFieldValues[i];
-            noteFields[fieldName] = formattedFieldValue;
-        }
-
-        return note;
     }
 
     containsMarker(fields, marker) {
