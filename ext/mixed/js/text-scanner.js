@@ -142,9 +142,9 @@ class TextScanner extends EventDispatcher {
         touchInputEnabled,
         pointerEventsEnabled,
         scanLength,
-        sentenceScanExtent,
         layoutAwareScan,
-        preventMiddleMouse
+        preventMiddleMouse,
+        sentenceParsingOptions
     }) {
         if (Array.isArray(inputs)) {
             this._inputs = inputs.map(({
@@ -193,14 +193,17 @@ class TextScanner extends EventDispatcher {
         if (typeof scanLength === 'number') {
             this._scanLength = scanLength;
         }
-        if (typeof sentenceScanExtent === 'number') {
-            this._sentenceScanExtent = sentenceScanExtent;
-        }
         if (typeof layoutAwareScan === 'boolean') {
             this._layoutAwareScan = layoutAwareScan;
         }
         if (typeof preventMiddleMouse === 'boolean') {
             this._preventMiddleMouse = preventMiddleMouse;
+        }
+        if (typeof sentenceParsingOptions === 'object' && sentenceParsingOptions !== null) {
+            const {scanExtent} = sentenceParsingOptions;
+            if (typeof scanExtent === 'number') {
+                this._sentenceScanExtent = sentenceParsingOptions.scanExtent;
+            }
         }
     }
 
