@@ -31,12 +31,16 @@ class DocumentUtil {
             ['\'', '\''],
             ['"', '"']
         ];
-        this._terminatorSet = new Set(['…', '。', '．', '.', '？', '?', '！', '!']);
+        const terminatorString = '…。．.？?！!';
+        this._terminatorMap = new Map();
+        for (const char of terminatorString) {
+            this._terminatorMap.set(char, [false, true]);
+        }
         this._forwardQuoteMap = new Map();
         this._backwardQuoteMap = new Map();
         for (const [char1, char2] of quoteArray) {
-            this._forwardQuoteMap.set(char1, char2);
-            this._backwardQuoteMap.set(char2, char1);
+            this._forwardQuoteMap.set(char1, [char2, false]);
+            this._backwardQuoteMap.set(char2, [char1, false]);
         }
     }
 
@@ -78,7 +82,7 @@ class DocumentUtil {
     }
 
     extractSentence(source, layoutAwareScan, extent) {
-        const terminatorSet = this._terminatorSet;
+        const terminatorMap = this._terminatorMap;
         const forwardQuoteMap = this._forwardQuoteMap;
         const backwardQuoteMap = this._backwardQuoteMap;
 
@@ -98,13 +102,18 @@ class DocumentUtil {
             const c = text[pos1 - 1];
             if (c === '\n') { break; }
 
-            if (quoteStack.length === 0 && terminatorSet.has(c)) {
-                break;
+            if (quoteStack.length === 0) {
+                const terminatorInfo = terminatorMap.get(c);
+                if (typeof terminatorInfo !== 'undefined') {
+                    if (terminatorInfo[0]) { --pos1; }
+                    break;
+                }
             }
 
-            let otherQuote = forwardQuoteMap.get(c);
-            if (typeof otherQuote !== 'undefined') {
+            let quoteInfo = forwardQuoteMap.get(c);
+            if (typeof quoteInfo !== 'undefined') {
                 if (quoteStack.length === 0) {
+                    if (quoteInfo[1]) { --pos1; }
                     break;
                 } else if (quoteStack[0] === c) {
                     quoteStack.pop();
@@ -112,9 +121,9 @@ class DocumentUtil {
                 }
             }
 
-            otherQuote = backwardQuoteMap.get(c);
-            if (typeof otherQuote !== 'undefined') {
-                quoteStack.unshift(otherQuote);
+            quoteInfo = backwardQuoteMap.get(c);
+            if (typeof quoteInfo !== 'undefined') {
+                quoteStack.unshift(quoteInfo[0]);
             }
         }
 
@@ -124,14 +133,18 @@ class DocumentUtil {
             const c = text[pos2];
             if (c === '\n') { break; }
 
-            if (quoteStack.length === 0 && terminatorSet.has(c)) {
-                ++pos2;
-                break;
+            if (quoteStack.length === 0) {
+                const terminatorInfo = terminatorMap.get(c);
+                if (typeof terminatorInfo !== 'undefined') {
+                    if (terminatorInfo[1]) { ++pos2; }
+                    break;
+                }
             }
 
-            let otherQuote = backwardQuoteMap.get(c);
-            if (typeof otherQuote !== 'undefined') {
+            let quoteInfo = backwardQuoteMap.get(c);
+            if (typeof quoteInfo !== 'undefined') {
                 if (quoteStack.length === 0) {
+                    if (quoteInfo[1]) { ++pos2; }
                     break;
                 } else if (quoteStack[0] === c) {
                     quoteStack.pop();
@@ -139,9 +152,9 @@ class DocumentUtil {
                 }
             }
 
-            otherQuote = forwardQuoteMap.get(c);
-            if (typeof otherQuote !== 'undefined') {
-                quoteStack.unshift(otherQuote);
+            quoteInfo = forwardQuoteMap.get(c);
+            if (typeof quoteInfo !== 'undefined') {
+                quoteStack.unshift(quoteInfo[0]);
             }
         }
 
