@@ -19,7 +19,7 @@ class TemplateRendererFrameApi {
     constructor(templateRenderer) {
         this._templateRenderer = templateRenderer;
         this._windowMessageHandlers = new Map([
-            ['renderHandlebarsTemplate', {async: true, handler: this._onRenderHandlebarsTemplate.bind(this)}]
+            ['render', {async: true, handler: this._onRender.bind(this)}]
         ]);
     }
 
@@ -51,7 +51,7 @@ class TemplateRendererFrameApi {
         source.postMessage({action: `${action}.response`, params: response, id}, '*');
     }
 
-    async _onRenderHandlebarsTemplate({template, data, marker}) {
+    async _onRender({template, data, marker}) {
         return await this._templateRenderer.render(template, data, marker);
     }
 
