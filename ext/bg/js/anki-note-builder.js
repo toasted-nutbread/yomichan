@@ -17,12 +17,13 @@
 
 /* global
  * DictionaryDataUtil
+ * TemplateRendererProxy
  */
 
 class AnkiNoteBuilder {
-    constructor({renderTemplate}) {
-        this._renderTemplate = renderTemplate;
+    constructor(enabled) {
         this._markerPattern = /\{([\w-]+)\}/g;
+        this._templateRenderer = enabled ? new TemplateRendererProxy() : null;
     }
 
     async createNote({
@@ -159,5 +160,9 @@ class AnkiNoteBuilder {
         }
         parts.push(str.substring(index));
         return Promise.all(parts).then((v) => v.join(''));
+    }
+
+    async _renderTemplate(template, data, marker) {
+        return await this._templateRenderer.render(template, data, marker);
     }
 }
