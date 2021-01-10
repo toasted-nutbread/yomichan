@@ -108,12 +108,13 @@ class DocumentUtil {
                     break;
                 } else if (quoteStack[0] === c) {
                     quoteStack.pop();
+                    continue;
                 }
-            } else {
-                otherQuote = backwardQuoteMap.get(c);
-                if (typeof otherQuote !== 'undefined') {
-                    quoteStack.unshift(otherQuote);
-                }
+            }
+
+            otherQuote = backwardQuoteMap.get(c);
+            if (typeof otherQuote !== 'undefined') {
+                quoteStack.unshift(otherQuote);
             }
         }
 
@@ -134,12 +135,13 @@ class DocumentUtil {
                     break;
                 } else if (quoteStack[0] === c) {
                     quoteStack.pop();
+                    continue;
                 }
-            } else {
-                otherQuote = forwardQuoteMap.get(c);
-                if (typeof otherQuote !== 'undefined') {
-                    quoteStack.unshift(otherQuote);
-                }
+            }
+
+            otherQuote = forwardQuoteMap.get(c);
+            if (typeof otherQuote !== 'undefined') {
+                quoteStack.unshift(otherQuote);
             }
         }
 
