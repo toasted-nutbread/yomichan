@@ -77,7 +77,7 @@ class DocumentUtil {
         }
     }
 
-    extractSentence(source, extent, layoutAwareScan) {
+    extractSentence(source, layoutAwareScan, extent) {
         const terminatorSet = this._terminatorSet;
         const startQuoteMap = this._startQuoteMap;
         const endQuoteMap = this._endQuoteMap;

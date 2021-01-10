@@ -731,7 +731,7 @@ class TextScanner extends EventDispatcher {
         if (definitions.length === 0) { return null; }
 
         textSource.setEndOffset(length, layoutAwareScan);
-        const sentence = this._documentUtil.extractSentence(textSource, sentenceScanExtent, layoutAwareScan);
+        const sentence = this._documentUtil.extractSentence(textSource, layoutAwareScan, sentenceScanExtent);
 
         return {definitions, sentence, type: 'terms'};
     }
@@ -746,7 +746,7 @@ class TextScanner extends EventDispatcher {
         if (definitions.length === 0) { return null; }
 
         textSource.setEndOffset(1, layoutAwareScan);
-        const sentence = this._documentUtil.extractSentence(textSource, sentenceScanExtent, layoutAwareScan);
+        const sentence = this._documentUtil.extractSentence(textSource, layoutAwareScan, sentenceScanExtent);
 
         return {definitions, sentence, type: 'kanji'};
     }
