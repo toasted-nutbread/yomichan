@@ -1206,8 +1206,11 @@ class Display extends EventDispatcher {
 
         const overrideToken = this._progressIndicatorVisible.setOverride(true);
         try {
+            const options = this._options;
             const noteContext = await this._getNoteContext();
-            const noteId = await this._addDefinition(definition, mode, noteContext);
+            const templates = await this._getTemplates(options);
+            const note = await this._createNote(definition, mode, noteContext, options, templates, true);
+            const noteId = await api.addAnkiNote(note);
             if (noteId) {
                 button.disabled = true;
                 this._viewerButtonShow(definitionIndex, noteId);
@@ -1483,13 +1486,6 @@ class Display extends EventDispatcher {
         const value = await api.getDefaultAnkiFieldTemplates();
         this._defaultAnkiFieldTemplates = value;
         return value;
-    }
-
-    async _addDefinition(definition, mode, context) {
-        const options = this._options;
-        const templates = await this._getTemplates(options);
-        const note = await this._createNote(definition, mode, context, options, templates, true);
-        return await api.addAnkiNote(note);
     }
 
     async _areDefinitionsAddable(definitions, modes, context) {
