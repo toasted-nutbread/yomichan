@@ -86,8 +86,8 @@ class Display extends EventDispatcher {
             documentUtil: this._documentUtil
         });
         this._mode = null;
-        this._defaultAnkiFieldTemplates = null;
-        this._defaultAnkiFieldTemplatesPromise = null;
+        this._ankiFieldTemplates = null;
+        this._ankiFieldTemplatesDefault = null;
         this._ankiNoteBuilder = new AnkiNoteBuilder(true);
         this._updateAdderButtonsPromise = Promise.resolve();
         this._contentScrollElement = document.querySelector('#content-scroll');
@@ -304,8 +304,10 @@ class Display extends EventDispatcher {
 
     async updateOptions() {
         const options = await api.optionsGet(this.getOptionsContext());
+        const templates = await this._getAnkiFieldTemplates(options);
         const {scanning: scanningOptions, sentenceParsing: sentenceParsingOptions} = options;
         this._options = options;
+        this._ankiFieldTemplates = templates;
 
         this._updateDocumentOptions(options);
         this._updateTheme(options.general.popupTheme);
@@ -1208,7 +1210,7 @@ class Display extends EventDispatcher {
         try {
             const options = this._options;
             const noteContext = await this._getNoteContext();
-            const templates = await this._getTemplates(options);
+            const templates = this._ankiFieldTemplates;
             const note = await this._createNote(definition, mode, noteContext, options, templates, true);
             const noteId = await api.addAnkiNote(note);
             if (noteId) {
@@ -1461,36 +1463,21 @@ class Display extends EventDispatcher {
         this.trigger('modeChange', {mode});
     }
 
-    async _getTemplates(options) {
+    async _getAnkiFieldTemplates(options) {
         let templates = options.anki.fieldTemplates;
         if (typeof templates === 'string') { return templates; }
 
-        templates = this._defaultAnkiFieldTemplates;
+        templates = this._ankiFieldTemplatesDefault;
         if (typeof templates === 'string') { return templates; }
 
-        return await this._getDefaultTemplatesPromise();
-    }
-
-    _getDefaultTemplatesPromise() {
-        if (this._defaultAnkiFieldTemplatesPromise === null) {
-            this._defaultAnkiFieldTemplatesPromise = this._getDefaultTemplates();
-            this._defaultAnkiFieldTemplatesPromise.then(
-                () => { this._defaultAnkiFieldTemplatesPromise = null; },
-                () => {} // NOP
-            );
-        }
-        return this._defaultAnkiFieldTemplatesPromise;
-    }
-
-    async _getDefaultTemplates() {
-        const value = await api.getDefaultAnkiFieldTemplates();
-        this._defaultAnkiFieldTemplates = value;
-        return value;
+        templates = await api.getDefaultAnkiFieldTemplates();
+        this._ankiFieldTemplatesDefault = templates;
+        return templates;
     }
 
     async _areDefinitionsAddable(definitions, modes, context) {
         const options = this._options;
-        const templates = await this._getTemplates(options);
+        const templates = this._ankiFieldTemplates;
 
         const modeCount = modes.length;
         const {duplicateScope} = options.anki;
