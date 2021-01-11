@@ -1475,7 +1475,6 @@ class Display extends EventDispatcher {
 
     async _areDefinitionsAddable(definitions, modes, context) {
         const modeCount = modes.length;
-        const {duplicateScope} = this._options.anki;
         const notePromises = [];
         for (const definition of definitions) {
             for (const mode of modes) {
@@ -1485,7 +1484,7 @@ class Display extends EventDispatcher {
         }
         const notes = await Promise.all(notePromises);
 
-        const infos = await api.getAnkiNoteInfo(notes, duplicateScope);
+        const infos = await api.getAnkiNoteInfo(notes);
         const results = [];
         for (let i = 0, ii = infos.length; i < ii; i += modeCount) {
             results.push(infos.slice(i, i + modeCount));
