@@ -125,10 +125,10 @@ class Display extends EventDispatcher {
             ['firstEntry',        () => { this._focusEntry(0, true); }],
             ['historyBackward',   () => { this._sourceTermView(); }],
             ['historyForward',    () => { this._nextTermView(); }],
-            ['addNoteKanji',      () => { this._noteTryAdd('kanji'); }],
-            ['addNoteTermKanji',  () => { this._noteTryAdd('term-kanji'); }],
-            ['addNoteTermKana',   () => { this._noteTryAdd('term-kana'); }],
-            ['viewNote',          () => { this._noteTryView(); }],
+            ['addNoteKanji',      () => { this._tryAddAnkiNoteForSelectedDefinition('kanji'); }],
+            ['addNoteTermKanji',  () => { this._tryAddAnkiNoteForSelectedDefinition('term-kanji'); }],
+            ['addNoteTermKana',   () => { this._tryAddAnkiNoteForSelectedDefinition('term-kana'); }],
+            ['viewNote',          () => { this._tryViewAnkiNoteForSelectedDefinition(); }],
             ['playAudio',         () => { this._playAudioCurrent(); }],
             ['copyHostSelection', () => this._copyHostSelection()]
         ]);
@@ -747,9 +747,7 @@ class Display extends EventDispatcher {
         e.preventDefault();
         const link = e.currentTarget;
         const index = this._getClosestDefinitionIndex(link);
-        if (index < 0 || index >= this._definitions.length) { return; }
-
-        this._noteAdd(this._definitions[index], link.dataset.mode);
+        this._addAnkiNote(index, link.dataset.mode);
     }
 
     _onNoteView(e) {
@@ -1188,43 +1186,41 @@ class Display extends EventDispatcher {
         }
     }
 
-    _noteTryAdd(mode) {
-        const index = this._index;
-        if (index < 0 || index >= this._definitions.length) { return; }
-
-        const button = this._adderButtonFind(index, mode);
-        if (button !== null && !button.disabled) {
-            this._noteAdd(this._definitions[index], mode);
-        }
+    _tryAddAnkiNoteForSelectedDefinition(mode) {
+        this._addAnkiNote(this._index, mode);
     }
 
-    _noteTryView() {
+    _tryViewAnkiNoteForSelectedDefinition() {
         const button = this._viewerButtonFind(this._index);
         if (button !== null && !button.disabled) {
             api.noteView(button.dataset.noteId);
         }
     }
 
-    async _noteAdd(definition, mode) {
+    async _addAnkiNote(definitionIndex, mode) {
+        if (definitionIndex < 0 || definitionIndex >= this._definitions.length) { return false; }
+        const definition = this._definitions[definitionIndex];
+
+        const button = this._adderButtonFind(definitionIndex, mode);
+        if (button === null || button.disabled) { return false; }
+
         const overrideToken = this._progressIndicatorVisible.setOverride(true);
         try {
             const noteContext = await this._getNoteContext();
             const noteId = await this._addDefinition(definition, mode, noteContext);
             if (noteId) {
-                const index = this._definitions.indexOf(definition);
-                const adderButton = this._adderButtonFind(index, mode);
-                if (adderButton !== null) {
-                    adderButton.disabled = true;
-                }
-                this._viewerButtonShow(index, noteId);
+                button.disabled = true;
+                this._viewerButtonShow(definitionIndex, noteId);
             } else {
                 throw new Error('Note could not be added');
             }
         } catch (e) {
             this.onError(e);
+            return false;
         } finally {
             this._progressIndicatorVisible.clearOverride(overrideToken);
         }
+        return true;
     }
 
     async _playAudio(definitionIndex, expressionIndex) {
