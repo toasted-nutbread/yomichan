@@ -35,6 +35,7 @@ class AnkiNoteBuilder {
         modelName,
         fields,
         tags=[],
+        injectedMedia=null,
         checkForDuplicates=true,
         duplicateScope='collection',
         resultOutputMode='split',
@@ -50,7 +51,15 @@ class AnkiNoteBuilder {
             duplicateScopeCheckChildren = true;
         }
 
-        const data = this._createNoteData(definition, mode, context, resultOutputMode, glossaryLayoutMode, compactTags);
+        const data = {
+            definition,
+            mode,
+            context,
+            resultOutputMode,
+            glossaryLayoutMode,
+            compactTags,
+            injectedMedia
+        };
         const formattedFieldValuePromises = [];
         for (const [, fieldValue] of fields) {
             const formattedFieldValuePromise = this._formatField(fieldValue, data, templates, errors);

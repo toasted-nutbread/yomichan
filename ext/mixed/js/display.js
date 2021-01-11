@@ -1534,9 +1534,7 @@ class Display extends EventDispatcher {
         const {deck: deckName, model: modelName} = modeOptions;
         const fields = Object.entries(modeOptions.fields);
 
-        if (injectMedia) {
-            await this._injectAnkiNoteMedia(definition, mode, options, fields);
-        }
+        const injectedMedia = (injectMedia ? await this._injectAnkiNoteMedia(definition, mode, options, fields) : null);
 
         return await this._ankiNoteBuilder.createNote({
             definition,
@@ -1551,7 +1549,8 @@ class Display extends EventDispatcher {
             duplicateScope,
             resultOutputMode,
             glossaryLayoutMode,
-            compactTags
+            compactTags,
+            injectedMedia
         });
     }
 
@@ -1570,17 +1569,13 @@ class Display extends EventDispatcher {
             image: this._ankiNoteBuilder.containsMarker(fields, 'clipboard-image'),
             text: this._ankiNoteBuilder.containsMarker(fields, 'clipboard-text')
         };
-        const {screenshotFileName, clipboardImageFileName, clipboardText, audioFileName} = await api.injectAnkiNoteMedia(
+        return await api.injectAnkiNoteMedia(
             timestamp,
             definitionDetails,
             audioDetails,
             screenshotDetails,
             clipboardDetails
         );
-        if (screenshotFileName !== null) { definition.screenshotFileName = screenshotFileName; }
-        if (clipboardImageFileName !== null) { definition.clipboardImageFileName = clipboardImageFileName; }
-        if (audioFileName !== null) { definition.audioFileName = audioFileName; }
-        if (clipboardText !== null) { definition.clipboardText = clipboardText; }
     }
 
     _getDefinitionDetailsForNote(definition) {

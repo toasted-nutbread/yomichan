@@ -16,6 +16,7 @@
  */
 
 /* globals
+ * AnkiNoteData
  * JapaneseUtil
  * TemplateRenderer
  * TemplateRendererFrameApi
@@ -26,8 +27,9 @@
     const templateRenderer = new TemplateRenderer(japaneseUtil);
     templateRenderer.registerDataType('ankiNote', {
         modifier: ({data, marker}) => {
-            data.marker = marker;
-            return data;
+            const result = new AnkiNoteData(data);
+            result.marker = marker;
+            return result;
         }
     });
     const api = new TemplateRendererFrameApi(templateRenderer);
