@@ -27,6 +27,8 @@ class TemplateRendererFrameApi {
         window.addEventListener('message', this._onWindowMessage.bind(this), false);
     }
 
+    // Private
+
     _onWindowMessage(e) {
         const {source, data: {action, params, id}} = e;
         const messageHandler = this._windowMessageHandlers.get(action);
@@ -51,8 +53,8 @@ class TemplateRendererFrameApi {
         source.postMessage({action: `${action}.response`, params: response, id}, '*');
     }
 
-    async _onRender({template, data, marker}) {
-        return await this._templateRenderer.render(template, data, marker);
+    async _onRender({template, data, type}) {
+        return await this._templateRenderer.render(template, data, type);
     }
 
     _errorToJson(error) {

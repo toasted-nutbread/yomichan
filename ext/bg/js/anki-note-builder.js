@@ -161,6 +161,6 @@ class AnkiNoteBuilder {
     }
 
     async _renderTemplate(template, data, marker) {
-        return await this._templateRenderer.render(template, data, marker);
+        return await this._templateRenderer.render(template, {data, marker}, 'ankiNote');
     }
 }
