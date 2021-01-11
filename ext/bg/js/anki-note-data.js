@@ -31,7 +31,8 @@ class AnkiNoteData {
         glossaryLayoutMode,
         compactTags,
         context,
-        marker=null
+        marker=null,
+        injectedMedia=null
     }) {
         this._definition = definition;
         this._resultOutputMode = resultOutputMode;
@@ -44,6 +45,26 @@ class AnkiNoteData {
         this._pitchCount = null;
         this._uniqueExpressions = null;
         this._uniqueReadings = null;
+
+        let screenshotFileName = null;
+        let clipboardImageFileName = null;
+        let clipboardText = null;
+        let audioFileName = null;
+        if (typeof injectedMedia === 'object' && injectedMedia !== null) {
+            ({
+                screenshotFileName=null,
+                clipboardImageFileName=null,
+                clipboardText=null,
+                audioFileName=null
+            } = injectedMedia);
+        }
+        const definitionSecondaryProperties = {
+            screenshotFileName,
+            clipboardImageFileName,
+            clipboardText,
+            audioFileName
+        };
+        this._definitionProxy = new Proxy(definition, new AnkiNoteDataDefinitionProxyHandler(definitionSecondaryProperties));
     }
 
     get marker() {
@@ -55,7 +76,7 @@ class AnkiNoteData {
     }
 
     get definition() {
-        return this._definition;
+        return this._definitionProxy;
     }
 
     get uniqueExpressions() {
@@ -144,5 +165,69 @@ class AnkiNoteData {
             }
         }
         return [...results];
+    }
+}
+
+/**
+ * This class is a wrapper around the definition data of `AnkiNoteData`.
+ * It is used to expose some additional properties without mutating the definition object.
+ */
+class AnkiNoteDataDefinitionProxyHandler {
+    constructor(secondaryTarget) {
+        this._secondaryTarget = secondaryTarget;
+    }
+
+    get(target, property) {
+        return (
+            Object.prototype.hasOwnProperty.call(target, property) ?
+            target[property] :
+            this._secondaryTarget[property]
+        );
+    }
+
+    has(target, property) {
+        return (
+            property in target ||
+            property in this._secondaryTarget
+        );
+    }
+
+    ownKeys(target) {
+        return [...new Set([
+            ...Reflect.ownKeys(target),
+            ...Reflect.ownKeys(this._secondaryTarget)
+        ])];
+    }
+
+    getOwnPropertyDescriptor(target, property) {
+        let result = Object.getOwnPropertyDescriptor(target, property);
+        if (typeof result === 'undefined') {
+            result = Object.getOwnPropertyDescriptor(this._secondaryTarget, property);
+        }
+        return result;
+    }
+
+    isExtensible() {
+        return false;
+    }
+
+    preventExtensions() {
+        // NOP
+    }
+
+    defineProperty() {
+        // NOP
+    }
+
+    deleteProperty() {
+        // NOP
+    }
+
+    set() {
+        // NOP
+    }
+
+    setPrototypeOf() {
+        // NOP
     }
 }
