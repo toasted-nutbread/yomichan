@@ -1208,10 +1208,8 @@ class Display extends EventDispatcher {
 
         const overrideToken = this._progressIndicatorVisible.setOverride(true);
         try {
-            const options = this._options;
             const noteContext = await this._getNoteContext();
-            const templates = this._ankiFieldTemplates;
-            const note = await this._createNote(definition, mode, noteContext, options, templates, true);
+            const note = await this._createNote(definition, mode, noteContext, true);
             const noteId = await api.addAnkiNote(note);
             if (noteId) {
                 button.disabled = true;
@@ -1476,15 +1474,12 @@ class Display extends EventDispatcher {
     }
 
     async _areDefinitionsAddable(definitions, modes, context) {
-        const options = this._options;
-        const templates = this._ankiFieldTemplates;
-
         const modeCount = modes.length;
-        const {duplicateScope} = options.anki;
+        const {duplicateScope} = this._options.anki;
         const notePromises = [];
         for (const definition of definitions) {
             for (const mode of modes) {
-                const notePromise = this._createNote(definition, mode, context, options, templates, false);
+                const notePromise = this._createNote(definition, mode, context, false);
                 notePromises.push(notePromise);
             }
         }
@@ -1512,7 +1507,9 @@ class Display extends EventDispatcher {
         return results;
     }
 
-    async _createNote(definition, mode, context, options, templates, injectMedia) {
+    async _createNote(definition, mode, context, injectMedia) {
+        const options = this._options;
+        const templates = this._ankiFieldTemplates;
         const {
             general: {resultOutputMode, glossaryLayoutMode, compactTags},
             anki: ankiOptions
