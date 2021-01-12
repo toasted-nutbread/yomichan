@@ -395,13 +395,6 @@ class Display extends EventDispatcher {
         }
     }
 
-    async getDocumentTitle() {
-        if (this._pageType === 'popup') {
-            return await this._getRootFrameDocumentTitle();
-        }
-        return document.title;
-    }
-
     registerActions(actions) {
         for (const [name, handler] of actions) {
             this._actions.set(name, handler);
@@ -1110,7 +1103,7 @@ class Display extends EventDispatcher {
             let states;
             try {
                 if (this._options.anki.checkForDuplicates) {
-                    const noteContext = await this._getNoteContext();
+                    const noteContext = this._getNoteContext();
                     states = await this._areDefinitionsAddable(definitions, modes, noteContext);
                 } else {
                     if (!await api.isAnkiConnected()) {
@@ -1224,7 +1217,7 @@ class Display extends EventDispatcher {
 
         const overrideToken = this._progressIndicatorVisible.setOverride(true);
         try {
-            const noteContext = await this._getNoteContext();
+            const noteContext = this._getNoteContext();
             const note = await this._createNote(definition, mode, noteContext, true);
             const noteId = await api.addAnkiNote(note);
             if (noteId) {
@@ -1387,8 +1380,15 @@ class Display extends EventDispatcher {
         return elementRect.top - documentRect.top;
     }
 
-    async _getNoteContext() {
-        const documentTitle = await this.getDocumentTitle();
+    _getNoteContext() {
+        const {state} = this._history;
+        let documentTitle = null;
+        if (typeof state === 'object' && state !== null) {
+            ({documentTitle} = state);
+        }
+        if (typeof documentTitle !== 'string') {
+            documentTitle = '';
+        }
         return {
             document: {
                 title: documentTitle
@@ -1742,15 +1742,6 @@ class Display extends EventDispatcher {
         textarea.select();
         document.execCommand('copy');
         parent.removeChild(textarea);
-    }
-
-    async _getRootFrameDocumentTitle() {
-        try {
-            const {title} = await api.crossFrame.invoke(0, 'getDocumentInformation');
-            return title;
-        } catch (e) {
-            return '';
-        }
     }
 
     _addMultipleEventListeners(container, selector, ...args) {
