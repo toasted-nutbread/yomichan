@@ -500,6 +500,7 @@ class Frontend {
     _showContent(textSource, focus, definitions, type, sentence, optionsContext) {
         const query = textSource.text();
         const {url} = optionsContext;
+        const documentTitle = document.title;
         const details = {
             focus,
             history: false,
@@ -512,7 +513,8 @@ class Frontend {
                 focusEntry: 0,
                 optionsContext,
                 url,
-                sentence
+                sentence,
+                documentTitle
             },
             content: {
                 definitions

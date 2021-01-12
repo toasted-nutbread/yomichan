@@ -472,7 +472,8 @@ class Display extends EventDispatcher {
                 focusEntry: 0,
                 optionsContext: this._optionsContext,
                 url: window.location.href,
-                sentence: {text: query, offset: 0}
+                sentence: {text: query, offset: 0},
+                documentTitle: document.title
             }
         );
         const details = {
@@ -718,8 +719,9 @@ class Display extends EventDispatcher {
             e.preventDefault();
             if (!this._historyHasState()) { return; }
 
-            let {state: {sentence, url}} = this._history;
+            let {state: {sentence, url, documentTitle}} = this._history;
             if (typeof url !== 'string') { url = window.location.href; }
+            if (typeof documentTitle !== 'string') { documentTitle = document.title; }
             const optionsContext = this.getOptionsContext();
             const query = e.currentTarget.textContent;
             const definitions = await api.kanjiFind(query, optionsContext);
@@ -731,7 +733,8 @@ class Display extends EventDispatcher {
                     focusEntry: 0,
                     optionsContext,
                     url,
-                    sentence
+                    sentence,
+                    documentTitle
                 },
                 content: {
                     definitions
@@ -1829,6 +1832,7 @@ class Display extends EventDispatcher {
 
         const query = textSource.text();
         const url = window.location.href;
+        const documentTitle = document.title;
         const details = {
             focus: false,
             history: true,
@@ -1841,7 +1845,8 @@ class Display extends EventDispatcher {
                 focusEntry: 0,
                 optionsContext,
                 url,
-                sentence
+                sentence,
+                documentTitle
             },
             content: {
                 definitions
