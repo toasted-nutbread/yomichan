@@ -46,6 +46,14 @@ class AnkiNoteData {
         this._uniqueExpressions = null;
         this._uniqueReadings = null;
 
+        let documentTitle = (typeof context === 'object' && context !== null ? context.documentTitle : '');
+        if (typeof documentTitle !== 'string') { documentTitle = ''; }
+        this._publicContext = {
+            document: {
+                title: documentTitle
+            }
+        };
+
         const definitionSecondaryProperties = new AnkiNoteDataDefinitionSecondaryProperties(injectedMedia);
         this._definitionProxy = new Proxy(definition, new AnkiNoteDataDefinitionProxyHandler(definitionSecondaryProperties));
     }
@@ -123,7 +131,7 @@ class AnkiNoteData {
     }
 
     get context() {
-        return this._context;
+        return this._publicContext;
     }
 
     // Private

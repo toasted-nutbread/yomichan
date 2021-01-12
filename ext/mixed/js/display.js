@@ -1382,17 +1382,18 @@ class Display extends EventDispatcher {
 
     _getNoteContext() {
         const {state} = this._history;
-        let documentTitle = null;
-        if (typeof state === 'object' && state !== null) {
-            ({documentTitle} = state);
-        }
+        let {documentTitle, url, sentence} = (isObject(state) ? state : {});
         if (typeof documentTitle !== 'string') {
             documentTitle = '';
         }
+        if (typeof url !== 'string') {
+            url = window.location.href;
+        }
+        sentence = this._getValidSentenceData(sentence);
         return {
-            document: {
-                title: documentTitle
-            }
+            url,
+            sentence,
+            documentTitle
         };
     }
 
