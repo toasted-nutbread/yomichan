@@ -46,24 +46,7 @@ class AnkiNoteData {
         this._uniqueExpressions = null;
         this._uniqueReadings = null;
 
-        let screenshotFileName = null;
-        let clipboardImageFileName = null;
-        let clipboardText = null;
-        let audioFileName = null;
-        if (typeof injectedMedia === 'object' && injectedMedia !== null) {
-            ({
-                screenshotFileName=null,
-                clipboardImageFileName=null,
-                clipboardText=null,
-                audioFileName=null
-            } = injectedMedia);
-        }
-        const definitionSecondaryProperties = {
-            screenshotFileName,
-            clipboardImageFileName,
-            clipboardText,
-            audioFileName
-        };
+        const definitionSecondaryProperties = new AnkiNoteDataDefinitionSecondaryProperties(injectedMedia);
         this._definitionProxy = new Proxy(definition, new AnkiNoteDataDefinitionProxyHandler(definitionSecondaryProperties));
     }
 
@@ -229,5 +212,30 @@ class AnkiNoteDataDefinitionProxyHandler {
 
     setPrototypeOf() {
         // NOP
+    }
+}
+
+/**
+ * This class represents the secondary properties for the definition data of `AnkiNoteData`.
+ */
+class AnkiNoteDataDefinitionSecondaryProperties {
+    constructor(injectedMedia) {
+        this._injectedMedia = injectedMedia;
+    }
+
+    get screenshotFileName() {
+        return this._injectedMedia.screenshotFileName;
+    }
+
+    get clipboardImageFileName() {
+        return this._injectedMedia.clipboardImageFileName;
+    }
+
+    get clipboardText() {
+        return this._injectedMedia.clipboardText;
+    }
+
+    get audioFileName() {
+        return this._injectedMedia.audioFileName;
     }
 }
