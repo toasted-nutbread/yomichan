@@ -915,15 +915,21 @@ class Display extends EventDispatcher {
             changeHistory = true;
         }
 
-        let {sentence=null, optionsContext=null, focusEntry=null, scrollX=null, scrollY=null} = state;
+        let {
+            focusEntry=null,
+            scrollX=null,
+            scrollY=null,
+            optionsContext=null,
+            sentence=null,
+            url
+        } = state;
         if (typeof focusEntry !== 'number') { focusEntry = 0; }
+        if (typeof url !== 'string') { url = window.location.href; }
         if (!(typeof optionsContext === 'object' && optionsContext !== null)) {
             optionsContext = this.getOptionsContext();
             state.optionsContext = optionsContext;
             changeHistory = true;
         }
-        let {url} = optionsContext;
-        if (typeof url !== 'string') { url = window.location.href; }
         sentence = this._getValidSentenceData(sentence);
 
         this._setFullQuery(queryFull);
