@@ -290,8 +290,8 @@ class TextScanner extends EventDispatcher {
 
     // Private
 
-    async _getOptionsContextForInput(inputInfo) {
-        const optionsContext = clone(await this._getOptionsContext());
+    _createOptionsContextForInput(baseOptionsContext, inputInfo) {
+        const optionsContext = clone(baseOptionsContext);
         const {modifiers, modifierKeys} = inputInfo;
         optionsContext.modifiers = [...modifiers];
         optionsContext.modifierKeys = [...modifierKeys];
@@ -311,7 +311,9 @@ class TextScanner extends EventDispatcher {
                 return;
             }
 
-            optionsContext = await this._getOptionsContextForInput(inputInfo);
+            optionsContext = await this._getOptionsContext();
+            optionsContext = this._createOptionsContextForInput(optionsContext, inputInfo);
+
             searched = true;
 
             const result = await this._findDefinitions(textSource, searchTerms, searchKanji, optionsContext);
