@@ -194,6 +194,10 @@ class Display extends EventDispatcher {
         return this._japaneseUtil;
     }
 
+    get depth() {
+        return this._depth;
+    }
+
     async prepare() {
         // State setup
         const {documentElement} = document;
@@ -466,8 +470,9 @@ class Display extends EventDispatcher {
             clone(this._history.state) :
             {
                 focusEntry: 0,
-                sentence: {text: query, offset: 0},
-                url: window.location.href
+                optionsContext: this._optionsContext,
+                url: window.location.href,
+                sentence: {text: query, offset: 0}
             }
         );
         const details = {
@@ -713,7 +718,8 @@ class Display extends EventDispatcher {
             e.preventDefault();
             if (!this._historyHasState()) { return; }
 
-            const {state: {sentence}} = this._history;
+            let {state: {sentence, url}} = this._history;
+            if (typeof url !== 'string') { url = window.location.href; }
             const optionsContext = this.getOptionsContext();
             const query = e.currentTarget.textContent;
             const definitions = await api.kanjiFind(query, optionsContext);
@@ -723,8 +729,9 @@ class Display extends EventDispatcher {
                 params: this._createSearchParams('kanji', query, false),
                 state: {
                     focusEntry: 0,
-                    sentence,
-                    optionsContext
+                    optionsContext,
+                    url,
+                    sentence
                 },
                 content: {
                     definitions
@@ -1815,6 +1822,7 @@ class Display extends EventDispatcher {
         if (type === null) { return; }
 
         const query = textSource.text();
+        const url = window.location.href;
         const details = {
             focus: false,
             history: true,
@@ -1825,8 +1833,9 @@ class Display extends EventDispatcher {
             },
             state: {
                 focusEntry: 0,
-                sentence,
-                optionsContext
+                optionsContext,
+                url,
+                sentence
             },
             content: {
                 definitions
