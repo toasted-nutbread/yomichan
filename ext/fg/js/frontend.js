@@ -114,12 +114,11 @@ class Frontend {
         this._textScanner.on('searched', this._onSearched.bind(this));
 
         api.crossFrame.registerHandlers([
-            ['getUrl',                  {async: false, handler: this._onApiGetUrl.bind(this)}],
             ['closePopup',              {async: false, handler: this._onApiClosePopup.bind(this)}],
             ['copySelection',           {async: false, handler: this._onApiCopySelection.bind(this)}],
             ['getSelectionText',        {async: false, handler: this._onApiGetSelectionText.bind(this)}],
             ['getPopupInfo',            {async: false, handler: this._onApiGetPopupInfo.bind(this)}],
-            ['getDocumentInformation',  {async: false, handler: this._onApiGetDocumentInformation.bind(this)}],
+            ['getPageInfo',             {async: false, handler: this._onApiGetPageInfo.bind(this)}],
             ['getFrameSize',            {async: true,  handler: this._onApiGetFrameSize.bind(this)}],
             ['setFrameSize',            {async: true,  handler: this._onApiSetFrameSize.bind(this)}]
         ]);
@@ -187,9 +186,10 @@ class Frontend {
         };
     }
 
-    _onApiGetDocumentInformation() {
+    _onApiGetPageInfo() {
         return {
-            title: document.title
+            url: window.location.href,
+            documentTitle: document.title
         };
     }
 
@@ -630,7 +630,8 @@ class Frontend {
         let url = window.location.href;
         if (this._useProxyPopup) {
             try {
-                url = await api.crossFrame.invoke(this._parentFrameId, 'getUrl', {});
+                // TODO : This should be getting the url and the document title
+                ({url} = await api.crossFrame.invoke(this._parentFrameId, 'getPageInfo', {}));
             } catch (e) {
                 // NOP
             }
