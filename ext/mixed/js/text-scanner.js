@@ -24,7 +24,7 @@ class TextScanner extends EventDispatcher {
     constructor({
         node,
         documentUtil,
-        getOptionsContext,
+        getSearchContext,
         ignoreElements=null,
         ignorePoint=null,
         searchTerms=false,
@@ -35,7 +35,7 @@ class TextScanner extends EventDispatcher {
         super();
         this._node = node;
         this._documentUtil = documentUtil;
-        this._getOptionsContext = getOptionsContext;
+        this._getSearchContext = getSearchContext;
         this._ignoreElements = ignoreElements;
         this._ignorePoint = ignorePoint;
         this._searchTerms = searchTerms;
@@ -305,13 +305,14 @@ class TextScanner extends EventDispatcher {
         let error = null;
         let searched = false;
         let optionsContext = null;
+        let detail = null;
 
         try {
             if (this._textSourceCurrent !== null && this._textSourceCurrent.hasSameStart(textSource)) {
                 return;
             }
 
-            optionsContext = await this._getOptionsContext();
+            ({optionsContext, detail} = await this._getSearchContext());
             optionsContext = this._createOptionsContextForInput(optionsContext, inputInfo);
 
             searched = true;
@@ -336,6 +337,7 @@ class TextScanner extends EventDispatcher {
             inputInfo,
             textSource,
             optionsContext,
+            detail,
             error
         });
     }
