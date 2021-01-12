@@ -251,7 +251,7 @@ class Frontend {
         }
     }
 
-    _onSearched({type, definitions, sentence, inputInfo: {cause, empty}, textSource, optionsContext, error}) {
+    _onSearched({type, definitions, sentence, inputInfo: {cause, empty}, textSource, optionsContext, detail: {documentTitle}, error}) {
         const scanningOptions = this._options.scanning;
 
         if (error !== null) {
@@ -265,7 +265,7 @@ class Frontend {
         } if (type !== null) {
             this._stopClearSelectionDelayed();
             const focus = (cause === 'mouseMove');
-            this._showContent(textSource, focus, definitions, type, sentence, optionsContext);
+            this._showContent(textSource, focus, definitions, type, sentence, documentTitle, optionsContext);
         } else {
             if (scanningOptions.autoHideResults) {
                 this._clearSelectionDelayed(scanningOptions.hideDelay, false);
@@ -497,10 +497,9 @@ class Frontend {
         this._showPopupContent(textSource, null);
     }
 
-    _showContent(textSource, focus, definitions, type, sentence, optionsContext) {
+    _showContent(textSource, focus, definitions, type, sentence, documentTitle, optionsContext) {
         const query = textSource.text();
         const {url} = optionsContext;
-        const documentTitle = document.title;
         const details = {
             focus,
             history: false,
@@ -628,16 +627,19 @@ class Frontend {
         }
 
         let url = window.location.href;
+        let documentTitle = document.title;
         if (this._useProxyPopup) {
             try {
-                // TODO : This should be getting the url and the document title
-                ({url} = await api.crossFrame.invoke(this._parentFrameId, 'getPageInfo', {}));
+                ({url, documentTitle} = await api.crossFrame.invoke(this._parentFrameId, 'getPageInfo', {}));
             } catch (e) {
                 // NOP
             }
         }
 
         const depth = this._depth;
-        return {optionsContext: {depth, url}};
+        return {
+            optionsContext: {depth, url},
+            detail: {documentTitle}
+        };
     }
 }
