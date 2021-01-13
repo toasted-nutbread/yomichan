@@ -201,10 +201,10 @@ class AnkiNoteData {
         const source = definition.type === 'kanji' ? definition.character : definition.rawSource;
 
         return {
-            sentence: text.trim(),
-            prefix: text.substring(0, offset).trim(),
+            sentence: text,
+            prefix: text.substring(0, offset),
             body: text.substring(offset, offset + source.length),
-            suffix: text.substring(offset + source.length).trim()
+            suffix: text.substring(offset + source.length)
         };
     }
 
