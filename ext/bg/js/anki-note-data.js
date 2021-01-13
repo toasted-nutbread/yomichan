@@ -41,22 +41,15 @@ class AnkiNoteData {
         this._compactTags = compactTags;
         this._context = context;
         this._marker = marker;
+        this._injectedMedia = injectedMedia;
         this._pitches = null;
         this._pitchCount = null;
         this._uniqueExpressions = null;
         this._uniqueReadings = null;
+        this._publicContext = null;
+        this._cloze = null;
 
-        let documentTitle = (typeof context === 'object' && context !== null ? context.documentTitle : '');
-        if (typeof documentTitle !== 'string') { documentTitle = ''; }
-        this._publicContext = {
-            document: {
-                title: documentTitle
-            }
-        };
-
-        const clozeSource = definition.type === 'kanji' ? definition.character : definition.rawSource;
-        const definitionSecondaryProperties = new AnkiNoteDataDefinitionSecondaryProperties(injectedMedia, context, clozeSource);
-        this._definitionProxy = new Proxy(definition, new AnkiNoteDataDefinitionProxyHandler(definitionSecondaryProperties));
+        this._prepareDefinition(definition, injectedMedia, context);
     }
 
     get marker() {
@@ -68,7 +61,7 @@ class AnkiNoteData {
     }
 
     get definition() {
-        return this._definitionProxy;
+        return this._definition;
     }
 
     get uniqueExpressions() {
@@ -132,10 +125,17 @@ class AnkiNoteData {
     }
 
     get context() {
+        if (this._publicContext === null) {
+            this._publicContext = this._getPublicContext();
+        }
         return this._publicContext;
     }
 
     // Private
+
+    _asObject(value) {
+        return (typeof value === 'object' && value !== null ? value : {});
+    }
 
     _getUniqueExpressions() {
         const results = new Set();
@@ -158,120 +158,62 @@ class AnkiNoteData {
         }
         return [...results];
     }
-}
 
-/**
- * This class is a wrapper around the definition data of `AnkiNoteData`.
- * It is used to expose some additional properties without mutating the definition object.
- */
-class AnkiNoteDataDefinitionProxyHandler {
-    constructor(secondaryTarget) {
-        this._secondaryTarget = secondaryTarget;
+    _getPublicContext() {
+        let {documentTitle} = this._asObject(this._context);
+        if (typeof documentTitle !== 'string') { documentTitle = ''; }
+
+        return {
+            document: {
+                title: documentTitle
+            }
+        };
     }
-
-    get(target, property) {
-        return (
-            Object.prototype.hasOwnProperty.call(target, property) ?
-            target[property] :
-            this._secondaryTarget[property]
-        );
-    }
-
-    has(target, property) {
-        return (
-            property in target ||
-            property in this._secondaryTarget
-        );
-    }
-
-    ownKeys(target) {
-        return [...new Set([
-            ...Reflect.ownKeys(target),
-            ...Reflect.ownKeys(this._secondaryTarget)
-        ])];
-    }
-
-    getOwnPropertyDescriptor(target, property) {
-        let result = Object.getOwnPropertyDescriptor(target, property);
-        if (typeof result === 'undefined') {
-            result = Object.getOwnPropertyDescriptor(this._secondaryTarget, property);
-        }
-        return result;
-    }
-
-    isExtensible() {
-        return false;
-    }
-
-    preventExtensions() {
-        // NOP
-    }
-
-    defineProperty() {
-        // NOP
-    }
-
-    deleteProperty() {
-        // NOP
-    }
-
-    set() {
-        // NOP
-    }
-
-    setPrototypeOf() {
-        // NOP
-    }
-}
-
-/**
- * This class represents the secondary properties for the definition data of `AnkiNoteData`.
- */
-class AnkiNoteDataDefinitionSecondaryProperties {
-    constructor(injectedMedia, context, clozeSource) {
-        this._injectedMedia = injectedMedia;
-        this._context = context;
-        this._clozeSource = clozeSource;
-        this._cloze = null;
-    }
-
-    get screenshotFileName() {
-        return this._injectedMedia.screenshotFileName;
-    }
-
-    get clipboardImageFileName() {
-        return this._injectedMedia.clipboardImageFileName;
-    }
-
-    get clipboardText() {
-        return this._injectedMedia.clipboardText;
-    }
-
-    get audioFileName() {
-        return this._injectedMedia.audioFileName;
-    }
-
-    get url() {
-        return this._context.url;
-    }
-
-    get cloze() {
-        if (this._cloze === null) {
-            this._cloze = this._getCloze();
-        }
-        return this._cloze;
-    }
-
-    // Private
 
     _getCloze() {
-        const {sentence: {text, offset}} = this._context;
-        const source = this._clozeSource;
+        const {sentence} = this._asObject(this._context);
+        let {text, offset} = this._asObject(sentence);
+        if (typeof text !== 'string') { text = ''; }
+        if (typeof offset !== 'number') { offset = 0; }
+
+        const definition = this._definition;
+        const source = definition.type === 'kanji' ? definition.character : definition.rawSource;
+
         return {
             sentence: text.trim(),
             prefix: text.substring(0, offset).trim(),
             body: text.substring(offset, offset + source.length),
             suffix: text.substring(offset + source.length).trim()
         };
+    }
+
+    _getClozeCached() {
+        if (this._cloze === null) {
+            this._cloze = this._getCloze();
+        }
+        return this._cloze;
+    }
+
+    _prepareDefinition(definition, injectedMedia, context) {
+        const {
+            screenshotFileName=null,
+            clipboardImageFileName=null,
+            clipboardText=null,
+            audioFileName=null
+        } = this._asObject(injectedMedia);
+
+        let {url} = this._asObject(context);
+        if (typeof url !== 'string') { url = ''; }
+
+        definition.screenshotFileName = screenshotFileName;
+        definition.clipboardImageFileName = clipboardImageFileName;
+        definition.clipboardText = clipboardText;
+        definition.audioFileName = audioFileName;
+        definition.url = url;
+        Object.defineProperty(definition, 'cloze', {
+            configurable: true,
+            enumerable: true,
+            get: this._getClozeCached.bind(this)
+        });
     }
 }
