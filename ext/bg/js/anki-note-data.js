@@ -31,9 +31,8 @@ class AnkiNoteData {
         glossaryLayoutMode,
         compactTags,
         context,
-        marker=null,
         injectedMedia=null
-    }) {
+    }, marker) {
         this._definition = definition;
         this._resultOutputMode = resultOutputMode;
         this._mode = mode;
@@ -129,6 +128,28 @@ class AnkiNoteData {
             this._publicContext = this._getPublicContext();
         }
         return this._publicContext;
+    }
+
+    createPublic() {
+        const self = this;
+        return {
+            get marker() { return self.marker; },
+            set marker(value) { self.marker = value; },
+            get definition() { return self.definition; },
+            get glossaryLayoutMode() { return self.glossaryLayoutMode; },
+            get compactTags() { return self.compactTags; },
+            get group() { return self.group; },
+            get merge() { return self.merge; },
+            get modeTermKanji() { return self.modeTermKanji; },
+            get modeTermKana() { return self.modeTermKana; },
+            get modeKanji() { return self.modeKanji; },
+            get compactGlossaries() { return self.compactGlossaries; },
+            get uniqueExpressions() { return self.uniqueExpressions; },
+            get uniqueReadings() { return self.uniqueReadings; },
+            get pitches() { return self.pitches; },
+            get pitchCount() { return self.pitchCount; },
+            get context() { return self.context; }
+        };
     }
 
     // Private
