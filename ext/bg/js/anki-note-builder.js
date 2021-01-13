@@ -16,7 +16,6 @@
  */
 
 /* global
- * DictionaryDataUtil
  * TemplateRendererProxy
  */
 
