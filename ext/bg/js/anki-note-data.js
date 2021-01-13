@@ -54,7 +54,8 @@ class AnkiNoteData {
             }
         };
 
-        const definitionSecondaryProperties = new AnkiNoteDataDefinitionSecondaryProperties(injectedMedia);
+        const clozeSource = definition.type === 'kanji' ? definition.character : definition.rawSource;
+        const definitionSecondaryProperties = new AnkiNoteDataDefinitionSecondaryProperties(injectedMedia, context, clozeSource);
         this._definitionProxy = new Proxy(definition, new AnkiNoteDataDefinitionProxyHandler(definitionSecondaryProperties));
     }
 
@@ -227,8 +228,11 @@ class AnkiNoteDataDefinitionProxyHandler {
  * This class represents the secondary properties for the definition data of `AnkiNoteData`.
  */
 class AnkiNoteDataDefinitionSecondaryProperties {
-    constructor(injectedMedia) {
+    constructor(injectedMedia, context, clozeSource) {
         this._injectedMedia = injectedMedia;
+        this._context = context;
+        this._clozeSource = clozeSource;
+        this._cloze = null;
     }
 
     get screenshotFileName() {
@@ -245,5 +249,29 @@ class AnkiNoteDataDefinitionSecondaryProperties {
 
     get audioFileName() {
         return this._injectedMedia.audioFileName;
+    }
+
+    get url() {
+        return this._context.url;
+    }
+
+    get cloze() {
+        if (this._cloze === null) {
+            this._cloze = this._getCloze();
+        }
+        return this._cloze;
+    }
+
+    // Private
+
+    _getCloze() {
+        const {sentence: {text, offset}} = this._context;
+        const source = this._clozeSource;
+        return {
+            sentence: text.trim(),
+            prefix: text.substring(0, offset).trim(),
+            body: text.substring(offset, offset + source.length),
+            suffix: text.substring(offset + source.length).trim()
+        };
     }
 }

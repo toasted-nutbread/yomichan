@@ -915,18 +915,14 @@ class Display extends EventDispatcher {
             focusEntry=null,
             scrollX=null,
             scrollY=null,
-            optionsContext=null,
-            sentence=null,
-            url
+            optionsContext=null
         } = state;
         if (typeof focusEntry !== 'number') { focusEntry = 0; }
-        if (typeof url !== 'string') { url = window.location.href; }
         if (!(typeof optionsContext === 'object' && optionsContext !== null)) {
             optionsContext = this.getOptionsContext();
             state.optionsContext = optionsContext;
             changeHistory = true;
         }
-        sentence = this._getValidSentenceData(sentence);
 
         this._setFullQuery(queryFull);
         this._setTitleText(query);
@@ -956,11 +952,6 @@ class Display extends EventDispatcher {
         this.trigger('contentUpdating', eventArgs);
 
         this._definitions = definitions;
-
-        for (const definition of definitions) {
-            definition.cloze = this._clozeBuild(sentence, isTerms ? definition.rawSource : definition.character);
-            definition.url = url;
-        }
 
         this._updateNavigation(this._history.hasPrevious(), this._history.hasNext());
         this._setNoContentVisible(definitions.length === 0);
@@ -1316,15 +1307,6 @@ class Display extends EventDispatcher {
         if (typeof text !== 'string') { text = ''; }
         if (typeof offset !== 'number') { offset = 0; }
         return {text, offset};
-    }
-
-    _clozeBuild({text, offset}, source) {
-        return {
-            sentence: text.trim(),
-            prefix: text.substring(0, offset).trim(),
-            body: text.substring(offset, offset + source.length),
-            suffix: text.substring(offset + source.length).trim()
-        };
     }
 
     _getClosestDefinitionIndex(element) {
