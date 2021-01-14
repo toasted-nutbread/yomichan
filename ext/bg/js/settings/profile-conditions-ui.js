@@ -525,12 +525,12 @@ class ProfileConditionUI {
         }
     }
 
-    _onModifierInputChange({validate, normalize}, {value}) {
-        value = this._joinModifiers(value);
-        const okay = this._validateValue(value, validate);
-        this._value = value;
+    _onModifierInputChange({validate, normalize}, {modifiers}) {
+        modifiers = this._joinModifiers(modifiers);
+        const okay = this._validateValue(modifiers, validate);
+        this._value = modifiers;
         if (okay) {
-            const normalizedValue = this._normalizeValue(value, normalize);
+            const normalizedValue = this._normalizeValue(modifiers, normalize);
             this.settingsController.setGlobalSetting(this.getPath('value'), normalizedValue);
         }
     }

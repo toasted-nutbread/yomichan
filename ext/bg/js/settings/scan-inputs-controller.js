@@ -230,14 +230,14 @@ class ScanInputField {
 
     // Private
 
-    _onIncludeValueChange({value}) {
-        value = this._joinModifiers(value);
-        this._parent.setProperty(this._index, 'include', value, true);
+    _onIncludeValueChange({modifiers}) {
+        modifiers = this._joinModifiers(modifiers);
+        this._parent.setProperty(this._index, 'include', modifiers, true);
     }
 
-    _onExcludeValueChange({value}) {
-        value = this._joinModifiers(value);
-        this._parent.setProperty(this._index, 'exclude', value, true);
+    _onExcludeValueChange({modifiers}) {
+        modifiers = this._joinModifiers(modifiers);
+        this._parent.setProperty(this._index, 'exclude', modifiers, true);
     }
 
     _onRemoveClick(e) {
