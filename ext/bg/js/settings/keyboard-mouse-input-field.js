@@ -131,9 +131,18 @@ class KeyboardMouseInputField extends EventDispatcher {
         }
         if (this._key !== null) {
             if (!first) { displayValue += this._keySeparator; }
-            displayValue += this._key;
+            displayValue += this._getDisplayKey(this._key);
         }
         this._inputNode.value = displayValue;
+    }
+
+    _getDisplayKey(key) {
+        if (typeof key === 'string') {
+            if (key.length === 4 && key.startsWith('Key')) {
+                key = key.substring(3);
+            }
+        }
+        return key;
     }
 
     _getModifierName(modifier) {
