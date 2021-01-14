@@ -590,7 +590,7 @@ class ProfileConditionUI {
         let inputType = 'text';
         let inputValue = value;
         let inputStep = null;
-        let mouseButtonHidden = true;
+        let showMouseButton = false;
         const events = [];
         const inputData = {validate, normalize};
         const node = this._valueInput;
@@ -604,9 +604,9 @@ class ProfileConditionUI {
             case 'modifierKeys':
             case 'modifierInputs':
                 inputValue = null;
-                mouseButtonHidden = (type !== 'modifierInputs');
+                showMouseButton = (type === 'modifierInputs');
                 this._kbmInputField = this._parent.parent.createKeyboardMouseInputField(node, this._mouseButton);
-                this._kbmInputField.prepare(null, this._splitModifiers(value), type);
+                this._kbmInputField.prepare(null, this._splitModifiers(value), showMouseButton, false);
                 events.push(['on', this._kbmInputField, 'change', this._onModifierInputChange.bind(this, inputData), false]);
                 break;
             default: // 'string'
@@ -625,7 +625,7 @@ class ProfileConditionUI {
         } else {
             node.removeAttribute('step');
         }
-        this._mouseButtonContainer.hidden = mouseButtonHidden;
+        this._mouseButtonContainer.hidden = !showMouseButton;
         for (const args of events) {
             this._inputEventListeners.addGeneric(...args);
         }

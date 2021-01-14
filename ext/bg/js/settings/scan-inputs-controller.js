@@ -199,8 +199,8 @@ class ScanInputField {
         const isPointerTypeSupported = this._isPointerTypeSupported.bind(this);
         this._includeInputField = new KeyboardMouseInputField(includeInputNode, includeMouseButton, this._os, isPointerTypeSupported);
         this._excludeInputField = new KeyboardMouseInputField(excludeInputNode, excludeMouseButton, this._os, isPointerTypeSupported);
-        this._includeInputField.prepare(null, this._splitModifiers(include), 'modifierInputs');
-        this._excludeInputField.prepare(null, this._splitModifiers(exclude), 'modifierInputs');
+        this._includeInputField.prepare(null, this._splitModifiers(include), true, false);
+        this._excludeInputField.prepare(null, this._splitModifiers(exclude), true, false);
 
         this._eventListeners.on(this._includeInputField, 'change', this._onIncludeValueChange.bind(this));
         this._eventListeners.on(this._excludeInputField, 'change', this._onExcludeValueChange.bind(this));

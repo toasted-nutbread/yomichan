@@ -37,25 +37,27 @@ class KeyboardMouseInputField extends EventDispatcher {
         this._eventListeners = new EventListenerCollection();
         this._key = null;
         this._modifiers = [];
-        this._type = null;
         this._penPointerIds = new Set();
+        this._mouseModifiersSupported = false;
+        this._keySupported = false;
     }
 
     get modifiers() {
         return this._modifiers;
     }
 
-    prepare(key, modifiers, type) {
+    prepare(key, modifiers, mouseModifiersSupported=false, keySupported=false) {
         this.cleanup();
 
         this._key = key;
         this._modifiers = this._sortModifiers(modifiers);
-        this._type = type;
+        this._mouseModifiersSupported = mouseModifiersSupported;
+        this._keySupported = keySupported;
         this._updateDisplayString();
         const events = [
             [this._inputNode, 'keydown', this._onModifierKeyDown.bind(this), false]
         ];
-        if (type === 'modifierInputs' && this._mouseButton !== null) {
+        if (mouseModifiersSupported && this._mouseButton !== null) {
             events.push(
                 [this._mouseButton, 'mousedown', this._onMouseButtonMouseDown.bind(this), false],
                 [this._mouseButton, 'pointerdown', this._onMouseButtonPointerDown.bind(this), false],
@@ -75,7 +77,8 @@ class KeyboardMouseInputField extends EventDispatcher {
         this._eventListeners.removeAllEventListeners();
         this._modifiers = [];
         this._key = null;
-        this._type = null;
+        this._mouseModifiersSupported = false;
+        this._keySupported = false;
         this._penPointerIds.clear();
     }
 
@@ -181,22 +184,18 @@ class KeyboardMouseInputField extends EventDispatcher {
         e.preventDefault();
 
         const key = DocumentUtil.getKeyFromEvent(e);
-        switch (this._type) {
-            case 'keyAndModifierKeys':
-            case 'keyAndModifierInputs':
-                this._updateModifiers([...this._getModifierKeys(e)], this._isModifierKey(key) ? void 0 : key);
-                break;
-            default:
-                switch (key) {
-                    case 'Escape':
-                    case 'Backspace':
-                        this.clearInputs();
-                        break;
-                    default:
-                        this._addModifiers(this._getModifierKeys(e));
-                        break;
-                }
-                break;
+        if (this._keySupported) {
+            this._updateModifiers([...this._getModifierKeys(e)], this._isModifierKey(key) ? void 0 : key);
+        } else {
+            switch (key) {
+                case 'Escape':
+                case 'Backspace':
+                    this.clearInputs();
+                    break;
+                default:
+                    this._addModifiers(this._getModifierKeys(e));
+                    break;
+            }
         }
     }
 
