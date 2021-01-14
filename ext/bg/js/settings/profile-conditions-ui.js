@@ -606,7 +606,7 @@ class ProfileConditionUI {
                 inputValue = null;
                 mouseButtonHidden = (type !== 'modifierInputs');
                 this._kbmInputField = this._parent.parent.createKeyboardMouseInputField(node, this._mouseButton);
-                this._kbmInputField.prepare(this._splitModifiers(value), type);
+                this._kbmInputField.prepare(null, this._splitModifiers(value), type);
                 events.push(['on', this._kbmInputField, 'change', this._onModifierInputChange.bind(this, inputData), false]);
                 break;
             default: // 'string'

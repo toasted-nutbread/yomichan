@@ -35,6 +35,7 @@ class KeyboardMouseInputField extends EventDispatcher {
         ]);
         this._mouseInputNamePattern = /^mouse(\d+)$/;
         this._eventListeners = new EventListenerCollection();
+        this._key = null;
         this._modifiers = [];
         this._type = null;
         this._penPointerIds = new Set();
@@ -44,9 +45,10 @@ class KeyboardMouseInputField extends EventDispatcher {
         return this._modifiers;
     }
 
-    prepare(modifiers, type) {
+    prepare(key, modifiers, type) {
         this.cleanup();
 
+        this._key = key;
         this._modifiers = this._sortModifiers(modifiers);
         this._type = type;
         this._updateDisplayString();
@@ -72,12 +74,13 @@ class KeyboardMouseInputField extends EventDispatcher {
     cleanup() {
         this._eventListeners.removeAllEventListeners();
         this._modifiers = [];
+        this._key = null;
         this._type = null;
         this._penPointerIds.clear();
     }
 
     clearInputs() {
-        this._updateModifiers([]);
+        this._updateModifiers([], null);
     }
 
     // Private
@@ -123,6 +126,10 @@ class KeyboardMouseInputField extends EventDispatcher {
             }
             displayValue += name;
         }
+        if (this._key !== null) {
+            if (!first) { displayValue += this._keySeparator; }
+            displayValue += this._key;
+        }
         this._inputNode.value = displayValue;
     }
 
@@ -158,17 +165,37 @@ class KeyboardMouseInputField extends EventDispatcher {
         return modifiers;
     }
 
+    _isModifierKey(keyName) {
+        switch (keyName) {
+            case 'Alt':
+            case 'Control':
+            case 'Meta':
+            case 'Shift':
+                return true;
+            default:
+                return false;
+        }
+    }
+
     _onModifierKeyDown(e) {
         e.preventDefault();
 
         const key = DocumentUtil.getKeyFromEvent(e);
-        switch (key) {
-            case 'Escape':
-            case 'Backspace':
-                this.clearInputs();
+        switch (this._type) {
+            case 'keyAndModifierKeys':
+            case 'keyAndModifierInputs':
+                this._updateModifiers([...this._getModifierKeys(e)], this._isModifierKey(key) ? void 0 : key);
                 break;
             default:
-                this._addModifiers(this._getModifierKeys(e));
+                switch (key) {
+                    case 'Escape':
+                    case 'Backspace':
+                        this.clearInputs();
+                        break;
+                    default:
+                        this._addModifiers(this._getModifierKeys(e));
+                        break;
+                }
                 break;
         }
     }
@@ -219,18 +246,22 @@ class KeyboardMouseInputField extends EventDispatcher {
         e.preventDefault();
     }
 
-    _addModifiers(newModifiers) {
+    _addModifiers(newModifiers, newKey) {
         const modifiers = new Set(this._modifiers);
         for (const modifier of newModifiers) {
             modifiers.add(modifier);
         }
-        this._updateModifiers([...modifiers]);
+        this._updateModifiers([...modifiers], newKey);
     }
 
-    _updateModifiers(modifiers) {
+    _updateModifiers(modifiers, newKey) {
         modifiers = this._sortModifiers(modifiers);
 
         let changed = false;
+        if (typeof newKey !== 'undefined' && this._key !== newKey) {
+            this._key = newKey;
+            changed = true;
+        }
         if (!this._areArraysEqual(this._modifiers, modifiers)) {
             this._modifiers = modifiers;
             changed = true;
@@ -238,7 +269,7 @@ class KeyboardMouseInputField extends EventDispatcher {
 
         this._updateDisplayString();
         if (changed) {
-            this.trigger('change', {modifiers});
+            this.trigger('change', {modifiers: this._modifiers, key: this._key});
         }
     }
 
