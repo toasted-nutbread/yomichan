@@ -47,9 +47,9 @@ class KeyboardMouseInputField extends EventDispatcher {
     prepare(modifiers, type) {
         this.cleanup();
 
-        this._modifiers = modifiers;
+        this._modifiers = this._sortModifiers(modifiers);
         this._type = type;
-        const displayValue = this._getModifierDisplayString(modifiers);
+        this._updateDisplayString();
         const events = [
             [this._inputNode, 'keydown', this._onModifierKeyDown.bind(this), false]
         ];
@@ -64,7 +64,6 @@ class KeyboardMouseInputField extends EventDispatcher {
                 [this._mouseButton, 'contextmenu', this._onMouseButtonContextMenu.bind(this), false]
             );
         }
-        this._inputNode.value = displayValue;
         for (const args of events) {
             this._eventListeners.addEventListener(...args);
         }
@@ -112,10 +111,10 @@ class KeyboardMouseInputField extends EventDispatcher {
         return modifierInfos.map(([modifier]) => modifier);
     }
 
-    _getModifierDisplayString(modifiers) {
+    _updateDisplayString() {
         let displayValue = '';
         let first = true;
-        for (const modifier of modifiers) {
+        for (const modifier of this._modifiers) {
             const {name} = this._getModifierName(modifier);
             if (first) {
                 first = false;
@@ -124,7 +123,7 @@ class KeyboardMouseInputField extends EventDispatcher {
             }
             displayValue += name;
         }
-        return displayValue;
+        this._inputNode.value = displayValue;
     }
 
     _getModifierName(modifier) {
@@ -231,12 +230,16 @@ class KeyboardMouseInputField extends EventDispatcher {
     _updateModifiers(modifiers) {
         modifiers = this._sortModifiers(modifiers);
 
-        const node = this._inputNode;
-        const displayValue = this._getModifierDisplayString(modifiers);
-        node.value = displayValue;
-        if (this._areArraysEqual(this._modifiers, modifiers)) { return; }
-        this._modifiers = modifiers;
-        this.trigger('change', {modifiers, displayValue});
+        let changed = false;
+        if (!this._areArraysEqual(this._modifiers, modifiers)) {
+            this._modifiers = modifiers;
+            changed = true;
+        }
+
+        this._updateDisplayString();
+        if (changed) {
+            this.trigger('change', {modifiers});
+        }
     }
 
     _areArraysEqual(array1, array2) {
