@@ -102,6 +102,8 @@ class DisplaySearch extends Display {
     }
 
     onKeyDown(e) {
+        if (super.onKeyDown(e)) { return; }
+
         const key = DocumentUtil.getKeyFromEvent(e);
         const ignoreKeys = this._onKeyDownIgnoreKeys;
 
@@ -122,7 +124,7 @@ class DisplaySearch extends Display {
             }
         }
 
-        if (!super.onKeyDown(e) && !preventFocus && document.activeElement !== this._queryInput) {
+        if (!preventFocus && document.activeElement !== this._queryInput) {
             this._queryInput.focus({preventScroll: true});
         }
     }
