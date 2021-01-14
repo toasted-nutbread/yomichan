@@ -526,6 +526,7 @@ class ProfileConditionUI {
     }
 
     _onModifierInputChange({validate, normalize}, {value}) {
+        value = this._joinModifiers(value);
         const okay = this._validateValue(value, validate);
         this._value = value;
         if (okay) {
@@ -605,7 +606,7 @@ class ProfileConditionUI {
                 inputValue = null;
                 mouseButtonHidden = (type !== 'modifierInputs');
                 this._kbmInputField = this._parent.parent.createKeyboardMouseInputField(node, this._mouseButton);
-                this._kbmInputField.prepare(value, type);
+                this._kbmInputField.prepare(this._splitModifiers(value), type);
                 events.push(['on', this._kbmInputField, 'change', this._onModifierInputChange.bind(this, inputData), false]);
                 break;
             default: // 'string'
@@ -644,5 +645,13 @@ class ProfileConditionUI {
 
     _removeSelf() {
         this._parent.removeCondition(this);
+    }
+
+    _splitModifiers(modifiersString) {
+        return modifiersString.split(/[,;\s]+/).map((v) => v.trim().toLowerCase()).filter((v) => v.length > 0);
+    }
+
+    _joinModifiers(modifiersArray) {
+        return modifiersArray.join(', ');
     }
 }

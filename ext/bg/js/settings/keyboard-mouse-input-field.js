@@ -35,7 +35,7 @@ class KeyboardMouseInputField extends EventDispatcher {
         ]);
         this._mouseInputNamePattern = /^mouse(\d+)$/;
         this._eventListeners = new EventListenerCollection();
-        this._value = '';
+        this._value = [];
         this._type = null;
         this._penPointerIds = new Set();
     }
@@ -49,8 +49,7 @@ class KeyboardMouseInputField extends EventDispatcher {
 
         this._value = value;
         this._type = type;
-        const modifiers = this._splitValue(value);
-        const {displayValue} = this._getInputStrings(modifiers);
+        const displayValue = this._getDisplayString(value);
         const events = [
             [this._inputNode, 'keydown', this._onModifierKeyDown.bind(this), false]
         ];
@@ -73,7 +72,7 @@ class KeyboardMouseInputField extends EventDispatcher {
 
     cleanup() {
         this._eventListeners.removeAllEventListeners();
-        this._value = '';
+        this._value = [];
         this._type = null;
         this._penPointerIds.clear();
     }
@@ -83,10 +82,6 @@ class KeyboardMouseInputField extends EventDispatcher {
     }
 
     // Private
-
-    _splitValue(value) {
-        return value.split(/[,;\s]+/).map((v) => v.trim().toLowerCase()).filter((v) => v.length > 0);
-    }
 
     _sortInputs(inputs) {
         const pattern = this._mouseInputNamePattern;
@@ -117,8 +112,7 @@ class KeyboardMouseInputField extends EventDispatcher {
         return inputInfos.map(([value]) => value);
     }
 
-    _getInputStrings(inputs) {
-        let value = '';
+    _getDisplayString(inputs) {
         let displayValue = '';
         let first = true;
         for (const input of inputs) {
@@ -126,13 +120,11 @@ class KeyboardMouseInputField extends EventDispatcher {
             if (first) {
                 first = false;
             } else {
-                value += ', ';
                 displayValue += this._keySeparator;
             }
-            value += input;
             displayValue += name;
         }
-        return {value, displayValue};
+        return displayValue;
     }
 
     _getInputName(value) {
@@ -229,21 +221,32 @@ class KeyboardMouseInputField extends EventDispatcher {
     }
 
     _addInputs(newInputs) {
-        const inputs = new Set(this._splitValue(this._value));
+        const inputs = new Set(this._value);
         for (const input of newInputs) {
             inputs.add(input);
         }
         this._updateInputs([...inputs]);
     }
 
-    _updateInputs(inputs) {
-        inputs = this._sortInputs(inputs);
+    _updateInputs(value) {
+        value = this._sortInputs(value);
 
         const node = this._inputNode;
-        const {value, displayValue} = this._getInputStrings(inputs);
+        const displayValue = this._getDisplayString(value);
         node.value = displayValue;
-        if (this._value === value) { return; }
+        if (this._areArraysEqual(this._value, value)) { return; }
         this._value = value;
         this.trigger('change', {value, displayValue});
+    }
+
+    _areArraysEqual(array1, array2) {
+        const length = array1.length;
+        if (length !== array2.length) { return false; }
+
+        for (let i = 0; i < length; ++i) {
+            if (array1[i] !== array2[i]) { return false; }
+        }
+
+        return true;
     }
 }

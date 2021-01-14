@@ -199,8 +199,8 @@ class ScanInputField {
         const isPointerTypeSupported = this._isPointerTypeSupported.bind(this);
         this._includeInputField = new KeyboardMouseInputField(includeInputNode, includeMouseButton, this._os, isPointerTypeSupported);
         this._excludeInputField = new KeyboardMouseInputField(excludeInputNode, excludeMouseButton, this._os, isPointerTypeSupported);
-        this._includeInputField.prepare(include, 'modifierInputs');
-        this._excludeInputField.prepare(exclude, 'modifierInputs');
+        this._includeInputField.prepare(this._splitModifiers(include), 'modifierInputs');
+        this._excludeInputField.prepare(this._splitModifiers(exclude), 'modifierInputs');
 
         this._eventListeners.on(this._includeInputField, 'change', this._onIncludeValueChange.bind(this));
         this._eventListeners.on(this._excludeInputField, 'change', this._onExcludeValueChange.bind(this));
@@ -231,10 +231,12 @@ class ScanInputField {
     // Private
 
     _onIncludeValueChange({value}) {
+        value = this._joinModifiers(value);
         this._parent.setProperty(this._index, 'include', value, true);
     }
 
     _onExcludeValueChange({value}) {
+        value = this._joinModifiers(value);
         this._parent.setProperty(this._index, 'exclude', value, true);
     }
 
@@ -295,5 +297,13 @@ class ScanInputField {
         showAdvanced = !!showAdvanced;
         this._node.dataset.showAdvanced = `${showAdvanced}`;
         this._parent.setProperty(this._index, 'options.showAdvanced', showAdvanced, false);
+    }
+
+    _splitModifiers(modifiersString) {
+        return modifiersString.split(/[,;\s]+/).map((v) => v.trim().toLowerCase()).filter((v) => v.length > 0);
+    }
+
+    _joinModifiers(modifiersArray) {
+        return modifiersArray.join(', ');
     }
 }
