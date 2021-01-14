@@ -18,7 +18,6 @@
 /* global
  * ClipboardMonitor
  * Display
- * DocumentUtil
  * api
  * wanakana
  */
