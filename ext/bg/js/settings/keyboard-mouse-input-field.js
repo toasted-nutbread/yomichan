@@ -48,6 +48,7 @@ class KeyboardMouseInputField extends EventDispatcher {
         this.cleanup();
 
         this._value = value;
+        this._type = type;
         const modifiers = this._splitValue(value);
         const {displayValue} = this._getInputStrings(modifiers);
         const events = [
