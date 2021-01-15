@@ -316,6 +316,10 @@ class ProfileConditionGroupUI {
         return this._node;
     }
 
+    get childCount() {
+        return this._children.length;
+    }
+
     prepare(conditionGroup) {
         this._node = this._parent.instantiateTemplate('profile-condition-group');
         this._conditionContainer = this._node.querySelector('.profile-condition-list');
@@ -372,7 +376,7 @@ class ProfileConditionGroupUI {
         }]);
 
         if (this._children.length === 0) {
-            this._parent.removeConditionGroup(this);
+            this.removeSelf();
         }
 
         return true;
@@ -381,6 +385,10 @@ class ProfileConditionGroupUI {
     getPath(property) {
         property = (typeof property === 'string' ? `.${property}` : '');
         return this._parent.getPath(`conditionGroups[${this._index}]${property}`);
+    }
+
+    removeSelf() {
+        this._parent.removeConditionGroup(this);
     }
 
     // Private
@@ -469,7 +477,10 @@ class ProfileConditionUI {
         this._eventListeners.addEventListener(this._typeInput, 'change', this._onTypeChange.bind(this), false);
         this._eventListeners.addEventListener(this._operatorInput, 'change', this._onOperatorChange.bind(this), false);
         if (this._removeButton !== null) { this._eventListeners.addEventListener(this._removeButton, 'click', this._onRemoveButtonClick.bind(this), false); }
-        if (this._menuButton !== null) { this._eventListeners.addEventListener(this._menuButton, 'menuClosed', this._onMenuClosed.bind(this), false); }
+        if (this._menuButton !== null) {
+            this._eventListeners.addEventListener(this._menuButton, 'menuOpened', this._onMenuOpened.bind(this), false);
+            this._eventListeners.addEventListener(this._menuButton, 'menuClosed', this._onMenuClosed.bind(this), false);
+        }
     }
 
     cleanup() {
@@ -534,10 +545,20 @@ class ProfileConditionUI {
         this._removeSelf();
     }
 
+    _onMenuOpened({detail: {menu}}) {
+        const deleteGroup = menu.querySelector('.popup-menu-item[data-menu-action="deleteGroup"]');
+        if (deleteGroup !== null) {
+            deleteGroup.hidden = (this._parent.childCount <= 1);
+        }
+    }
+
     _onMenuClosed({detail: {action}}) {
         switch (action) {
             case 'delete':
                 this._removeSelf();
+                break;
+            case 'deleteGroup':
+                this._parent.removeSelf();
                 break;
             case 'resetValue':
                 this._resetValue();
