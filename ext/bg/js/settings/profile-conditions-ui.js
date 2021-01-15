@@ -19,8 +19,9 @@
  * KeyboardMouseInputField
  */
 
-class ProfileConditionsUI {
+class ProfileConditionsUI extends EventDispatcher {
     constructor(settingsController) {
+        super();
         this._settingsController = settingsController;
         this._os = null;
         this._conditionGroupsContainer = null;
@@ -195,6 +196,8 @@ class ProfileConditionsUI {
             items: []
         }]);
 
+        this._triggerConditionGroupCountChanged(this._children.length);
+
         return true;
     }
 
@@ -228,6 +231,8 @@ class ProfileConditionsUI {
             deleteCount: 0,
             items: [conditionGroup]
         }]);
+
+        this._triggerConditionGroupCountChanged(this._children.length);
     }
 
     _addConditionGroup(conditionGroup, index) {
@@ -268,6 +273,10 @@ class ProfileConditionsUI {
 
     _normalizeDomains(value) {
         return this.splitValue(value).join(', ');
+    }
+
+    _triggerConditionGroupCountChanged(count) {
+        this.trigger('conditionGroupCountChanged', {count, profileIndex: this._profileIndex});
     }
 }
 
