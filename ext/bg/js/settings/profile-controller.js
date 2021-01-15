@@ -335,7 +335,7 @@ class ProfileController {
 
         this._profileConditionsUI.cleanup();
         this._profileConditionsIndex = profileIndex;
-        this._profileConditionsUI.prepare(profileIndex, profile.conditionGroups);
+        this._profileConditionsUI.prepare(profileIndex);
         if (this._profileConditionsProfileName !== null) {
             this._profileConditionsProfileName.textContent = profile.name;
         }
@@ -369,7 +369,7 @@ class ProfileController {
         this._profileConditionsUI.cleanup();
         const conditionsProfile = this._getProfile(this._profileConditionsIndex !== null ? this._profileConditionsIndex : settingsProfileIndex);
         if (conditionsProfile !== null) {
-            this._profileConditionsUI.prepare(settingsProfileIndex, conditionsProfile.conditionGroups);
+            this._profileConditionsUI.prepare(settingsProfileIndex);
         }
 
         // Udpate profile entries

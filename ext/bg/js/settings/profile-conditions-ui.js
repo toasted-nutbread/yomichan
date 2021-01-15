@@ -89,7 +89,12 @@ class ProfileConditionsUI extends EventDispatcher {
         this._os = value;
     }
 
-    prepare(profileIndex, conditionGroups) {
+    async prepare(profileIndex) {
+        const options = await this._settingsController.getOptionsFull();
+        const {profiles} = options;
+        if (profileIndex < 0 || profileIndex >= profiles.length) { return; }
+        const {conditionGroups} = profiles[profileIndex];
+
         this._profileIndex = profileIndex;
         this._conditionGroupsContainer = document.querySelector('#profile-condition-groups');
         this._addConditionGroupButton = document.querySelector('#profile-add-condition-group');
