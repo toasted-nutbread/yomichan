@@ -49,11 +49,9 @@ class KeyboardMouseInputField extends EventDispatcher {
     prepare(key, modifiers, mouseModifiersSupported=false, keySupported=false) {
         this.cleanup();
 
-        this._key = key;
-        this._modifiers = this._sortModifiers(modifiers);
         this._mouseModifiersSupported = mouseModifiersSupported;
         this._keySupported = keySupported;
-        this._updateDisplayString();
+        this.setInput(key, modifiers);
         const events = [
             [this._inputNode, 'keydown', this._onModifierKeyDown.bind(this), false]
         ];
@@ -71,6 +69,12 @@ class KeyboardMouseInputField extends EventDispatcher {
         for (const args of events) {
             this._eventListeners.addEventListener(...args);
         }
+    }
+
+    setInput(key, modifiers) {
+        this._key = key;
+        this._modifiers = this._sortModifiers(modifiers);
+        this._updateDisplayString();
     }
 
     cleanup() {
