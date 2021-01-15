@@ -525,6 +525,9 @@ class ProfileConditionUI {
             case 'delete':
                 this._removeSelf();
                 break;
+            case 'resetValue':
+                this._resetValue();
+                break;
         }
     }
 
@@ -636,9 +639,11 @@ class ProfileConditionUI {
         return modifiersArray.join(', ');
     }
 
-    async _setType(type) {
+    async _setType(type, operator) {
         const operators = this._getDescriptorOperators(type);
-        const operator = operators.length > 0 ? operators[0].name : '';
+        if (typeof operator === 'undefined') {
+            operator = operators.length > 0 ? operators[0].name : '';
+        }
         const operatorDetails = this._getOperatorDetails(type, operator);
         const {defaultValue} = operatorDetails;
         this._updateSelect(this._operatorInput, this._operatorOptionContainer, operators, operator);
@@ -661,5 +666,11 @@ class ProfileConditionUI {
             }
         }
         await this.settingsController.modifyGlobalSettings(settingsModifications);
+    }
+
+    async _resetValue() {
+        const type = this._typeInput.value;
+        const operator = this._operatorInput.value;
+        await this._setType(type, operator);
     }
 }
