@@ -92,6 +92,7 @@ class ProfileController {
         if (this._profileMoveUpButton !== null) { this._profileMoveUpButton.addEventListener('click', this._onMove.bind(this, -1), false); }
         if (this._profileMoveDownButton !== null) { this._profileMoveDownButton.addEventListener('click', this._onMove.bind(this, 1), false); }
 
+        this._profileConditionsUI.on('conditionGroupCountChanged', this._onConditionGroupCountChanged.bind(this));
         this._settingsController.on('optionsChanged', this._onOptionsChanged.bind(this));
         this._onOptionsChanged();
     }
@@ -449,6 +450,13 @@ class ProfileController {
         this.moveProfile(this._settingsController.profileIndex, offset);
     }
 
+    _onConditionGroupCountChanged({count, profileIndex}) {
+        if (profileIndex >= 0 && profileIndex < this._profileEntryList.length) {
+            const profileEntry = this._profileEntryList[profileIndex];
+            profileEntry.setConditionGroupsCount(count);
+        }
+    }
+
     _addProfileEntry(profileIndex) {
         const profile = this._profiles[profileIndex];
         const node = this._settingsController.instantiateTemplate('profile-entry');
@@ -626,8 +634,12 @@ class ProfileEntry {
 
     updateState() {
         this._nameInput.value = this._profile.name;
-        this._countText.textContent = this._profile.conditionGroups.length;
+        this._countText.textContent = `${this._profile.conditionGroups.length}`;
         this._isDefaultRadio.checked = (this._index === this._profileController.profileCurrentIndex);
+    }
+
+    setConditionGroupsCount(count) {
+        this._countText.textContent = `${count}`;
     }
 
     // Private
