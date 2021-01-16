@@ -819,19 +819,11 @@ class Backend {
         // Create a new window
         const options = this.getOptions({current: true});
         const createData = this._getSearchPopupWindowCreateData(baseUrl, options);
-        const popupWindow = await new Promise((resolve, reject) => {
-            chrome.windows.create(
-                createData,
-                (result) => {
-                    const error = chrome.runtime.lastError;
-                    if (error) {
-                        reject(new Error(error.message));
-                    } else {
-                        resolve(result);
-                    }
-                }
-            );
-        });
+        const {popupWindow: {windowState}} = options;
+        const popupWindow = await this._createWindow(createData);
+        if (windowState !== 'normal') {
+            await this._updateWindow(popupWindow.id, {state: windowState});
+        }
 
         const {tabs} = popupWindow;
         if (tabs.length === 0) {
@@ -852,7 +844,7 @@ class Backend {
     }
 
     _getSearchPopupWindowCreateData(url, options) {
-        const {popupWindow: {width, height, left, top, useLeft, useTop, windowType, windowState}} = options;
+        const {popupWindow: {width, height, left, top, useLeft, useTop, windowType}} = options;
         return {
             url,
             width,
@@ -860,8 +852,41 @@ class Backend {
             left: useLeft ? left : void 0,
             top: useTop ? top : void 0,
             type: windowType,
-            state: windowState
+            state: 'normal'
         };
+    }
+
+    _createWindow(createData) {
+        return new Promise((resolve, reject) => {
+            chrome.windows.create(
+                createData,
+                (result) => {
+                    const error = chrome.runtime.lastError;
+                    if (error) {
+                        reject(new Error(error.message));
+                    } else {
+                        resolve(result);
+                    }
+                }
+            );
+        });
+    }
+
+    _updateWindow(windowId, updateInfo) {
+        return new Promise((resolve, reject) => {
+            chrome.windows.update(
+                windowId,
+                updateInfo,
+                (result) => {
+                    const error = chrome.runtime.lastError;
+                    if (error) {
+                        reject(new Error(error.message));
+                    } else {
+                        resolve(result);
+                    }
+                }
+            );
+        });
     }
 
     _updateSearchQuery(tabId, text, animate) {
