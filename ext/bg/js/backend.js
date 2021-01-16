@@ -134,7 +134,8 @@ class Backend {
             ['toggleTextScanning', this._onCommandToggleTextScanning.bind(this)],
             ['openHelpPage',       this._onCommandOpenHelpPage.bind(this)],
             ['openSettingsPage',   this._onCommandOpenSettingsPage.bind(this)],
-            ['openSearchPage',     this._onCommandOpenSearchPage.bind(this)]
+            ['openSearchPage',     this._onCommandOpenSearchPage.bind(this)],
+            ['openPopupWindow',    this._onCommandOpenPopupWindow.bind(this)]
         ]);
     }
 
@@ -787,6 +788,10 @@ class Backend {
         const options = this.getOptions({current: true});
         options.general.enable = !options.general.enable;
         await this._saveOptions(source);
+    }
+
+    async _onCommandOpenPopupWindow() {
+        await this._onApiGetOrCreateSearchPopup({focus: true});
     }
 
     // Utilities

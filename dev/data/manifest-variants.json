@@ -103,6 +103,9 @@
                     "default": "Alt+Insert"
                 },
                 "description": "Open the search page"
+            },
+            "openPopupWindow": {
+                "description": "Open the popup window"
             }
         },
         "web_accessible_resources": [
