@@ -1623,6 +1623,7 @@ class Display extends EventDispatcher {
         await dynamicLoader.loadScripts([
             '/mixed/js/text-scanner.js',
             '/mixed/js/frame-client.js',
+            '/mixed/js/hotkey-handler.js',
             '/fg/js/popup.js',
             '/fg/js/popup-proxy.js',
             '/fg/js/popup-window.js',
@@ -1640,7 +1641,8 @@ class Display extends EventDispatcher {
             popupFactory,
             pageType: this._pageType,
             allowRootFramePopupProxy: true,
-            childrenSupported: this._childrenSupported
+            childrenSupported: this._childrenSupported,
+            hotkeyHandler: this._hotkeyHandler
         });
 
         const frontend = new Frontend(setupNestedPopupsOptions);
