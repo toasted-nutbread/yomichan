@@ -682,8 +682,8 @@ class TextScanner extends EventDispatcher {
             }
         }
 
-        for (const [node, type, listener, options] of eventListenerInfos) {
-            this._eventListeners.addEventListener(node, type, listener, options);
+        for (const args of eventListenerInfos) {
+            this._eventListeners.addEventListener(...args);
         }
     }
 
