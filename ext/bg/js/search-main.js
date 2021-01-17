@@ -34,7 +34,7 @@
 
         const japaneseUtil = new JapaneseUtil(wanakana);
 
-        const hotkeyHandler = new HotkeyHandler(false);
+        const hotkeyHandler = new HotkeyHandler();
         hotkeyHandler.prepare();
 
         const displaySearch = new DisplaySearch(japaneseUtil, documentFocusController, hotkeyHandler);

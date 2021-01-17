@@ -34,7 +34,7 @@
 
         const japaneseUtil = new JapaneseUtil(null);
 
-        const hotkeyHandler = new HotkeyHandler(true);
+        const hotkeyHandler = new HotkeyHandler();
         hotkeyHandler.prepare();
 
         const display = new Display('popup', japaneseUtil, documentFocusController, hotkeyHandler);

@@ -496,6 +496,9 @@ class Display extends EventDispatcher {
         this._parentPopupId = parentPopupId;
         this._parentFrameId = parentFrameId;
         this._ownerFrameId = ownerFrameId;
+        if (this._pageType === 'popup') {
+            this._hotkeyHandler.forwardFrameId = ownerFrameId;
+        }
         this._childrenSupported = childrenSupported;
         this._setContentScale(scale);
         await this.setOptionsContext(optionsContext);
