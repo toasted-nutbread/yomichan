@@ -283,8 +283,8 @@ class TextScanner extends EventDispatcher {
         return false;
     }
 
-    async search(textSource) {
-        const inputInfo = this._createInputInfo(-1, false, null, 'script', 'script', [], []);
+    async search(textSource, inputDetail) {
+        const inputInfo = this._createInputInfo(-1, false, null, 'script', 'script', [], [], inputDetail);
         return await this._search(textSource, this._searchTerms, this._searchKanji, inputInfo);
     }
 
@@ -924,8 +924,8 @@ class TextScanner extends EventDispatcher {
         return fallback;
     }
 
-    _createInputInfo(index, empty, input, type, cause, modifiers, modifierKeys) {
-        return {index, empty, input, type, cause, modifiers, modifierKeys};
+    _createInputInfo(index, empty, input, type, cause, modifiers, modifierKeys, detail) {
+        return {index, empty, input, type, cause, modifiers, modifierKeys, detail};
     }
 
     _setHasAll(set, values) {
