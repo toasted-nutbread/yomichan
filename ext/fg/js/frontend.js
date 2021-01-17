@@ -251,12 +251,12 @@ class Frontend {
         }
     }
 
-    _onSearched({type, definitions, sentence, inputInfo: {eventType, empty, detail}, textSource, optionsContext, detail: {documentTitle}, error}) {
+    _onSearched({type, definitions, sentence, inputInfo: {eventType, passive, detail}, textSource, optionsContext, detail: {documentTitle}, error}) {
         const scanningOptions = this._options.scanning;
 
         if (error !== null) {
             if (yomichan.isExtensionUnloaded) {
-                if (textSource !== null && !empty) {
+                if (textSource !== null && !passive) {
                     this._showExtensionUnloaded(textSource);
                 }
             } else {
