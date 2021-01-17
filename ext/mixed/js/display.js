@@ -60,7 +60,7 @@ class Display extends EventDispatcher {
             japaneseUtil,
             mediaLoader: this._mediaLoader
         });
-        this._hotkeyHandler = new HotkeyHandler(this._pageType, (this._pageType === 'popup'));
+        this._hotkeyHandler = new HotkeyHandler(this._pageType === 'popup');
         this._messageHandlers = new Map();
         this._directMessageHandlers = new Map();
         this._windowMessageHandlers = new Map();
@@ -1879,8 +1879,9 @@ class Display extends EventDispatcher {
     }
 
     _updateHotkeys(options) {
-        this._hotkeyHandler.clearHotkeys();
-        this._hotkeyHandler.registerHotkeys(options.inputs.hotkeys);
+        const scope = this._pageType;
+        this._hotkeyHandler.clearHotkeys(scope);
+        this._hotkeyHandler.registerHotkeys(scope, options.inputs.hotkeys);
     }
 
     async _closeTab() {
