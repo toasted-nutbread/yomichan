@@ -41,6 +41,13 @@ class TextSourceRange {
         return this._imposterSourceElement;
     }
 
+    get isConnected() {
+        return (
+            this._range.startContainer.isConnected &&
+            this._range.endContainer.isConnected
+        );
+    }
+
     clone() {
         return new TextSourceRange(this._range.cloneRange(), this._content, this._imposterContainer, this._imposterSourceElement);
     }
