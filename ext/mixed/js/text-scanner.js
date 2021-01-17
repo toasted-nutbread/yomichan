@@ -900,22 +900,22 @@ class TextScanner extends EventDispatcher {
         }
     }
 
-    _getMatchingInputGroupFromEvent(type, cause, event) {
+    _getMatchingInputGroupFromEvent(pointerType, cause, event) {
         const modifiers = DocumentUtil.getActiveModifiersAndButtons(event);
         const modifierKeys = DocumentUtil.getActiveModifiers(event);
-        return this._getMatchingInputGroup(type, cause, modifiers, modifierKeys);
+        return this._getMatchingInputGroup(pointerType, cause, modifiers, modifierKeys);
     }
 
-    _getMatchingInputGroup(type, cause, modifiers, modifierKeys) {
+    _getMatchingInputGroup(pointerType, cause, modifiers, modifierKeys) {
         let fallbackIndex = -1;
         const modifiersSet = new Set(modifiers);
         for (let i = 0, ii = this._inputs.length; i < ii; ++i) {
             const input = this._inputs[i];
             const {include, exclude, types} = input;
-            if (!types.has(type)) { continue; }
+            if (!types.has(pointerType)) { continue; }
             if (this._setHasAll(modifiersSet, include) && (exclude.length === 0 || !this._setHasAll(modifiersSet, exclude))) {
                 if (include.length > 0) {
-                    return this._createInputInfo(i, false, input, type, cause, modifiers, modifierKeys);
+                    return this._createInputInfo(i, false, input, pointerType, cause, modifiers, modifierKeys);
                 } else if (fallbackIndex < 0) {
                     fallbackIndex = i;
                 }
@@ -924,13 +924,13 @@ class TextScanner extends EventDispatcher {
 
         return (
             fallbackIndex >= 0 ?
-            this._createInputInfo(fallbackIndex, true, this._inputs[fallbackIndex], type, cause, modifiers, modifierKeys) :
+            this._createInputInfo(fallbackIndex, true, this._inputs[fallbackIndex], pointerType, cause, modifiers, modifierKeys) :
             null
         );
     }
 
-    _createInputInfo(index, empty, input, type, cause, modifiers, modifierKeys, detail) {
-        return {index, empty, input, type, cause, modifiers, modifierKeys, detail};
+    _createInputInfo(index, empty, input, pointerType, cause, modifiers, modifierKeys, detail) {
+        return {index, empty, input, pointerType, cause, modifiers, modifierKeys, detail};
     }
 
     _setHasAll(set, values) {
