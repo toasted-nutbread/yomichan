@@ -73,6 +73,15 @@ class TextSourceElement {
         return delta;
     }
 
+    collapse(toStart) {
+        if (toStart) {
+            this._endOffset = this._startOffset;
+        } else {
+            this._startOffset = this._endOffset;
+        }
+        this._content = '';
+    }
+
     getRect() {
         return this._element.getBoundingClientRect();
     }

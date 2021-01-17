@@ -74,6 +74,11 @@ class TextSourceRange {
         return length - state.remainder;
     }
 
+    collapse(toStart) {
+        this._range.collapse(toStart);
+        this._content = '';
+    }
+
     getRect() {
         return this._range.getBoundingClientRect();
     }
