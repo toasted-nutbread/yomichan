@@ -188,7 +188,7 @@ class KeyboardShortcutHotkeyEntry {
 
         const scopes = this._data.scopes;
         for (const scopeCheckbox of scopeCheckboxes) {
-            scopeCheckbox.checked = scopes.includes(scopeCheckbox.dataset.type);
+            scopeCheckbox.checked = scopes.includes(scopeCheckbox.dataset.scope);
             this._eventListeners.addEventListener(scopeCheckbox, 'change', this._onScopeCheckboxChange.bind(this), false);
         }
 
@@ -227,9 +227,9 @@ class KeyboardShortcutHotkeyEntry {
 
     _onScopeCheckboxChange(e) {
         const node = e.currentTarget;
-        const {type} = node.dataset;
-        if (typeof type !== 'string') { return; }
-        this._setScopeEnabled(type, node.checked);
+        const {scope} = node.dataset;
+        if (typeof scope !== 'string') { return; }
+        this._setScopeEnabled(scope, node.checked);
     }
 
     async _delete() {
