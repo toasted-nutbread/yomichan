@@ -60,7 +60,7 @@ class Display extends EventDispatcher {
             japaneseUtil,
             mediaLoader: this._mediaLoader
         });
-        this._hotkeyHandler = new HotkeyHandler(this._pageType);
+        this._hotkeyHandler = new HotkeyHandler(this._pageType, (this._pageType === 'popup'));
         this._messageHandlers = new Map();
         this._directMessageHandlers = new Map();
         this._windowMessageHandlers = new Map();
