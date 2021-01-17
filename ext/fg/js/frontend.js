@@ -251,7 +251,7 @@ class Frontend {
         }
     }
 
-    _onSearched({type, definitions, sentence, inputInfo: {cause, empty, detail}, textSource, optionsContext, detail: {documentTitle}, error}) {
+    _onSearched({type, definitions, sentence, inputInfo: {eventType, empty, detail}, textSource, optionsContext, detail: {documentTitle}, error}) {
         const scanningOptions = this._options.scanning;
 
         if (error !== null) {
@@ -264,7 +264,7 @@ class Frontend {
             }
         } if (type !== null) {
             this._stopClearSelectionDelayed();
-            let focus = (cause === 'mouseMove');
+            let focus = (eventType === 'mouseMove');
             if (isObject(detail)) {
                 const focus2 = detail.focus;
                 if (typeof focus2 === 'boolean') { focus = focus2; }
