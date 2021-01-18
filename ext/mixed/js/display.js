@@ -42,6 +42,7 @@ class Display extends EventDispatcher {
         this._hotkeyHandler = hotkeyHandler;
         this._container = document.querySelector('#definitions');
         this._definitions = [];
+        this._definitionNodes = [];
         this._optionsContext = {depth: 0, url: window.location.href};
         this._options = null;
         this._index = 0;
@@ -181,6 +182,14 @@ class Display extends EventDispatcher {
 
     get hotkeyHandler() {
         return this._hotkeyHandler;
+    }
+
+    get definitions() {
+        return this._definitions;
+    }
+
+    get definitionNodes() {
+        return this._definitionNodes;
     }
 
     async prepare() {
@@ -519,6 +528,8 @@ class Display extends EventDispatcher {
             this._eventListeners.removeAllEventListeners();
             this._mediaLoader.unloadAll();
             this._hideTagNotification(false);
+            this._definitions = [];
+            this._definitionNodes = [];
 
             // Prepare
             const urlSearchParams = new URLSearchParams(location.search);
@@ -921,6 +932,7 @@ class Display extends EventDispatcher {
                 this._displayGenerator.createKanjiEntry(definition)
             );
             entry.dataset.index = `${i}`;
+            this._definitionNodes.push(entry);
             this._addEntryEventListeners(entry);
             container.appendChild(entry);
             if (focusEntry === i) {
@@ -1278,7 +1290,7 @@ class Display extends EventDispatcher {
     }
 
     _getEntry(index) {
-        const entries = this._container.querySelectorAll('.entry');
+        const entries = this._definitionNodes;
         return index >= 0 && index < entries.length ? entries[index] : null;
     }
 
