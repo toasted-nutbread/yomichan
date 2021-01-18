@@ -672,18 +672,8 @@ class Backend {
         return details;
     }
 
-    async _onApiModifySettings({targets, source}) {
-        const results = [];
-        for (const target of targets) {
-            try {
-                const result = this._modifySetting(target);
-                results.push({result: clone(result)});
-            } catch (e) {
-                results.push({error: serializeError(e)});
-            }
-        }
-        await this._saveOptions(source);
-        return results;
+    _onApiModifySettings({targets, source}) {
+        return this._modifySettings(targets, source);
     }
 
     _onApiGetSettings({targets}) {
@@ -784,10 +774,14 @@ class Backend {
     }
 
     async _onCommandToggleTextScanning() {
-        const source = 'popup';
         const options = this.getOptions({current: true});
-        options.general.enable = !options.general.enable;
-        await this._saveOptions(source);
+        await this._modifySettings([{
+            action: 'set',
+            path: 'general.enable',
+            value: !options.general.enable,
+            scope: 'profile',
+            optionsContext: {current: true}
+        }], 'backend');
     }
 
     async _onCommandOpenPopupWindow() {
@@ -795,6 +789,20 @@ class Backend {
     }
 
     // Utilities
+
+    async _modifySettings(targets, source) {
+        const results = [];
+        for (const target of targets) {
+            try {
+                const result = this._modifySetting(target);
+                results.push({result: clone(result)});
+            } catch (e) {
+                results.push({error: serializeError(e)});
+            }
+        }
+        await this._saveOptions(source);
+        return results;
+    }
 
     _getOrCreateSearchPopup() {
         if (this._searchPopupTabCreatePromise === null) {
