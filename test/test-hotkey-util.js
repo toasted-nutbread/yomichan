@@ -150,7 +150,7 @@ function testDisplayNames() {
 function testSortModifiers() {
     const data = [
         {modifiers: [], expected: []},
-        {modifiers: ['shift', 'alt', 'ctrl', 'mouse4', 'meta', 'mouse1', 'mouse0'], expected: ['meta', 'ctrl', 'alt', 'shift', 'mouse0', 'mouse1', 'mouse4']},
+        {modifiers: ['shift', 'alt', 'ctrl', 'mouse4', 'meta', 'mouse1', 'mouse0'], expected: ['meta', 'ctrl', 'alt', 'shift', 'mouse0', 'mouse1', 'mouse4']}
     ];
 
     const hotkeyUtil = createHotkeyUtil();

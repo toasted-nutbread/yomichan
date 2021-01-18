@@ -16,7 +16,6 @@
  */
 
 /* global
- * DocumentUtil
  * HotkeyUtil
  * ScanInputsController
  * api
