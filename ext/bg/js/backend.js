@@ -158,6 +158,8 @@ class Backend {
         return this._prepareCompletePromise;
     }
 
+    // Private
+
     _prepareInternalSync() {
         if (isObject(chrome.commands) && isObject(chrome.commands.onCommand)) {
             const onCommand = this._onWebExtensionEventWrapper(this._onCommand.bind(this));
@@ -226,10 +228,6 @@ class Backend {
                 this._badgePrepareDelayTimer = null;
             }
         }
-    }
-
-    isPrepared() {
-        return this._isPrepared;
     }
 
     // Event handlers
