@@ -17,7 +17,6 @@
 
 /* global
  * DocumentUtil
- * HotkeyHandler
  * TextScanner
  * TextSourceElement
  * TextSourceRange
