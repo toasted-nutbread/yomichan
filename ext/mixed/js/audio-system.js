@@ -24,6 +24,7 @@
 class AudioSystem {
     constructor(useCache) {
         this._cache = new CacheMap(useCache ? 32 : 0);
+        this._fallbackAudio = null;
     }
 
     prepare() {
@@ -79,6 +80,13 @@ class AudioSystem {
         }
 
         throw new Error('Could not create audio');
+    }
+
+    getFallbackAudio() {
+        if (this._fallbackAudio === null) {
+            this._fallbackAudio = new Audio('/mixed/mp3/button.mp3');
+        }
+        return this._fallbackAudio;
     }
 
     createAudio(url) {
