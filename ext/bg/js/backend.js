@@ -208,7 +208,7 @@ class Backend {
 
             this._applyOptions('background');
 
-            const options = this.getOptions({current: true});
+            const options = this._getProfileOptions({current: true});
             if (options.general.showGuide) {
                 this._openWelcomeGuidePage();
             }
@@ -232,19 +232,10 @@ class Backend {
         return this._isPrepared;
     }
 
-    getFullOptions(useSchema=false) {
-        const options = this._options;
-        return useSchema ? this._optionsUtil.createValidatingProxy(options) : options;
-    }
-
-    getOptions(optionsContext, useSchema=false) {
-        return this._getProfile(optionsContext, useSchema).options;
-    }
-
     // Event handlers
 
     async _onClipboardTextChange({text}) {
-        const {general: {maximumClipboardSearchLength}} = this.getOptions({current: true});
+        const {general: {maximumClipboardSearchLength}} = this._getProfileOptions({current: true});
         if (text.length > maximumClipboardSearchLength) {
             text = text.substring(0, maximumClipboardSearchLength);
         }
@@ -385,15 +376,15 @@ class Backend {
     }
 
     _onApiOptionsGet({optionsContext}) {
-        return this.getOptions(optionsContext);
+        return this._getProfileOptions(optionsContext);
     }
 
     _onApiOptionsGetFull() {
-        return this.getFullOptions();
+        return this._getOptionsFull();
     }
 
     async _onApiKanjiFind({text, optionsContext}) {
-        const options = this.getOptions(optionsContext);
+        const options = this._getProfileOptions(optionsContext);
         const {general: {maxResults}} = options;
         const findKanjiOptions = this._getTranslatorFindKanjiOptions(options);
         const definitions = await this._translator.findKanji(text, findKanjiOptions);
@@ -402,7 +393,7 @@ class Backend {
     }
 
     async _onApiTermsFind({text, details, optionsContext}) {
-        const options = this.getOptions(optionsContext);
+        const options = this._getProfileOptions(optionsContext);
         const {general: {resultOutputMode: mode, maxResults}} = options;
         const findTermsOptions = this._getTranslatorFindTermsOptions(details, options);
         const [definitions, length] = await this._translator.findTerms(mode, text, findTermsOptions);
@@ -411,7 +402,7 @@ class Backend {
     }
 
     async _onApiTextParse({text, optionsContext}) {
-        const options = this.getOptions(optionsContext);
+        const options = this._getProfileOptions(optionsContext);
         const results = [];
 
         if (options.parsing.enableScanningParser) {
@@ -774,7 +765,7 @@ class Backend {
     }
 
     async _onCommandToggleTextScanning() {
-        const options = this.getOptions({current: true});
+        const options = this._getProfileOptions({current: true});
         await this._modifySettings([{
             action: 'set',
             path: 'general.enable',
@@ -830,7 +821,7 @@ class Backend {
         }
 
         // Create a new window
-        const options = this.getOptions({current: true});
+        const options = this._getProfileOptions({current: true});
         const createData = this._getSearchPopupWindowCreateData(baseUrl, options);
         const {popupWindow: {windowState}} = options;
         const popupWindow = await this._createWindow(createData);
@@ -911,7 +902,7 @@ class Backend {
     }
 
     _applyOptions(source) {
-        const options = this.getOptions({current: true});
+        const options = this._getProfileOptions({current: true});
         this._updateBadge();
 
         this._anki.server = options.anki.server;
@@ -932,8 +923,17 @@ class Backend {
         this._sendMessageAllTabsIgnoreResponse('optionsUpdated', {source});
     }
 
+    _getOptionsFull(useSchema=false) {
+        const options = this._options;
+        return useSchema ? this._optionsUtil.createValidatingProxy(options) : options;
+    }
+
+    _getProfileOptions(optionsContext, useSchema=false) {
+        return this._getProfile(optionsContext, useSchema).options;
+    }
+
     _getProfile(optionsContext, useSchema=false) {
-        const options = this.getFullOptions(useSchema);
+        const options = this._getOptionsFull(useSchema);
         const profiles = options.profiles;
         if (optionsContext.current) {
             return profiles[options.profileCurrent];
@@ -1140,9 +1140,9 @@ class Backend {
         switch (scope) {
             case 'profile':
                 if (!isObject(target.optionsContext)) { throw new Error('Invalid optionsContext'); }
-                return this.getOptions(target.optionsContext, true);
+                return this._getProfileOptions(target.optionsContext, true);
             case 'global':
-                return this.getFullOptions(true);
+                return this._getOptionsFull(true);
             default:
                 throw new Error(`Invalid scope: ${scope}`);
         }
@@ -1697,7 +1697,7 @@ class Backend {
 
     async _saveOptions(source) {
         this._clearProfileConditionsSchemaCache();
-        const options = this.getFullOptions();
+        const options = this._getOptionsFull();
         await this._optionsUtil.save(options);
         this._applyOptions(source);
     }
