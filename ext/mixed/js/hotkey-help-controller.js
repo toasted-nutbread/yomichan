@@ -46,24 +46,35 @@ class HotkeyHelpController {
 
     setupNode(node) {
         const globalPrexix = 'global:';
+        const replacementPattern = this._replacementPattern;
         for (const node2 of node.querySelectorAll('[data-hotkey]')) {
-            let [action, attributes, values] = JSON.parse(node2.dataset.hotkey);
+            const data = JSON.parse(node2.dataset.hotkey);
+            let [action, attributes, values] = data;
             if (!Array.isArray(attributes)) { attributes = [attributes]; }
             const multipleValues = Array.isArray(values);
 
             const actionIsGlobal = action.startsWith(globalPrexix);
             if (actionIsGlobal) { action = action.substring(globalPrexix.length); }
 
+            const defaultAttributeValues = this._getDefaultAttributeValues(node2, data, attributes);
+
             const hotkey = (actionIsGlobal ? this._globalActionHotkeys : this._localActionHotseys).get(action);
-            if (typeof hotkey === 'undefined') { continue; }
 
             for (let i = 0, ii = attributes.length; i < ii; ++i) {
                 const attribute = attributes[i];
-                let value = (multipleValues ? values[i] : values);
+                let value = null;
+                if (typeof hotkey !== 'undefined') {
+                    value = (multipleValues ? values[i] : values);
+                    value = value.replace(replacementPattern, hotkey);
+                } else {
+                    value = defaultAttributeValues[i];
+                }
 
-                value = value.replace(this._replacementPattern, hotkey);
-
-                node2.setAttribute(attribute, value);
+                if (typeof value === 'string') {
+                    node2.setAttribute(attribute, value);
+                } else {
+                    node2.removeAttribute(attribute);
+                }
             }
         }
     }
@@ -89,5 +100,21 @@ class HotkeyHelpController {
             commandMap.set(name, this._hotkeyUtil.getInputDisplayValue(key, modifiers));
         }
         return commandMap;
+    }
+
+    _getDefaultAttributeValues(node, data, attributes) {
+        if (data.length > 3) {
+            return data[3];
+        }
+
+        const defaultAttributeValues = [];
+        for (let i = 0, ii = attributes.length; i < ii; ++i) {
+            const attribute = attributes[i];
+            const value = node.hasAttribute(attribute) ? node.getAttribute(attribute) : null;
+            defaultAttributeValues.push(value);
+        }
+        data[3] = defaultAttributeValues;
+        node.dataset.hotkey = JSON.stringify(data);
+        return defaultAttributeValues;
     }
 }
