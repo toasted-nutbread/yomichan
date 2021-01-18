@@ -47,9 +47,7 @@ class Display extends EventDispatcher {
         this._index = 0;
         this._audioPlaying = null;
         this._audioFallback = null;
-        this._audioSystem = new AudioSystem({
-            getAudioInfo: this._getAudioInfo.bind(this)
-        });
+        this._audioSystem = new AudioSystem(true);
         this._styleNode = null;
         this._eventListeners = new EventListenerCollection();
         this._setContentToken = null;
@@ -1567,10 +1565,6 @@ class Display extends EventDispatcher {
         }
         const {expression, reading} = termDetailsList[Math.max(0, bestIndex)];
         return {type, expression, reading};
-    }
-
-    async _getAudioInfo(source, expression, reading, details) {
-        return await api.getDefinitionAudioInfo(source, expression, reading, details);
     }
 
     async _setOptionsContextIfDifferent(optionsContext) {

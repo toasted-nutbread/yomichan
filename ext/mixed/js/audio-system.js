@@ -18,12 +18,12 @@
 /* global
  * CacheMap
  * TextToSpeechAudio
+ * api
  */
 
 class AudioSystem {
-    constructor({getAudioInfo, cacheSize=32}) {
-        this._cache = new CacheMap(cacheSize);
-        this._getAudioInfo = getAudioInfo;
+    constructor(useCache) {
+        this._cache = new CacheMap(useCache ? 32 : 0);
     }
 
     prepare() {
@@ -104,6 +104,10 @@ class AudioSystem {
     }
 
     // Private
+
+    async _getAudioInfo(source, expression, reading, details) {
+        return await api.getDefinitionAudioInfo(source, expression, reading, details);
+    }
 
     _isAudioValid(audio) {
         const duration = audio.duration;
