@@ -50,18 +50,18 @@ class AudioSystem {
 
         for (let i = 0, ii = sources.length; i < ii; ++i) {
             const source = sources[i];
-            const info = await this._getAudioInfo(source, expression, reading, details);
-            if (info === null) { continue; }
+            const infoArray = await await api.getDefinitionAudioInfo(source, expression, reading, details);
+            for (const info of infoArray) {
+                let audio;
+                try {
+                    audio = await this.createAudioFromInfo(info);
+                } catch (e) {
+                    continue;
+                }
 
-            let audio;
-            try {
-                audio = await this.createAudioFromInfo(info);
-            } catch (e) {
-                continue;
+                this._cache.set(key, {audio, source});
+                return {audio, index: i};
             }
-
-            this._cache.set(key, {audio, source});
-            return {audio, index: i};
         }
 
         throw new Error('Could not create audio');
@@ -108,10 +108,6 @@ class AudioSystem {
     }
 
     // Private
-
-    async _getAudioInfo(source, expression, reading, details) {
-        return await api.getDefinitionAudioInfo(source, expression, reading, details);
-    }
 
     _isAudioValid(audio) {
         const duration = audio.duration;

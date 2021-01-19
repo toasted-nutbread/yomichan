@@ -43,23 +43,23 @@ class AudioDownloader {
                 // NOP
             }
         }
-        return null;
+        return [];
     }
 
     async downloadAudio(sources, expression, reading, details) {
         for (const source of sources) {
-            const info = await this.getInfo(source, expression, reading, details);
-            if (info === null) { continue; }
+            const infoArray = await this.getInfo(source, expression, reading, details);
 
-            switch (info.type) {
-                case 'url':
-                    try {
-                        const {url} = info;
-                        return await this._downloadAudioFromUrl(url);
-                    } catch (e) {
-                        // NOP
-                    }
-                    break;
+            for (const info of infoArray) {
+                switch (info.type) {
+                    case 'url':
+                        try {
+                            return await this._downloadAudioFromUrl(info.url);
+                        } catch (e) {
+                            // NOP
+                        }
+                        break;
+                }
             }
         }
 
@@ -90,7 +90,7 @@ class AudioDownloader {
         }
 
         const url = `https://assets.languagepod101.com/dictionary/japanese/audiomp3.php?${params.join('&')}`;
-        return {type: 'url', url};
+        return [{type: 'url', url}];
     }
 
     async _getInfoJpod101Alternate(expression, reading) {
@@ -128,7 +128,7 @@ class AudioDownloader {
                 const htmlReading = dom.getTextContent(htmlReadings[0]);
                 if (htmlReading && (!reading || reading === htmlReading)) {
                     url = this._normalizeUrl(url, response.url);
-                    return {type: 'url', url};
+                    return [{type: 'url', url}];
                 }
             } catch (e) {
                 // NOP
@@ -159,7 +159,7 @@ class AudioDownloader {
                     let url = dom.getAttribute(source, 'src');
                     if (url !== null) {
                         url = this._normalizeUrl(url, response.url);
-                        return {type: 'url', url};
+                        return [{type: 'url', url}];
                     }
                 }
             }
@@ -174,14 +174,14 @@ class AudioDownloader {
         if (!textToSpeechVoice) {
             throw new Error('No voice');
         }
-        return {type: 'tts', text: expression, voice: textToSpeechVoice};
+        return [{type: 'tts', text: expression, voice: textToSpeechVoice}];
     }
 
     async _getInfoTextToSpeechReading(expression, reading, {textToSpeechVoice}) {
         if (!textToSpeechVoice) {
             throw new Error('No voice');
         }
-        return {type: 'tts', text: reading || expression, voice: textToSpeechVoice};
+        return [{type: 'tts', text: reading || expression, voice: textToSpeechVoice}];
     }
 
     async _getInfoCustom(expression, reading, {customSourceUrl}) {
@@ -190,7 +190,7 @@ class AudioDownloader {
         }
         const data = {expression, reading};
         const url = customSourceUrl.replace(/\{([^}]*)\}/g, (m0, m1) => (Object.prototype.hasOwnProperty.call(data, m1) ? `${data[m1]}` : m0));
-        return {type: 'url', url};
+        return [{type: 'url', url}];
     }
 
     async _downloadAudioFromUrl(url) {
