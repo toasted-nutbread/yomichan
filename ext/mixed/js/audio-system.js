@@ -58,13 +58,13 @@ class AudioSystem {
                 switch (info.type) {
                     case 'url':
                         {
-                            const {details: {url}} = info;
+                            const {url} = info;
                             audio = await this.createAudio(url);
                         }
                         break;
                     case 'tts':
                         {
-                            const {details: {text, voice}} = info;
+                            const {text, voice} = info;
                             audio = this.createTextToSpeechAudio(text, voice);
                         }
                         break;
