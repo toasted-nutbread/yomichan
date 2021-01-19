@@ -118,7 +118,7 @@ class DisplayAudio {
             let info;
             try {
                 let sourceIndex;
-                ({audio, sourceIndex} = await this._audioSystem.createDefinitionAudio(sources, expression, reading, {textToSpeechVoice, customSourceUrl}));
+                ({audio, sourceIndex} = await this._audioSystem.createExpressionAudio(sources, expression, reading, {textToSpeechVoice, customSourceUrl}));
                 info = `From source ${1 + sourceIndex}: ${sources[sourceIndex]}`;
             } catch (e) {
                 audio = this._audioSystem.getFallbackAudio();

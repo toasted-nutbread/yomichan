@@ -34,7 +34,7 @@ class AudioDownloader {
         ]);
     }
 
-    async getInfo(source, expression, reading, details) {
+    async getExpressionAudioInfoList(source, expression, reading, details) {
         const handler = this._getInfoHandlers.get(source);
         if (typeof handler === 'function') {
             try {
@@ -46,11 +46,10 @@ class AudioDownloader {
         return [];
     }
 
-    async downloadAudio(sources, expression, reading, details) {
+    async downloadExpressionAudio(sources, expression, reading, details) {
         for (const source of sources) {
-            const infoArray = await this.getInfo(source, expression, reading, details);
-
-            for (const info of infoArray) {
+            const infoList = await this.getExpressionAudioInfoList(source, expression, reading, details);
+            for (const info of infoList) {
                 switch (info.type) {
                     case 'url':
                         try {

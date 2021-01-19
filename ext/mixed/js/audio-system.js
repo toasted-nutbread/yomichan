@@ -36,7 +36,7 @@ class AudioSystem {
         eventListeners.addEventListener(speechSynthesis, 'voiceschanged', onVoicesChanged, false);
     }
 
-    async createDefinitionAudio(sources, expression, reading, details) {
+    async createExpressionAudio(sources, expression, reading, details) {
         const key = [expression, reading];
 
         const cacheValue = this._cache.get(key);
@@ -50,8 +50,8 @@ class AudioSystem {
 
         for (let i = 0, ii = sources.length; i < ii; ++i) {
             const source = sources[i];
-            const infoArray = await await api.getDefinitionAudioInfo(source, expression, reading, details);
-            for (const info of infoArray) {
+            const infoList = await await api.getExpressionAudioInfoList(source, expression, reading, details);
+            for (const info of infoList) {
                 let audio;
                 try {
                     audio = await this.createAudioFromInfo(info);
