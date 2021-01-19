@@ -41,17 +41,18 @@ class AudioSystem {
 
         const cacheValue = this._cache.get(key);
         if (typeof cacheValue !== 'undefined') {
-            const {audio, source} = cacheValue;
+            const {audio, source, infoList, infoListIndex} = cacheValue;
             const sourceIndex = sources.indexOf(source);
             if (sourceIndex >= 0) {
-                return {audio, sourceIndex};
+                return {audio, sourceIndex, infoList, infoListIndex};
             }
         }
 
         for (let i = 0, ii = sources.length; i < ii; ++i) {
             const source = sources[i];
             const infoList = await await api.getExpressionAudioInfoList(source, expression, reading, details);
-            for (const info of infoList) {
+            for (let j = 0, jj = infoList.length; j < jj; ++j) {
+                const info = infoList[j];
                 let audio;
                 try {
                     audio = await this.createAudioFromInfo(info);
@@ -59,8 +60,8 @@ class AudioSystem {
                     continue;
                 }
 
-                this._cache.set(key, {audio, source});
-                return {audio, sourceIndex: i};
+                this._cache.set(key, {audio, source, infoList, infoListIndex: j});
+                return {audio, source, infoList, infoListIndex: j};
             }
         }
 
