@@ -42,9 +42,9 @@ class AudioSystem {
         const cacheValue = this._cache.get(key);
         if (typeof cacheValue !== 'undefined') {
             const {audio, source} = cacheValue;
-            const index = sources.indexOf(source);
-            if (index >= 0) {
-                return {audio, index};
+            const sourceIndex = sources.indexOf(source);
+            if (sourceIndex >= 0) {
+                return {audio, sourceIndex};
             }
         }
 
@@ -60,7 +60,7 @@ class AudioSystem {
                 }
 
                 this._cache.set(key, {audio, source});
-                return {audio, index: i};
+                return {audio, sourceIndex: i};
             }
         }
 
