@@ -55,22 +55,7 @@ class AudioSystem {
 
             let audio;
             try {
-                switch (info.type) {
-                    case 'url':
-                        {
-                            const {url} = info;
-                            audio = await this.createAudio(url);
-                        }
-                        break;
-                    case 'tts':
-                        {
-                            const {text, voice} = info;
-                            audio = this.createTextToSpeechAudio(text, voice);
-                        }
-                        break;
-                    default:
-                        throw new Error(`Unsupported type: ${info.type}`);
-                }
+                audio = await this.createAudioFromInfo(info);
             } catch (e) {
                 continue;
             }
@@ -109,6 +94,17 @@ class AudioSystem {
             throw new Error('Invalid text-to-speech voice');
         }
         return new TextToSpeechAudio(text, voice);
+    }
+
+    async createAudioFromInfo(info) {
+        switch (info.type) {
+            case 'url':
+                return await this.createAudio(info.url);
+            case 'tts':
+                return this.createTextToSpeechAudio(info.text, info.voice);
+            default:
+                throw new Error(`Unsupported type: ${info.type}`);
+        }
     }
 
     // Private
