@@ -117,9 +117,10 @@ class DisplayAudio {
             let audio;
             let info;
             try {
-                let sourceIndex;
-                ({audio, sourceIndex} = await this._audioSystem.createExpressionAudio(sources, expression, reading, {textToSpeechVoice, customSourceUrl}));
-                info = `From source ${1 + sourceIndex}: ${sources[sourceIndex]}`;
+                let source;
+                ({audio, source} = await this._audioSystem.createExpressionAudio(sources, expression, reading, {textToSpeechVoice, customSourceUrl}));
+                const sourceIndex = sources.indexOf(source);
+                info = `From source ${1 + sourceIndex}: ${source}`;
             } catch (e) {
                 audio = this._audioSystem.getFallbackAudio();
                 info = 'Could not find audio';

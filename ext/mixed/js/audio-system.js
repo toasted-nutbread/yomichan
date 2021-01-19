@@ -41,11 +41,7 @@ class AudioSystem {
 
         const cacheValue = this._cache.get(key);
         if (typeof cacheValue !== 'undefined') {
-            const {audio, source, infoList, infoListIndex} = cacheValue;
-            const sourceIndex = sources.indexOf(source);
-            if (sourceIndex >= 0) {
-                return {audio, sourceIndex, infoList, infoListIndex};
-            }
+            return cacheValue;
         }
 
         for (let i = 0, ii = sources.length; i < ii; ++i) {
@@ -60,8 +56,9 @@ class AudioSystem {
                     continue;
                 }
 
-                this._cache.set(key, {audio, source, infoList, infoListIndex: j});
-                return {audio, source, infoList, infoListIndex: j};
+                const result = {audio, source, infoList, infoListIndex: j};
+                this._cache.set(key, result);
+                return result;
             }
         }
 
