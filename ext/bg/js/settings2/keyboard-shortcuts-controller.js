@@ -215,8 +215,7 @@ class KeyboardShortcutHotkeyEntry {
     // Private
 
     _onMenuClose(e) {
-        const {detail: {action}} = e;
-        switch (action) {
+        switch (e.detail.action) {
             case 'delete':
                 this._delete();
                 break;

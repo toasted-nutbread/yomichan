@@ -138,10 +138,10 @@ class AnkiTemplatesController {
         this._validate(infoNode, field, 'term-kanji', true, false);
     }
 
-    _onFieldMenuClose({currentTarget: node, detail: {action, item}}) {
+    _onFieldMenuClose({currentTarget: button, detail: {action, item}}) {
         switch (action) {
             case 'setFieldMarker':
-                this._setFieldMarker(node, item.dataset.marker);
+                this._setFieldMarker(button, item.dataset.marker);
                 break;
         }
     }

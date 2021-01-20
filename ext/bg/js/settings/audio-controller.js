@@ -225,8 +225,7 @@ class AudioController {
     }
 
     _onMenuClose(entry, e) {
-        const {detail: {action}} = e;
-        switch (action) {
+        switch (e.detail.action) {
             case 'remove':
                 this._removeAudioSourceEntry(entry);
                 break;

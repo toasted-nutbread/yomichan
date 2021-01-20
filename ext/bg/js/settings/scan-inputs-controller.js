@@ -258,8 +258,8 @@ class ScanInputField {
         }
     }
 
-    _onMenuClose({detail: {action}}) {
-        switch (action) {
+    _onMenuClose(e) {
+        switch (e.detail.action) {
             case 'remove':
                 this._removeSelf();
                 break;

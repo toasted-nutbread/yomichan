@@ -169,9 +169,7 @@ class PopupMenu extends EventDispatcher {
         const action = (item !== null ? item.dataset.menuAction : null);
 
         const detail = {
-            popupMenu: this,
-            container: this._containerNode,
-            menu: this._node,
+            menu: this,
             item,
             action,
             cause

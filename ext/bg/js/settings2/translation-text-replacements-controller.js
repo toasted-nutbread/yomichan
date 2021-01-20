@@ -182,8 +182,8 @@ class TranslationTextReplacementsEntry {
         node.querySelector('[data-menu-action=hideTest]').hidden = !testVisible;
     }
 
-    _onMenuClose({detail: {action}}) {
-        switch (action) {
+    _onMenuClose(e) {
+        switch (e.detail.action) {
             case 'remove':
                 this._parent.deleteGroup(this._index);
                 break;

@@ -553,8 +553,8 @@ class ProfileConditionUI {
         }
     }
 
-    _onMenuClose({detail: {action}}) {
-        switch (action) {
+    _onMenuClose(e) {
+        switch (e.detail.action) {
             case 'delete':
                 this._removeSelf();
                 break;

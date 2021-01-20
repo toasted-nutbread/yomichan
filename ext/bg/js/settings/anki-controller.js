@@ -445,10 +445,10 @@ class AnkiCardController {
         this._validateField(node, index);
     }
 
-    _onFieldMenuClose({currentTarget: node, detail: {action, item}}) {
+    _onFieldMenuClose({currentTarget: button, detail: {action, item}}) {
         switch (action) {
             case 'setFieldMarker':
-                this._setFieldMarker(node, item.dataset.marker);
+                this._setFieldMarker(button, item.dataset.marker);
                 break;
         }
     }

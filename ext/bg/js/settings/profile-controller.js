@@ -667,8 +667,8 @@ class ProfileEntry {
         this._setMenuActionEnabled(node, 'delete', count > 1);
     }
 
-    _onMenuClose({detail: {action}}) {
-        switch (action) {
+    _onMenuClose(e) {
+        switch (e.detail.action) {
             case 'moveUp':
                 this._profileController.moveProfile(this._index, -1);
                 break;
