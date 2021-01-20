@@ -545,8 +545,9 @@ class ProfileConditionUI {
         this._removeSelf();
     }
 
-    _onMenuOpen({detail: {menu}}) {
-        const deleteGroup = menu.querySelector('.popup-menu-item[data-menu-action="deleteGroup"]');
+    _onMenuOpen(e) {
+        const node = e.detail.menu.node;
+        const deleteGroup = node.querySelector('.popup-menu-item[data-menu-action="deleteGroup"]');
         if (deleteGroup !== null) {
             deleteGroup.hidden = (this._parent.childCount <= 1);
         }

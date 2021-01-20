@@ -658,12 +658,13 @@ class ProfileEntry {
         this._profileController.openProfileConditionsModal(this._index);
     }
 
-    _onMenuOpen({detail: {menu}}) {
+    _onMenuOpen(e) {
+        const node = e.detail.menu.node;
         const count = this._profileController.profileCount;
-        this._setMenuActionEnabled(menu, 'moveUp', this._index > 0);
-        this._setMenuActionEnabled(menu, 'moveDown', this._index < count - 1);
-        this._setMenuActionEnabled(menu, 'copyFrom', count > 1);
-        this._setMenuActionEnabled(menu, 'delete', count > 1);
+        this._setMenuActionEnabled(node, 'moveUp', this._index > 0);
+        this._setMenuActionEnabled(node, 'moveDown', this._index < count - 1);
+        this._setMenuActionEnabled(node, 'copyFrom', count > 1);
+        this._setMenuActionEnabled(node, 'delete', count > 1);
     }
 
     _onMenuClose({detail: {action}}) {

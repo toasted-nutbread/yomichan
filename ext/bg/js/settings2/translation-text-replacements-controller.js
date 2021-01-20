@@ -175,10 +175,11 @@ class TranslationTextReplacementsEntry {
 
     // Private
 
-    _onMenuOpen({detail: {menu}}) {
+    _onMenuOpen(e) {
+        const node = e.detail.menu.node;
         const testVisible = this._isTestVisible();
-        menu.querySelector('[data-menu-action=showTest]').hidden = testVisible;
-        menu.querySelector('[data-menu-action=hideTest]').hidden = !testVisible;
+        node.querySelector('[data-menu-action=showTest]').hidden = testVisible;
+        node.querySelector('[data-menu-action=hideTest]').hidden = !testVisible;
     }
 
     _onMenuClose({detail: {action}}) {

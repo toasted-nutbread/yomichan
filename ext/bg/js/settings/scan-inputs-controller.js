@@ -245,9 +245,10 @@ class ScanInputField {
         this._removeSelf();
     }
 
-    _onMenuOpen({detail: {menu}}) {
-        const showAdvanced = menu.querySelector('.popup-menu-item[data-menu-action="showAdvanced"]');
-        const hideAdvanced = menu.querySelector('.popup-menu-item[data-menu-action="hideAdvanced"]');
+    _onMenuOpen(e) {
+        const node = e.detail.menu.node;
+        const showAdvanced = node.querySelector('.popup-menu-item[data-menu-action="showAdvanced"]');
+        const hideAdvanced = node.querySelector('.popup-menu-item[data-menu-action="hideAdvanced"]');
         const advancedVisible = (this._node.dataset.showAdvanced === 'true');
         if (showAdvanced !== null) {
             showAdvanced.hidden = advancedVisible;
