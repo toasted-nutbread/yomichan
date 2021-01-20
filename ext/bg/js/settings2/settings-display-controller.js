@@ -200,7 +200,7 @@ class SettingsDisplayController {
 
     _onClosePopupMenu({popupMenu, onClose}) {
         this._openPopupMenus.delete(popupMenu);
-        popupMenu.off('closed', onClose);
+        popupMenu.off('close', onClose);
     }
 
     _onInputTabActionKeyDown(e) {
@@ -271,7 +271,7 @@ class SettingsDisplayController {
         const data = {popupMenu, onClose: null};
         data.onClose = this._onClosePopupMenu.bind(this, data);
 
-        popupMenu.on('closed', data.onClose);
+        popupMenu.on('close', data.onClose);
         popupMenu.prepare();
     }
 

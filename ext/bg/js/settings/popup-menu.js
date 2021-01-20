@@ -177,7 +177,7 @@ class PopupMenu extends EventDispatcher {
             this._container.parentNode.removeChild(this._container);
         }
 
-        this.trigger('closed', {
+        this.trigger('close', {
             popupMenu: this,
             container: this._container,
             menu: this._menu,
