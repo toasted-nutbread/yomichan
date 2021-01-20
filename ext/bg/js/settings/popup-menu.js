@@ -172,6 +172,7 @@ class PopupMenu extends EventDispatcher {
         }));
         if (!result) { return false; }
 
+        this._isClosed = true;
         this._eventListeners.removeAllEventListeners();
         if (this._container.parentNode !== null) {
             this._container.parentNode.removeChild(this._container);
