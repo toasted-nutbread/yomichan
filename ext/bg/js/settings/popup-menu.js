@@ -158,18 +158,15 @@ class PopupMenu extends EventDispatcher {
         if (this._isClosed) { return true; }
         const action = (item !== null ? item.dataset.menuAction : null);
 
-        const result = this._sourceElement.dispatchEvent(new CustomEvent('menuClose', {
-            bubbles: false,
-            cancelable: true,
-            detail: {
-                popupMenu: this,
-                container: this._container,
-                menu: this._menu,
-                item,
-                action,
-                cause
-            }
-        }));
+        const detail = {
+            popupMenu: this,
+            container: this._container,
+            menu: this._menu,
+            item,
+            action,
+            cause
+        };
+        const result = this._sourceElement.dispatchEvent(new CustomEvent('menuClose', {bubbles: false, cancelable: true, detail}));
         if (!result) { return false; }
 
         this._isClosed = true;
@@ -178,14 +175,7 @@ class PopupMenu extends EventDispatcher {
             this._container.parentNode.removeChild(this._container);
         }
 
-        this.trigger('close', {
-            popupMenu: this,
-            container: this._container,
-            menu: this._menu,
-            item,
-            action,
-            cause
-        });
+        this.trigger('close', detail);
         return true;
     }
 }
