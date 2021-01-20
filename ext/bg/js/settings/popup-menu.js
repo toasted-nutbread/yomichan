@@ -67,25 +67,25 @@ class PopupMenu extends EventDispatcher {
         }));
     }
 
-    close() {
-        return this._close(null, 'close');
+    close(cancelable=true) {
+        return this._close(null, 'close', cancelable);
     }
 
     // Private
 
     _onMenuContainerClick(e) {
         if (e.currentTarget !== e.target) { return; }
-        this._close(null, 'outside');
+        this._close(null, 'outside', true);
     }
 
     _onMenuItemClick(e) {
         const item = e.currentTarget;
         if (item.disabled) { return; }
-        this._close(item, 'item');
+        this._close(item, 'item', true);
     }
 
     _onWindowResize() {
-        this._close(null, 'resize');
+        this._close(null, 'resize', true);
     }
 
     _setPosition(items) {
@@ -168,7 +168,7 @@ class PopupMenu extends EventDispatcher {
         menu.style.top = `${y}px`;
     }
 
-    _close(item, cause) {
+    _close(item, cause, cancelable) {
         if (this._isClosed) { return true; }
         const action = (item !== null ? item.dataset.menuAction : null);
 
@@ -180,8 +180,8 @@ class PopupMenu extends EventDispatcher {
             action,
             cause
         };
-        const result = this._sourceElement.dispatchEvent(new CustomEvent('menuClose', {bubbles: false, cancelable: true, detail}));
-        if (!result) { return false; }
+        const result = this._sourceElement.dispatchEvent(new CustomEvent('menuClose', {bubbles: false, cancelable, detail}));
+        if (cancelable && !result) { return false; }
 
         PopupMenu.openMenus.delete(this);
 
