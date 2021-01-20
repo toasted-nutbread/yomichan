@@ -16,13 +16,25 @@
  */
 
 class PopupMenu extends EventDispatcher {
-    constructor(sourceElement, container) {
+    constructor(sourceElement, containerNode) {
         super();
         this._sourceElement = sourceElement;
-        this._container = container;
-        this._menu = container.querySelector('.popup-menu');
+        this._containerNode = containerNode;
+        this._node = containerNode.querySelector('.popup-menu');
         this._isClosed = false;
         this._eventListeners = new EventListenerCollection();
+    }
+
+    get sourceElement() {
+        return this._sourceElement;
+    }
+
+    get containerNode() {
+        return this._containerNode;
+    }
+
+    get node() {
+        return this._node;
     }
 
     get isClosed() {
@@ -30,12 +42,12 @@ class PopupMenu extends EventDispatcher {
     }
 
     prepare() {
-        const items = this._menu.querySelectorAll('.popup-menu-item');
+        const items = this._node.querySelectorAll('.popup-menu-item');
         this._setPosition(items);
-        this._container.focus();
+        this._containerNode.focus();
 
         this._eventListeners.addEventListener(window, 'resize', this._onWindowResize.bind(this), false);
-        this._eventListeners.addEventListener(this._container, 'click', this._onMenuContainerClick.bind(this), false);
+        this._eventListeners.addEventListener(this._containerNode, 'click', this._onMenuContainerClick.bind(this), false);
 
         const onMenuItemClick = this._onMenuItemClick.bind(this);
         for (const item of items) {
@@ -49,8 +61,8 @@ class PopupMenu extends EventDispatcher {
             cancelable: false,
             detail: {
                 popupMenu: this,
-                container: this._container,
-                menu: this._menu
+                container: this._containerNode,
+                menu: this._node
             }
         }));
     }
@@ -124,8 +136,8 @@ class PopupMenu extends EventDispatcher {
         }
 
         // Position
-        const menu = this._menu;
-        const fullRect = this._container.getBoundingClientRect();
+        const menu = this._node;
+        const fullRect = this._containerNode.getBoundingClientRect();
         const sourceRect = this._sourceElement.getBoundingClientRect();
         const menuRect = menu.getBoundingClientRect();
         let top = menuRect.top;
@@ -162,8 +174,8 @@ class PopupMenu extends EventDispatcher {
 
         const detail = {
             popupMenu: this,
-            container: this._container,
-            menu: this._menu,
+            container: this._containerNode,
+            menu: this._node,
             item,
             action,
             cause
@@ -175,8 +187,8 @@ class PopupMenu extends EventDispatcher {
 
         this._isClosed = true;
         this._eventListeners.removeAllEventListeners();
-        if (this._container.parentNode !== null) {
-            this._container.parentNode.removeChild(this._container);
+        if (this._containerNode.parentNode !== null) {
+            this._containerNode.parentNode.removeChild(this._containerNode);
         }
 
         this.trigger('close', detail);
