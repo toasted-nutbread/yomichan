@@ -182,7 +182,7 @@ class SentenceTerminationCharacterEntry {
         this._eventListeners.addEventListener(typeSelect, 'change', this._onTypeSelectChange.bind(this), false);
         this._eventListeners.addEventListener(character1Input, 'change', this._onCharacterChange.bind(this, 1), false);
         this._eventListeners.addEventListener(character2Input, 'change', this._onCharacterChange.bind(this, 2), false);
-        this._eventListeners.addEventListener(menuButton, 'menuClosed', this._onMenuClosed.bind(this), false);
+        this._eventListeners.addEventListener(menuButton, 'menuClose', this._onMenuClose.bind(this), false);
     }
 
     cleanup() {
@@ -208,7 +208,7 @@ class SentenceTerminationCharacterEntry {
         this._setCharacterValue(node, characterNumber, value);
     }
 
-    _onMenuClosed(e) {
+    _onMenuClose(e) {
         const {detail: {action}} = e;
         switch (action) {
             case 'delete':

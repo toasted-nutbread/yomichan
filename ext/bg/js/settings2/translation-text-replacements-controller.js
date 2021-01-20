@@ -159,7 +159,7 @@ class TranslationTextReplacementsEntry {
         ignoreCaseToggle.dataset.setting = `${pathBase}.ignoreCase`;
 
         this._eventListeners.addEventListener(menuButton, 'menuOpen', this._onMenuOpen.bind(this), false);
-        this._eventListeners.addEventListener(menuButton, 'menuClosed', this._onMenuClosed.bind(this), false);
+        this._eventListeners.addEventListener(menuButton, 'menuClose', this._onMenuClose.bind(this), false);
         this._eventListeners.addEventListener(patternInput, 'settingChanged', this._onPatternChanged.bind(this), false);
         this._eventListeners.addEventListener(ignoreCaseToggle, 'settingChanged', this._updateTestInput.bind(this), false);
         this._eventListeners.addEventListener(replacementInput, 'settingChanged', this._updateTestInput.bind(this), false);
@@ -181,7 +181,7 @@ class TranslationTextReplacementsEntry {
         menu.querySelector('[data-menu-action=hideTest]').hidden = !testVisible;
     }
 
-    _onMenuClosed({detail: {action}}) {
+    _onMenuClose({detail: {action}}) {
         switch (action) {
             case 'remove':
                 this._parent.deleteGroup(this._index);

@@ -479,7 +479,7 @@ class ProfileConditionUI {
         if (this._removeButton !== null) { this._eventListeners.addEventListener(this._removeButton, 'click', this._onRemoveButtonClick.bind(this), false); }
         if (this._menuButton !== null) {
             this._eventListeners.addEventListener(this._menuButton, 'menuOpen', this._onMenuOpen.bind(this), false);
-            this._eventListeners.addEventListener(this._menuButton, 'menuClosed', this._onMenuClosed.bind(this), false);
+            this._eventListeners.addEventListener(this._menuButton, 'menuClose', this._onMenuClose.bind(this), false);
         }
     }
 
@@ -552,7 +552,7 @@ class ProfileConditionUI {
         }
     }
 
-    _onMenuClosed({detail: {action}}) {
+    _onMenuClose({detail: {action}}) {
         switch (action) {
             case 'delete':
                 this._removeSelf();

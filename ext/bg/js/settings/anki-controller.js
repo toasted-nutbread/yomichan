@@ -445,7 +445,7 @@ class AnkiCardController {
         this._validateField(node, index);
     }
 
-    _onFieldMenuClosed({currentTarget: node, detail: {action, item}}) {
+    _onFieldMenuClose({currentTarget: node, detail: {action, item}}) {
         switch (action) {
             case 'setFieldMarker':
                 this._setFieldMarker(node, item.dataset.marker);
@@ -547,7 +547,7 @@ class AnkiCardController {
                 } else {
                     delete menuButton.dataset.menu;
                 }
-                this._fieldEventListeners.addEventListener(menuButton, 'menuClosed', this._onFieldMenuClosed.bind(this), false);
+                this._fieldEventListeners.addEventListener(menuButton, 'menuClose', this._onFieldMenuClose.bind(this), false);
             }
 
             totalFragment.appendChild(content);

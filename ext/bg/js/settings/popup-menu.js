@@ -158,7 +158,7 @@ class PopupMenu extends EventDispatcher {
         if (this._isClosed) { return true; }
         const action = (item !== null ? item.dataset.menuAction : null);
 
-        const result = this._sourceElement.dispatchEvent(new CustomEvent('menuClosed', {
+        const result = this._sourceElement.dispatchEvent(new CustomEvent('menuClose', {
             bubbles: false,
             cancelable: true,
             detail: {

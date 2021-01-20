@@ -87,7 +87,7 @@ class DictionaryEntry {
         }
         if (menuButton !== null) {
             this._eventListeners.addEventListener(menuButton, 'menuOpen', this._onMenuOpen.bind(this), false);
-            this._eventListeners.addEventListener(menuButton, 'menuClosed', this._onMenuClosed.bind(this), false);
+            this._eventListeners.addEventListener(menuButton, 'menuClose', this._onMenuClose.bind(this), false);
         }
         if (detailsToggleLink !== null && this._detailsContainer !== null) {
             this._eventListeners.addEventListener(detailsToggleLink, 'click', this._onDetailsToggleLinkClicked.bind(this), false);
@@ -132,7 +132,7 @@ class DictionaryEntry {
         }
     }
 
-    _onMenuClosed(e) {
+    _onMenuClose(e) {
         const {detail: {action}} = e;
         switch (action) {
             case 'delete':

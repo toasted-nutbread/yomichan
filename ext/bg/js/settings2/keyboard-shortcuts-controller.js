@@ -199,7 +199,7 @@ class KeyboardShortcutHotkeyEntry {
         for (const scopeCheckbox of scopeCheckboxes) {
             this._eventListeners.addEventListener(scopeCheckbox, 'change', this._onScopeCheckboxChange.bind(this), false);
         }
-        this._eventListeners.addEventListener(menuButton, 'menuClosed', this._onMenuClosed.bind(this), false);
+        this._eventListeners.addEventListener(menuButton, 'menuClose', this._onMenuClose.bind(this), false);
         this._eventListeners.addEventListener(this._actionSelect, 'change', this._onActionSelectChange.bind(this), false);
         this._eventListeners.on(this._inputField, 'change', this._onInputFieldChange.bind(this));
     }
@@ -214,7 +214,7 @@ class KeyboardShortcutHotkeyEntry {
 
     // Private
 
-    _onMenuClosed(e) {
+    _onMenuClose(e) {
         const {detail: {action}} = e;
         switch (action) {
             case 'delete':

@@ -209,7 +209,7 @@ class ScanInputField {
         }
         if (menuButton !== null) {
             this._eventListeners.addEventListener(menuButton, 'menuOpen', this._onMenuOpen.bind(this));
-            this._eventListeners.addEventListener(menuButton, 'menuClosed', this._onMenuClosed.bind(this));
+            this._eventListeners.addEventListener(menuButton, 'menuClose', this._onMenuClose.bind(this));
         }
 
         this._updateDataSettingTargets();
@@ -257,7 +257,7 @@ class ScanInputField {
         }
     }
 
-    _onMenuClosed({detail: {action}}) {
+    _onMenuClose({detail: {action}}) {
         switch (action) {
             case 'remove':
                 this._removeSelf();
