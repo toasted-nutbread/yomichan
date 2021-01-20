@@ -42,6 +42,8 @@ class PopupMenu extends EventDispatcher {
             this._eventListeners.addEventListener(item, 'click', onMenuItemClick, false);
         }
 
+        PopupMenu.openMenus.add(this);
+
         this._sourceElement.dispatchEvent(new CustomEvent('menuOpen', {
             bubbles: false,
             cancelable: false,
@@ -169,6 +171,8 @@ class PopupMenu extends EventDispatcher {
         const result = this._sourceElement.dispatchEvent(new CustomEvent('menuClose', {bubbles: false, cancelable: true, detail}));
         if (!result) { return false; }
 
+        PopupMenu.openMenus.delete(this);
+
         this._isClosed = true;
         this._eventListeners.removeAllEventListeners();
         if (this._container.parentNode !== null) {
@@ -179,3 +183,10 @@ class PopupMenu extends EventDispatcher {
         return true;
     }
 }
+
+Object.defineProperty(PopupMenu, 'openMenus', {
+    configurable: false,
+    enumerable: true,
+    writable: false,
+    value: new Set()
+});
