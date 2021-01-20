@@ -42,7 +42,7 @@ class PopupMenu extends EventDispatcher {
             this._eventListeners.addEventListener(item, 'click', onMenuItemClick, false);
         }
 
-        this._sourceElement.dispatchEvent(new CustomEvent('menuOpened', {
+        this._sourceElement.dispatchEvent(new CustomEvent('menuOpen', {
             bubbles: false,
             cancelable: false,
             detail: {

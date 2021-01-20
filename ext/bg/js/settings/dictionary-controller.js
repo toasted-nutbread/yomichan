@@ -86,7 +86,7 @@ class DictionaryEntry {
             this._eventListeners.addEventListener(deleteButton, 'click', this._onDeleteButtonClicked.bind(this), false);
         }
         if (menuButton !== null) {
-            this._eventListeners.addEventListener(menuButton, 'menuOpened', this._onMenuOpened.bind(this), false);
+            this._eventListeners.addEventListener(menuButton, 'menuOpen', this._onMenuOpen.bind(this), false);
             this._eventListeners.addEventListener(menuButton, 'menuClosed', this._onMenuClosed.bind(this), false);
         }
         if (detailsToggleLink !== null && this._detailsContainer !== null) {
@@ -116,7 +116,7 @@ class DictionaryEntry {
         this._delete();
     }
 
-    _onMenuOpened(e) {
+    _onMenuOpen(e) {
         const {detail: {menu}} = e;
         const showDetails = menu.querySelector('.popup-menu-item[data-menu-action="showDetails"]');
         const hideDetails = menu.querySelector('.popup-menu-item[data-menu-action="hideDetails"]');

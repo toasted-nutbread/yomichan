@@ -208,7 +208,7 @@ class ScanInputField {
             this._eventListeners.addEventListener(removeButton, 'click', this._onRemoveClick.bind(this));
         }
         if (menuButton !== null) {
-            this._eventListeners.addEventListener(menuButton, 'menuOpened', this._onMenuOpened.bind(this));
+            this._eventListeners.addEventListener(menuButton, 'menuOpen', this._onMenuOpen.bind(this));
             this._eventListeners.addEventListener(menuButton, 'menuClosed', this._onMenuClosed.bind(this));
         }
 
@@ -245,7 +245,7 @@ class ScanInputField {
         this._removeSelf();
     }
 
-    _onMenuOpened({detail: {menu}}) {
+    _onMenuOpen({detail: {menu}}) {
         const showAdvanced = menu.querySelector('.popup-menu-item[data-menu-action="showAdvanced"]');
         const hideAdvanced = menu.querySelector('.popup-menu-item[data-menu-action="hideAdvanced"]');
         const advancedVisible = (this._node.dataset.showAdvanced === 'true');
