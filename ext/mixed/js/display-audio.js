@@ -118,15 +118,15 @@ class DisplayAudio {
         try {
             // Create audio
             let audio;
-            let info;
+            let title;
             try {
                 let source;
                 ({audio, source} = await this._createExpressionAudio(sources, expression, reading, {textToSpeechVoice, customSourceUrl}));
                 const sourceIndex = sources.indexOf(source);
-                info = `From source ${1 + sourceIndex}: ${source}`;
+                title = `From source ${1 + sourceIndex}: ${source}`;
             } catch (e) {
                 audio = this._audioSystem.getFallbackAudio();
-                info = 'Could not find audio';
+                title = 'Could not find audio';
             }
 
             // Stop any currently playing audio
@@ -135,7 +135,7 @@ class DisplayAudio {
             // Update details
             for (const button of this._getAudioPlayButtons(definitionIndex, expressionIndex)) {
                 const titleDefault = button.dataset.titleDefault || '';
-                button.title = `${titleDefault}\n${info}`;
+                button.title = `${titleDefault}\n${title}`;
             }
 
             // Play
