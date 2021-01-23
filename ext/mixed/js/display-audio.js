@@ -97,7 +97,7 @@ class DisplayAudio {
         this._audioPlaying = null;
     }
 
-    async playAudio(definitionIndex, expressionIndex) {
+    async playAudio(definitionIndex, expressionIndex, sources=null) {
         this.stopAudio();
         this.clearAutoPlayTimer();
 
@@ -105,7 +105,11 @@ class DisplayAudio {
         if (expressionReading === null) { return; }
 
         const {expression, reading} = expressionReading;
-        const {sources, textToSpeechVoice, customSourceUrl, volume} = this._getAudioOptions();
+        const audioOptions = this._getAudioOptions();
+        const {textToSpeechVoice, customSourceUrl, volume} = audioOptions;
+        if (!Array.isArray(sources)) {
+            ({sources} = audioOptions);
+        }
 
         const progressIndicatorVisible = this._display.progressIndicatorVisible;
         const overrideToken = progressIndicatorVisible.setOverride(true);
