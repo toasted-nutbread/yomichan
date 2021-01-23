@@ -17,7 +17,6 @@
 
 /* global
  * AudioSystem
- * CacheMap
  * api
  */
 
@@ -29,7 +28,7 @@ class DisplayAudio {
         this._autoPlayAudioTimer = null;
         this._autoPlayAudioDelay = 400;
         this._eventListeners = new EventListenerCollection();
-        this._cache = new CacheMap(32);
+        this._cache = new Map();
     }
 
     get autoPlayAudioDelay() {
@@ -50,6 +49,7 @@ class DisplayAudio {
     }
 
     cleanupEntries() {
+        this._cache.clear();
         this.clearAutoPlayTimer();
         this._eventListeners.removeAllEventListeners();
     }
