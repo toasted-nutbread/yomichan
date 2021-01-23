@@ -193,12 +193,19 @@ class DisplayAudio {
         for (let i = 0, ii = sources.length; i < ii; ++i) {
             const source = sources[i];
 
-            let infoListPromise = sourceMap.get(source);
-            if (typeof infoListPromise === 'undefined') {
+            let infoListPromise;
+            let sourceInfo = sourceMap.get(source);
+            if (typeof sourceInfo === 'undefined') {
                 infoListPromise = this._getExpressionAudioInfoList(source, expression, reading, details);
-                sourceMap.set(source, infoListPromise);
+                sourceInfo = {infoListPromise, infoList: null};
+                sourceMap.set(source, sourceInfo);
             }
-            const infoList = await infoListPromise;
+
+            let {infoList} = sourceInfo;
+            if (infoList === null) {
+                infoList = await infoListPromise;
+                sourceInfo.infoList = infoList;
+            }
 
             const audio = await this._createAudioFromInfoList(source, infoList, 0, infoList.length);
             if (audio !== null) { return audio; }
@@ -211,18 +218,27 @@ class DisplayAudio {
         for (let i = start; i < end; ++i) {
             const item = infoList[i];
 
-            let {audioPromise} = item;
-            if (audioPromise === null) {
-                audioPromise = this._createAudioFromInfo(item.info, source);
-                item.audioPromise = audioPromise;
+            let {audio, audioResolved} = item;
+
+            if (!audioResolved) {
+                let {audioPromise} = item;
+                if (audioPromise === null) {
+                    audioPromise = this._createAudioFromInfo(item.info, source);
+                    item.audioPromise = audioPromise;
+                }
+
+                try {
+                    audio = await audioPromise;
+                } catch (e) {
+                    continue;
+                } finally {
+                    item.audioResolved = true;
+                }
+
+                item.audio = audio;
             }
 
-            let audio;
-            try {
-                audio = await audioPromise;
-            } catch (e) {
-                continue;
-            }
+            if (audio === null) { continue; }
 
             return {audio, source, infoListIndex: i};
         }
