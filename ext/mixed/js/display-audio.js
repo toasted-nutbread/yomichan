@@ -101,16 +101,10 @@ class DisplayAudio {
         this.stopAudio();
         this.clearAutoPlayTimer();
 
-        const {definitions} = this._display;
-        if (definitionIndex < 0 || definitionIndex >= definitions.length) { return; }
+        const expressionReading = this._getExpressionAndReading(definitionIndex, expressionIndex);
+        if (expressionReading === null) { return; }
 
-        const definition = definitions[definitionIndex];
-        if (definition.type === 'kanji') { return; }
-
-        const {expressions} = definition;
-        if (expressionIndex < 0 || expressionIndex >= expressions.length) { return; }
-
-        const {expression, reading} = expressions[expressionIndex];
+        const {expression, reading} = expressionReading;
         const {sources, textToSpeechVoice, customSourceUrl, volume} = this._display.getOptions().audio;
 
         const progressIndicatorVisible = this._display.progressIndicatorVisible;
@@ -243,5 +237,19 @@ class DisplayAudio {
     async _getExpressionAudioInfoList(source, expression, reading, details) {
         const infoList = await api.getExpressionAudioInfoList(source, expression, reading, details);
         return infoList.map((info) => ({info, audioPromise: null}));
+    }
+
+    _getExpressionAndReading(definitionIndex, expressionIndex) {
+        const {definitions} = this._display;
+        if (definitionIndex < 0 || definitionIndex >= definitions.length) { return null; }
+
+        const definition = definitions[definitionIndex];
+        if (definition.type === 'kanji') { return null; }
+
+        const {expressions} = definition;
+        if (expressionIndex < 0 || expressionIndex >= expressions.length) { return null; }
+
+        const {expression, reading} = expressions[expressionIndex];
+        return {expression, reading};
     }
 }
