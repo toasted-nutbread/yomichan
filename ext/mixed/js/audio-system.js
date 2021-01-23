@@ -62,17 +62,6 @@ class AudioSystem {
         return new TextToSpeechAudio(text, voice);
     }
 
-    async createAudioFromInfo(info, source) {
-        switch (info.type) {
-            case 'url':
-                return await this.createAudio(info.url, source);
-            case 'tts':
-                return this.createTextToSpeechAudio(info.text, info.voice);
-            default:
-                throw new Error(`Unsupported type: ${info.type}`);
-        }
-    }
-
     // Private
 
     _isAudioValid(audio, source) {

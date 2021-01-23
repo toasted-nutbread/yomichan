@@ -201,7 +201,7 @@ class DisplayAudio {
                 const info = infoList[j];
                 let audio;
                 try {
-                    audio = await this._audioSystem.createAudioFromInfo(info, source);
+                    audio = await this._createAudioFromInfo(info, source);
                 } catch (e) {
                     continue;
                 }
@@ -213,5 +213,16 @@ class DisplayAudio {
         }
 
         throw new Error('Could not create audio');
+    }
+
+    async _createAudioFromInfo(info, source) {
+        switch (info.type) {
+            case 'url':
+                return await this._audioSystem.createAudio(info.url, source);
+            case 'tts':
+                return this._audioSystem.createTextToSpeechAudio(info.text, info.voice);
+            default:
+                throw new Error(`Unsupported type: ${info.type}`);
+        }
     }
 }
