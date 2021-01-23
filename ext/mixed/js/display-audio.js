@@ -200,26 +200,32 @@ class DisplayAudio {
             }
             const infoList = await infoListPromise;
 
-            for (let j = 0, jj = infoList.length; j < jj; ++j) {
-                const item = infoList[j];
-
-                let {audioPromise} = item;
-                if (audioPromise === null) {
-                    audioPromise = this._createAudioFromInfo(item.info, source);
-                    item.audioPromise = audioPromise;
-                }
-
-                let audio;
-                try {
-                    audio = await audioPromise;
-                } catch (e) {
-                    continue;
-                }
-
-                return {audio, source, infoListIndex: j};
-            }
+            const audio = await this._createAudioFromInfoList(source, infoList, 0, infoList.length);
+            if (audio !== null) { return audio; }
         }
 
+        return null;
+    }
+
+    async _createAudioFromInfoList(source, infoList, start, end) {
+        for (let i = start; i < end; ++i) {
+            const item = infoList[i];
+
+            let {audioPromise} = item;
+            if (audioPromise === null) {
+                audioPromise = this._createAudioFromInfo(item.info, source);
+                item.audioPromise = audioPromise;
+            }
+
+            let audio;
+            try {
+                audio = await audioPromise;
+            } catch (e) {
+                continue;
+            }
+
+            return {audio, source, infoListIndex: i};
+        }
         return null;
     }
 
