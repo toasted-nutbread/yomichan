@@ -189,26 +189,39 @@ class DisplayAudio {
     async _createExpressionAudio(sources, expression, reading, details) {
         const key = JSON.stringify([expression, reading]);
 
-        const cacheValue = this._cache.get(key);
-        if (typeof cacheValue !== 'undefined') {
-            return cacheValue;
+        let sourceMap = this._cache.get(key);
+        if (typeof sourceMap === 'undefined') {
+            sourceMap = new Map();
+            this._cache.set(key, sourceMap);
         }
 
         for (let i = 0, ii = sources.length; i < ii; ++i) {
             const source = sources[i];
-            const infoList = await this._getExpressionAudioInfoList(source, expression, reading, details);
+
+            let infoListPromise = sourceMap.get(source);
+            if (typeof infoListPromise === 'undefined') {
+                infoListPromise = this._getExpressionAudioInfoList(source, expression, reading, details);
+                sourceMap.set(source, infoListPromise);
+            }
+            const infoList = await infoListPromise;
+
             for (let j = 0, jj = infoList.length; j < jj; ++j) {
-                const info = infoList[j];
+                const item = infoList[j];
+
+                let {audioPromise} = item;
+                if (audioPromise === null) {
+                    audioPromise = this._createAudioFromInfo(item.info, source);
+                    item.audioPromise = audioPromise;
+                }
+
                 let audio;
                 try {
-                    audio = await this._createAudioFromInfo(info, source);
+                    audio = await audioPromise;
                 } catch (e) {
                     continue;
                 }
 
-                const result = {audio, source, infoList, infoListIndex: j};
-                this._cache.set(key, result);
-                return result;
+                return {audio, source, infoListIndex: j};
             }
         }
 
@@ -227,6 +240,7 @@ class DisplayAudio {
     }
 
     async _getExpressionAudioInfoList(source, expression, reading, details) {
-        return await api.getExpressionAudioInfoList(source, expression, reading, details);
+        const infoList = await api.getExpressionAudioInfoList(source, expression, reading, details);
+        return infoList.map((info) => ({info, audioPromise: null}));
     }
 }
