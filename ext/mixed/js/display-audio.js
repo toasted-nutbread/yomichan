@@ -196,7 +196,7 @@ class DisplayAudio {
 
         for (let i = 0, ii = sources.length; i < ii; ++i) {
             const source = sources[i];
-            const infoList = await await api.getExpressionAudioInfoList(source, expression, reading, details);
+            const infoList = await this._getExpressionAudioInfoList(source, expression, reading, details);
             for (let j = 0, jj = infoList.length; j < jj; ++j) {
                 const info = infoList[j];
                 let audio;
@@ -224,5 +224,9 @@ class DisplayAudio {
             default:
                 throw new Error(`Unsupported type: ${info.type}`);
         }
+    }
+
+    async _getExpressionAudioInfoList(source, expression, reading, details) {
+        return await api.getExpressionAudioInfoList(source, expression, reading, details);
     }
 }
