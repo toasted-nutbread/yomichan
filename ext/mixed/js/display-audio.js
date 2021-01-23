@@ -62,8 +62,8 @@ class DisplayAudio {
     }
 
     setupEntriesComplete() {
-        const {audio} = this._display.getOptions();
-        if (!audio.enabled || !audio.autoPlay) { return; }
+        const audioOptions = this._getAudioOptions();
+        if (!audioOptions.enabled || !audioOptions.autoPlay) { return; }
 
         this.clearAutoPlayTimer();
 
@@ -105,7 +105,7 @@ class DisplayAudio {
         if (expressionReading === null) { return; }
 
         const {expression, reading} = expressionReading;
-        const {sources, textToSpeechVoice, customSourceUrl, volume} = this._display.getOptions().audio;
+        const {sources, textToSpeechVoice, customSourceUrl, volume} = this._getAudioOptions();
 
         const progressIndicatorVisible = this._display.progressIndicatorVisible;
         const overrideToken = progressIndicatorVisible.setOverride(true);
@@ -255,5 +255,9 @@ class DisplayAudio {
 
     _getExpressionReadingKey(expression, reading) {
         return JSON.stringify([expression, reading]);
+    }
+
+    _getAudioOptions() {
+        return this._display.getOptions().audio;
     }
 }
