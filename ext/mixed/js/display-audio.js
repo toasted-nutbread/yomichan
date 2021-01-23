@@ -182,7 +182,7 @@ class DisplayAudio {
     }
 
     async _createExpressionAudio(sources, expression, reading, details) {
-        const key = JSON.stringify([expression, reading]);
+        const key = this._getExpressionReadingKey(expression, reading);
 
         let sourceMap = this._cache.get(key);
         if (typeof sourceMap === 'undefined') {
@@ -251,5 +251,9 @@ class DisplayAudio {
 
         const {expression, reading} = expressions[expressionIndex];
         return {expression, reading};
+    }
+
+    _getExpressionReadingKey(expression, reading) {
+        return JSON.stringify([expression, reading]);
     }
 }
