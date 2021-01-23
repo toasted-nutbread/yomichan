@@ -119,12 +119,13 @@ class DisplayAudio {
             // Create audio
             let audio;
             let title;
-            try {
+            const info = await this._createExpressionAudio(sources, expression, reading, {textToSpeechVoice, customSourceUrl});
+            if (info !== null) {
                 let source;
-                ({audio, source} = await this._createExpressionAudio(sources, expression, reading, {textToSpeechVoice, customSourceUrl}));
+                ({audio, source} = info);
                 const sourceIndex = sources.indexOf(source);
                 title = `From source ${1 + sourceIndex}: ${source}`;
-            } catch (e) {
+            } else {
                 audio = this._audioSystem.getFallbackAudio();
                 title = 'Could not find audio';
             }
@@ -225,7 +226,7 @@ class DisplayAudio {
             }
         }
 
-        throw new Error('Could not create audio');
+        return null;
     }
 
     async _createAudioFromInfo(info, source) {
