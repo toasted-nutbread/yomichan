@@ -97,7 +97,7 @@ class DisplayAudio {
         this._audioPlaying = null;
     }
 
-    async playAudio(definitionIndex, expressionIndex, sources=null) {
+    async playAudio(definitionIndex, expressionIndex, sources=null, sourceDetailsMap=null) {
         this.stopAudio();
         this.clearAutoPlayTimer();
 
@@ -110,6 +110,9 @@ class DisplayAudio {
         if (!Array.isArray(sources)) {
             ({sources} = audioOptions);
         }
+        if (!(sourceDetailsMap instanceof Map)) {
+            sourceDetailsMap = null;
+        }
 
         const progressIndicatorVisible = this._display.progressIndicatorVisible;
         const overrideToken = progressIndicatorVisible.setOverride(true);
@@ -117,7 +120,7 @@ class DisplayAudio {
             // Create audio
             let audio;
             let title;
-            const info = await this._createExpressionAudio(sources, expression, reading, {textToSpeechVoice, customSourceUrl});
+            const info = await this._createExpressionAudio(sources, sourceDetailsMap, expression, reading, {textToSpeechVoice, customSourceUrl});
             if (info !== null) {
                 let source;
                 ({audio, source} = info);
@@ -185,7 +188,7 @@ class DisplayAudio {
         return results;
     }
 
-    async _createExpressionAudio(sources, expression, reading, details) {
+    async _createExpressionAudio(sources, sourceDetailsMap, expression, reading, details) {
         const key = this._getExpressionReadingKey(expression, reading);
 
         let sourceMap = this._cache.get(key);
@@ -211,7 +214,19 @@ class DisplayAudio {
                 sourceInfo.infoList = infoList;
             }
 
-            const audio = await this._createAudioFromInfoList(source, infoList, 0, infoList.length);
+            let start = 0;
+            let end = infoList.length;
+
+            if (sourceDetailsMap !== null) {
+                const sourceDetails = sourceDetailsMap.get(source);
+                if (typeof sourceDetails !== 'undefined') {
+                    const {start: start2, end: end2} = sourceDetails;
+                    if (this._isInteger(start2)) { start = this._clamp(start2, start, end); }
+                    if (this._isInteger(end2)) { end = this._clamp(end2, start, end); }
+                }
+            }
+
+            const audio = await this._createAudioFromInfoList(source, infoList, start, end);
             if (audio !== null) { return audio; }
         }
 
@@ -285,5 +300,17 @@ class DisplayAudio {
 
     _getAudioOptions() {
         return this._display.getOptions().audio;
+    }
+
+    _isInteger(value) {
+        return (
+            typeof value === 'number' &&
+            Number.isFinite(value) &&
+            Math.floor(value) === value
+        );
+    }
+
+    _clamp(value, min, max) {
+        return Math.max(min, Math.min(max, value));
     }
 }
