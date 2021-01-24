@@ -317,6 +317,12 @@ class DisplayAudio {
     }
 
     _updateAudioPlayButtonBadge(button, potentialAvailableAudioCount) {
+        if (potentialAvailableAudioCount === null) {
+            delete button.dataset.potentialAvailableAudioCount;
+        } else {
+            button.dataset.potentialAvailableAudioCount = `${potentialAvailableAudioCount}`;
+        }
+
         const badge = button.querySelector('.action-button-badge');
         if (badge === null) { return; }
 
