@@ -964,11 +964,13 @@ button.popup-menu-item:disabled {
     color: var(--text-color-light2);
 }
 .popup-menu-item-icon {
-    display: block;
     width: calc(16em / 14);
     height: calc(16em / 14);
     background-color: var(--text-color);
     margin-right: 0.5em;
+}
+.popup-menu-item-icon:not([hidden]) {
+    display: block;
 }
 :root[data-page-type=popup] .popup-menu.popup-menu-auto-size,
 .popup-menu.popup-menu-small {
