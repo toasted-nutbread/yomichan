@@ -104,6 +104,8 @@ class DisplayAudio {
         const expressionReading = this._getExpressionAndReading(definitionIndex, expressionIndex);
         if (expressionReading === null) { return; }
 
+        const buttons = this._getAudioPlayButtons(definitionIndex, expressionIndex);
+
         const {expression, reading} = expressionReading;
         const audioOptions = this._getAudioOptions();
         const {textToSpeechVoice, customSourceUrl, volume} = audioOptions;
@@ -136,7 +138,7 @@ class DisplayAudio {
 
             // Update details
             const potentialAvailableAudioCount = this._getPotentialAvailableAudioCount(expression, reading);
-            for (const button of this._getAudioPlayButtons(definitionIndex, expressionIndex)) {
+            for (const button of buttons) {
                 const titleDefault = button.dataset.titleDefault || '';
                 button.title = `${titleDefault}\n${title}`;
                 this._updateAudioPlayButtonBadge(button, potentialAvailableAudioCount);
