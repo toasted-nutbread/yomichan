@@ -21,6 +21,7 @@ class PopupMenu extends EventDispatcher {
         this._sourceElement = sourceElement;
         this._containerNode = containerNode;
         this._node = containerNode.querySelector('.popup-menu');
+        this._bodyNode = containerNode.querySelector('.popup-menu-body');
         this._isClosed = false;
         this._eventListeners = new EventListenerCollection();
     }
@@ -37,12 +38,16 @@ class PopupMenu extends EventDispatcher {
         return this._node;
     }
 
+    get bodyNode() {
+        return this._bodyNode;
+    }
+
     get isClosed() {
         return this._isClosed;
     }
 
     prepare() {
-        const items = this._node.querySelectorAll('.popup-menu-item');
+        const items = this._bodyNode.querySelectorAll('.popup-menu-item');
         this._setPosition(items);
         this._containerNode.focus();
 
