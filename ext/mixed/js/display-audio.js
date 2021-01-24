@@ -112,7 +112,7 @@ class DisplayAudio {
 
         const {expression, reading} = expressionReading;
         const audioOptions = this._getAudioOptions();
-        const {textToSpeechVoice, customSourceUrl, volume} = audioOptions;
+        const {textToSpeechVoice, customSourceUrl, customSourceType, volume} = audioOptions;
         if (!Array.isArray(sources)) {
             ({sources} = audioOptions);
         }
@@ -126,7 +126,7 @@ class DisplayAudio {
             // Create audio
             let audio;
             let title;
-            const info = await this._createExpressionAudio(sources, sourceDetailsMap, expression, reading, {textToSpeechVoice, customSourceUrl});
+            const info = await this._createExpressionAudio(sources, sourceDetailsMap, expression, reading, {textToSpeechVoice, customSourceUrl, customSourceType});
             if (info !== null) {
                 let source;
                 ({audio, source} = info);
