@@ -48,7 +48,7 @@ class PopupMenu extends EventDispatcher {
 
     prepare() {
         const items = this._bodyNode.querySelectorAll('.popup-menu-item');
-        this._setPosition(items);
+        this._setPosition();
         this._containerNode.focus();
 
         this._eventListeners.addEventListener(window, 'resize', this._onWindowResize.bind(this), false);
@@ -89,7 +89,7 @@ class PopupMenu extends EventDispatcher {
         this._close(null, 'resize', true);
     }
 
-    _setPosition(items) {
+    _setPosition() {
         // Get flags
         let horizontal = 1;
         let vertical = 1;
@@ -143,11 +143,10 @@ class PopupMenu extends EventDispatcher {
         const menuRect = menu.getBoundingClientRect();
         let top = menuRect.top;
         let bottom = menuRect.bottom;
-        if (verticalCover === 1 && items.length > 0) {
-            const rect1 = items[0].getBoundingClientRect();
-            const rect2 = items[items.length - 1].getBoundingClientRect();
-            top = rect1.top;
-            bottom = rect2.bottom;
+        if (verticalCover === 1) {
+            const bodyRect = this._bodyNode.getBoundingClientRect();
+            top = bodyRect.top;
+            bottom = bodyRect.bottom;
         }
 
         let x = (
