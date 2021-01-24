@@ -79,6 +79,8 @@
     --danger-color-transparent5: rgba(200, 60, 40, 0.05);
     --danger-color-transparent25: rgba(200, 60, 40, 0.25);
 
+    --success-color: #51ab30;
+
     --disabled-color: #aaaaaa;
     --disabled-color-light: #dddddd;
     --disabled-color-lighter: #eeeeee;
@@ -134,6 +136,8 @@
     --danger-color-transparent0: rgba(221, 103, 85, 0);
     --danger-color-transparent5: rgba(221, 103, 85, 0.05);
     --danger-color-transparent25: rgba(221, 103, 85, 0.25);
+
+    --success-color: #75cf54;
 
     --disabled-color: #444444;
     --disabled-color-light: #585858;
