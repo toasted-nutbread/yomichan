@@ -86,7 +86,7 @@ primary language is not English, you may consider also importing the English ver
 
 1.  Click the <img src="ext/mixed/img/yomichan-icon.svg" alt="" width="16" height="16"> _Yomichan_ button in the browser bar to open the quick-actions popup.
 
-    <a href="resources/images/browser-action-popup1.png"><img src="resources/images/browser-action-popup1.png" width="103" height="100"></a>
+    <a target="_blank" href="resources/images/browser-action-popup1.png"><img src="resources/images/browser-action-popup1.png" width="103" height="100"></a>
 
     *   The <img src="ext/mixed/img/cog.svg" alt="" width="16" height="16"> _cog_ button will open the settings page.
     *   The <img src="ext/mixed/img/magnifying-glass.svg" alt="" width="16" height="16"> _magnifying glass_ button will open the search page.
