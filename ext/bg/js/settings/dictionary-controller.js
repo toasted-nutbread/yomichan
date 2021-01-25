@@ -204,6 +204,7 @@ class DictionaryController {
         this._dictionaryEntryContainer = null;
         this._integrityExtraInfoContainer = null;
         this._dictionaryInstallCountNode = null;
+        this._dictionaryEnabledCountNode = null;
         this._noDictionariesInstalledWarnings = null;
         this._noDictionariesEnabledWarnings = null;
         this._deleteDictionaryModal = null;
@@ -216,6 +217,7 @@ class DictionaryController {
         this._dictionaryEntryContainer = document.querySelector('#dictionary-list');
         this._integrityExtraInfoContainer = document.querySelector('#dictionary-list-extra');
         this._dictionaryInstallCountNode = document.querySelector('#dictionary-install-count');
+        this._dictionaryEnabledCountNode = document.querySelector('#dictionary-enabled-count');
         this._noDictionariesInstalledWarnings = document.querySelectorAll('.no-dictionaries-installed-warning');
         this._noDictionariesEnabledWarnings = document.querySelectorAll('.no-dictionaries-enabled-warning');
         this._deleteDictionaryModal = this._modalController.getModal('dictionary-confirm-delete');
@@ -288,21 +290,25 @@ class DictionaryController {
     }
 
     _updateDictionariesEnabledWarnings(options) {
-        if (this._dictionaries === null) { return; }
-
-        let hasEnabledDictionary = false;
-        for (const {title} of this._dictionaries) {
-            if (Object.prototype.hasOwnProperty.call(options.dictionaries, title)) {
-                const {enabled} = options.dictionaries[title];
-                if (enabled) {
-                    hasEnabledDictionary = true;
-                    break;
+        let enabledCount = 0;
+        if (this._dictionaries !== null) {
+            for (const {title} of this._dictionaries) {
+                if (Object.prototype.hasOwnProperty.call(options.dictionaries, title)) {
+                    const {enabled} = options.dictionaries[title];
+                    if (enabled) {
+                        ++enabledCount;
+                    }
                 }
             }
         }
 
+        const hasEnabledDictionary = (enabledCount > 0);
         for (const node of this._noDictionariesEnabledWarnings) {
             node.hidden = hasEnabledDictionary;
+        }
+
+        if (this._dictionaryEnabledCountNode !== null) {
+            this._dictionaryEnabledCountNode.textContent = `${enabledCount}`;
         }
     }
 
