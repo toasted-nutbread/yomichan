@@ -912,7 +912,7 @@ class Backend {
             this._mecab.stopListener();
         }
 
-        if (options.general.enableClipboardPopups) {
+        if (options.clipboard.enableBackgroundMonitor) {
             this._clipboardMonitor.start();
         } else {
             this._clipboardMonitor.stop();
