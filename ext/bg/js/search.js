@@ -182,13 +182,13 @@ class DisplaySearch extends Display {
     }
 
     _onExternalSearchUpdate({text, animate=true}) {
-        const {general: {autoSearchClipboardContent}, clipboard: {maximumSearchLength}} = this.getOptions();
+        const {clipboard: {autoSearchContent, maximumSearchLength}} = this.getOptions();
         if (text.length > maximumSearchLength) {
             text = text.substring(0, maximumSearchLength);
         }
         this._queryInput.value = text;
         this._updateSearchHeight(true);
-        this._search(animate, false, autoSearchClipboardContent);
+        this._search(animate, false, autoSearchContent);
     }
 
     _onWanakanaEnableChange(e) {
