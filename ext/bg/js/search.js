@@ -130,7 +130,7 @@ class DisplaySearch extends Display {
             case 'terms':
             case 'kanji':
                 animate = !!content.animate;
-                valid = content.definitions.length > 0;
+                valid = (typeof source === 'string' && source.length > 0);
                 this.blurElement(this._queryInput);
                 break;
             case 'clear':
