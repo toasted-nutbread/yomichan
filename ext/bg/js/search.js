@@ -126,7 +126,7 @@ class DisplaySearch extends Display {
     }
 
     _onDisplayOptionsUpdated({options}) {
-        this._clipboardMonitorEnabled = options.general.enableClipboardMonitor;
+        this._clipboardMonitorEnabled = options.clipboard.enableSearchPageMonitor;
         this._updateClipboardMonitorEnabled();
     }
 
@@ -303,7 +303,7 @@ class DisplaySearch extends Display {
 
         await api.modifySettings([{
             action: 'set',
-            path: 'general.enableClipboardMonitor',
+            path: 'clipboard.enableSearchPageMonitor',
             value,
             scope: 'profile',
             optionsContext: this.getOptionsContext()
