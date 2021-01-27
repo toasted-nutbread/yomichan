@@ -791,7 +791,8 @@ select.short-height {
     flex: 0 0 auto;
     padding: var(--modal-padding-vertical-half) var(--modal-padding-horizontal);
 }
-.modal-body>.settings-item {
+.modal-body>.settings-item,
+.modal-settings-group>.settings-item {
     margin-left: calc(var(--modal-padding-horizontal) * -1);
 }
 .modal-body .settings-item {
