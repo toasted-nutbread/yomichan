@@ -913,6 +913,15 @@ button.icon-button.modal-header-button:active>.icon-button-inner>.icon {
         visibility 0s ease-in-out var(--animation-duration2);
 }
 
+.modal-separator-line {
+    border-bottom: var(--thin-border-size) solid var(--separator-color1);
+    margin: 0 calc(var(--modal-padding-horizontal) * -1);
+}
+.modal-separator-line-light {
+    border-bottom: var(--thin-border-size) solid var(--separator-color2);
+    margin: 0 calc(var(--modal-padding-horizontal) * -1);
+}
+
 
 /* Status footer */
 .status-footer-container {
@@ -1943,11 +1952,6 @@ input.sentence-termination-character-input2 {
 }
 .hotkey-scope-checkbox-container>span {
     padding-left: 0.375em;
-}
-
-.anki-card-primary-separator {
-    border-bottom: var(--thin-border-size) solid var(--separator-color1);
-    margin: 0 calc(var(--modal-padding-horizontal) * -1);
 }
 
 
