@@ -99,7 +99,7 @@ primary language is not English, you may consider also importing the English ver
 
     <a href="resources/images/settings-dictionaries-popup.png"><img src="resources/images/settings-dictionaries-popup-thumb.png" width="128" height="86"></a>
 
-3.  Webpage text can be scanned by moving the cursor while holding the scanning modifier key, which is <kbd>Shift</kbd>
+3.  Webpage text can be scanned by moving the cursor while holding a modifier key, which is <kbd>Shift</kbd>
     by default. If definitions are found for the text at the cursor position, a popup window containing term definitions
     will open. This window can be dismissed by clicking anywhere outside of it.
 
