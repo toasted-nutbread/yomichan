@@ -50,6 +50,7 @@ function createVM(extDir) {
         'mixed/js/core.js',
         'mixed/js/cache-map.js',
         'bg/js/json-schema.js',
+        'bg/js/template-patcher.js',
         'bg/js/options.js'
     ]);
 
@@ -610,11 +611,15 @@ async function testDefault(extDir) {
 
 async function testFieldTemplatesUpdate(extDir) {
     const vm = createVM(extDir);
-    const [OptionsUtil] = vm.get(['OptionsUtil']);
+    const [OptionsUtil, TemplatePatcher] = vm.get(['OptionsUtil', 'TemplatePatcher']);
     const optionsUtil = new OptionsUtil();
     await optionsUtil.prepare();
 
-    const loadDataFile = (fileName) => fs.readFileSync(path.join(extDir, fileName), {encoding: 'utf8'});
+    const templatePatcher = new TemplatePatcher();
+    const loadDataFile = (fileName) => {
+        const content = fs.readFileSync(path.join(extDir, fileName), {encoding: 'utf8'});
+        return templatePatcher.parsePatch(content).addition;
+    };
     const update2 = loadDataFile('bg/data/anki-field-templates-upgrade-v2.handlebars');
     const update4 = loadDataFile('bg/data/anki-field-templates-upgrade-v4.handlebars');
     const update6 = loadDataFile('bg/data/anki-field-templates-upgrade-v6.handlebars');
