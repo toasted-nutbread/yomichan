@@ -88,9 +88,9 @@ primary language is not English, you may consider also importing the English ver
 
     <a href="resources/images/browser-action-popup1.png"><img src="resources/images/browser-action-popup1.png" width="103" height="100"></a>
 
-    *   The <img src="ext/mixed/img/cog.svg" alt="" width="16" height="16"> _cog_ button will open the settings page.
-    *   The <img src="ext/mixed/img/magnifying-glass.svg" alt="" width="16" height="16"> _magnifying glass_ button will open the search page.
-    *   The <img src="ext/mixed/img/question-mark-circle.svg" alt="" width="16" height="16"> _question mark_ button will open a page with some general information about Yomichan.
+    *   The <img src="ext/mixed/img/cog.svg" alt="" width="16" height="16"> _cog_ button will open the Settings page.
+    *   The <img src="ext/mixed/img/magnifying-glass.svg" alt="" width="16" height="16"> _magnifying glass_ button will open the Search page.
+    *   The <img src="ext/mixed/img/question-mark-circle.svg" alt="" width="16" height="16"> _question mark_ button will open the Information page.
     *   The <img src="ext/mixed/img/profile.svg" alt="" width="16" height="16"> _profile_ button will appear when multiple profiles exist, allowing the current profile to be quickly changed.
 
 2.  Import the dictionaries you wish to use for term and kanji searches. If you do not have any dictionaries installed
