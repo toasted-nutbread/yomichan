@@ -1170,39 +1170,44 @@ class Display extends EventDispatcher {
     }
 
     async _addAnkiNote(definitionIndex, mode) {
-        if (definitionIndex < 0 || definitionIndex >= this._definitions.length) { return false; }
+        if (definitionIndex < 0 || definitionIndex >= this._definitions.length) { return; }
         const definition = this._definitions[definitionIndex];
 
         const button = this._adderButtonFind(definitionIndex, mode);
-        if (button === null || button.disabled) { return false; }
+        if (button === null || button.disabled) { return; }
 
+        const errors = [];
         const overrideToken = this._progressIndicatorVisible.setOverride(true);
         try {
             const {anki: {suspendNewCards}} = this._options;
             const noteContext = this._getNoteContext();
-            const errors = [];
             const note = await this._createNote(definition, mode, noteContext, true, errors);
             const noteId = await api.addAnkiNote(note);
-            if (noteId !== null) {
+            if (noteId === null) {
+                errors.length = 0;
+                errors.push(new Error('Note could not be added'));
+            } else {
                 if (suspendNewCards) {
                     try {
                         await api.suspendAnkiCardsForNote(noteId);
                     } catch (e) {
-                        // NOP
+                        errors.push(e);
                     }
                 }
                 button.disabled = true;
                 this._viewerButtonShow(definitionIndex, noteId);
-            } else {
-                throw new Error('Note could not be added');
             }
         } catch (e) {
-            this.onError(e);
-            return false;
+            errors.push(e);
         } finally {
             this._progressIndicatorVisible.clearOverride(overrideToken);
         }
-        return true;
+
+        this._showAnkiNoteErrors(errors);
+    }
+
+    _showAnkiNoteErrors(errors) {
+        // TODO
     }
 
     async _playAudioCurrent() {
