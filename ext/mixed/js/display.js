@@ -1187,20 +1187,31 @@ class Display extends EventDispatcher {
             const {anki: {suspendNewCards}} = this._options;
             const noteContext = this._getNoteContext();
             const note = await this._createNote(definition, mode, noteContext, true, errors);
-            const noteId = await api.addAnkiNote(note);
-            if (noteId === null) {
+
+            let noteId = null;
+            let addNoteOkay = false;
+            try {
+                noteId = await api.addAnkiNote(note);
+                addNoteOkay = true;
+            } catch (e) {
                 errors.length = 0;
-                errors.push(new Error('Note could not be added'));
-            } else {
-                if (suspendNewCards) {
-                    try {
-                        await api.suspendAnkiCardsForNote(noteId);
-                    } catch (e) {
-                        errors.push(e);
+                errors.push(e);
+            }
+
+            if (addNoteOkay) {
+                if (noteId === null) {
+                    errors.push(new Error('Note could not be added'));
+                } else {
+                    if (suspendNewCards) {
+                        try {
+                            await api.suspendAnkiCardsForNote(noteId);
+                        } catch (e) {
+                            errors.push(e);
+                        }
                     }
+                    button.disabled = true;
+                    this._viewerButtonShow(definitionIndex, noteId);
                 }
-                button.disabled = true;
-                this._viewerButtonShow(definitionIndex, noteId);
             }
         } catch (e) {
             errors.push(e);
