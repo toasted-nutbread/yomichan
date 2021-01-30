@@ -62,6 +62,18 @@ async function setPermissionsGranted(permissions, shouldHave) {
     );
 }
 
+function setupPermissionCheckbox(checkbox, permissions) {
+    checkbox.addEventListener('change', (e) => {
+        updatePermissionCheckbox(checkbox, permissions, e.currentTarget.checked);
+    }, false);
+}
+
+async function updatePermissionCheckbox(checkbox, permissions, value) {
+    checkbox.checked = !value;
+    const hasPermission = await setPermissionsGranted(permissions, value);
+    checkbox.checked = hasPermission;
+}
+
 (async () => {
     try {
         const documentFocusController = new DocumentFocusController();
@@ -90,9 +102,7 @@ async function setPermissionsGranted(permissions, shouldHave) {
             permissionsCheckboxes[i].checked = permissions[i];
         }
 
-        permissionsCheckboxes[0].addEventListener('change', (e) => {
-            setPermissionsGranted(['clipboardRead'], e.currentTarget.checked);
-        });
+        setupPermissionCheckbox(permissionsCheckboxes[0], ['clipboardRead']);
 
         await promiseTimeout(100);
 
