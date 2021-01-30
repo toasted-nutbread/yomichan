@@ -41,13 +41,24 @@ async function hasPermissions(permissions) {
 }
 
 async function setPermissionsGranted(permissions, shouldHave) {
-    const has = await hasPermissions(permissions);
-    if (shouldHave === has) { return has; }
-
     return await (
         shouldHave ?
-        new Promise((resolve) => chrome.permissions.request({permissions}, resolve)) :
-        new Promise((resolve) => chrome.permissions.remove({permissions}, (v) => resolve(!v)))
+        new Promise((resolve, reject) => chrome.permissions.request({permissions}, (result) => {
+            const e = chrome.runtime.lastError;
+            if (e) {
+                reject(new Error(e.message));
+            } else {
+                resolve(result);
+            }
+        })) :
+        new Promise((resolve, reject) => chrome.permissions.remove({permissions}, (result) => {
+            const e = chrome.runtime.lastError;
+            if (e) {
+                reject(new Error(e.message));
+            } else {
+                resolve(!result);
+            }
+        }))
     );
 }
 
