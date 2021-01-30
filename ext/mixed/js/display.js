@@ -110,8 +110,10 @@ class Display extends EventDispatcher {
         this._frameResizeStartOffset = null;
         this._frameResizeEventListeners = new EventListenerCollection();
         this._tagNotification = null;
-        this._tagNotificationContainer = document.querySelector('#content-footer');
+        this._footerNotificationContainer = document.querySelector('#content-footer');
         this._displayAudio = new DisplayAudio(this);
+        this._ankiNoteNotification = null;
+        this._ankiNoteNotificationEventListeners = null;
 
         this._hotkeyHandler.registerActions([
             ['close',             () => { this._onHotkeyClose(); }],
@@ -525,6 +527,7 @@ class Display extends EventDispatcher {
             this._mediaLoader.unloadAll();
             this._displayAudio.cleanupEntries();
             this._hideTagNotification(false);
+            this._hideAnkiNoteErrors(false);
             this._definitions = [];
             this._definitionNodes = [];
 
@@ -791,7 +794,7 @@ class Display extends EventDispatcher {
         if (this._tagNotification === null) {
             const node = this._displayGenerator.createEmptyFooterNotification();
             node.classList.add('click-scannable');
-            this._tagNotification = new DisplayNotification(this._tagNotificationContainer, node);
+            this._tagNotification = new DisplayNotification(this._footerNotificationContainer, node);
         }
 
         const content = this._displayGenerator.createTagFooterNotificationDetails(tagNode);
@@ -1176,6 +1179,8 @@ class Display extends EventDispatcher {
         const button = this._adderButtonFind(definitionIndex, mode);
         if (button === null || button.disabled) { return; }
 
+        this._hideAnkiNoteErrors(true);
+
         const errors = [];
         const overrideToken = this._progressIndicatorVisible.setOverride(true);
         try {
@@ -1203,11 +1208,39 @@ class Display extends EventDispatcher {
             this._progressIndicatorVisible.clearOverride(overrideToken);
         }
 
-        this._showAnkiNoteErrors(errors);
+        if (errors.length > 0) {
+            this._showAnkiNoteErrors(errors);
+        } else {
+            this._hideAnkiNoteErrors(true);
+        }
     }
 
     _showAnkiNoteErrors(errors) {
-        // TODO
+        if (this._ankiNoteNotificationEventListeners !== null) {
+            this._ankiNoteNotificationEventListeners.removeAllEventListeners();
+        }
+
+        if (this._ankiNoteNotification === null) {
+            const node = this._displayGenerator.createEmptyFooterNotification();
+            this._ankiNoteNotification = new DisplayNotification(this._footerNotificationContainer, node);
+            this._ankiNoteNotificationEventListeners = new EventListenerCollection();
+        }
+
+        const content = this._displayGenerator.createAnkiNoteErrorsNotificationContent(errors);
+        for (const node of content.querySelectorAll('.anki-note-error-log-link')) {
+            this._ankiNoteNotificationEventListeners.addEventListener(node, 'click', () => {
+                console.log({ankiNoteErrors: errors});
+            }, false);
+        }
+
+        this._ankiNoteNotification.setContent(content);
+        this._ankiNoteNotification.open();
+    }
+
+    _hideAnkiNoteErrors(animate) {
+        if (this._ankiNoteNotification === null) { return; }
+        this._ankiNoteNotification.close(animate);
+        this._ankiNoteNotificationEventListeners.removeAllEventListeners();
     }
 
     async _playAudioCurrent() {
