@@ -150,6 +150,10 @@ code {
 label {
     cursor: pointer;
 }
+pre {
+    white-space: pre-wrap;
+    margin: 0;
+}
 
 
 /* Text styles */
@@ -1946,6 +1950,13 @@ input.sentence-termination-character-input2 {
 }
 .hotkey-scope-checkbox-container>span {
     padding-left: 0.375em;
+}
+
+.inline-icon {
+    position: relative;
+    width: calc(1em * (16 / var(--font-size-no-units)));
+    height: calc(1em * (16 / var(--font-size-no-units)));
+    top: calc(1em * (3 / var(--font-size-no-units)));
 }
 
 
