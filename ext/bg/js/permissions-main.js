@@ -36,12 +36,15 @@ async function isAllowedFileSchemeAccess() {
     return await new Promise((resolve) => chrome.extension.isAllowedFileSchemeAccess(resolve));
 }
 
-async function hasPermissions(permissions) {
-    return await new Promise((resolve) => chrome.permissions.contains({permissions}, resolve));
+function hasPermissions(permissions) {
+    return new Promise((resolve) => chrome.permissions.contains({permissions}, (result) => {
+        const e = chrome.runtime.lastError;
+        resolve(!e && result);
+    }));
 }
 
-async function setPermissionsGranted(permissions, shouldHave) {
-    return await (
+function setPermissionsGranted(permissions, shouldHave) {
+    return (
         shouldHave ?
         new Promise((resolve, reject) => chrome.permissions.request({permissions}, (result) => {
             const e = chrome.runtime.lastError;
