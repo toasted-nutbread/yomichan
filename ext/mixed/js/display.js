@@ -1183,7 +1183,7 @@ class Display extends EventDispatcher {
             const errors = [];
             const note = await this._createNote(definition, mode, noteContext, true, errors);
             const noteId = await api.addAnkiNote(note);
-            if (noteId) {
+            if (noteId !== null) {
                 if (suspendNewCards) {
                     try {
                         await api.suspendAnkiCardsForNote(noteId);
