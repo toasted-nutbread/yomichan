@@ -1180,7 +1180,8 @@ class Display extends EventDispatcher {
         try {
             const {anki: {suspendNewCards}} = this._options;
             const noteContext = this._getNoteContext();
-            const note = await this._createNote(definition, mode, noteContext, true);
+            const errors = [];
+            const note = await this._createNote(definition, mode, noteContext, true, errors);
             const noteId = await api.addAnkiNote(note);
             if (noteId) {
                 if (suspendNewCards) {
@@ -1372,7 +1373,7 @@ class Display extends EventDispatcher {
         const notePromises = [];
         for (const definition of definitions) {
             for (const mode of modes) {
-                const notePromise = this._createNote(definition, mode, context, false);
+                const notePromise = this._createNote(definition, mode, context, false, null);
                 notePromises.push(notePromise);
             }
         }
@@ -1400,7 +1401,7 @@ class Display extends EventDispatcher {
         return results;
     }
 
-    async _createNote(definition, mode, context, injectMedia) {
+    async _createNote(definition, mode, context, injectMedia, errors) {
         const options = this._options;
         const templates = this._ankiFieldTemplates;
         const {
@@ -1412,7 +1413,16 @@ class Display extends EventDispatcher {
         const {deck: deckName, model: modelName} = modeOptions;
         const fields = Object.entries(modeOptions.fields);
 
-        const injectedMedia = (injectMedia ? await this._injectAnkiNoteMedia(definition, mode, options, fields) : null);
+        let injectedMedia = null;
+        if (injectMedia) {
+            let errors2;
+            ({result: injectedMedia, errors: errors2} = await this._injectAnkiNoteMedia(definition, mode, options, fields));
+            if (Array.isArray(errors)) {
+                for (const error of errors2) {
+                    errors.push(deserializeError(error));
+                }
+            }
+        }
 
         return await this._ankiNoteBuilder.createNote({
             definition,
@@ -1428,7 +1438,8 @@ class Display extends EventDispatcher {
             resultOutputMode,
             glossaryLayoutMode,
             compactTags,
-            injectedMedia
+            injectedMedia,
+            errors
         });
     }
 

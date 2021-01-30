@@ -1539,13 +1539,14 @@ class Backend {
         let clipboardImageFileName = null;
         let clipboardText = null;
         let audioFileName = null;
+        const errors = [];
 
         try {
             if (screenshotDetails !== null) {
                 screenshotFileName = await this._injectAnkNoteScreenshot(ankiConnect, timestamp, definitionDetails, screenshotDetails);
             }
         } catch (e) {
-            // NOP
+            errors.push(serializeError(e));
         }
 
         try {
@@ -1553,7 +1554,7 @@ class Backend {
                 clipboardImageFileName = await this._injectAnkNoteClipboardImage(ankiConnect, timestamp, definitionDetails);
             }
         } catch (e) {
-            // NOP
+            errors.push(serializeError(e));
         }
 
         try {
@@ -1561,7 +1562,7 @@ class Backend {
                 clipboardText = await this._clipboardReader.getText();
             }
         } catch (e) {
-            // NOP
+            errors.push(serializeError(e));
         }
 
         try {
@@ -1569,10 +1570,18 @@ class Backend {
                 audioFileName = await this._injectAnkNoteAudio(ankiConnect, timestamp, definitionDetails, audioDetails);
             }
         } catch (e) {
-            // NOP
+            errors.push(serializeError(e));
         }
 
-        return {screenshotFileName, clipboardImageFileName, clipboardText, audioFileName};
+        return {
+            result: {
+                screenshotFileName,
+                clipboardImageFileName,
+                clipboardText,
+                audioFileName
+            },
+            errors
+        };
     }
 
     async _injectAnkNoteAudio(ankiConnect, timestamp, definitionDetails, details) {
