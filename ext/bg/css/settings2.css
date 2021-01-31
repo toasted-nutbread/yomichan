@@ -1466,15 +1466,8 @@ button.anki-card-field-value-menu-button {
     border-collapse: collapse;
     border-spacing: 0;
 }
-.anki-field-marker-info-table>thead {
+.anki-field-marker-info-table tr.anki-field-marker-info-table-heading {
     font-weight: bold;
-}
-code.anki-field-marker {
-    white-space: nowrap;
-    font-size: 0.85em;
-    font-weight: bold;
-}
-.anki-field-marker-info-table thead tr {
     background-color: var(--input-background-color);
 }
 .anki-field-marker-info-table td {
@@ -1488,6 +1481,11 @@ code.anki-field-marker {
 }
 .anki-field-marker-info-table td:nth-last-child(n+2) {
     border-right: none;
+}
+code.anki-field-marker {
+    white-space: nowrap;
+    font-size: 0.85em;
+    font-weight: bold;
 }
 
 .anki-card-templates-layout {
