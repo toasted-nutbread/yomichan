@@ -164,7 +164,7 @@ class SettingsDisplayController {
         if (typeof target === 'undefined') {
             const currentModal = node.closest('.modal');
             if (currentModal === null) { return; }
-            target = currentModal.id;
+            target = currentModal;
         }
 
         const modal = this._modalController.getModal(target);
