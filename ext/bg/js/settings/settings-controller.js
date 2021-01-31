@@ -46,6 +46,8 @@ class SettingsController extends EventDispatcher {
 
     prepare() {
         yomichan.on('optionsUpdated', this._onOptionsUpdated.bind(this));
+        chrome.permissions.onAdded.addListener(this._onPermissionsChanged.bind(this));
+        chrome.permissions.onRemoved.addListener(this._onPermissionsChanged.bind(this));
     }
 
     async refresh() {
@@ -230,5 +232,17 @@ class SettingsController extends EventDispatcher {
         if (this._pageExitPreventions.size === 0) {
             this._pageExitPreventionEventListeners.removeAllEventListeners();
         }
+    }
+
+    _onPermissionsChanged() {
+        this._triggerPermissionsChanged();
+    }
+
+    async _triggerPermissionsChanged() {
+        const event = 'permissionsChanged';
+        if (!this.hasListeners(event)) { return; }
+
+        const permissions = await this.getAllPermissions();
+        this.trigger(event, {permissions});
     }
 }
