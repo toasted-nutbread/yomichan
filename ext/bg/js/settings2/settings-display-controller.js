@@ -168,7 +168,7 @@ class SettingsDisplayController {
         }
 
         const modal = this._modalController.getModal(target);
-        if (typeof modal === 'undefined') { return; }
+        if (modal === null) { return; }
 
         switch (action) {
             case 'show':
