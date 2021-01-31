@@ -26,7 +26,7 @@ class ModalController {
     }
 
     prepare() {
-        for (const node of document.querySelectorAll('.modal,.modal-container')) {
+        for (const node of document.querySelectorAll('.modal')) {
             const {id} = node;
             const modal = new Modal(node);
             modal.prepare();
