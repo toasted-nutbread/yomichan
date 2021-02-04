@@ -282,7 +282,7 @@ class DisplayGenerator {
     _createTermGlossaryItemText(glossary) {
         const node = this._templates.instantiate('term-glossary-item');
         const container = node.querySelector('.term-glossary');
-        this._appendMultilineText(container, glossary);
+        this._setTextContent(container, glossary);
         return node;
     }
 
@@ -330,7 +330,7 @@ class DisplayGenerator {
 
         if (typeof description === 'string') {
             const container = node.querySelector('.term-glossary-image-description');
-            this._appendMultilineText(container, description);
+            this._setTextContent(container, description);
         }
 
         return node;
@@ -365,7 +365,7 @@ class DisplayGenerator {
     _createKanjiGlossaryItem(glossary) {
         const node = this._templates.instantiate('kanji-glossary-item');
         const container = node.querySelector('.kanji-glossary');
-        this._appendMultilineText(container, glossary);
+        this._setTextContent(container, glossary);
         return node;
     }
 
@@ -672,15 +672,6 @@ class DisplayGenerator {
             } else {
                 addText(container, text);
             }
-        }
-    }
-
-    _appendMultilineText(container, text) {
-        const parts = text.split('\n');
-        container.appendChild(document.createTextNode(parts[0]));
-        for (let i = 1, ii = parts.length; i < ii; ++i) {
-            container.appendChild(document.createElement('br'));
-            container.appendChild(document.createTextNode(parts[i]));
         }
     }
 
