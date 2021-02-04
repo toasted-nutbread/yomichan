@@ -182,6 +182,7 @@ class DisplayGenerator {
                 const segments = this._japaneseUtil.distributeFurigana(expression, reading);
                 const disambiguationItem = document.createElement('span');
                 disambiguationItem.className = 'tag-details-disambiguation';
+                disambiguationItem.lang = 'ja';
                 this._appendFurigana(disambiguationItem, segments, (container, text) => {
                     container.appendChild(document.createTextNode(text));
                 });
@@ -233,6 +234,8 @@ class DisplayGenerator {
 
         node.dataset.readingIsSame = `${!reading || reading === expression}`;
         node.dataset.frequency = termFrequency;
+
+        expressionContainer.lang = 'ja';
 
         this._appendFurigana(expressionContainer, furiganaSegments, this._appendKanjiLinks.bind(this));
         this._appendMultiple(tagContainer, this._createTag.bind(this), termTags);
@@ -493,7 +496,7 @@ class DisplayGenerator {
             n1.dataset.position = `${i}`;
             n1.dataset.pitch = highPitch ? 'high' : 'low';
             n1.dataset.pitchNext = highPitchNext ? 'high' : 'low';
-            this._setTextContent(n2, mora, 'jp');
+            this._setTextContent(n2, mora, 'ja');
 
             n.appendChild(n1);
         }
@@ -620,6 +623,7 @@ class DisplayGenerator {
     }
 
     _appendKanjiLinks(container, text) {
+        container.lang = 'ja';
         const jp = this._japaneseUtil;
         let part = '';
         for (const c of text) {
