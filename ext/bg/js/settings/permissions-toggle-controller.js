@@ -19,7 +19,7 @@
  * ObjectPropertyAccessor
  */
 
-class ClipboardPopupsController {
+class PermissionsToggleController {
     constructor(settingsController) {
         this._settingsController = settingsController;
         this._toggles = null;

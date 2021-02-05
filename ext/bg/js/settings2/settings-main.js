@@ -20,7 +20,7 @@
  * AnkiTemplatesController
  * AudioController
  * BackupController
- * ClipboardPopupsController
+ * PermissionsToggleController
  * DictionaryController
  * DictionaryImportController
  * DocumentFocusController
@@ -119,8 +119,8 @@ async function setupGenericSettingsController(genericSettingController) {
         const nestedPopupsController = new NestedPopupsController(settingsController);
         nestedPopupsController.prepare();
 
-        const clipboardPopupsController = new ClipboardPopupsController(settingsController);
-        clipboardPopupsController.prepare();
+        const permissionsToggleController = new PermissionsToggleController(settingsController);
+        permissionsToggleController.prepare();
 
         const secondarySearchDictionaryController = new SecondarySearchDictionaryController(settingsController);
         secondarySearchDictionaryController.prepare();

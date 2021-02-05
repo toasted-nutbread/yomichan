@@ -20,7 +20,7 @@
  * AnkiTemplatesController
  * AudioController
  * BackupController
- * ClipboardPopupsController
+ * PermissionsToggleController
  * DictionaryController
  * DictionaryImportController
  * GenericSettingController
@@ -71,8 +71,8 @@ async function setupEnvironmentInfo() {
         const genericSettingController = new GenericSettingController(settingsController);
         genericSettingController.prepare();
 
-        const clipboardPopupsController = new ClipboardPopupsController(settingsController);
-        clipboardPopupsController.prepare();
+        const permissionsToggleController = new PermissionsToggleController(settingsController);
+        permissionsToggleController.prepare();
 
         const popupPreviewController = new PopupPreviewController(settingsController);
         popupPreviewController.prepare();
