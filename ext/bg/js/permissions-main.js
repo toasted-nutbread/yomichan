@@ -38,10 +38,32 @@ async function isAllowedFileSchemeAccess() {
     return await new Promise((resolve) => chrome.extension.isAllowedFileSchemeAccess(resolve));
 }
 
+function setupPermissionsToggles() {
+    const manifest = chrome.runtime.getManifest();
+    let optionalPermissions = manifest.optional_permissions;
+    if (!Array.isArray(optionalPermissions)) { optionalPermissions = []; }
+    optionalPermissions = new Set(optionalPermissions);
+
+    const hasAllPermisions = (set, values) => {
+        for (const value of values) {
+            if (!set.has(value)) { return false; }
+        }
+        return true;
+    };
+
+    for (const toggle of document.querySelectorAll('.permissions-toggle')) {
+        let permissions = toggle.dataset.requiredPermissions;
+        permissions = (typeof permissions === 'string' && permissions.length > 0 ? permissions.split(' ') : []);
+        toggle.disabled = !hasAllPermisions(optionalPermissions, permissions);
+    }
+}
+
 (async () => {
     try {
         const documentFocusController = new DocumentFocusController();
         documentFocusController.prepare();
+
+        setupPermissionsToggles();
 
         for (const node of document.querySelectorAll('.extension-id-example')) {
             node.textContent = chrome.runtime.getURL('/');
