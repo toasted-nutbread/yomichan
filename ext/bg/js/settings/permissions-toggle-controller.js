@@ -26,10 +26,10 @@ class PermissionsToggleController {
     }
 
     async prepare() {
-        this._toggles = document.querySelectorAll('.clipboard-toggle');
+        this._toggles = document.querySelectorAll('.permissions-toggle');
 
         for (const toggle of this._toggles) {
-            toggle.addEventListener('change', this._onClipboardToggleChange.bind(this), false);
+            toggle.addEventListener('change', this._onPermissionsToggleChange.bind(this), false);
         }
         this._settingsController.on('optionsChanged', this._onOptionsChanged.bind(this));
         this._settingsController.on('permissionsChanged', this._onPermissionsChanged.bind(this));
@@ -55,7 +55,7 @@ class PermissionsToggleController {
         this._updateValidity();
     }
 
-    async _onClipboardToggleChange(e) {
+    async _onPermissionsToggleChange(e) {
         const toggle = e.currentTarget;
         let value = toggle.checked;
 
