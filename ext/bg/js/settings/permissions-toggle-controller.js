@@ -43,7 +43,7 @@ class PermissionsToggleController {
     _onOptionsChanged({options}) {
         const accessor = new ObjectPropertyAccessor(options);
         for (const toggle of this._toggles) {
-            const path = ObjectPropertyAccessor.getPathArray(toggle.dataset.clipboardSetting);
+            const path = ObjectPropertyAccessor.getPathArray(toggle.dataset.permissionsSetting);
             let value;
             try {
                 value = accessor.get(path, path.length);
@@ -67,7 +67,7 @@ class PermissionsToggleController {
 
         this._setToggleValid(toggle, true);
 
-        await this._settingsController.setProfileSetting(toggle.dataset.clipboardSetting, value);
+        await this._settingsController.setProfileSetting(toggle.dataset.permissionsSetting, value);
     }
 
     _onPermissionsChanged({permissions: {permissions}}) {
