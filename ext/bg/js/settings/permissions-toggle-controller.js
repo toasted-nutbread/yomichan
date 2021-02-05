@@ -61,7 +61,7 @@ class PermissionsToggleController {
 
         if (value) {
             toggle.checked = false;
-            value = await this._settingsController.setPermissionsGranted(['clipboardRead'], true);
+            value = await this._settingsController.setPermissionsGranted(this._getRequiredPermissions(toggle), true);
             toggle.checked = value;
         }
 
@@ -73,7 +73,7 @@ class PermissionsToggleController {
     _onPermissionsChanged({permissions: {permissions}}) {
         const permissionsSet = new Set(permissions);
         for (const toggle of this._toggles) {
-            const valid = !toggle.checked || permissionsSet.has('clipboardRead');
+            const valid = !toggle.checked || this._hasAll(permissionsSet, this._getRequiredPermissions(toggle));
             this._setToggleValid(toggle, valid);
         }
     }
@@ -87,5 +87,17 @@ class PermissionsToggleController {
     async _updateValidity() {
         const permissions = await this._settingsController.getAllPermissions();
         this._onPermissionsChanged({permissions});
+    }
+
+    _hasAll(set, values) {
+        for (const value of values) {
+            if (!set.has(value)) { return false; }
+        }
+        return true;
+    }
+
+    _getRequiredPermissions(toggle) {
+        const requiredPermissions = toggle.dataset.requiredPermissions;
+        return (typeof requiredPermissions === 'string' && requiredPermissions.length > 0 ? requiredPermissions.split(' ') : []);
     }
 }
