@@ -20,11 +20,11 @@
  * AnkiTemplatesController
  * AudioController
  * BackupController
- * PermissionsToggleController
  * DictionaryController
  * DictionaryImportController
  * GenericSettingController
  * ModalController
+ * PermissionsToggleController
  * PopupPreviewController
  * ProfileController
  * ScanInputsController

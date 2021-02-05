@@ -20,7 +20,6 @@
  * AnkiTemplatesController
  * AudioController
  * BackupController
- * PermissionsToggleController
  * DictionaryController
  * DictionaryImportController
  * DocumentFocusController
@@ -29,6 +28,7 @@
  * KeyboardShortcutController
  * ModalController
  * NestedPopupsController
+ * PermissionsToggleController
  * PopupPreviewController
  * PopupWindowController
  * ProfileController
