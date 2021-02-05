@@ -17,6 +17,8 @@
 
 /* global
  * DocumentFocusController
+ * PermissionsToggleController
+ * SettingsController
  * api
  */
 
@@ -36,47 +38,6 @@ async function isAllowedFileSchemeAccess() {
     return await new Promise((resolve) => chrome.extension.isAllowedFileSchemeAccess(resolve));
 }
 
-function hasPermissions(permissions) {
-    return new Promise((resolve) => chrome.permissions.contains({permissions}, (result) => {
-        const e = chrome.runtime.lastError;
-        resolve(!e && result);
-    }));
-}
-
-function setPermissionsGranted(permissions, shouldHave) {
-    return (
-        shouldHave ?
-        new Promise((resolve, reject) => chrome.permissions.request({permissions}, (result) => {
-            const e = chrome.runtime.lastError;
-            if (e) {
-                reject(new Error(e.message));
-            } else {
-                resolve(result);
-            }
-        })) :
-        new Promise((resolve, reject) => chrome.permissions.remove({permissions}, (result) => {
-            const e = chrome.runtime.lastError;
-            if (e) {
-                reject(new Error(e.message));
-            } else {
-                resolve(!result);
-            }
-        }))
-    );
-}
-
-function setupPermissionCheckbox(checkbox, permissions) {
-    checkbox.addEventListener('change', (e) => {
-        updatePermissionCheckbox(checkbox, permissions, e.currentTarget.checked);
-    }, false);
-}
-
-async function updatePermissionCheckbox(checkbox, permissions, value) {
-    checkbox.checked = !value;
-    const hasPermission = await setPermissionsGranted(permissions, value);
-    checkbox.checked = hasPermission;
-}
-
 (async () => {
     try {
         const documentFocusController = new DocumentFocusController();
@@ -92,13 +53,11 @@ async function updatePermissionCheckbox(checkbox, permissions, value) {
         setupEnvironmentInfo();
 
         const permissionsCheckboxes = [
-            document.querySelector('#permission-checkbox-clipboard-read'),
             document.querySelector('#permission-checkbox-allow-in-private-windows'),
             document.querySelector('#permission-checkbox-allow-file-url-access')
         ];
 
         const permissions = await Promise.all([
-            hasPermissions(['clipboardRead']),
             isAllowedIncognitoAccess(),
             isAllowedFileSchemeAccess()
         ]);
@@ -107,7 +66,11 @@ async function updatePermissionCheckbox(checkbox, permissions, value) {
             permissionsCheckboxes[i].checked = permissions[i];
         }
 
-        setupPermissionCheckbox(permissionsCheckboxes[0], ['clipboardRead']);
+        const settingsController = new SettingsController(0);
+        settingsController.prepare();
+
+        const permissionsToggleController = new PermissionsToggleController(settingsController);
+        permissionsToggleController.prepare();
 
         await promiseTimeout(100);
 
