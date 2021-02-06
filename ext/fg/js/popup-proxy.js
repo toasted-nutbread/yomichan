@@ -34,7 +34,7 @@ class PopupProxy extends EventDispatcher {
         this._ownerFrameId = ownerFrameId;
         this._frameOffsetForwarder = frameOffsetForwarder;
 
-        this._frameOffset = null;
+        this._frameOffset = [0, 0];
         this._frameOffsetPromise = null;
         this._frameOffsetUpdatedAt = null;
         this._frameOffsetExpireTimeout = 1000;
