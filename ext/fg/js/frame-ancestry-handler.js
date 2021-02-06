@@ -136,6 +136,9 @@ class FrameAncestryHandler {
     // Private
 
     _onWindowMessage(event) {
+        const {source} = event;
+        if (source === window || source.parent !== window) { return; }
+
         const {data} = event;
         if (
             typeof data === 'object' &&
