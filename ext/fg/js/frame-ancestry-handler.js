@@ -34,6 +34,7 @@ class FrameAncestryHandler {
         this._isPrepared = false;
         this._requestMessageId = 'FrameAncestryHandler.requestFrameInfo';
         this._responseMessageIdBase = `${this._requestMessageId}.response.`;
+        this._childFrameMap = new Map();
     }
 
     /**
@@ -110,7 +111,8 @@ class FrameAncestryHandler {
             // Start
             api.crossFrame.registerHandlers([[responseMessageId, {async: false, handler: onMessage}]]);
             resetTimeout();
-            this._requestFrameInfo(targetWindow, this._frameId, uniqueId, nonce);
+            const frameId = this._frameId;
+            this._requestFrameInfo(targetWindow, frameId, frameId, uniqueId, nonce);
         });
     }
 
@@ -126,13 +128,13 @@ class FrameAncestryHandler {
             data !== null &&
             data.action === this._requestMessageId
         ) {
-            this._onRequestFrameInfo(data.params);
+            this._onRequestFrameInfo(data.params, source);
         }
     }
 
-    async _onRequestFrameInfo(params) {
+    async _onRequestFrameInfo(params, source) {
         try {
-            let {originFrameId, uniqueId, nonce} = params;
+            let {originFrameId, childFrameId, uniqueId, nonce} = params;
             if (
                 !this._isNonNegativeInteger(originFrameId) ||
                 typeof uniqueId !== 'string' ||
@@ -141,9 +143,10 @@ class FrameAncestryHandler {
                 return;
             }
 
+            const frameId = this._frameId;
             const {parent} = window;
             const more = (window !== parent);
-            const responseParams = {frameId: this._frameId, nonce, more};
+            const responseParams = {frameId, nonce, more};
             const responseMessageId = `${this._responseMessageIdBase}${uniqueId}`;
 
             try {
@@ -154,18 +157,22 @@ class FrameAncestryHandler {
                 return;
             }
 
+            if (!this._childFrameMap.has(childFrameId)) {
+                this._childFrameMap.set(childFrameId, {window: source});
+            }
+
             if (more) {
-                this._requestFrameInfo(parent, originFrameId, uniqueId, nonce);
+                this._requestFrameInfo(parent, originFrameId, frameId, uniqueId, nonce);
             }
         } catch (e) {
             // NOP
         }
     }
 
-    _requestFrameInfo(targetWindow, originFrameId, uniqueId, nonce) {
+    _requestFrameInfo(targetWindow, originFrameId, childFrameId, uniqueId, nonce) {
         targetWindow.postMessage({
             action: this._requestMessageId,
-            params: {originFrameId, uniqueId, nonce}
+            params: {originFrameId, childFrameId, uniqueId, nonce}
         }, '*');
     }
 
