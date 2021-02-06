@@ -33,7 +33,7 @@ class FrameAncestryHandler {
         this._frameId = frameId;
         this._isPrepared = false;
         this._requestMessageId = 'FrameAncestryHandler.requestFrameInfo';
-        this._responseMessageId = `${this._requestMessageId}.response`;
+        this._responseMessageIdBase = `${this._requestMessageId}.response.`;
     }
 
     /**
@@ -68,10 +68,9 @@ class FrameAncestryHandler {
             }
 
             const uniqueId = generateId(16);
-            const responseMessageId = this._responseMessageId;
+            let nonce = generateId(16);
+            const responseMessageId = `${this._responseMessageIdBase}${uniqueId}`;
             const results = [];
-            let resultsExpectedCount = null;
-            let resultsCount = 0;
             let timer = null;
 
             const cleanup = () => {
@@ -79,42 +78,24 @@ class FrameAncestryHandler {
                     clearTimeout(timer);
                     timer = null;
                 }
-                chrome.runtime.onMessage.removeListener(onMessage);
+                api.crossFrame.unregisterHandler(responseMessageId);
             };
-            const onMessage = (message, sender, sendResponse) => {
-                // Validate message
-                if (
-                    typeof message !== 'object' ||
-                    message === null ||
-                    message.action !== responseMessageId
-                ) {
-                    return;
-                }
-
-                const {params} = message;
-                if (params.uniqueId !== uniqueId) { return; } // Wrong ID
-
-                const {frameId, index, more} = params;
-                console.log({frameId, index, more});
-                if (typeof results[index] !== 'undefined') { return; } // Invalid repeat
+            const onMessage = (params) => {
+                if (params.nonce !== nonce) { return null; }
 
                 // Add result
-                results[index] = frameId;
-                ++resultsCount;
-                if (!more) {
-                    resultsExpectedCount = index + 1;
-                }
+                const {frameId, more} = params;
+                results.push(frameId);
+                nonce = generateId(16);
 
-                if (resultsExpectedCount !== null && resultsCount >= resultsExpectedCount) {
+                if (!more) {
                     // Cleanup
                     cleanup();
-                    sendResponse();
 
                     // Finish
                     resolve(results);
-                } else {
-                    resetTimeout();
                 }
+                return {nonce};
             };
             const onTimeout = () => {
                 timer = null;
@@ -127,9 +108,9 @@ class FrameAncestryHandler {
             };
 
             // Start
-            chrome.runtime.onMessage.addListener(onMessage);
+            api.crossFrame.registerHandlers([[responseMessageId, {async: false, handler: onMessage}]]);
             resetTimeout();
-            this._requestFrameInfo(targetWindow, uniqueId, this._frameId, 0);
+            this._requestFrameInfo(targetWindow, this._frameId, uniqueId, nonce);
         });
     }
 
@@ -145,46 +126,46 @@ class FrameAncestryHandler {
             data !== null &&
             data.action === this._requestMessageId
         ) {
-            try {
-                this._onRequestFrameInfo(data.params);
-            } catch (e) {
-                // NOP
-            }
+            this._onRequestFrameInfo(data.params);
         }
     }
 
-    _onRequestFrameInfo({uniqueId, originFrameId, index}) {
-        if (
-            typeof uniqueId !== 'string' ||
-            typeof originFrameId !== 'number' ||
-            !this._isNonNegativeInteger(index)
-        ) {
-            return;
-        }
-
-        const {parent} = window;
-        const more = (window !== parent);
-
-        const responseParams = {uniqueId, frameId: this._frameId, index, more};
-        this._safeSendMessageToFrame(originFrameId, this._responseMessageId, responseParams);
-
-        if (more) {
-            this._requestFrameInfo(parent, uniqueId, originFrameId, index + 1);
-        }
-    }
-
-    async _safeSendMessageToFrame(frameId, action, params) {
+    async _onRequestFrameInfo(params) {
         try {
-            await api.sendMessageToFrame(frameId, action, params);
+            let {originFrameId, uniqueId, nonce} = params;
+            if (
+                !this._isNonNegativeInteger(originFrameId) ||
+                typeof uniqueId !== 'string' ||
+                typeof nonce !== 'string'
+            ) {
+                return;
+            }
+
+            const {parent} = window;
+            const more = (window !== parent);
+            const responseParams = {frameId: this._frameId, nonce, more};
+            const responseMessageId = `${this._responseMessageIdBase}${uniqueId}`;
+
+            try {
+                const response = await api.crossFrame.invoke(originFrameId, responseMessageId, responseParams);
+                if (response === null) { return; }
+                nonce = response.nonce;
+            } catch (e) {
+                return;
+            }
+
+            if (more) {
+                this._requestFrameInfo(parent, originFrameId, uniqueId, nonce);
+            }
         } catch (e) {
             // NOP
         }
     }
 
-    _requestFrameInfo(targetWindow, uniqueId, originFrameId, index) {
+    _requestFrameInfo(targetWindow, originFrameId, uniqueId, nonce) {
         targetWindow.postMessage({
             action: this._requestMessageId,
-            params: {uniqueId, originFrameId, index}
+            params: {originFrameId, uniqueId, nonce}
         }, '*');
     }
 
