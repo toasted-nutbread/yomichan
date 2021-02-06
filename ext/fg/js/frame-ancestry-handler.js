@@ -34,6 +34,7 @@ class FrameAncestryHandler {
         this._isPrepared = false;
         this._requestMessageId = 'FrameAncestryHandler.requestFrameInfo';
         this._responseMessageIdBase = `${this._requestMessageId}.response.`;
+        this._getFrameAncestryInfoPromise = null;
         this._childFrameMap = new Map();
     }
 
@@ -60,7 +61,16 @@ class FrameAncestryHandler {
      * @param timeout The maximum time to wait to receive a response to frame information requests.
      * @returns An array of frame IDs corresponding to the ancestors of the current frame.
      */
-    getFrameAncestryInfo(timeout=5000) {
+    async getFrameAncestryInfo() {
+        if (this._getFrameAncestryInfoPromise === null) {
+            this._getFrameAncestryInfoPromise = this._getFrameAncestryInfo(5000);
+        }
+        return await this._getFrameAncestryInfoPromise;
+    }
+
+    // Private
+
+    _getFrameAncestryInfo(timeout=5000) {
         return new Promise((resolve, reject) => {
             const targetWindow = window.parent;
             if (window === targetWindow) {
@@ -115,8 +125,6 @@ class FrameAncestryHandler {
             this._requestFrameInfo(targetWindow, frameId, frameId, uniqueId, nonce);
         });
     }
-
-    // Private
 
     _onWindowMessage(event) {
         const {source} = event;
