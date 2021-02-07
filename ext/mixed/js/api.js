@@ -109,10 +109,6 @@ const api = (() => {
             return this._invoke('commandExec', {command, params});
         }
 
-        screenshotGet(options) {
-            return this._invoke('screenshotGet', {options});
-        }
-
         sendMessageToFrame(frameId, action, params) {
             return this._invoke('sendMessageToFrame', {frameId, action, params});
         }

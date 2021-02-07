@@ -101,7 +101,6 @@ class Backend {
             ['commandExec',                  {async: false, contentScript: true,  handler: this._onApiCommandExec.bind(this)}],
             ['getExpressionAudioInfoList',   {async: true,  contentScript: true,  handler: this._onApiGetExpressionAudioInfoList.bind(this)}],
             ['downloadDefinitionAudio',      {async: true,  contentScript: true,  handler: this._onApiDownloadDefinitionAudio.bind(this)}],
-            ['screenshotGet',                {async: true,  contentScript: true,  handler: this._onApiScreenshotGet.bind(this)}],
             ['sendMessageToFrame',           {async: false, contentScript: true,  handler: this._onApiSendMessageToFrame.bind(this)}],
             ['broadcastTab',                 {async: false, contentScript: true,  handler: this._onApiBroadcastTab.bind(this)}],
             ['frameInformationGet',          {async: true,  contentScript: true,  handler: this._onApiFrameInformationGet.bind(this)}],
@@ -506,24 +505,6 @@ class Backend {
 
     async _onApiDownloadDefinitionAudio({sources, expression, reading, details}) {
         return await this._downloadDefinitionAudio(sources, expression, reading, details);
-    }
-
-    _onApiScreenshotGet({options}, sender) {
-        if (!(sender && sender.tab)) {
-            return Promise.resolve();
-        }
-
-        const windowId = sender.tab.windowId;
-        return new Promise((resolve, reject) => {
-            chrome.tabs.captureVisibleTab(windowId, options, (dataUrl) => {
-                const e = chrome.runtime.lastError;
-                if (e) {
-                    reject(new Error(e.message));
-                } else {
-                    resolve(dataUrl);
-                }
-            });
-        });
     }
 
     _onApiSendMessageToFrame({frameId: targetFrameId, action, params}, sender) {
