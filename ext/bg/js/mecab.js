@@ -54,10 +54,7 @@ class Mecab {
     stopListener() {
         if (this._port === null) { return; }
         this._port.disconnect();
-        this._port = null;
-        this._listeners.clear();
-        this._eventListeners.removeAllEventListeners();
-        this._sequence = 0;
+        this._clearPort();
     }
 
     // Private
@@ -73,13 +70,14 @@ class Mecab {
     }
 
     _onDisconnect() {
+        if (this._port === null) { return; }
         const e = chrome.runtime.lastError;
         const error = new Error(e ? e.message : 'MeCab disconnected');
         for (const {reject, timer} of this._listeners) {
             clearTimeout(timer);
             reject(error);
         }
-        this._listeners.clear();
+        this._clearPort();
     }
 
     _invoke(action, params) {
@@ -127,5 +125,12 @@ class Mecab {
             results[mecabName] = result;
         }
         return results;
+    }
+
+    _clearPort() {
+        this._port = null;
+        this._listeners.clear();
+        this._eventListeners.removeAllEventListeners();
+        this._sequence = 0;
     }
 }
