@@ -21,6 +21,8 @@ class Mecab {
         this._port = null;
         this._listeners = new Map();
         this._sequence = 0;
+        this._timeout = 5000;
+        this._version = 1;
     }
 
     onError(error) {
@@ -30,9 +32,9 @@ class Mecab {
     async checkVersion() {
         try {
             const {version} = await this.invoke('get_version', {});
-            if (version !== Mecab.version) {
+            if (version !== this._version) {
                 this.stopListener();
-                throw new Error(`Unsupported MeCab native messenger version ${version}. Yomichan supports version ${Mecab.version}.`);
+                throw new Error(`Unsupported MeCab native messenger version ${version}. Yomichan supports version ${this._version}.`);
             }
         } catch (error) {
             this.onError(error);
@@ -108,14 +110,11 @@ class Mecab {
                 callback: resolve,
                 timer: setTimeout(() => {
                     this._listeners.delete(sequence);
-                    reject(new Error(`Mecab invoke timed out in ${Mecab.timeout} ms`));
-                }, Mecab.timeout)
+                    reject(new Error(`Mecab invoke timed out in ${this._timeout} ms`));
+                }, this._timeout)
             });
 
             this._port.postMessage({action, params, sequence});
         });
     }
 }
-
-Mecab.timeout = 5000;
-Mecab.version = 1;
