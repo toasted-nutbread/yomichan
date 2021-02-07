@@ -28,6 +28,17 @@ class Mecab {
         this._setupPortPromise = null;
     }
 
+    isEnabled() {
+        return this._enabled;
+    }
+
+    setEnabled(enabled) {
+        this._enabled = !!enabled;
+        if (!this._enabled && this._port !== null) {
+            this._clearPort();
+        }
+    }
+
     async getVersion() {
         await this._setupPort();
         const {version} = await this._invoke('get_version', {});
@@ -53,17 +64,6 @@ class Mecab {
         await this._setupPort();
         const rawResults = await this._invoke('parse_text', {text});
         return this._convertParseTextResults(rawResults);
-    }
-
-    isEnabled() {
-        return this._enabled;
-    }
-
-    setEnabled(enabled) {
-        this._enabled = !!enabled;
-        if (!this._enabled && this._port !== null) {
-            this._clearPort();
-        }
     }
 
     // Private
