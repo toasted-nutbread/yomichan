@@ -25,10 +25,6 @@ class Mecab {
         this._version = 1;
     }
 
-    onError(error) {
-        yomichan.logError(error);
-    }
-
     async checkVersion() {
         try {
             const {version} = await this.invoke('get_version', {});
@@ -37,7 +33,7 @@ class Mecab {
                 throw new Error(`Unsupported MeCab native messenger version ${version}. Yomichan supports version ${this._version}.`);
             }
         } catch (error) {
-            this.onError(error);
+            yomichan.logError(error);
         }
     }
 
