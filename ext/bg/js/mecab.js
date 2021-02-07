@@ -18,9 +18,9 @@
 
 class Mecab {
     constructor() {
-        this.port = null;
-        this.listeners = new Map();
-        this.sequence = 0;
+        this._port = null;
+        this._listeners = new Map();
+        this._sequence = 0;
     }
 
     onError(error) {
@@ -73,46 +73,46 @@ class Mecab {
     }
 
     startListener() {
-        if (this.port !== null) { return; }
-        this.port = chrome.runtime.connectNative('yomichan_mecab');
-        this.port.onMessage.addListener(this.onNativeMessage.bind(this));
+        if (this._port !== null) { return; }
+        this._port = chrome.runtime.connectNative('yomichan_mecab');
+        this._port.onMessage.addListener(this.onNativeMessage.bind(this));
         this.checkVersion();
     }
 
     stopListener() {
-        if (this.port === null) { return; }
-        this.port.disconnect();
-        this.port = null;
-        this.listeners.clear();
-        this.sequence = 0;
+        if (this._port === null) { return; }
+        this._port.disconnect();
+        this._port = null;
+        this._listeners.clear();
+        this._sequence = 0;
     }
 
     onNativeMessage({sequence, data}) {
-        const listener = this.listeners.get(sequence);
+        const listener = this._listeners.get(sequence);
         if (typeof listener === 'undefined') { return; }
 
         const {callback, timer} = listener;
         clearTimeout(timer);
         callback(data);
-        this.listeners.delete(sequence);
+        this._listeners.delete(sequence);
     }
 
     invoke(action, params) {
-        if (this.port === null) {
+        if (this._port === null) {
             return Promise.resolve({});
         }
         return new Promise((resolve, reject) => {
-            const sequence = this.sequence++;
+            const sequence = this._sequence++;
 
-            this.listeners.set(sequence, {
+            this._listeners.set(sequence, {
                 callback: resolve,
                 timer: setTimeout(() => {
-                    this.listeners.delete(sequence);
+                    this._listeners.delete(sequence);
                     reject(new Error(`Mecab invoke timed out in ${Mecab.timeout} ms`));
                 }, Mecab.timeout)
             });
 
-            this.port.postMessage({action, params, sequence});
+            this._port.postMessage({action, params, sequence});
         });
     }
 }
