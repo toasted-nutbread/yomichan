@@ -15,8 +15,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
+/**
+ * This class is used to connect Yomichan to a native component that is
+ * used to parse text into individual terms.
+ */
 class Mecab {
+    /**
+     * Creates a new instance of the class.
+     */
     constructor() {
         this._port = null;
         this._sequence = 0;
@@ -24,14 +30,22 @@ class Mecab {
         this._eventListeners = new EventListenerCollection();
         this._timeout = 5000;
         this._version = 1;
+        this._remoteVersion = null;
         this._enabled = false;
         this._setupPortPromise = null;
     }
 
+    /**
+     * Returns whether or not the component is enabled.
+     */
     isEnabled() {
         return this._enabled;
     }
 
+    /**
+     * Changes whether or not the component connection is enabled.
+     * @param enabled A boolean indicating whether or not the component should be enabled.
+     */
     setEnabled(enabled) {
         this._enabled = !!enabled;
         if (!this._enabled && this._port !== null) {
@@ -39,13 +53,22 @@ class Mecab {
         }
     }
 
+    /**
+     * Gets the version of the MeCab component.
+     * @returns The version of the MeCab component, or `null` if the component was not found.
+     */
     async getVersion() {
-        await this._setupPort();
-        const {version} = await this._invoke('get_version', {});
-        return version;
+        try {
+            await this._setupPort();
+        } catch (e) {
+            // NOP
+        }
+        return this._remoteVersion;
     }
 
     /**
+     * Parses a string of Japanese text into arrays of lines and terms.
+     *
      * Return value format:
      * ```js
      * [
@@ -59,6 +82,8 @@ class Mecab {
      *     ...
      * ]
      * ```
+     * @param text The string to parse.
+     * @returns A collection of parsing results of the text.
      */
     async parseText(text) {
         await this._setupPort();
@@ -124,6 +149,9 @@ class Mecab {
     }
 
     async _setupPort() {
+        if (!this._enabled) {
+            throw new Error('MeCab not enabled');
+        }
         if (this._setupPortPromise === null) {
             this._setupPortPromise = this._setupPort2();
         }
@@ -142,6 +170,7 @@ class Mecab {
 
         try {
             const {version} = await this._invoke('get_version', {});
+            this._remoteVersion = version;
             if (version !== this._version) {
                 throw new Error(`Unsupported MeCab native messenger version ${version}. Yomichan supports version ${this._version}.`);
             }
