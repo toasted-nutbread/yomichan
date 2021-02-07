@@ -107,7 +107,6 @@ class Backend {
             ['getStylesheetContent',         {async: true,  contentScript: true,  handler: this._onApiGetStylesheetContent.bind(this)}],
             ['getEnvironmentInfo',           {async: false, contentScript: true,  handler: this._onApiGetEnvironmentInfo.bind(this)}],
             ['clipboardGet',                 {async: true,  contentScript: true,  handler: this._onApiClipboardGet.bind(this)}],
-            ['clipboardGetImage',            {async: true,  contentScript: true,  handler: this._onApiClipboardImageGet.bind(this)}],
             ['getDisplayTemplatesHtml',      {async: true,  contentScript: true,  handler: this._onApiGetDisplayTemplatesHtml.bind(this)}],
             ['getZoom',                      {async: true,  contentScript: true,  handler: this._onApiGetZoom.bind(this)}],
             ['getDefaultAnkiFieldTemplates', {async: false, contentScript: true,  handler: this._onApiGetDefaultAnkiFieldTemplates.bind(this)}],
@@ -546,10 +545,6 @@ class Backend {
 
     async _onApiClipboardGet() {
         return this._clipboardReader.getText();
-    }
-
-    async _onApiClipboardImageGet() {
-        return this._clipboardReader.getImage();
     }
 
     async _onApiGetDisplayTemplatesHtml() {

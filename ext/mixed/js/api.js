@@ -133,10 +133,6 @@ const api = (() => {
             return this._invoke('clipboardGet');
         }
 
-        clipboardGetImage() {
-            return this._invoke('clipboardGetImage');
-        }
-
         getDisplayTemplatesHtml() {
             return this._invoke('getDisplayTemplatesHtml');
         }
