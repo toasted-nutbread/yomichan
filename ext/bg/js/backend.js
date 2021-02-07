@@ -1014,7 +1014,13 @@ class Backend {
         const jp = this._japaneseUtil;
         const {parsing: {readingMode}} = options;
         const results = [];
-        const rawResults = await this._mecab.parseText(text);
+        let rawResults;
+        try {
+            rawResults = await this._mecab.parseText(text);
+        } catch (e) {
+            return results;
+        }
+
         for (const [mecabName, parsedLines] of Object.entries(rawResults)) {
             const result = [];
             for (const parsedLine of parsedLines) {
