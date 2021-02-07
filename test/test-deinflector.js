@@ -873,7 +873,8 @@ function testDeinflections() {
                 {term: 'まずい',     source: 'まっぜえ',   rule: 'adj-i', reasons: ['-e']},
                 {term: 'ちっちゃい', source: 'ちっちぇえ', rule: 'adj-i', reasons: ['-e']},
                 {term: 'あかい',     source: 'あけえ',     rule: 'adj-i', reasons: ['-e']},
-                {term: 'しらない',   source: 'しらねえ',   rule: 'adj-i', reasons: ['-e']}
+                {term: 'こわい',     source: 'こええ',     rule: 'adj-i', reasons: ['-e']},
+                {term: 'つよい',     source: 'つええ',     rule: 'adj-i', reasons: ['-e']}
             ]
         }
     ];

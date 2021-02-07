@@ -595,6 +595,8 @@
         {"kanaIn": "ちい", "kanaOut": "つい", "rulesIn": [], "rulesOut": ["adj-i"]},
         {"kanaIn": "せえ", "kanaOut": "すい", "rulesIn": [], "rulesOut": ["adj-i"]},
         {"kanaIn": "ええ", "kanaOut": "いい", "rulesIn": [], "rulesOut": ["adj-i"]},
+        {"kanaIn": "ええ", "kanaOut": "わい", "rulesIn": [], "rulesOut": ["adj-i"]},
+        {"kanaIn": "ええ", "kanaOut": "よい", "rulesIn": [], "rulesOut": ["adj-i"]},
         {"kanaIn": "いぇえ", "kanaOut": "よい", "rulesIn": [], "rulesOut": ["adj-i"]},
         {"kanaIn": "うぇえ", "kanaOut": "わい", "rulesIn": [], "rulesOut": ["adj-i"]},
         {"kanaIn": "けえ", "kanaOut": "かい", "rulesIn": [], "rulesOut": ["adj-i"]},
