@@ -24,37 +24,31 @@ class Mecab {
         this._eventListeners = new EventListenerCollection();
         this._timeout = 5000;
         this._version = 1;
+        this._enabled = false;
+        this._setupPortPromise = null;
     }
 
-    async checkVersion() {
-        try {
-            const {version} = await this._invoke('get_version', {});
-            if (version !== this._version) {
-                this.stopListener();
-                throw new Error(`Unsupported MeCab native messenger version ${version}. Yomichan supports version ${this._version}.`);
-            }
-        } catch (error) {
-            yomichan.logError(error);
-        }
+    async getVersion() {
+        await this._setupPort();
+        const {version} = await this._invoke('get_version', {});
+        return version;
     }
 
     async parseText(text) {
+        await this._setupPort();
         const rawResults = await this._invoke('parse_text', {text});
         return this._convertParseTextResults(rawResults);
     }
 
-    startListener() {
-        if (this._port !== null) { return; }
-        this._port = chrome.runtime.connectNative('yomichan_mecab');
-        this._eventListeners.addListener(this._port.onMessage, this._onMessage.bind(this));
-        this._eventListeners.addListener(this._port.onDisconnect, this._onDisconnect.bind(this));
-        this.checkVersion();
+    isEnabled() {
+        return this._enabled;
     }
 
-    stopListener() {
-        if (this._port === null) { return; }
-        this._port.disconnect();
-        this._clearPort();
+    setEnabled(enabled) {
+        this._enabled = !!enabled;
+        if (!this._enabled && this._port !== null) {
+            this._clearPort();
+        }
     }
 
     // Private
@@ -127,7 +121,38 @@ class Mecab {
         return results;
     }
 
+    async _setupPort() {
+        if (this._setupPortPromise === null) {
+            this._setupPortPromise = this._setupPort2();
+        }
+        try {
+            await this._setupPortPromise;
+        } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+
+    async _setupPort2() {
+        const port = chrome.runtime.connectNative('yomichan_mecab');
+        this._eventListeners.addListener(port.onMessage, this._onMessage.bind(this));
+        this._eventListeners.addListener(port.onDisconnect, this._onDisconnect.bind(this));
+        this._port = port;
+
+        try {
+            const {version} = await this._invoke('get_version', {});
+            if (version !== this._version) {
+                throw new Error(`Unsupported MeCab native messenger version ${version}. Yomichan supports version ${this._version}.`);
+            }
+        } catch (e) {
+            if (this._port === port) {
+                this._clearPort();
+            }
+            throw e;
+        }
+    }
+
     _clearPort() {
+        this._port.disconnect();
         this._port = null;
         this._listeners.clear();
         this._eventListeners.removeAllEventListeners();

@@ -906,11 +906,7 @@ class Backend {
         this._anki.server = options.anki.server;
         this._anki.enabled = options.anki.enable;
 
-        if (options.parsing.enableMecabParser) {
-            this._mecab.startListener();
-        } else {
-            this._mecab.stopListener();
-        }
+        this._mecab.setEnabled(options.parsing.enableMecabParser);
 
         if (options.clipboard.enableBackgroundMonitor) {
             this._clipboardMonitor.start();
