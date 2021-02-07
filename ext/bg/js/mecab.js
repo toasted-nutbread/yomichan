@@ -27,7 +27,7 @@ class Mecab {
 
     async checkVersion() {
         try {
-            const {version} = await this.invoke('get_version', {});
+            const {version} = await this._invoke('get_version', {});
             if (version !== this._version) {
                 this.stopListener();
                 throw new Error(`Unsupported MeCab native messenger version ${version}. Yomichan supports version ${this._version}.`);
@@ -38,7 +38,7 @@ class Mecab {
     }
 
     async parseText(text) {
-        const rawResults = await this.invoke('parse_text', {text});
+        const rawResults = await this._invoke('parse_text', {text});
         // {
         //     'mecab-name': [
         //         // line1
@@ -73,7 +73,7 @@ class Mecab {
     startListener() {
         if (this._port !== null) { return; }
         this._port = chrome.runtime.connectNative('yomichan_mecab');
-        this._port.onMessage.addListener(this.onNativeMessage.bind(this));
+        this._port.onMessage.addListener(this._onNativeMessage.bind(this));
         this.checkVersion();
     }
 
@@ -85,7 +85,9 @@ class Mecab {
         this._sequence = 0;
     }
 
-    onNativeMessage({sequence, data}) {
+    // Private
+
+    _onNativeMessage({sequence, data}) {
         const listener = this._listeners.get(sequence);
         if (typeof listener === 'undefined') { return; }
 
@@ -95,7 +97,7 @@ class Mecab {
         this._listeners.delete(sequence);
     }
 
-    invoke(action, params) {
+    _invoke(action, params) {
         if (this._port === null) {
             return Promise.resolve({});
         }
