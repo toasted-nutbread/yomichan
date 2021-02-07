@@ -116,6 +116,10 @@ class Mecab {
 
     _invoke(action, params) {
         return new Promise((resolve, reject) => {
+            if (this._port === null) {
+                reject(new Error('Port disconnected'));
+            }
+
             const sequence = this._sequence++;
 
             const timer = setTimeout(() => {
@@ -188,5 +192,6 @@ class Mecab {
         this._invocations.clear();
         this._eventListeners.removeAllEventListeners();
         this._sequence = 0;
+        this._setupPortPromise = null;
     }
 }
