@@ -100,7 +100,6 @@ class Backend {
             ['suspendAnkiCardsForNote',      {async: true,  contentScript: true,  handler: this._onApiSuspendAnkiCardsForNote.bind(this)}],
             ['commandExec',                  {async: false, contentScript: true,  handler: this._onApiCommandExec.bind(this)}],
             ['getExpressionAudioInfoList',   {async: true,  contentScript: true,  handler: this._onApiGetExpressionAudioInfoList.bind(this)}],
-            ['downloadDefinitionAudio',      {async: true,  contentScript: true,  handler: this._onApiDownloadDefinitionAudio.bind(this)}],
             ['sendMessageToFrame',           {async: false, contentScript: true,  handler: this._onApiSendMessageToFrame.bind(this)}],
             ['broadcastTab',                 {async: false, contentScript: true,  handler: this._onApiBroadcastTab.bind(this)}],
             ['frameInformationGet',          {async: true,  contentScript: true,  handler: this._onApiFrameInformationGet.bind(this)}],
@@ -501,10 +500,6 @@ class Backend {
 
     async _onApiGetExpressionAudioInfoList({source, expression, reading, details}) {
         return await this._audioDownloader.getExpressionAudioInfoList(source, expression, reading, details);
-    }
-
-    async _onApiDownloadDefinitionAudio({sources, expression, reading, details}) {
-        return await this._downloadDefinitionAudio(sources, expression, reading, details);
     }
 
     _onApiSendMessageToFrame({frameId: targetFrameId, action, params}, sender) {

@@ -101,10 +101,6 @@ const api = (() => {
             return this._invoke('getExpressionAudioInfoList', {source, expression, reading, details});
         }
 
-        downloadDefinitionAudio(sources, expression, reading, details) {
-            return this._invoke('downloadDefinitionAudio', {sources, expression, reading, details});
-        }
-
         commandExec(command, params) {
             return this._invoke('commandExec', {command, params});
         }
