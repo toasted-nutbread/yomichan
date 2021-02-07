@@ -19,8 +19,8 @@
 class Mecab {
     constructor() {
         this._port = null;
-        this._listeners = new Map();
         this._sequence = 0;
+        this._invocations = new Map();
         this._eventListeners = new EventListenerCollection();
         this._timeout = 5000;
         this._version = 1;
@@ -54,20 +54,20 @@ class Mecab {
     // Private
 
     _onMessage({sequence, data}) {
-        const listener = this._listeners.get(sequence);
-        if (typeof listener === 'undefined') { return; }
+        const invocation = this._invocations.get(sequence);
+        if (typeof invocation === 'undefined') { return; }
 
-        const {resolve, timer} = listener;
+        const {resolve, timer} = invocation;
         clearTimeout(timer);
         resolve(data);
-        this._listeners.delete(sequence);
+        this._invocations.delete(sequence);
     }
 
     _onDisconnect() {
         if (this._port === null) { return; }
         const e = chrome.runtime.lastError;
         const error = new Error(e ? e.message : 'MeCab disconnected');
-        for (const {reject, timer} of this._listeners) {
+        for (const {reject, timer} of this._invocations) {
             clearTimeout(timer);
             reject(error);
         }
@@ -79,11 +79,11 @@ class Mecab {
             const sequence = this._sequence++;
 
             const timer = setTimeout(() => {
-                this._listeners.delete(sequence);
+                this._invocations.delete(sequence);
                 reject(new Error(`MeCab invoke timed out after ${this._timeout}ms`));
             }, this._timeout);
 
-            this._listeners.set(sequence, {resolve, reject, timer}, this._timeout);
+            this._invocations.set(sequence, {resolve, reject, timer}, this._timeout);
 
             this._port.postMessage({action, params, sequence});
         });
@@ -154,7 +154,7 @@ class Mecab {
     _clearPort() {
         this._port.disconnect();
         this._port = null;
-        this._listeners.clear();
+        this._invocations.clear();
         this._eventListeners.removeAllEventListeners();
         this._sequence = 0;
     }
