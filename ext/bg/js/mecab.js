@@ -67,7 +67,7 @@ class Mecab {
         if (this._port === null) { return; }
         const e = chrome.runtime.lastError;
         const error = new Error(e ? e.message : 'MeCab disconnected');
-        for (const {reject, timer} of this._invocations) {
+        for (const {reject, timer} of this._invocations.values()) {
             clearTimeout(timer);
             reject(error);
         }
