@@ -55,6 +55,14 @@ class FrameAncestryHandler {
     }
 
     /**
+     * Returns whether or not this frame is the root frame in the tab.
+     * @returns `true` if it is the root, otherwise `false`.
+     */
+    isRootFrame() {
+        return (window === window.parent);
+    }
+
+    /**
      * Gets the frame ancestry information for the current frame. If the frame is the
      * root frame, an empty array is returned. Otherwise, an array of frame IDs is returned,
      * starting from the nearest ancestor.
