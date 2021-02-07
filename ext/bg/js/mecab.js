@@ -34,6 +34,21 @@ class Mecab {
         return version;
     }
 
+    /**
+     * Return value format:
+     * ```js
+     * [
+     *     {
+     *         name: (string),
+     *         lines: [
+     *             {expression: (string), reading: (string), source: (string)},
+     *             ...
+     *         ]
+     *     },
+     *     ...
+     * ]
+     * ```
+     */
     async parseText(text) {
         await this._setupPort();
         const rawResults = await this._invoke('parse_text', {text});
@@ -90,33 +105,20 @@ class Mecab {
     }
 
     _convertParseTextResults(rawResults) {
-        // {
-        //     'mecab-name': [
-        //         // line1
-        //         [
-        //             {str expression: 'expression', str reading: 'reading', str source: 'source'},
-        //             {str expression: 'expression2', str reading: 'reading2', str source: 'source2'}
-        //         ],
-        //         line2,
-        //         ...
-        //     ],
-        //     'mecab-name2': [...]
-        // }
-        const results = {};
-        for (const [mecabName, parsedLines] of Object.entries(rawResults)) {
-            const result = [];
-            for (const parsedLine of parsedLines) {
+        const results = [];
+        for (const [name, rawLines] of Object.entries(rawResults)) {
+            const lines = [];
+            for (const rawLine of rawLines) {
                 const line = [];
-                for (const {expression, reading, source} of parsedLine) {
-                    line.push({
-                        expression: expression || '',
-                        reading: reading || '',
-                        source: source || ''
-                    });
+                for (let {expression, reading, source} of rawLine) {
+                    if (typeof expression !== 'string') { expression = ''; }
+                    if (typeof reading !== 'string') { reading = ''; }
+                    if (typeof source !== 'string') { source = ''; }
+                    line.push({expression, reading, source});
                 }
-                result.push(line);
+                lines.push(line);
             }
-            results[mecabName] = result;
+            results.push({name, lines});
         }
         return results;
     }

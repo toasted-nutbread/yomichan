@@ -1013,18 +1013,19 @@ class Backend {
     async _textParseMecab(text, options) {
         const jp = this._japaneseUtil;
         const {parsing: {readingMode}} = options;
-        const results = [];
-        let rawResults;
+
+        let parseTextResults;
         try {
-            rawResults = await this._mecab.parseText(text);
+            parseTextResults = await this._mecab.parseText(text);
         } catch (e) {
-            return results;
+            return [];
         }
 
-        for (const [mecabName, parsedLines] of Object.entries(rawResults)) {
+        const results = [];
+        for (const {name, lines} of parseTextResults) {
             const result = [];
-            for (const parsedLine of parsedLines) {
-                for (const {expression, reading, source} of parsedLine) {
+            for (const line of lines) {
+                for (const {expression, reading, source} of line) {
                     const term = [];
                     for (const {text: text2, furigana} of jp.distributeFuriganaInflected(
                         expression.length > 0 ? expression : source,
@@ -1038,7 +1039,7 @@ class Backend {
                 }
                 result.push([{text: '\n', reading: ''}]);
             }
-            results.push([mecabName, result]);
+            results.push([name, result]);
         }
         return results;
     }
