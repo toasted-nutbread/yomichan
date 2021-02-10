@@ -525,8 +525,10 @@ class Backend {
     }
 
     _onApiFrameInformationGet(params, sender) {
+        const tab = sender.tab;
+        const tabId = tab ? tab.id : void 0;
         const frameId = sender.frameId;
-        return Promise.resolve({frameId});
+        return Promise.resolve({tabId, frameId});
     }
 
     _onApiInjectStylesheet({type, value}, sender) {
