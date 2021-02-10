@@ -28,6 +28,7 @@ class Frontend {
         pageType,
         popupFactory,
         depth,
+        tabId,
         frameId,
         parentPopupId,
         parentFrameId,
@@ -40,6 +41,7 @@ class Frontend {
         this._pageType = pageType;
         this._popupFactory = popupFactory;
         this._depth = depth;
+        this._tabId = tabId;
         this._frameId = frameId;
         this._parentPopupId = parentPopupId;
         this._parentFrameId = parentFrameId;
