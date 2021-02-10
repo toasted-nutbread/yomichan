@@ -467,8 +467,8 @@ class Backend {
 
     async _onApiInjectAnkiNoteMedia({timestamp, definitionDetails, audioDetails, screenshotDetails, clipboardDetails}, sender) {
         if (isObject(screenshotDetails)) {
-            const {id: tabId, windowId} = (sender && sender.tab ? sender.tab : {});
-            screenshotDetails = Object.assign({}, screenshotDetails, {tabId, windowId});
+            const {windowId} = (sender && sender.tab ? sender.tab : {});
+            screenshotDetails = Object.assign({}, screenshotDetails, {windowId});
         }
         return await this._injectAnkNoteMedia(
             this._anki,
