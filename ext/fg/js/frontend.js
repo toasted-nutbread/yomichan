@@ -439,7 +439,6 @@ class Frontend {
 
         return await this._popupFactory.getOrCreatePopup({
             frameId: this._frameId,
-            ownerFrameId: this._frameId,
             depth: this._depth,
             childrenSupported: this._childrenSupported
         });
@@ -448,7 +447,6 @@ class Frontend {
     async _getProxyPopup() {
         return await this._popupFactory.getOrCreatePopup({
             frameId: this._parentFrameId,
-            ownerFrameId: this._frameId,
             depth: this._depth,
             parentPopupId: this._parentPopupId,
             childrenSupported: this._childrenSupported
@@ -471,7 +469,6 @@ class Frontend {
 
         const popup = await this._popupFactory.getOrCreatePopup({
             frameId: targetFrameId,
-            ownerFrameId: this._frameId,
             id: popupId,
             childrenSupported: this._childrenSupported
         });
@@ -484,7 +481,6 @@ class Frontend {
 
     async _getPopupWindow() {
         return await this._popupFactory.getOrCreatePopup({
-            ownerFrameId: this._frameId,
             depth: this._depth,
             popupWindow: true,
             childrenSupported: this._childrenSupported
