@@ -36,8 +36,10 @@
  */
 
 class Display extends EventDispatcher {
-    constructor(pageType, japaneseUtil, documentFocusController, hotkeyHandler) {
+    constructor(tabId, frameId, pageType, japaneseUtil, documentFocusController, hotkeyHandler) {
         super();
+        this._tabId = tabId;
+        this._frameId = frameId;
         this._pageType = pageType;
         this._japaneseUtil = japaneseUtil;
         this._documentFocusController = documentFocusController;
@@ -197,6 +199,14 @@ class Display extends EventDispatcher {
 
     get progressIndicatorVisible() {
         return this._progressIndicatorVisible;
+    }
+
+    get tabId() {
+        return this._tabId;
+    }
+
+    get frameId() {
+        return this._frameId;
     }
 
     async prepare() {
@@ -1583,8 +1593,6 @@ class Display extends EventDispatcher {
             parentFrameId: this._parentFrameId
         };
 
-        const {frameId} = await api.frameInformationGet();
-
         await dynamicLoader.loadScripts([
             '/mixed/js/text-scanner.js',
             '/mixed/js/frame-client.js',
@@ -1597,12 +1605,13 @@ class Display extends EventDispatcher {
             '/fg/js/frontend.js'
         ]);
 
-        const popupFactory = new PopupFactory(frameId);
+        const popupFactory = new PopupFactory(this._frameId);
         popupFactory.prepare();
 
         Object.assign(setupNestedPopupsOptions, {
             depth: this._depth + 1,
-            frameId,
+            tabId: this._tabId,
+            frameId: this._frameId,
             popupFactory,
             pageType: this._pageType,
             allowRootFramePopupProxy: true,
