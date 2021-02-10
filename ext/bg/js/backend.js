@@ -1507,17 +1507,17 @@ class Backend {
         return isValidTab ? tab : null;
     }
 
-    async _getScreenshot(windowId, tabId, ownerFrameId, format, quality) {
+    async _getScreenshot(windowId, tabId, frameId, format, quality) {
         if (typeof windowId !== 'number') {
             throw new Error('Invalid window ID');
         }
 
         let token = null;
         try {
-            if (typeof tabId === 'number' && typeof ownerFrameId === 'number') {
+            if (typeof tabId === 'number' && typeof frameId === 'number') {
                 const action = 'setAllVisibleOverride';
                 const params = {value: false, priority: 0, awaitFrame: true};
-                token = await this._sendMessageTabPromise(tabId, {action, params}, {frameId: ownerFrameId});
+                token = await this._sendMessageTabPromise(tabId, {action, params}, {frameId});
             }
 
             return await new Promise((resolve, reject) => {
@@ -1535,7 +1535,7 @@ class Backend {
                 const action = 'clearAllVisibleOverride';
                 const params = {token};
                 try {
-                    await this._sendMessageTabPromise(tabId, {action, params}, {frameId: ownerFrameId});
+                    await this._sendMessageTabPromise(tabId, {action, params}, {frameId});
                 } catch (e) {
                     // NOP
                 }
@@ -1636,8 +1636,8 @@ class Backend {
     }
 
     async _injectAnkNoteScreenshot(ankiConnect, timestamp, definitionDetails, details) {
-        const {windowId, tabId, ownerFrameId, format, quality} = details;
-        const dataUrl = await this._getScreenshot(windowId, tabId, ownerFrameId, format, quality);
+        const {windowId, tabId, frameId, format, quality} = details;
+        const dataUrl = await this._getScreenshot(windowId, tabId, frameId, format, quality);
 
         const {mediaType, data} = this._getDataUrlInfo(dataUrl);
         const extension = this._mediaUtility.getFileExtensionFromImageMediaType(mediaType);
