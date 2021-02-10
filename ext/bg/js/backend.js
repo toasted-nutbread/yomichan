@@ -465,7 +465,7 @@ class Backend {
         return results;
     }
 
-    async _onApiInjectAnkiNoteMedia({timestamp, definitionDetails, audioDetails, screenshotDetails, clipboardDetails}, sender) {
+    async _onApiInjectAnkiNoteMedia({timestamp, definitionDetails, audioDetails, screenshotDetails, clipboardDetails}) {
         return await this._injectAnkNoteMedia(
             this._anki,
             timestamp,
