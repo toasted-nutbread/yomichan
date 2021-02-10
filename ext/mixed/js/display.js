@@ -1655,10 +1655,10 @@ class Display extends EventDispatcher {
     }
 
     async _invokeContentOrigin(action, params={}) {
-        if (this._contentOriginFrameId === null) {
-            throw new Error('No content origin');
+        if (this._contentOriginTabId === this._tabId && this._contentOriginFrameId === this._frameId) {
+            throw new Error('Content origin is same page');
         }
-        return await api.crossFrame.invoke(this._contentOriginFrameId, action, params);
+        return await api.crossFrame.invokeTab(this._contentOriginTabId, this._contentOriginFrameId, action, params);
     }
 
     _copyHostSelection() {
