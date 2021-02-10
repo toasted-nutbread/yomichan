@@ -100,7 +100,8 @@ class Display extends EventDispatcher {
         this._depth = 0;
         this._parentPopupId = null;
         this._parentFrameId = null;
-        this._ownerFrameId = null;
+        this._ownerTabId = tabId;
+        this._ownerFrameId = frameId;
         this._childrenSupported = true;
         this._frameEndpoint = (pageType === 'popup' ? new FrameEndpoint() : null);
         this._browser = null;
@@ -254,6 +255,13 @@ class Display extends EventDispatcher {
         if (this._frameResizeHandle !== null) {
             this._frameResizeHandle.addEventListener('mousedown', this._onFrameResizerMouseDown.bind(this), false);
         }
+    }
+
+    getOwner() {
+        return {
+            tabId: this._ownerTabId,
+            frameId: this._ownerFrameId
+        };
     }
 
     initializeState() {
@@ -437,7 +445,8 @@ class Display extends EventDispatcher {
             params: this._createSearchParams(type, query, false),
             state,
             content: {
-                definitions: null
+                definitions: null,
+                owner: this.getOwner()
             }
         };
         this.setContent(details);
@@ -504,14 +513,10 @@ class Display extends EventDispatcher {
         this._setContentScale(scale);
     }
 
-    async _onMessageConfigure({depth, parentPopupId, parentFrameId, ownerFrameId, childrenSupported, scale, optionsContext}) {
+    async _onMessageConfigure({depth, parentPopupId, parentFrameId, childrenSupported, scale, optionsContext}) {
         this._depth = depth;
         this._parentPopupId = parentPopupId;
         this._parentFrameId = parentFrameId;
-        this._ownerFrameId = ownerFrameId;
-        if (this._pageType === 'popup') {
-            this._hotkeyHandler.forwardFrameId = ownerFrameId;
-        }
         this._childrenSupported = childrenSupported;
         this._setContentScale(scale);
         await this.setOptionsContext(optionsContext);
@@ -625,7 +630,8 @@ class Display extends EventDispatcher {
                 cause: 'queryParser'
             },
             content: {
-                definitions
+                definitions,
+                owner: this.getOwner()
             }
         };
         this.setContent(details);
@@ -639,7 +645,12 @@ class Display extends EventDispatcher {
             history: false,
             params: {type},
             state: {},
-            content: {}
+            content: {
+                owner: {
+                    tabId: this._tabId,
+                    frameId: this._frameId
+                }
+            }
         };
         this.setContent(details);
     }
@@ -701,7 +712,8 @@ class Display extends EventDispatcher {
                     documentTitle
                 },
                 content: {
-                    definitions
+                    definitions,
+                    owner: this.getOwner()
                 }
             };
             this.setContent(details);
@@ -893,6 +905,24 @@ class Display extends EventDispatcher {
             definitions = lookup ? await this._findDefinitions(isTerms, query, wildcardsEnabled, optionsContext) : [];
             if (this._setContentToken !== token) { return; }
             content.definitions = definitions;
+            changeHistory = true;
+        }
+
+        let ownerValid = false;
+        const {owner} = content;
+        if (typeof owner === 'object' && owner !== null) {
+            const {tabId, frameId} = owner;
+            if (typeof tabId === 'number' && typeof frameId === 'number') {
+                this._ownerTabId = tabId;
+                this._ownerFrameId = frameId;
+                if (this._pageType === 'popup') {
+                    this._hotkeyHandler.forwardFrameId = (tabId === this._tabId ? frameId : null);
+                }
+                ownerValid = true;
+            }
+        }
+        if (!ownerValid) {
+            content.owner = this.getOwner();
             changeHistory = true;
         }
 
@@ -1769,7 +1799,8 @@ class Display extends EventDispatcher {
                 documentTitle
             },
             content: {
-                definitions
+                definitions,
+                owner: this.getOwner()
             }
         };
         this._definitionTextScanner.clearSelection(true);

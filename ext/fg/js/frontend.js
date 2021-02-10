@@ -539,7 +539,11 @@ class Frontend {
                 documentTitle
             },
             content: {
-                definitions
+                definitions,
+                owner: {
+                    tabId: this._tabId,
+                    frameId: this._frameId
+                }
             }
         };
         if (textSource instanceof TextSourceElement && textSource.fullContent !== query) {

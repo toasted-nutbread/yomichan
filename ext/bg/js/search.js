@@ -353,7 +353,11 @@ class DisplaySearch extends Display {
             },
             content: {
                 definitions: null,
-                animate
+                animate,
+                owner: {
+                    tabId: this.tabId,
+                    frameId: this.frameId
+                }
             }
         };
         if (!lookup) { details.params.lookup = 'false'; }
