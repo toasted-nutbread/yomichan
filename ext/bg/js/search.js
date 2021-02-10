@@ -354,7 +354,7 @@ class DisplaySearch extends Display {
             content: {
                 definitions: null,
                 animate,
-                owner: {
+                contentOrigin: {
                     tabId: this.tabId,
                     frameId: this.frameId
                 }

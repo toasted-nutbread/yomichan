@@ -536,7 +536,7 @@ class Frontend {
             },
             content: {
                 definitions,
-                owner: {
+                contentOrigin: {
                     tabId: this._tabId,
                     frameId: this._frameId
                 }
