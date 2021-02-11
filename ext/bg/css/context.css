@@ -75,6 +75,7 @@ label {
 }
 .icon[data-icon=profile]                 { --icon-image: url(/mixed/img/profile.svg); }
 .icon[data-icon=cog]                     { --icon-image: url(/mixed/img/cog.svg); }
+.icon[data-icon=key]                     { --icon-image: url(/mixed/img/key.svg); }
 .icon[data-icon=magnifying-glass]        { --icon-image: url(/mixed/img/magnifying-glass.svg); }
 .icon[data-icon=exclamation-point-short] { --icon-image: url(/mixed/img/exclamation-point-short.svg); }
 .icon[data-icon=question-mark-circle]    { --icon-image: url(/mixed/img/question-mark-circle.svg); }
@@ -82,7 +83,6 @@ label {
 
 /* Page-specific styles */
 .link-group {
-    display: flex;
     flex-flow: row nowrap;
     align-items: center;
     line-height: 1.5em;
@@ -94,6 +94,9 @@ label {
     background-color: transparent;
     transition: background-color 0.125s linear 0s;
     max-width: none;
+}
+.link-group:not([hidden]) {
+    display: flex;
 }
 .link-group:hover,
 .link-group:active {
