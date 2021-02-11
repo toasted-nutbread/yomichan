@@ -656,7 +656,7 @@ class AnkiCardController {
 
     async _requestPermissions(permissions) {
         try {
-            await this._settingsController.setPermissionsGranted(permissions, true);
+            await this._settingsController.permissionsUtil.setPermissionsGranted({permissions}, true);
         } catch (e) {
             yomichan.logError(e);
         }
@@ -669,8 +669,8 @@ class AnkiCardController {
             node.dataset.requiredPermission = permissions.join(' ');
             const hasPermissions = await (
                 request ?
-                this._settingsController.setPermissionsGranted(permissions, true) :
-                this._settingsController.hasPermissions(permissions)
+                this._settingsController.permissionsUtil.setPermissionsGranted({permissions}, true) :
+                this._settingsController.permissionsUtil.hasPermissions({permissions})
             );
             node.dataset.hasPermissions = `${hasPermissions}`;
         } else {
