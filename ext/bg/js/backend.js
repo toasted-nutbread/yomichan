@@ -28,6 +28,7 @@
  * MediaUtility
  * ObjectPropertyAccessor
  * OptionsUtil
+ * PermissionsUtil
  * ProfileConditions
  * RequestBuilder
  * Translator
@@ -84,6 +85,7 @@ class Backend {
         this._badgePrepareDelayTimer = null;
         this._logErrorLevel = null;
         this._permissions = null;
+        this._permissionsUtil = new PermissionsUtil();
 
         this._messageHandlers = new Map([
             ['requestBackendReadySignal',    {async: false, contentScript: true,  handler: this._onApiRequestBackendReadySignal.bind(this)}],
@@ -185,7 +187,7 @@ class Backend {
         try {
             this._prepareInternalSync();
 
-            this._permissions = await this._getAllPermissions();
+            this._permissions = await this._permissionsUtil.getAllPermissions();
             this._defaultBrowserActionTitle = await this._getBrowserIconTitle();
             this._badgePrepareDelayTimer = setTimeout(() => {
                 this._badgePrepareDelayTimer = null;
@@ -692,7 +694,7 @@ class Backend {
 
         let permissionsOkay = false;
         try {
-            permissionsOkay = await this._hasPermissions({permissions: ['nativeMessaging']});
+            permissionsOkay = await this._permissionsUtil.hasPermissions({permissions: ['nativeMessaging']});
         } catch (e) {
             // NOP
         }
@@ -1276,7 +1278,7 @@ class Backend {
             } else if (!this._hasRequiredPermissionsForSettings(options)) {
                 text = '!';
                 color = '#f0ad4e';
-                status = 'Some settings require permissions';
+                status = 'Some settings require additional permissions';
             } else if (!this._isAnyDictionaryEnabled(options)) {
                 text = '!';
                 color = '#f0ad4e';
@@ -1955,28 +1957,6 @@ class Backend {
         });
     }
 
-    _hasPermissions(permissions) {
-        return new Promise((resolve, reject) => chrome.permissions.contains(permissions, (result) => {
-            const e = chrome.runtime.lastError;
-            if (e) {
-                reject(new Error(e.message));
-            } else {
-                resolve(result);
-            }
-        }));
-    }
-
-    _getAllPermissions() {
-        return new Promise((resolve, reject) => chrome.permissions.getAll((result) => {
-            const e = chrome.runtime.lastError;
-            if (e) {
-                reject(new Error(e.message));
-            } else {
-                resolve(result);
-            }
-        }));
-    }
-
     _getTabById(tabId) {
         return new Promise((resolve, reject) => {
             chrome.tabs.get(
@@ -1994,55 +1974,11 @@ class Backend {
     }
 
     async _checkPermissions() {
-        this._permissions = await this._getAllPermissions();
+        this._permissions = await this._permissionsUtil.getAllPermissions();
         this._updateBadge();
     }
 
     _hasRequiredPermissionsForSettings(options) {
-        if (this._permissions === null) { return true; }
-
-        const permissionsSet = new Set(this._permissions.permissions);
-
-        if (!permissionsSet.has('nativeMessaging')) {
-            if (options.parsing.enableMecabParser) {
-                return false;
-            }
-        }
-
-        if (!permissionsSet.has('clipboardRead')) {
-            if (options.clipboard.enableBackgroundMonitor || options.clipboard.enableSearchPageMonitor) {
-                return false;
-            }
-            const fieldMarkersRequiringClipboardPermission = new Set([
-                'clipboard-image',
-                'clipboard-text'
-            ]);
-            const fieldsList = [
-                options.anki.terms.fields,
-                options.anki.kanji.fields
-            ];
-            for (const fields of fieldsList) {
-                for (const fieldValue of Object.values(fields)) {
-                    const markers = this._getAnkiFieldMarkers(fieldValue);
-                    for (const marker of markers) {
-                        if (fieldMarkersRequiringClipboardPermission.has(marker)) {
-                            return false;
-                        }
-                    }
-                }
-            }
-        }
-
-        return true;
-    }
-
-    _getAnkiFieldMarkers(fieldValue) {
-        const pattern = /\{([\w-]+)\}/g;
-        const markers = [];
-        let match;
-        while ((match = pattern.exec(fieldValue)) !== null) {
-            markers.push(match[1]);
-        }
-        return markers;
+        return this._permissions === null || this._permissionsUtil.hasRequiredPermissionsForOptions(this._permissions, options);
     }
 }
