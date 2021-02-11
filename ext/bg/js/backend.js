@@ -83,6 +83,7 @@ class Backend {
         this._defaultBrowserActionTitle = null;
         this._badgePrepareDelayTimer = null;
         this._logErrorLevel = null;
+        this._permissions = null;
 
         this._messageHandlers = new Map([
             ['requestBackendReadySignal',    {async: false, contentScript: true,  handler: this._onApiRequestBackendReadySignal.bind(this)}],
@@ -174,12 +175,17 @@ class Backend {
 
         const onMessage = this._onMessageWrapper.bind(this);
         chrome.runtime.onMessage.addListener(onMessage);
+
+        const onPermissionsChanged = this._onWebExtensionEventWrapper(this._onPermissionsChanged.bind(this));
+        chrome.permissions.onAdded.addListener(onPermissionsChanged);
+        chrome.permissions.onRemoved.addListener(onPermissionsChanged);
     }
 
     async _prepareInternal() {
         try {
             this._prepareInternalSync();
 
+            this._permissions = await this._getAllPermissions();
             this._defaultBrowserActionTitle = await this._getBrowserIconTitle();
             this._badgePrepareDelayTimer = setTimeout(() => {
                 this._badgePrepareDelayTimer = null;
@@ -355,6 +361,10 @@ class Backend {
 
     _onZoomChange({tabId, oldZoomFactor, newZoomFactor}) {
         this._sendMessageTabIgnoreResponse(tabId, {action: 'zoomChanged', params: {oldZoomFactor, newZoomFactor}});
+    }
+
+    _onPermissionsChanged() {
+        this._checkPermissions();
     }
 
     // Message handlers
@@ -1263,6 +1273,10 @@ class Backend {
                 text = 'off';
                 color = '#555555';
                 status = 'Disabled';
+            } else if (!this._hasRequiredPermissionsForSettings(options)) {
+                text = '!';
+                color = '#f0ad4e';
+                status = 'Some settings require permissions';
             } else if (!this._isAnyDictionaryEnabled(options)) {
                 text = '!';
                 color = '#f0ad4e';
@@ -1952,6 +1966,17 @@ class Backend {
         }));
     }
 
+    _getAllPermissions() {
+        return new Promise((resolve, reject) => chrome.permissions.getAll((result) => {
+            const e = chrome.runtime.lastError;
+            if (e) {
+                reject(new Error(e.message));
+            } else {
+                resolve(result);
+            }
+        }));
+    }
+
     _getTabById(tabId) {
         return new Promise((resolve, reject) => {
             chrome.tabs.get(
@@ -1966,5 +1991,58 @@ class Backend {
                 }
             );
         });
+    }
+
+    async _checkPermissions() {
+        this._permissions = await this._getAllPermissions();
+        this._updateBadge();
+    }
+
+    _hasRequiredPermissionsForSettings(options) {
+        if (this._permissions === null) { return true; }
+
+        const permissionsSet = new Set(this._permissions.permissions);
+
+        if (!permissionsSet.has('nativeMessaging')) {
+            if (options.parsing.enableMecabParser) {
+                return false;
+            }
+        }
+
+        if (!permissionsSet.has('clipboardRead')) {
+            if (options.clipboard.enableBackgroundMonitor || options.clipboard.enableSearchPageMonitor) {
+                return false;
+            }
+            const fieldMarkersRequiringClipboardPermission = new Set([
+                'clipboard-image',
+                'clipboard-text'
+            ]);
+            const fieldsList = [
+                options.anki.terms.fields,
+                options.anki.kanji.fields
+            ];
+            for (const fields of fieldsList) {
+                for (const fieldValue of Object.values(fields)) {
+                    const markers = this._getAnkiFieldMarkers(fieldValue);
+                    for (const marker of markers) {
+                        if (fieldMarkersRequiringClipboardPermission.has(marker)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    _getAnkiFieldMarkers(fieldValue) {
+        const pattern = /\{([\w-]+)\}/g;
+        const markers = [];
+        let match;
+        while ((match = pattern.exec(fieldValue)) !== null) {
+            markers.push(match[1]);
+        }
+        return markers;
     }
 }
