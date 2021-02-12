@@ -32,7 +32,6 @@ class DisplaySearch {
         this._wanakanaEnableCheckbox = document.querySelector('#wanakana-enable');
         this._queryInputEvents = new EventListenerCollection();
         this._wanakanaEnabled = false;
-        this._isPrepared = false;
         this._introVisible = true;
         this._introAnimationTimer = null;
         this._clipboardMonitorEnabled = false;
@@ -78,8 +77,6 @@ class DisplaySearch {
 
         this._onModeChange();
         this._onDisplayOptionsUpdated({options: this._display.getOptions()});
-
-        this._isPrepared = true;
     }
 
     // Actions
