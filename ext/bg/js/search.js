@@ -31,6 +31,7 @@ class DisplaySearch {
         this._clipboardMonitorEnableCheckbox = document.querySelector('#clipboard-monitor-enable');
         this._wanakanaEnableCheckbox = document.querySelector('#wanakana-enable');
         this._queryInputEvents = new EventListenerCollection();
+        this._queryInputEventsSetup = false;
         this._wanakanaEnabled = false;
         this._introVisible = true;
         this._introAnimationTimer = null;
@@ -63,10 +64,6 @@ class DisplaySearch {
         this._display.queryParserVisible = true;
         this._display.setHistorySettings({useBrowserHistory: true});
         this._display.setQueryPostProcessor(this._postProcessQuery.bind(this));
-
-        const enableWanakana = !!this._display.getOptions().general.enableWanakana;
-        this._wanakanaEnableCheckbox.checked = enableWanakana;
-        this._setWanakanaEnabled(enableWanakana);
 
         this._searchButton.addEventListener('click', this._onSearch.bind(this), false);
         this._wanakanaEnableCheckbox.addEventListener('change', this._onWanakanaEnableChange.bind(this));
@@ -112,6 +109,10 @@ class DisplaySearch {
     _onDisplayOptionsUpdated({options}) {
         this._clipboardMonitorEnabled = options.clipboard.enableSearchPageMonitor;
         this._updateClipboardMonitorEnabled();
+
+        const enableWanakana = !!this._display.getOptions().general.enableWanakana;
+        this._wanakanaEnableCheckbox.checked = enableWanakana;
+        this._setWanakanaEnabled(enableWanakana);
     }
 
     _onContentUpdating({type, content, source}) {
@@ -200,21 +201,21 @@ class DisplaySearch {
     }
 
     _setWanakanaEnabled(enabled) {
+        if (this._queryInputEventsSetup && this._wanakanaEnabled === enabled) { return; }
+
         const input = this._queryInput;
         this._queryInputEvents.removeAllEventListeners();
-
         this._queryInputEvents.addEventListener(input, 'keydown', this._onSearchKeydown.bind(this), false);
 
-        if (this._wanakanaEnabled !== enabled) {
-            this._wanakanaEnabled = enabled;
-            if (enabled) {
-                wanakana.bind(input);
-            } else {
-                wanakana.unbind(input);
-            }
+        this._wanakanaEnabled = enabled;
+        if (enabled) {
+            wanakana.bind(input);
+        } else {
+            wanakana.unbind(input);
         }
 
         this._queryInputEvents.addEventListener(input, 'input', this._onSearchInput.bind(this), false);
+        this._queryInputEventsSetup = true;
     }
 
     _setIntroVisible(visible, animate) {
