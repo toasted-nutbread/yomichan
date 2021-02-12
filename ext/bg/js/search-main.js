@@ -16,6 +16,7 @@
  */
 
 /* global
+ * Display
  * DisplaySearch
  * DocumentFocusController
  * HotkeyHandler
@@ -39,7 +40,10 @@
         const hotkeyHandler = new HotkeyHandler();
         hotkeyHandler.prepare();
 
-        const displaySearch = new DisplaySearch(tabId, frameId, japaneseUtil, documentFocusController, hotkeyHandler);
+        const display = new Display(tabId, frameId, 'search', japaneseUtil, documentFocusController, hotkeyHandler);
+        await display.prepare();
+
+        const displaySearch = new DisplaySearch(display, japaneseUtil);
         await displaySearch.prepare();
 
         document.documentElement.dataset.loaded = 'true';

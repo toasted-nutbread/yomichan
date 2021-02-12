@@ -23,8 +23,8 @@
  */
 
 class DisplaySearch {
-    constructor(tabId, frameId, japaneseUtil, documentFocusController, hotkeyHandler) {
-        this._display = new Display(tabId, frameId, 'search', japaneseUtil, documentFocusController, hotkeyHandler);
+    constructor(display, japaneseUtil) {
+        this._display = display;
         this._searchButton = document.querySelector('#search-button');
         this._queryInput = document.querySelector('#search-textbox');
         this._introElement = document.querySelector('#intro');
@@ -42,29 +42,27 @@ class DisplaySearch {
                 getText: async () => (await api.clipboardGet())
             }
         });
-        this._display.autoPlayAudioDelay = 0;
-
-        this._display.hotkeyHandler.registerActions([
-            ['focusSearchBox', this._onActionFocusSearchBox.bind(this)]
-        ]);
     }
 
     async prepare() {
-        await this._display.prepare();
         await this._display.updateOptions();
+
         yomichan.on('optionsUpdated', this._onOptionsUpdated.bind(this));
 
         this._display.on('optionsUpdated', this._onDisplayOptionsUpdated.bind(this));
         this._display.on('contentUpdating', this._onContentUpdating.bind(this));
         this._display.on('modeChange', this._onModeChange.bind(this));
 
+        this._display.hotkeyHandler.registerActions([
+            ['focusSearchBox', this._onActionFocusSearchBox.bind(this)]
+        ]);
         this._display.registerMessageHandlers([
             ['updateSearchQuery', {async: false, handler: this._onExternalSearchUpdate.bind(this)}]
         ]);
 
+        this._display.autoPlayAudioDelay = 0;
         this._display.queryParserVisible = true;
         this._display.setHistorySettings({useBrowserHistory: true});
-
         this._display.setQueryPostProcessor(this._postProcessQuery.bind(this));
 
         const enableWanakana = !!this._display.getOptions().general.enableWanakana;
