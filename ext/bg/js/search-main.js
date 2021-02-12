@@ -46,7 +46,10 @@
         const displaySearch = new DisplaySearch(display, japaneseUtil);
         await displaySearch.prepare();
 
+        display.initializeState();
+
         document.documentElement.dataset.loaded = 'true';
+
         yomichan.ready();
     } catch (e) {
         yomichan.logError(e);

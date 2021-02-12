@@ -79,8 +79,6 @@ class DisplaySearch {
         this._onModeChange();
         this._onDisplayOptionsUpdated({options: this._display.getOptions()});
 
-        this._display.initializeState();
-
         this._isPrepared = true;
     }
 
