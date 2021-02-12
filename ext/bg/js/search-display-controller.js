@@ -22,7 +22,7 @@
  * wanakana
  */
 
-class DisplaySearch {
+class SearchDisplayController {
     constructor(tabId, frameId, display, japaneseUtil) {
         this._tabId = tabId;
         this._frameId = frameId;

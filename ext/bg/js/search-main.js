@@ -17,7 +17,7 @@
 
 /* global
  * Display
- * DisplaySearch
+ * SearchDisplayController
  * DocumentFocusController
  * HotkeyHandler
  * JapaneseUtil
@@ -43,8 +43,8 @@
         const display = new Display(tabId, frameId, 'search', japaneseUtil, documentFocusController, hotkeyHandler);
         await display.prepare();
 
-        const displaySearch = new DisplaySearch(tabId, frameId, display, japaneseUtil);
-        await displaySearch.prepare();
+        const searchDisplayController = new SearchDisplayController(tabId, frameId, display, japaneseUtil);
+        await searchDisplayController.prepare();
 
         display.initializeState();
 
