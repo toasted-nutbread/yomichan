@@ -17,10 +17,10 @@
 
 /* global
  * Display
- * SearchDisplayController
  * DocumentFocusController
  * HotkeyHandler
  * JapaneseUtil
+ * SearchDisplayController
  * api
  * wanakana
  */
