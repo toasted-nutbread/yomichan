@@ -22,9 +22,9 @@
  * wanakana
  */
 
-class DisplaySearch extends Display {
+class DisplaySearch {
     constructor(tabId, frameId, japaneseUtil, documentFocusController, hotkeyHandler) {
-        super(tabId, frameId, 'search', japaneseUtil, documentFocusController, hotkeyHandler);
+        this._display = new Display(tabId, frameId, 'search', japaneseUtil, documentFocusController, hotkeyHandler);
         this._searchButton = document.querySelector('#search-button');
         this._queryInput = document.querySelector('#search-textbox');
         this._introElement = document.querySelector('#intro');
@@ -42,32 +42,32 @@ class DisplaySearch extends Display {
                 getText: async () => (await api.clipboardGet())
             }
         });
-        this.autoPlayAudioDelay = 0;
+        this._display.autoPlayAudioDelay = 0;
 
-        this.hotkeyHandler.registerActions([
+        this._display.hotkeyHandler.registerActions([
             ['focusSearchBox', this._onActionFocusSearchBox.bind(this)]
         ]);
     }
 
     async prepare() {
-        await super.prepare();
-        await this.updateOptions();
+        await this._display.prepare();
+        await this._display.updateOptions();
         yomichan.on('optionsUpdated', this._onOptionsUpdated.bind(this));
 
-        this.on('optionsUpdated', this._onDisplayOptionsUpdated.bind(this));
-        this.on('contentUpdating', this._onContentUpdating.bind(this));
-        this.on('modeChange', this._onModeChange.bind(this));
+        this._display.on('optionsUpdated', this._onDisplayOptionsUpdated.bind(this));
+        this._display.on('contentUpdating', this._onContentUpdating.bind(this));
+        this._display.on('modeChange', this._onModeChange.bind(this));
 
-        this.registerMessageHandlers([
+        this._display.registerMessageHandlers([
             ['updateSearchQuery', {async: false, handler: this._onExternalSearchUpdate.bind(this)}]
         ]);
 
-        this.queryParserVisible = true;
-        this.setHistorySettings({useBrowserHistory: true});
+        this._display.queryParserVisible = true;
+        this._display.setHistorySettings({useBrowserHistory: true});
 
-        this.setQueryPostProcessor(this._postProcessQuery.bind(this));
+        this._display.setQueryPostProcessor(this._postProcessQuery.bind(this));
 
-        const enableWanakana = !!this.getOptions().general.enableWanakana;
+        const enableWanakana = !!this._display.getOptions().general.enableWanakana;
         this._wanakanaEnableCheckbox.checked = enableWanakana;
         this._setWanakanaEnabled(enableWanakana);
 
@@ -76,12 +76,12 @@ class DisplaySearch extends Display {
         window.addEventListener('copy', this._onCopy.bind(this));
         this._clipboardMonitor.on('change', this._onExternalSearchUpdate.bind(this));
         this._clipboardMonitorEnableCheckbox.addEventListener('change', this._onClipboardMonitorEnableChange.bind(this));
-        this.hotkeyHandler.on('keydownNonHotkey', this._onKeyDown.bind(this));
+        this._display.hotkeyHandler.on('keydownNonHotkey', this._onKeyDown.bind(this));
 
         this._onModeChange();
-        this._onDisplayOptionsUpdated({options: this.getOptions()});
+        this._onDisplayOptionsUpdated({options: this._display.getOptions()});
 
-        this.initializeState();
+        this._display.initializeState();
 
         this._isPrepared = true;
     }
@@ -109,10 +109,10 @@ class DisplaySearch extends Display {
     }
 
     async _onOptionsUpdated() {
-        await this.updateOptions();
+        await this._display.updateOptions();
         const query = this._queryInput.value;
         if (query) {
-            this.searchLast();
+            this._display.searchLast();
         }
     }
 
@@ -129,7 +129,7 @@ class DisplaySearch extends Display {
             case 'kanji':
                 animate = !!content.animate;
                 valid = (typeof source === 'string' && source.length > 0);
-                this.blurElement(this._queryInput);
+                this._display.blurElement(this._queryInput);
                 break;
             case 'clear':
                 valid = false;
@@ -158,7 +158,7 @@ class DisplaySearch extends Display {
         // Search
         e.preventDefault();
         e.stopImmediatePropagation();
-        this.blurElement(e.currentTarget);
+        this._display.blurElement(e.currentTarget);
         this._search(true, true, true);
     }
 
@@ -173,7 +173,7 @@ class DisplaySearch extends Display {
     }
 
     _onExternalSearchUpdate({text, animate=true}) {
-        const {clipboard: {autoSearchContent, maximumSearchLength}} = this.getOptions();
+        const {clipboard: {autoSearchContent, maximumSearchLength}} = this._display.getOptions();
         if (text.length > maximumSearchLength) {
             text = text.substring(0, maximumSearchLength);
         }
@@ -190,7 +190,7 @@ class DisplaySearch extends Display {
             path: 'general.enableWanakana',
             value,
             scope: 'profile',
-            optionsContext: this.getOptionsContext()
+            optionsContext: this._display.getOptionsContext()
         }], 'search');
     }
 
@@ -200,7 +200,7 @@ class DisplaySearch extends Display {
     }
 
     _onModeChange() {
-        let mode = this.mode;
+        let mode = this._display.mode;
         if (mode === null) { mode = ''; }
         document.documentElement.dataset.searchMode = mode;
         this._updateClipboardMonitorEnabled();
@@ -297,12 +297,12 @@ class DisplaySearch extends Display {
             path: 'clipboard.enableSearchPageMonitor',
             value,
             scope: 'profile',
-            optionsContext: this.getOptionsContext()
+            optionsContext: this._display.getOptionsContext()
         }], 'search');
     }
 
     _updateClipboardMonitorEnabled() {
-        const mode = this.mode;
+        const mode = this._display.mode;
         const enabled = this._clipboardMonitorEnabled;
         this._clipboardMonitorEnableCheckbox.checked = enabled;
         if (enabled && mode !== 'popup') {
@@ -326,7 +326,7 @@ class DisplaySearch extends Display {
 
     _search(animate, history, lookup) {
         const query = this._queryInput.value;
-        const depth = this.depth;
+        const depth = this._display.depth;
         const url = window.location.href;
         const documentTitle = document.title;
         const details = {
@@ -346,13 +346,13 @@ class DisplaySearch extends Display {
                 definitions: null,
                 animate,
                 contentOrigin: {
-                    tabId: this.tabId,
-                    frameId: this.frameId
+                    tabId: this._display.tabId,
+                    frameId: this._display.frameId
                 }
             }
         };
         if (!lookup) { details.params.lookup = 'false'; }
-        this.setContent(details);
+        this._display.setContent(details);
     }
 
     _updateSearchHeight(shrink) {
