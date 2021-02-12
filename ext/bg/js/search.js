@@ -23,7 +23,9 @@
  */
 
 class DisplaySearch {
-    constructor(display, japaneseUtil) {
+    constructor(tabId, frameId, display, japaneseUtil) {
+        this._tabId = tabId;
+        this._frameId = frameId;
         this._display = display;
         this._searchButton = document.querySelector('#search-button');
         this._queryInput = document.querySelector('#search-textbox');
@@ -340,8 +342,8 @@ class DisplaySearch {
                 definitions: null,
                 animate,
                 contentOrigin: {
-                    tabId: this._display.tabId,
-                    frameId: this._display.frameId
+                    tabId: this.tabId,
+                    frameId: this.frameId
                 }
             }
         };

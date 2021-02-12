@@ -43,7 +43,7 @@
         const display = new Display(tabId, frameId, 'search', japaneseUtil, documentFocusController, hotkeyHandler);
         await display.prepare();
 
-        const displaySearch = new DisplaySearch(display, japaneseUtil);
+        const displaySearch = new DisplaySearch(tabId, frameId, display, japaneseUtil);
         await displaySearch.prepare();
 
         display.initializeState();
