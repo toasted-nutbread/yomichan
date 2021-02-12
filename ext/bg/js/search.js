@@ -65,6 +65,8 @@ class DisplaySearch extends Display {
         this.queryParserVisible = true;
         this.setHistorySettings({useBrowserHistory: true});
 
+        this.setQueryPostProcessor(this._postProcessQuery.bind(this));
+
         const enableWanakana = !!this.getOptions().general.enableWanakana;
         this._wanakanaEnableCheckbox.checked = enableWanakana;
         this._setWanakanaEnabled(enableWanakana);
@@ -82,17 +84,6 @@ class DisplaySearch extends Display {
         this.initializeState();
 
         this._isPrepared = true;
-    }
-
-    postProcessQuery(query) {
-        if (this._wanakanaEnabled) {
-            try {
-                query = this._japaneseUtil.convertToKana(query);
-            } catch (e) {
-                // NOP
-            }
-        }
-        return query;
     }
 
     // Actions
@@ -374,5 +365,16 @@ class DisplaySearch extends Display {
         if (shrink || scrollHeight >= currentHeight - 1) {
             node.style.height = `${scrollHeight}px`;
         }
+    }
+
+    _postProcessQuery(query) {
+        if (this._wanakanaEnabled) {
+            try {
+                query = this._japaneseUtil.convertToKana(query);
+            } catch (e) {
+                // NOP
+            }
+        }
+        return query;
     }
 }
