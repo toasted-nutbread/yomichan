@@ -71,7 +71,7 @@
         },
         "sandbox": {
             "pages": [
-                "bg/template-renderer.html"
+                "template-renderer.html"
             ],
             "content_security_policy": "sandbox allow-scripts; default-src 'self'; script-src 'self' 'unsafe-eval'"
         },
@@ -112,7 +112,7 @@
         },
         "web_accessible_resources": [
             "fg/float.html",
-            "bg/template-renderer.html"
+            "template-renderer.html"
         ],
         "content_security_policy": "default-src 'self'; style-src 'self' 'unsafe-inline'; media-src *; connect-src *"
     },
@@ -185,7 +185,7 @@
                 {
                     "action": "remove",
                     "path": ["web_accessible_resources"],
-                    "item": "bg/template-renderer.html"
+                    "item": "template-renderer.html"
                 },
                 {
                     "action": "delete",
