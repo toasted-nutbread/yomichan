@@ -832,6 +832,14 @@ class Backend {
             this._searchPopupTabId = null;
         }
 
+        // Find existing tab
+        const existingTabInfo = await this._findSearchPopupTab(urlPredicate);
+        if (existingTabInfo !== null) {
+            const existingTab = existingTabInfo.tab;
+            this._searchPopupTabId = existingTab.id;
+            return {tab: existingTab, created: false};
+        }
+
         // chrome.windows not supported (e.g. on Firefox mobile)
         if (!isObject(chrome.windows)) {
             throw new Error('Window creation not supported');
@@ -862,6 +870,23 @@ class Backend {
 
         this._searchPopupTabId = tab.id;
         return {tab, created: true};
+    }
+
+    async _findSearchPopupTab(urlPredicate) {
+        const predicate = async ({url, tab}) => {
+            if (!urlPredicate(url)) { return false; }
+            try {
+                const mode = await this._sendMessageTabPromise(
+                    tab.id,
+                    {action: 'getMode', params: {}},
+                    {frameId: 0}
+                );
+                return mode === 'popup';
+            } catch (e) {
+                return false;
+            }
+        };
+        return await this._findTabs(1000, false, predicate, true);
     }
 
     _getSearchPopupWindowCreateData(url, options) {
