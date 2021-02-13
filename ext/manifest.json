@@ -110,7 +110,7 @@
         }
     },
     "web_accessible_resources": [
-        "fg/float.html",
+        "float.html",
         "template-renderer.html"
     ],
     "content_security_policy": "default-src 'self'; style-src 'self' 'unsafe-inline'; media-src *; connect-src *"
