@@ -1821,7 +1821,7 @@ class Backend {
     }
 
     async _openWelcomeGuidePage() {
-        await this._createTab(chrome.runtime.getURL('/bg/welcome.html'));
+        await this._createTab(chrome.runtime.getURL('/welcome.html'));
     }
 
     async _openInfoPage() {
