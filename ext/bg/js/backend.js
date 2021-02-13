@@ -559,7 +559,7 @@ class Backend {
     }
 
     async _onApiGetDisplayTemplatesHtml() {
-        return await this._fetchAsset('/mixed/display-templates.html');
+        return await this._fetchAsset('/display-templates.html');
     }
 
     _onApiGetZoom(params, sender) {
