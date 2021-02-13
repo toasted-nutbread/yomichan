@@ -140,7 +140,7 @@ class Display extends EventDispatcher {
         ]);
         this.registerMessageHandlers([
             ['setMode', {async: false, handler: this._onMessageSetMode.bind(this)}],
-            ['getMode', {async: false, handler: this._onMessageGetMode.bind(this)}],
+            ['getMode', {async: false, handler: this._onMessageGetMode.bind(this)}]
         ]);
         this.registerDirectMessageHandlers([
             ['setOptionsContext',  {async: false, handler: this._onMessageSetOptionsContext.bind(this)}],
