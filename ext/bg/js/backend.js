@@ -1825,7 +1825,7 @@ class Backend {
     }
 
     async _openInfoPage() {
-        await this._createTab(chrome.runtime.getURL('/bg/info.html'));
+        await this._createTab(chrome.runtime.getURL('/info.html'));
     }
 
     async _openSettingsPage(mode) {
