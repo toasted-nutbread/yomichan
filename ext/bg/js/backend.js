@@ -1346,6 +1346,63 @@ class Backend {
         });
     }
 
+    async _findTabs(timeout, multiple, predicate, predicateIsAsync) {
+        // This function works around the need to have the "tabs" permission to access tab.url.
+        const tabs = await this._getAllTabs();
+
+        let done = false;
+        const checkTab = async (tab, add) => {
+            const url = await this._getTabUrl(tab.id);
+
+            if (done) { return; }
+
+            let okay = false;
+            const item = {tab, url};
+            try {
+                okay = predicate(item);
+                if (predicateIsAsync) { okay = await okay; }
+            } catch (e) {
+                // NOP
+            }
+
+            if (okay && !done) {
+                if (add(item)) {
+                    done = true;
+                }
+            }
+        };
+
+        if (multiple) {
+            const results = [];
+            const add = (value) => {
+                results.push(value);
+                return false;
+            };
+            const checkTabPromises = tabs.map((tab) => checkTab(tab, add));
+            await Promise.race([
+                Promise.all(checkTabPromises),
+                promiseTimeout(timeout)
+            ]);
+            return results;
+        } else {
+            const {promise, resolve} = deferPromise();
+            let result = null;
+            const add = (value) => {
+                result = value;
+                resolve();
+                return true;
+            };
+            const checkTabPromises = tabs.map((tab) => checkTab(tab, add));
+            await Promise.race([
+                promise,
+                Promise.all(checkTabPromises),
+                promiseTimeout(timeout)
+            ]);
+            resolve();
+            return result;
+        }
+    }
+
     async _findTab(timeout, checkUrl) {
         // This function works around the need to have the "tabs" permission to access tab.url.
         const tabs = await this._getAllTabs();
