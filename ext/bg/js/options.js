@@ -28,7 +28,7 @@ class OptionsUtil {
     }
 
     async prepare() {
-        this._optionsSchema = await this._fetchAsset('/bg/data/options-schema.json', true);
+        this._optionsSchema = await this._fetchAsset('/data/schemas/options-schema.json', true);
     }
 
     async update(options) {
