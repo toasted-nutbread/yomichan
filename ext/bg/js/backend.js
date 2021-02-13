@@ -821,10 +821,11 @@ class Backend {
     }
 
     async _getOrCreateSearchPopup2() {
-        // Reuse same tab
+        // Use existing tab
         const baseUrl = chrome.runtime.getURL('/search.html');
+        const urlPredicate = (url) => url !== null && url.startsWith(baseUrl);
         if (this._searchPopupTabId !== null) {
-            const tab = await this._checkTabUrl(this._searchPopupTabId, (url) => url.startsWith(baseUrl));
+            const tab = await this._checkTabUrl(this._searchPopupTabId, urlPredicate);
             if (tab !== null) {
                 return {tab, created: false};
             }
