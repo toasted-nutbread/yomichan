@@ -737,7 +737,7 @@ class Backend {
             url += `?${queryString}`;
         }
 
-        const isTabMatch = (url2) => {
+        const predicate = ({url: url2}) => {
             if (url2 === null || !url2.startsWith(baseUrl)) { return false; }
             const parsedUrl = new URL(url2);
             const baseUrl2 = `${parsedUrl.origin}${parsedUrl.pathname}`;
@@ -746,7 +746,7 @@ class Backend {
         };
 
         const openInTab = async () => {
-            const tab = await this._findTab(1000, isTabMatch);
+            const tab = await this._findTabs(1000, false, predicate, false);
             if (tab !== null) {
                 await this._focusTab(tab);
                 if (queryParams.query) {
@@ -1905,7 +1905,8 @@ class Backend {
         switch (mode) {
             case 'existingOrNewTab':
                 if (useSettingsV2) {
-                    const tab = await this._findTab(1000, (url2) => (url2 !== null && url2.startsWith(url)));
+                    const predicate = ({url: url2}) => (url2 !== null && url2.startsWith(url));
+                    const tab = await this._findTabs(1000, false, predicate, false);
                     if (tab !== null) {
                         await this._focusTab(tab);
                     } else {
