@@ -42,7 +42,7 @@ class DisplayController {
 
         const optionsPageUrl = optionsFull.global.useSettingsV2 ? '/bg/settings2.html' : manifest.options_ui.page;
         this._setupButtonEvents('.action-open-settings', 'openSettingsPage', chrome.runtime.getURL(optionsPageUrl));
-        this._setupButtonEvents('.action-open-permissions', null, chrome.runtime.getURL('/bg/permissions.html'));
+        this._setupButtonEvents('.action-open-permissions', null, chrome.runtime.getURL('/permissions.html'));
 
         const {profiles, profileCurrent} = optionsFull;
         const primaryProfile = (profileCurrent >= 0 && profileCurrent < profiles.length) ? profiles[profileCurrent] : null;
