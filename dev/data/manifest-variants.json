@@ -25,7 +25,7 @@
                 "128": "images/icon128.png"
             },
             "default_title": "Yomichan",
-            "default_popup": "bg/context.html"
+            "default_popup": "context.html"
         },
         "background": {
             "page": "background.html",
