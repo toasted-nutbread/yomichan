@@ -1831,7 +1831,7 @@ class Backend {
     async _openSettingsPage(mode) {
         const {useSettingsV2} = this._options.global;
         const manifest = chrome.runtime.getManifest();
-        const url = chrome.runtime.getURL(useSettingsV2 ? '/bg/settings2.html' : manifest.options_ui.page);
+        const url = chrome.runtime.getURL(useSettingsV2 ? '/settings.html' : manifest.options_ui.page);
         switch (mode) {
             case 'existingOrNewTab':
                 if (useSettingsV2) {
