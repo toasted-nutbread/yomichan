@@ -32,7 +32,7 @@ class DisplayController {
 
         this._showExtensionInfo(manifest);
         this._setupEnvironment();
-        this._setupButtonEvents('.action-open-search', 'openSearchPage', chrome.runtime.getURL('/bg/search.html'));
+        this._setupButtonEvents('.action-open-search', 'openSearchPage', chrome.runtime.getURL('/search.html'));
         this._setupButtonEvents('.action-open-info', 'openInfoPage', chrome.runtime.getURL('/info.html'));
 
         const optionsFull = await api.optionsGetFull();
