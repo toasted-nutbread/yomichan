@@ -1333,9 +1333,22 @@ class Backend {
         return null;
     }
 
+    _getAllTabs() {
+        return new Promise((resolve, reject) => {
+            chrome.tabs.query({}, (tabs) => {
+                const e = chrome.runtime.lastError;
+                if (e) {
+                    reject(new Error(e.message));
+                } else {
+                    resolve(tabs);
+                }
+            });
+        });
+    }
+
     async _findTab(timeout, checkUrl) {
         // This function works around the need to have the "tabs" permission to access tab.url.
-        const tabs = await new Promise((resolve) => chrome.tabs.query({}, resolve));
+        const tabs = await this._getAllTabs();
         const {promise: matchPromise, resolve: matchPromiseResolve} = deferPromise();
 
         const checkTabUrl = ({tab, url}) => {
