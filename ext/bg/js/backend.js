@@ -1403,35 +1403,6 @@ class Backend {
         }
     }
 
-    async _findTab(timeout, checkUrl) {
-        // This function works around the need to have the "tabs" permission to access tab.url.
-        const tabs = await this._getAllTabs();
-        const {promise: matchPromise, resolve: matchPromiseResolve} = deferPromise();
-
-        const checkTabUrl = ({tab, url}) => {
-            if (checkUrl(url, tab)) {
-                matchPromiseResolve(tab);
-            }
-        };
-
-        const promises = [];
-        for (const tab of tabs) {
-            const promise = this._getTabUrl(tab.id);
-            promise.then((url) => checkTabUrl({url, tab}));
-            promises.push(promise);
-        }
-
-        const racePromises = [
-            matchPromise,
-            Promise.all(promises).then(() => null)
-        ];
-        if (typeof timeout === 'number') {
-            racePromises.push(new Promise((resolve) => setTimeout(() => resolve(null), timeout)));
-        }
-
-        return await Promise.race(racePromises);
-    }
-
     async _focusTab(tab) {
         await new Promise((resolve, reject) => {
             chrome.tabs.update(tab.id, {active: true}, () => {
