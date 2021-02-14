@@ -176,7 +176,7 @@
                 "ext/js/comm/mecab.js",
                 "ext/js/media/media-utility.js",
                 "ext/js/data/options-util.js",
-                "ext/bg/js/permissions-util.js",
+                "ext/js/data/permissions-util.js",
                 "ext/js/background/profile-conditions.js",
                 "ext/js/background/request-builder.js",
                 "ext/js/dom/simple-dom-parser.js",

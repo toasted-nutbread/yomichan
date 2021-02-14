@@ -36,7 +36,7 @@ self.importScripts(
     '/js/comm/mecab.js',
     '/js/media/media-utility.js',
     '/js/data/options-util.js',
-    '/bg/js/permissions-util.js',
+    '/js/data/permissions-util.js',
     '/js/background/profile-conditions.js',
     '/js/background/request-builder.js',
     '/js/dom/simple-dom-parser.js',
