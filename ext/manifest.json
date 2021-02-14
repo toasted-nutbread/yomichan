@@ -45,7 +45,7 @@
                 "mixed/js/dynamic-loader.js",
                 "js/comm/frame-client.js",
                 "mixed/js/text-scanner.js",
-                "mixed/js/document-util.js",
+                "js/dom/document-util.js",
                 "js/input/hotkey-handler.js",
                 "fg/js/dom-text-scanner.js",
                 "fg/js/popup.js",
