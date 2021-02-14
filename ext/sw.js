@@ -28,7 +28,7 @@ self.importScripts(
     '/js/comm/anki.js',
     '/js/media/audio-downloader.js',
     '/bg/js/clipboard-monitor.js',
-    '/bg/js/clipboard-reader.js',
+    '/js/comm/clipboard-reader.js',
     '/bg/js/database.js',
     '/js/language/deinflector.js',
     '/bg/js/dictionary-database.js',
