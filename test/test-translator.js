@@ -42,7 +42,7 @@ async function createVM() {
         'bg/js/json-schema.js',
         'js/media/media-utility.js',
         'js/language/dictionary-importer.js',
-        'bg/js/database.js',
+        'js/data/database.js',
         'js/language/dictionary-database.js',
         'js/general/text-source-map.js',
         'js/language/deinflector.js',

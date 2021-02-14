@@ -29,7 +29,7 @@ self.importScripts(
     '/js/media/audio-downloader.js',
     '/js/comm/clipboard-monitor.js',
     '/js/comm/clipboard-reader.js',
-    '/bg/js/database.js',
+    '/js/data/database.js',
     '/js/language/deinflector.js',
     '/js/language/dictionary-database.js',
     '/bg/js/json-schema.js',

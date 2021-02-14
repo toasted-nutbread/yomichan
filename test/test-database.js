@@ -28,7 +28,7 @@ vm.execute([
     'bg/js/json-schema.js',
     'js/media/media-utility.js',
     'js/language/dictionary-importer.js',
-    'bg/js/database.js',
+    'js/data/database.js',
     'js/language/dictionary-database.js'
 ]);
 const DictionaryImporter = vm.get('DictionaryImporter');
