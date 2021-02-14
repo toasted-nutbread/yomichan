@@ -24,7 +24,7 @@
 
 (async () => {
     try {
-        api.forwardLogsToBackend();
+        api.prepare();
 
         const {tabId, frameId} = await api.frameInformationGet();
 

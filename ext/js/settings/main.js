@@ -51,7 +51,7 @@ async function setupEnvironmentInfo() {
 
 (async () => {
     try {
-        api.forwardLogsToBackend();
+        api.prepare();
         await yomichan.backendReady();
 
         setupEnvironmentInfo();
