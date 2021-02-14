@@ -44,7 +44,7 @@
                     "js/comm/cross-frame-api.js",
                     "js/comm/api.js",
                     "mixed/js/dynamic-loader.js",
-                    "mixed/js/frame-client.js",
+                    "js/comm/frame-client.js",
                     "mixed/js/text-scanner.js",
                     "mixed/js/document-util.js",
                     "js/input/hotkey-handler.js",
