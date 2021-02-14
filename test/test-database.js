@@ -27,7 +27,7 @@ vm.execute([
     'js/general/cache-map.js',
     'bg/js/json-schema.js',
     'js/media/media-utility.js',
-    'bg/js/dictionary-importer.js',
+    'js/language/dictionary-importer.js',
     'bg/js/database.js',
     'js/language/dictionary-database.js'
 ]);
