@@ -148,7 +148,7 @@ class PopupWindow extends EventDispatcher {
         const frameId = 0;
         if (this._popupTabId !== null) {
             try {
-                return await api.crossFrame.invokeTab(this._popupTabId, frameId, 'popupMessage', {action, params});
+                return await yomichan.crossFrame.invokeTab(this._popupTabId, frameId, 'popupMessage', {action, params});
             } catch (e) {
                 if (yomichan.isExtensionUnloaded) {
                     open = false;
@@ -164,6 +164,6 @@ class PopupWindow extends EventDispatcher {
         const {tabId} = await api.getOrCreateSearchPopup({focus: 'ifCreated'});
         this._popupTabId = tabId;
 
-        return await api.crossFrame.invokeTab(this._popupTabId, frameId, 'popupMessage', {action, params});
+        return await yomichan.crossFrame.invokeTab(this._popupTabId, frameId, 'popupMessage', {action, params});
     }
 }

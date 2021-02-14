@@ -158,7 +158,7 @@ class PopupProxy extends EventDispatcher {
     // Private
 
     _invoke(action, params={}) {
-        return api.crossFrame.invoke(this._frameId, action, params);
+        return yomichan.crossFrame.invoke(this._frameId, action, params);
     }
 
     async _invokeSafe(action, params={}, defaultReturnValue) {

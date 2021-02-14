@@ -124,7 +124,7 @@ class Frontend {
         this._textScanner.on('clearSelection', this._onClearSelection.bind(this));
         this._textScanner.on('searched', this._onSearched.bind(this));
 
-        api.crossFrame.registerHandlers([
+        yomichan.crossFrame.registerHandlers([
             ['closePopup',              {async: false, handler: this._onApiClosePopup.bind(this)}],
             ['copySelection',           {async: false, handler: this._onApiCopySelection.bind(this)}],
             ['getSelectionText',        {async: false, handler: this._onApiGetSelectionText.bind(this)}],
@@ -462,7 +462,7 @@ class Frontend {
             return await this._getDefaultPopup();
         }
 
-        const {popupId} = await api.crossFrame.invoke(targetFrameId, 'getPopupInfo');
+        const {popupId} = await yomichan.crossFrame.invoke(targetFrameId, 'getPopupInfo');
         if (popupId === null) {
             return null;
         }
@@ -653,7 +653,7 @@ class Frontend {
         let documentTitle = document.title;
         if (this._useProxyPopup) {
             try {
-                ({url, documentTitle} = await api.crossFrame.invoke(this._parentFrameId, 'getPageInfo', {}));
+                ({url, documentTitle} = await yomichan.crossFrame.invoke(this._parentFrameId, 'getPageInfo', {}));
             } catch (e) {
                 // NOP
             }

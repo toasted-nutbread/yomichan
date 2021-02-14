@@ -15,25 +15,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/* global
- * CrossFrameAPI
- */
-
 const api = (() => {
     class API {
         constructor() {
             this._prepared = false;
-            this._crossFrame = null;
-        }
-
-        get crossFrame() {
-            return this._crossFrame;
         }
 
         prepare() {
             if (this._prepared) { return; }
-            this._crossFrame = new CrossFrameAPI();
-            this._crossFrame.prepare();
             yomichan.on('log', this._onLog.bind(this));
             this._prepared = true;
         }

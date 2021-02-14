@@ -460,7 +460,7 @@ class Popup extends EventDispatcher {
         if (this._frameClient === null || !this._frameClient.isConnected() || contentWindow === null) { return; }
 
         const message = this._frameClient.createMessage({action, params});
-        return await api.crossFrame.invoke(this._frameClient.frameId, 'popupMessage', message);
+        return await yomichan.crossFrame.invoke(this._frameClient.frameId, 'popupMessage', message);
     }
 
     async _invokeSafe(action, params={}, defaultReturnValue) {

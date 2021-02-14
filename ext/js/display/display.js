@@ -221,7 +221,7 @@ class Display extends EventDispatcher {
         this._queryParser.on('searched', this._onQueryParserSearch.bind(this));
         this._progressIndicatorVisible.on('change', this._onProgressIndicatorVisibleChanged.bind(this));
         yomichan.on('extensionUnloaded', this._onExtensionUnloaded.bind(this));
-        api.crossFrame.registerHandlers([
+        yomichan.crossFrame.registerHandlers([
             ['popupMessage', {async: 'dynamic', handler: this._onDirectMessage.bind(this)}]
         ]);
         window.addEventListener('message', this._onWindowMessage.bind(this), false);
@@ -1605,7 +1605,7 @@ class Display extends EventDispatcher {
         if (this._contentOriginTabId === this._tabId && this._contentOriginFrameId === this._frameId) {
             throw new Error('Content origin is same page');
         }
-        return await api.crossFrame.invokeTab(this._contentOriginTabId, this._contentOriginFrameId, action, params);
+        return await yomichan.crossFrame.invokeTab(this._contentOriginTabId, this._contentOriginFrameId, action, params);
     }
 
     _copyHostSelection() {

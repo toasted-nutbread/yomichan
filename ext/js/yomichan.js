@@ -15,6 +15,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+/* global
+ * CrossFrameAPI
+ */
+
 // Set up chrome alias if it's not available (Edge Legacy)
 if ((() => {
     let hasChrome = false;
@@ -47,6 +51,8 @@ const yomichan = (() => {
                 // NOP
             }
 
+            this._isBackground = null;
+            this._crossFrame = null;
             this._isExtensionUnloaded = false;
             this._isTriggeringExtensionUnloaded = false;
             this._isReady = false;
@@ -67,14 +73,26 @@ const yomichan = (() => {
 
         // Public
 
+        get isBackground() {
+            return this._isBackground;
+        }
+
         get isExtensionUnloaded() {
             return this._isExtensionUnloaded;
         }
 
+        get crossFrame() {
+            return this._crossFrame;
+        }
+
         async prepare(isBackground=false) {
+            this._isBackground = isBackground;
             chrome.runtime.onMessage.addListener(this._onMessage.bind(this));
 
             if (!isBackground) {
+                this._crossFrame = new CrossFrameAPI();
+                this._crossFrame.prepare();
+
                 this.sendMessage({action: 'requestBackendReadySignal'});
                 await this._isBackendReadyPromise;
             }
