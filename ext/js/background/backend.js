@@ -307,7 +307,7 @@ class Backend {
             }
         }
 
-        return yomichan.invokeMessageHandler(messageHandler, params, callback, sender);
+        return invokeMessageHandler(messageHandler, params, callback, sender);
     }
 
     _onConnect(port) {

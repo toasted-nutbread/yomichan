@@ -238,7 +238,7 @@ class Frontend {
     _onRuntimeMessage({action, params}, sender, callback) {
         const messageHandler = this._runtimeMessageHandlers.get(action);
         if (typeof messageHandler === 'undefined') { return false; }
-        return yomichan.invokeMessageHandler(messageHandler, params, callback, sender);
+        return invokeMessageHandler(messageHandler, params, callback, sender);
     }
 
     _onZoomChanged({newZoomFactor}) {

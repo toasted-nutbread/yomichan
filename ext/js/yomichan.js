@@ -189,28 +189,6 @@ class Yomichan extends EventDispatcher {
         return response.result;
     }
 
-    invokeMessageHandler({handler, async}, params, callback, ...extraArgs) {
-        try {
-            let promiseOrResult = handler(params, ...extraArgs);
-            if (async === 'dynamic') {
-                ({async, result: promiseOrResult} = promiseOrResult);
-            }
-            if (async) {
-                promiseOrResult.then(
-                    (result) => { callback({result}); },
-                    (error) => { callback({error: serializeError(error)}); }
-                );
-                return true;
-            } else {
-                callback({result: promiseOrResult});
-                return false;
-            }
-        } catch (error) {
-            callback({error: serializeError(error)});
-            return false;
-        }
-    }
-
     triggerExtensionUnloaded() {
         this._isExtensionUnloaded = true;
         if (this._isTriggeringExtensionUnloaded) { return; }
@@ -235,7 +213,7 @@ class Yomichan extends EventDispatcher {
     _onMessage({action, params}, sender, callback) {
         const messageHandler = this._messageHandlers.get(action);
         if (typeof messageHandler === 'undefined') { return false; }
-        return this.invokeMessageHandler(messageHandler, params, callback, sender);
+        return invokeMessageHandler(messageHandler, params, callback, sender);
     }
 
     _onMessageIsReady() {
