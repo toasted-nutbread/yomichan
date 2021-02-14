@@ -57,7 +57,7 @@
                     "js/comm/frame-offset-forwarder.js",
                     "fg/js/popup-proxy.js",
                     "fg/js/popup-window.js",
-                    "fg/js/frontend.js",
+                    "js/app/frontend.js",
                     "js/app/content-script-main.js"
                 ],
                 "match_about_blank": true,

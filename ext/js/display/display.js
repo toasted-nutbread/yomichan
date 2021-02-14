@@ -1579,7 +1579,7 @@ class Display extends EventDispatcher {
             '/fg/js/popup-factory.js',
             '/js/comm/frame-ancestry-handler.js',
             '/js/comm/frame-offset-forwarder.js',
-            '/fg/js/frontend.js'
+            '/js/app/frontend.js'
         ]);
 
         const popupFactory = new PopupFactory(this._frameId);
