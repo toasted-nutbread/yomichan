@@ -49,7 +49,7 @@
                     "js/dom/document-util.js",
                     "js/input/hotkey-handler.js",
                     "js/dom/dom-text-scanner.js",
-                    "fg/js/popup.js",
+                    "js/app/popup.js",
                     "js/dom/text-source-range.js",
                     "js/dom/text-source-element.js",
                     "js/app/popup-factory.js",

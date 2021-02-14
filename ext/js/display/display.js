@@ -1573,7 +1573,7 @@ class Display extends EventDispatcher {
         await dynamicLoader.loadScripts([
             '/js/language/text-scanner.js',
             '/js/comm/frame-client.js',
-            '/fg/js/popup.js',
+            '/js/app/popup.js',
             '/js/app/popup-proxy.js',
             '/js/app/popup-window.js',
             '/js/app/popup-factory.js',
