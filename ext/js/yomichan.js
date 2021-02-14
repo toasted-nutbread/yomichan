@@ -16,6 +16,7 @@
  */
 
 /* global
+ * API
  * CrossFrameAPI
  */
 
@@ -52,6 +53,7 @@ const yomichan = (() => {
             }
 
             this._isBackground = null;
+            this._api = null;
             this._crossFrame = null;
             this._isExtensionUnloaded = false;
             this._isTriggeringExtensionUnloaded = false;
@@ -81,6 +83,10 @@ const yomichan = (() => {
             return this._isExtensionUnloaded;
         }
 
+        get api() {
+            return this._api;
+        }
+
         get crossFrame() {
             return this._crossFrame;
         }
@@ -90,11 +96,15 @@ const yomichan = (() => {
             chrome.runtime.onMessage.addListener(this._onMessage.bind(this));
 
             if (!isBackground) {
+                this._api = new API();
+
                 this._crossFrame = new CrossFrameAPI();
                 this._crossFrame.prepare();
 
                 this.sendMessage({action: 'requestBackendReadySignal'});
                 await this._isBackendReadyPromise;
+
+                this.on('log', this._onForwardLog.bind(this));
             }
         }
 
@@ -315,6 +325,14 @@ const yomichan = (() => {
 
         _onMessageZoomChanged({oldZoomFactor, newZoomFactor}) {
             this.trigger('zoomChanged', {oldZoomFactor, newZoomFactor});
+        }
+
+        async _onForwardLog({error, level, context}) {
+            try {
+                await this._api.log(serializeError(error), level, context);
+            } catch (e) {
+                // NOP
+            }
         }
     }
 
