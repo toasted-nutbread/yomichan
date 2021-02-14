@@ -96,7 +96,7 @@ async function testDocument1() {
     vm.execute([
         'js/dom/dom-text-scanner.js',
         'fg/js/text-source-range.js',
-        'fg/js/text-source-element.js',
+        'js/dom/text-source-element.js',
         'js/dom/document-util.js'
     ]);
     const [DOMTextScanner, TextSourceRange, TextSourceElement, DocumentUtil] = vm.get([
