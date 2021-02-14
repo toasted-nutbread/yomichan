@@ -222,7 +222,7 @@ class DisplayController {
 
 (async () => {
     api.prepare();
-    await yomichan.backendReady();
+    await yomichan.prepare();
 
     api.logIndicatorClear();
 

@@ -52,7 +52,7 @@ async function setupEnvironmentInfo() {
 (async () => {
     try {
         api.prepare();
-        await yomichan.backendReady();
+        await yomichan.prepare();
 
         setupEnvironmentInfo();
         showExtensionInformation();

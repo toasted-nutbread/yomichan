@@ -25,7 +25,7 @@
 (async () => {
     try {
         api.prepare();
-        await yomichan.backendReady();
+        await yomichan.prepare();
 
         const {tabId, frameId} = await api.frameInformationGet();
         if (typeof frameId !== 'number') {
