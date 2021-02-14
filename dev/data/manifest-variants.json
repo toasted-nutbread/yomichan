@@ -175,7 +175,7 @@
             ],
             "excludeFiles": [
                 "background.html",
-                "bg/js/native-simple-dom-parser.js"
+                "js/dom/native-simple-dom-parser.js"
             ]
         },
         {
