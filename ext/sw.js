@@ -43,6 +43,6 @@ self.importScripts(
     '/js/templates/template-patcher.js',
     '/bg/js/text-source-map.js',
     '/bg/js/translator.js',
-    '/bg/js/backend.js',
+    '/js/background/backend.js',
     '/bg/js/background-main.js'
 );

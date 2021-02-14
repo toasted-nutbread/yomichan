@@ -183,7 +183,7 @@
                 "ext/js/templates/template-patcher.js",
                 "ext/bg/js/text-source-map.js",
                 "ext/bg/js/translator.js",
-                "ext/bg/js/backend.js",
+                "ext/js/background/backend.js",
                 "ext/bg/js/background-main.js"
             ],
             "env": {
