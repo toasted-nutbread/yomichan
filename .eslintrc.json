@@ -182,7 +182,7 @@
                 "ext/js/dom/simple-dom-parser.js",
                 "ext/js/templates/template-patcher.js",
                 "ext/bg/js/text-source-map.js",
-                "ext/bg/js/translator.js",
+                "ext/js/language/translator.js",
                 "ext/js/background/backend.js",
                 "ext/bg/js/background-main.js"
             ],

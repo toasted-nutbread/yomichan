@@ -46,7 +46,7 @@ async function createVM() {
         'bg/js/dictionary-database.js',
         'bg/js/text-source-map.js',
         'js/language/deinflector.js',
-        'bg/js/translator.js'
+        'js/language/translator.js'
     ]);
     const [
         DictionaryImporter,

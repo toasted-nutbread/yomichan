@@ -42,7 +42,7 @@ self.importScripts(
     '/js/dom/simple-dom-parser.js',
     '/js/templates/template-patcher.js',
     '/bg/js/text-source-map.js',
-    '/bg/js/translator.js',
+    '/js/language/translator.js',
     '/js/background/backend.js',
     '/bg/js/background-main.js'
 );
