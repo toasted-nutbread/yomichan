@@ -1577,7 +1577,7 @@ class Display extends EventDispatcher {
             '/fg/js/popup-proxy.js',
             '/fg/js/popup-window.js',
             '/fg/js/popup-factory.js',
-            '/fg/js/frame-ancestry-handler.js',
+            '/js/comm/frame-ancestry-handler.js',
             '/fg/js/frame-offset-forwarder.js',
             '/fg/js/frontend.js'
         ]);
