@@ -40,7 +40,7 @@ async function createVM() {
         'js/general/cache-map.js',
         'js/language/japanese-util.js',
         'bg/js/json-schema.js',
-        'bg/js/media-utility.js',
+        'js/media/media-utility.js',
         'bg/js/dictionary-importer.js',
         'bg/js/database.js',
         'bg/js/dictionary-database.js',
