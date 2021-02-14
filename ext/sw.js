@@ -20,7 +20,7 @@ self.importScripts(
     '/lib/wanakana.min.js',
     '/js/core.js',
     '/js/yomichan.js',
-    '/mixed/js/environment.js',
+    '/js/background/environment.js',
     '/js/language/japanese-util.js',
     '/js/general/cache-map.js',
     '/js/language/dictionary-data-util.js',
