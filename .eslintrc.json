@@ -178,7 +178,7 @@
                 "ext/bg/js/options.js",
                 "ext/bg/js/permissions-util.js",
                 "ext/bg/js/profile-conditions.js",
-                "ext/bg/js/request-builder.js",
+                "ext/js/background/request-builder.js",
                 "ext/js/dom/simple-dom-parser.js",
                 "ext/js/templates/template-patcher.js",
                 "ext/bg/js/text-source-map.js",
