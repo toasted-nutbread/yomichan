@@ -161,7 +161,7 @@
                 "ext/js/core.js",
                 "ext/js/yomichan.js",
                 "ext/mixed/js/environment.js",
-                "ext/mixed/js/japanese.js",
+                "ext/js/language/japanese-util.js",
                 "ext/mixed/js/cache-map.js",
                 "ext/mixed/js/dictionary-data-util.js",
                 "ext/mixed/js/object-property-accessor.js",

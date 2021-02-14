@@ -21,7 +21,7 @@ self.importScripts(
     '/js/core.js',
     '/js/yomichan.js',
     '/mixed/js/environment.js',
-    '/mixed/js/japanese.js',
+    '/js/language/japanese-util.js',
     '/mixed/js/cache-map.js',
     '/mixed/js/dictionary-data-util.js',
     '/mixed/js/object-property-accessor.js',

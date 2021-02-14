@@ -38,7 +38,7 @@ async function createVM() {
     vm.execute([
         'js/core.js',
         'mixed/js/cache-map.js',
-        'mixed/js/japanese.js',
+        'js/language/japanese-util.js',
         'bg/js/json-schema.js',
         'bg/js/media-utility.js',
         'bg/js/dictionary-importer.js',
