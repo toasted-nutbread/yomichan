@@ -25,7 +25,7 @@ self.importScripts(
     '/js/general/cache-map.js',
     '/js/language/dictionary-data-util.js',
     '/js/general/object-property-accessor.js',
-    '/bg/js/anki.js',
+    '/js/comm/anki.js',
     '/bg/js/audio-downloader.js',
     '/bg/js/clipboard-monitor.js',
     '/bg/js/clipboard-reader.js',

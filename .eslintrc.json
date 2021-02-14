@@ -165,7 +165,7 @@
                 "ext/js/general/cache-map.js",
                 "ext/js/language/dictionary-data-util.js",
                 "ext/js/general/object-property-accessor.js",
-                "ext/bg/js/anki.js",
+                "ext/js/comm/anki.js",
                 "ext/bg/js/audio-downloader.js",
                 "ext/bg/js/clipboard-monitor.js",
                 "ext/bg/js/clipboard-reader.js",
