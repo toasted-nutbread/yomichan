@@ -29,8 +29,8 @@
  * PopupFactory
  * PopupMenu
  * QueryParser
- * TextScanner
  * ScrollElement
+ * TextScanner
  * api
  * dynamicLoader
  */
