@@ -33,7 +33,7 @@ self.importScripts(
     '/bg/js/deinflector.js',
     '/bg/js/dictionary-database.js',
     '/bg/js/json-schema.js',
-    '/bg/js/mecab.js',
+    '/js/comm/mecab.js',
     '/bg/js/media-utility.js',
     '/bg/js/options.js',
     '/bg/js/permissions-util.js',
