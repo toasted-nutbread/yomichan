@@ -96,7 +96,7 @@ const yomichan = (() => {
             chrome.runtime.onMessage.addListener(this._onMessage.bind(this));
 
             if (!isBackground) {
-                this._api = new API();
+                this._api = new API(this);
 
                 this._crossFrame = new CrossFrameAPI();
                 this._crossFrame.prepare();

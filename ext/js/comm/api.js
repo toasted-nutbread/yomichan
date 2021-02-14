@@ -16,6 +16,10 @@
  */
 
 class API {
+    constructor(yomichan) {
+        this._yomichan = yomichan;
+    }
+
     optionsGet(optionsContext) {
         return this._invoke('optionsGet', {optionsContext});
     }
@@ -276,7 +280,7 @@ class API {
         const data = {action, params};
         return new Promise((resolve, reject) => {
             try {
-                yomichan.sendMessage(data, (response) => {
+                this._yomichan.sendMessage(data, (response) => {
                     this._checkLastError(chrome.runtime.lastError);
                     if (response !== null && typeof response === 'object') {
                         if (typeof response.error !== 'undefined') {
