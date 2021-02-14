@@ -50,7 +50,7 @@
                     "js/input/hotkey-handler.js",
                     "js/dom/dom-text-scanner.js",
                     "fg/js/popup.js",
-                    "fg/js/text-source-range.js",
+                    "js/dom/text-source-range.js",
                     "js/dom/text-source-element.js",
                     "fg/js/popup-factory.js",
                     "js/comm/frame-ancestry-handler.js",
