@@ -55,7 +55,7 @@
                 "js/comm/frame-ancestry-handler.js",
                 "js/comm/frame-offset-forwarder.js",
                 "js/app/popup-proxy.js",
-                "fg/js/popup-window.js",
+                "js/app/popup-window.js",
                 "js/app/frontend.js",
                 "js/app/content-script-main.js"
             ],
