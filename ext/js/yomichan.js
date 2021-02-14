@@ -174,21 +174,6 @@ class Yomichan extends EventDispatcher {
         }
     }
 
-    getMessageResponseResult(response) {
-        let error = chrome.runtime.lastError;
-        if (error) {
-            throw new Error(error.message);
-        }
-        if (!isObject(response)) {
-            throw new Error('Tab did not respond');
-        }
-        error = response.error;
-        if (error) {
-            throw deserializeError(error);
-        }
-        return response.result;
-    }
-
     triggerExtensionUnloaded() {
         this._isExtensionUnloaded = true;
         if (this._isTriggeringExtensionUnloaded) { return; }
