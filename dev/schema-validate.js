@@ -20,7 +20,7 @@ const {VM} = require('./vm');
 
 const vm = new VM();
 vm.execute([
-    'mixed/js/core.js',
+    'js/core.js',
     'mixed/js/cache-map.js',
     'bg/js/json-schema.js'
 ]);

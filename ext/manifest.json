@@ -38,7 +38,7 @@
                 "file://*/*"
             ],
             "js": [
-                "mixed/js/core.js",
+                "js/core.js",
                 "mixed/js/yomichan.js",
                 "mixed/js/comm.js",
                 "mixed/js/api.js",

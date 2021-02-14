@@ -36,7 +36,7 @@ async function createVM() {
     // Set up VM
     const vm = new DatabaseVM();
     vm.execute([
-        'mixed/js/core.js',
+        'js/core.js',
         'mixed/js/cache-map.js',
         'mixed/js/japanese.js',
         'bg/js/json-schema.js',

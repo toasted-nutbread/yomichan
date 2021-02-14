@@ -23,7 +23,7 @@ const {DatabaseVM} = require('../dev/database-vm');
 
 const vm = new DatabaseVM();
 vm.execute([
-    'mixed/js/core.js',
+    'js/core.js',
     'mixed/js/cache-map.js',
     'bg/js/json-schema.js',
     'bg/js/media-utility.js',

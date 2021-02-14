@@ -84,7 +84,7 @@
     "overrides": [
         {
             "files": [
-                "ext/mixed/js/core.js",
+                "ext/js/core.js",
                 "ext/bg/js/template-renderer.js",
                 "ext/mixed/js/dictionary-data-util.js"
             ],
@@ -95,7 +95,7 @@
         {
             "files": ["ext/**/*.js"],
             "excludedFiles": [
-                "ext/mixed/js/core.js",
+                "ext/js/core.js",
                 "ext/bg/js/template-renderer.js",
                 "ext/bg/js/anki-note-data.js",
                 "ext/mixed/js/dictionary-data-util.js"
@@ -120,7 +120,7 @@
         {
             "files": ["ext/**/*.js"],
             "excludedFiles": [
-                "ext/mixed/js/core.js",
+                "ext/js/core.js",
                 "ext/mixed/js/yomichan.js"
             ],
             "globals": {
@@ -158,7 +158,7 @@
         },
         {
             "files": [
-                "ext/mixed/js/core.js",
+                "ext/js/core.js",
                 "ext/mixed/js/yomichan.js",
                 "ext/mixed/js/environment.js",
                 "ext/mixed/js/japanese.js",
