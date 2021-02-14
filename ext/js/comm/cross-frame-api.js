@@ -269,7 +269,7 @@ class CrossFrameAPI {
             this._setupCommPort(otherTabId, otherFrameId, port);
         } catch (e) {
             port.disconnect();
-            yomichan.logError(e);
+            log.error(e);
         }
     }
 
