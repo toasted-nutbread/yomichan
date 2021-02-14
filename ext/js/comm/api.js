@@ -299,5 +299,3 @@ class API {
         // NOP
     }
 }
-
-const api = new API();

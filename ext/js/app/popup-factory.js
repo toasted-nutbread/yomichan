@@ -20,7 +20,6 @@
  * Popup
  * PopupProxy
  * PopupWindow
- * api
  */
 
 class PopupFactory {

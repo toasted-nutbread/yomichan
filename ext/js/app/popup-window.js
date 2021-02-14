@@ -15,10 +15,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/* global
- * api
- */
-
 class PopupWindow extends EventDispatcher {
     constructor({
         id,
@@ -82,7 +78,7 @@ class PopupWindow extends EventDispatcher {
     }
 
     async isVisible() {
-        return (this._popupTabId !== null && await api.isTabSearchPopup(this._popupTabId));
+        return (this._popupTabId !== null && await yomichan.api.isTabSearchPopup(this._popupTabId));
     }
 
     async setVisibleOverride(_value, _priority) {
@@ -161,7 +157,7 @@ class PopupWindow extends EventDispatcher {
             return defaultReturnValue;
         }
 
-        const {tabId} = await api.getOrCreateSearchPopup({focus: 'ifCreated'});
+        const {tabId} = await yomichan.api.getOrCreateSearchPopup({focus: 'ifCreated'});
         this._popupTabId = tabId;
 
         return await yomichan.crossFrame.invokeTab(this._popupTabId, frameId, 'popupMessage', {action, params});

@@ -18,7 +18,6 @@
 /* global
  * DocumentUtil
  * FrameClient
- * api
  * dynamicLoader
  */
 
@@ -676,7 +675,7 @@ class Popup extends EventDispatcher {
 
     async _setOptionsContext(optionsContext) {
         this._optionsContext = optionsContext;
-        this._options = await api.optionsGet(optionsContext);
+        this._options = await yomichan.api.optionsGet(optionsContext);
         this.updateTheme();
     }
 

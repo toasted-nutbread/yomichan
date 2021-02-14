@@ -17,7 +17,6 @@
 
 /* global
  * FrameAncestryHandler
- * api
  */
 
 class FrameOffsetForwarder {
