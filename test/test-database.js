@@ -24,7 +24,7 @@ const {DatabaseVM} = require('../dev/database-vm');
 const vm = new DatabaseVM();
 vm.execute([
     'js/core.js',
-    'mixed/js/cache-map.js',
+    'js/general/cache-map.js',
     'bg/js/json-schema.js',
     'bg/js/media-utility.js',
     'bg/js/dictionary-importer.js',

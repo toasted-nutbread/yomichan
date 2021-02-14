@@ -22,7 +22,7 @@ const {VM} = require('../dev/vm');
 const vm = new VM();
 vm.execute([
     'js/core.js',
-    'mixed/js/cache-map.js',
+    'js/general/cache-map.js',
     'bg/js/json-schema.js'
 ]);
 const JsonSchemaValidator = vm.get('JsonSchemaValidator');

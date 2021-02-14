@@ -22,7 +22,7 @@ self.importScripts(
     '/js/yomichan.js',
     '/mixed/js/environment.js',
     '/js/language/japanese-util.js',
-    '/mixed/js/cache-map.js',
+    '/js/general/cache-map.js',
     '/js/language/dictionary-data-util.js',
     '/mixed/js/object-property-accessor.js',
     '/bg/js/anki.js',
