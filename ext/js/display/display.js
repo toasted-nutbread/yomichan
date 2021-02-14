@@ -30,7 +30,7 @@
  * PopupMenu
  * QueryParser
  * TextScanner
- * WindowScroll
+ * ScrollElement
  * api
  * dynamicLoader
  */
@@ -90,7 +90,7 @@ class Display extends EventDispatcher {
         this._updateAdderButtonsPromise = Promise.resolve();
         this._contentScrollElement = document.querySelector('#content-scroll');
         this._contentScrollBodyElement = document.querySelector('#content-body');
-        this._windowScroll = new WindowScroll(this._contentScrollElement);
+        this._windowScroll = new ScrollElement(this._contentScrollElement);
         this._closeButton = document.querySelector('#close-button');
         this._navigationPreviousButton = document.querySelector('#navigate-previous-button');
         this._navigationNextButton = document.querySelector('#navigate-next-button');
