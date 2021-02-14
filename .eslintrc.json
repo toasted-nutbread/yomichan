@@ -85,7 +85,7 @@
         {
             "files": [
                 "ext/js/core.js",
-                "ext/bg/js/template-renderer.js",
+                "ext/js/templates/template-renderer.js",
                 "ext/js/language/dictionary-data-util.js"
             ],
             "env": {
@@ -96,7 +96,7 @@
             "files": ["ext/**/*.js"],
             "excludedFiles": [
                 "ext/js/core.js",
-                "ext/bg/js/template-renderer.js",
+                "ext/js/templates/template-renderer.js",
                 "ext/bg/js/anki-note-data.js",
                 "ext/js/language/dictionary-data-util.js"
             ],
