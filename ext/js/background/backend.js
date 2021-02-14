@@ -612,7 +612,7 @@ class Backend {
     }
 
     _onApiLog({error, level, context}) {
-        yomichan.log(deserializeError(error), level, context);
+        log.log(deserializeError(error), level, context);
     }
 
     _onApiLogIndicatorClear() {
