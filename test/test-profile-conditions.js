@@ -63,8 +63,8 @@ function testNormalizeContext() {
     ];
 
     for (const {context, expected} of data) {
-        const profileConditions = new ProfileConditionsUtil();
-        const actual = profileConditions.normalizeContext(context);
+        const profileConditionsUtil = new ProfileConditionsUtil();
+        const actual = profileConditionsUtil.normalizeContext(context);
         vm.assert.deepStrictEqual(actual, expected);
     }
 }
@@ -818,14 +818,14 @@ function testSchemas() {
     ];
 
     for (const {conditionGroups, expectedSchema, inputs} of data) {
-        const profileConditions = new ProfileConditionsUtil();
-        const schema = profileConditions.createSchema(conditionGroups);
+        const profileConditionsUtil = new ProfileConditionsUtil();
+        const schema = profileConditionsUtil.createSchema(conditionGroups);
         if (typeof expectedSchema !== 'undefined') {
             vm.assert.deepStrictEqual(schema, expectedSchema);
         }
         if (Array.isArray(inputs)) {
             for (const {expected, context} of inputs) {
-                const normalizedContext = profileConditions.normalizeContext(context);
+                const normalizedContext = profileConditionsUtil.normalizeContext(context);
                 const actual = schemaValidate(normalizedContext, schema);
                 assert.strictEqual(actual, expected);
             }
