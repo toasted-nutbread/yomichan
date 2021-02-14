@@ -26,7 +26,7 @@ self.importScripts(
     '/js/language/dictionary-data-util.js',
     '/js/general/object-property-accessor.js',
     '/js/comm/anki.js',
-    '/bg/js/audio-downloader.js',
+    '/js/media/audio-downloader.js',
     '/bg/js/clipboard-monitor.js',
     '/bg/js/clipboard-reader.js',
     '/bg/js/database.js',
