@@ -19,7 +19,7 @@ self.importScripts(
     '/lib/parse5.js',
     '/lib/wanakana.min.js',
     '/js/core.js',
-    '/mixed/js/yomichan.js',
+    '/js/yomichan.js',
     '/mixed/js/environment.js',
     '/mixed/js/japanese.js',
     '/mixed/js/cache-map.js',

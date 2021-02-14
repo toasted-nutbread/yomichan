@@ -40,7 +40,7 @@
                 ],
                 "js": [
                     "js/core.js",
-                    "mixed/js/yomichan.js",
+                    "js/yomichan.js",
                     "mixed/js/comm.js",
                     "mixed/js/api.js",
                     "mixed/js/dynamic-loader.js",

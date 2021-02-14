@@ -121,14 +121,14 @@
             "files": ["ext/**/*.js"],
             "excludedFiles": [
                 "ext/js/core.js",
-                "ext/mixed/js/yomichan.js"
+                "ext/js/yomichan.js"
             ],
             "globals": {
                 "yomichan": "readonly"
             }
         },
         {
-            "files": ["ext/mixed/js/yomichan.js"],
+            "files": ["ext/js/yomichan.js"],
             "globals": {
                 "chrome": "writable"
             }
@@ -159,7 +159,7 @@
         {
             "files": [
                 "ext/js/core.js",
-                "ext/mixed/js/yomichan.js",
+                "ext/js/yomichan.js",
                 "ext/mixed/js/environment.js",
                 "ext/mixed/js/japanese.js",
                 "ext/mixed/js/cache-map.js",
