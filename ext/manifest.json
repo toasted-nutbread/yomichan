@@ -44,7 +44,7 @@
                 "js/comm/api.js",
                 "mixed/js/dynamic-loader.js",
                 "js/comm/frame-client.js",
-                "mixed/js/text-scanner.js",
+                "js/language/text-scanner.js",
                 "js/dom/document-util.js",
                 "js/input/hotkey-handler.js",
                 "fg/js/dom-text-scanner.js",
