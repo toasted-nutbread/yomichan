@@ -40,7 +40,7 @@
             "js": [
                 "js/core.js",
                 "js/yomichan.js",
-                "mixed/js/comm.js",
+                "js/comm/cross-frame-api.js",
                 "mixed/js/api.js",
                 "mixed/js/dynamic-loader.js",
                 "mixed/js/frame-client.js",
