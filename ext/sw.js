@@ -23,7 +23,7 @@ self.importScripts(
     '/mixed/js/environment.js',
     '/js/language/japanese-util.js',
     '/mixed/js/cache-map.js',
-    '/mixed/js/dictionary-data-util.js',
+    '/js/language/dictionary-data-util.js',
     '/mixed/js/object-property-accessor.js',
     '/bg/js/anki.js',
     '/bg/js/audio-downloader.js',

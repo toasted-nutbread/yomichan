@@ -86,7 +86,7 @@
             "files": [
                 "ext/js/core.js",
                 "ext/bg/js/template-renderer.js",
-                "ext/mixed/js/dictionary-data-util.js"
+                "ext/js/language/dictionary-data-util.js"
             ],
             "env": {
                 "webextensions": false
@@ -98,7 +98,7 @@
                 "ext/js/core.js",
                 "ext/bg/js/template-renderer.js",
                 "ext/bg/js/anki-note-data.js",
-                "ext/mixed/js/dictionary-data-util.js"
+                "ext/js/language/dictionary-data-util.js"
             ],
             "globals": {
                 "serializeError": "readonly",
@@ -163,7 +163,7 @@
                 "ext/mixed/js/environment.js",
                 "ext/js/language/japanese-util.js",
                 "ext/mixed/js/cache-map.js",
-                "ext/mixed/js/dictionary-data-util.js",
+                "ext/js/language/dictionary-data-util.js",
                 "ext/mixed/js/object-property-accessor.js",
                 "ext/bg/js/anki.js",
                 "ext/bg/js/audio-downloader.js",
