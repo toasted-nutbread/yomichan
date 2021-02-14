@@ -63,10 +63,10 @@ function main() {
     try {
         const extDir = path.resolve(__dirname, '..', '..', 'ext');
         const pattern = /\.html$/;
-        const ignorePattern = /[\\/]ext[\\/]lib[\\/]/;
-        const fileNames = getAllFiles(extDir, null, (f) => pattern.test(f) && !ignorePattern.test(f));
+        const ignorePattern = /^lib[\\/]/;
+        const fileNames = getAllFiles(extDir, (f) => pattern.test(f) && !ignorePattern.test(f));
         for (const fileName of fileNames) {
-            validateHtmlScripts(fileName, extDir);
+            validateHtmlScripts(path.join(extDir, fileName), extDir);
         }
     } catch (e) {
         console.error(e);
