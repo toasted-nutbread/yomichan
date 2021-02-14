@@ -31,7 +31,7 @@ self.importScripts(
     '/js/comm/clipboard-reader.js',
     '/bg/js/database.js',
     '/js/language/deinflector.js',
-    '/bg/js/dictionary-database.js',
+    '/js/language/dictionary-database.js',
     '/bg/js/json-schema.js',
     '/js/comm/mecab.js',
     '/js/media/media-utility.js',

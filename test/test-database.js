@@ -29,7 +29,7 @@ vm.execute([
     'js/media/media-utility.js',
     'bg/js/dictionary-importer.js',
     'bg/js/database.js',
-    'bg/js/dictionary-database.js'
+    'js/language/dictionary-database.js'
 ]);
 const DictionaryImporter = vm.get('DictionaryImporter');
 const DictionaryDatabase = vm.get('DictionaryDatabase');
