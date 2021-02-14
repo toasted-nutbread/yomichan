@@ -176,7 +176,7 @@
                 "ext/js/media/media-util.js",
                 "ext/js/data/options-util.js",
                 "ext/js/data/permissions-util.js",
-                "ext/js/background/profile-conditions.js",
+                "ext/js/background/profile-conditions-util.js",
                 "ext/js/background/request-builder.js",
                 "ext/js/dom/simple-dom-parser.js",
                 "ext/js/templates/template-patcher.js",

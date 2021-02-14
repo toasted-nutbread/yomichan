@@ -37,7 +37,7 @@ self.importScripts(
     '/js/media/media-util.js',
     '/js/data/options-util.js',
     '/js/data/permissions-util.js',
-    '/js/background/profile-conditions.js',
+    '/js/background/profile-conditions-util.js',
     '/js/background/request-builder.js',
     '/js/dom/simple-dom-parser.js',
     '/js/templates/template-patcher.js',
