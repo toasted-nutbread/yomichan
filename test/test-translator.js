@@ -45,7 +45,7 @@ async function createVM() {
         'bg/js/database.js',
         'bg/js/dictionary-database.js',
         'bg/js/text-source-map.js',
-        'bg/js/deinflector.js',
+        'js/language/deinflector.js',
         'bg/js/translator.js'
     ]);
     const [

@@ -30,7 +30,7 @@ self.importScripts(
     '/bg/js/clipboard-monitor.js',
     '/bg/js/clipboard-reader.js',
     '/bg/js/database.js',
-    '/bg/js/deinflector.js',
+    '/js/language/deinflector.js',
     '/bg/js/dictionary-database.js',
     '/bg/js/json-schema.js',
     '/js/comm/mecab.js',
