@@ -51,7 +51,7 @@ function createVM(extDir) {
         'js/general/cache-map.js',
         'js/data/json-schema.js',
         'js/templates/template-patcher.js',
-        'bg/js/options.js'
+        'js/data/options-util.js'
     ]);
 
     return vm;
