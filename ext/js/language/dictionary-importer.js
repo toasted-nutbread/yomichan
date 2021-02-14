@@ -18,14 +18,14 @@
 /* global
  * JSZip
  * JsonSchemaValidator
- * MediaUtility
+ * MediaUtil
  */
 
 class DictionaryImporter {
     constructor() {
         this._schemas = new Map();
         this._jsonSchemaValidator = new JsonSchemaValidator();
-        this._mediaUtility = new MediaUtility();
+        this._mediaUtility = new MediaUtil();
     }
 
     async importDictionary(dictionaryDatabase, archiveSource, details, onProgress) {

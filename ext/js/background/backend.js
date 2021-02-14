@@ -25,7 +25,7 @@
  * JapaneseUtil
  * JsonSchemaValidator
  * Mecab
- * MediaUtility
+ * MediaUtil
  * ObjectPropertyAccessor
  * OptionsUtil
  * PermissionsUtil
@@ -46,7 +46,7 @@ class Backend {
         });
         this._anki = new AnkiConnect();
         this._mecab = new Mecab();
-        this._mediaUtility = new MediaUtility();
+        this._mediaUtility = new MediaUtil();
         this._clipboardReader = new ClipboardReader({
             // eslint-disable-next-line no-undef
             document: (typeof document === 'object' && document !== null ? document : null),
