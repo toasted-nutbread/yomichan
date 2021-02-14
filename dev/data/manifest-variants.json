@@ -48,7 +48,7 @@
                     "js/language/text-scanner.js",
                     "js/dom/document-util.js",
                     "js/input/hotkey-handler.js",
-                    "fg/js/dom-text-scanner.js",
+                    "js/dom/dom-text-scanner.js",
                     "fg/js/popup.js",
                     "fg/js/text-source-range.js",
                     "fg/js/text-source-element.js",
