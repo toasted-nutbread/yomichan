@@ -164,7 +164,7 @@
                 "ext/js/language/japanese-util.js",
                 "ext/js/general/cache-map.js",
                 "ext/js/language/dictionary-data-util.js",
-                "ext/mixed/js/object-property-accessor.js",
+                "ext/js/general/object-property-accessor.js",
                 "ext/bg/js/anki.js",
                 "ext/bg/js/audio-downloader.js",
                 "ext/bg/js/clipboard-monitor.js",

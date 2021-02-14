@@ -24,7 +24,7 @@ self.importScripts(
     '/js/language/japanese-util.js',
     '/js/general/cache-map.js',
     '/js/language/dictionary-data-util.js',
-    '/mixed/js/object-property-accessor.js',
+    '/js/general/object-property-accessor.js',
     '/bg/js/anki.js',
     '/bg/js/audio-downloader.js',
     '/bg/js/clipboard-monitor.js',
