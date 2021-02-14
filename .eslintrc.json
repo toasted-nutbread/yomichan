@@ -12,8 +12,7 @@
     },
     "plugins": ["no-unsanitized"],
     "ignorePatterns": [
-        "/ext/lib/",
-        "/ext/bg/js/templates.js"
+        "/ext/lib/"
     ],
     "rules": {
         "arrow-parens": ["error", "always"],
