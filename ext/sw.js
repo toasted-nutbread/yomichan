@@ -27,7 +27,7 @@ self.importScripts(
     '/js/general/object-property-accessor.js',
     '/js/comm/anki.js',
     '/js/media/audio-downloader.js',
-    '/bg/js/clipboard-monitor.js',
+    '/js/comm/clipboard-monitor.js',
     '/js/comm/clipboard-reader.js',
     '/bg/js/database.js',
     '/js/language/deinflector.js',
