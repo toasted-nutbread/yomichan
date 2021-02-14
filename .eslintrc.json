@@ -184,7 +184,7 @@
                 "ext/js/general/text-source-map.js",
                 "ext/js/language/translator.js",
                 "ext/js/background/backend.js",
-                "ext/bg/js/background-main.js"
+                "ext/js/background/background-main.js"
             ],
             "env": {
                 "browser": false,

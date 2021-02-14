@@ -44,5 +44,5 @@ self.importScripts(
     '/js/general/text-source-map.js',
     '/js/language/translator.js',
     '/js/background/backend.js',
-    '/bg/js/background-main.js'
+    '/js/background/background-main.js'
 );
