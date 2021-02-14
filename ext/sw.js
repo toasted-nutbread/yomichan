@@ -34,7 +34,7 @@ self.importScripts(
     '/js/language/dictionary-database.js',
     '/js/data/json-schema.js',
     '/js/comm/mecab.js',
-    '/js/media/media-utility.js',
+    '/js/media/media-util.js',
     '/js/data/options-util.js',
     '/js/data/permissions-util.js',
     '/js/background/profile-conditions.js',
