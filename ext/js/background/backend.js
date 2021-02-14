@@ -29,7 +29,7 @@
  * ObjectPropertyAccessor
  * OptionsUtil
  * PermissionsUtil
- * ProfileConditions
+ * ProfileConditionsUtil
  * RequestBuilder
  * Translator
  * wanakana
@@ -61,7 +61,7 @@ class Backend {
         this._options = null;
         this._profileConditionsSchemaValidator = new JsonSchemaValidator();
         this._profileConditionsSchemaCache = [];
-        this._profileConditionsUtil = new ProfileConditions();
+        this._profileConditionsUtil = new ProfileConditionsUtil();
         this._defaultAnkiFieldTemplates = null;
         this._requestBuilder = new RequestBuilder();
         this._audioDownloader = new AudioDownloader({

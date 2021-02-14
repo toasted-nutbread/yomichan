@@ -27,7 +27,7 @@ vm.execute([
     'js/data/json-schema.js',
     'js/background/profile-conditions.js'
 ]);
-const [JsonSchemaValidator, ProfileConditions] = vm.get(['JsonSchemaValidator', 'ProfileConditions']);
+const [JsonSchemaValidator, ProfileConditionsUtil] = vm.get(['JsonSchemaValidator', 'ProfileConditionsUtil']);
 
 
 function schemaValidate(value, schema) {
@@ -63,7 +63,7 @@ function testNormalizeContext() {
     ];
 
     for (const {context, expected} of data) {
-        const profileConditions = new ProfileConditions();
+        const profileConditions = new ProfileConditionsUtil();
         const actual = profileConditions.normalizeContext(context);
         vm.assert.deepStrictEqual(actual, expected);
     }
@@ -818,7 +818,7 @@ function testSchemas() {
     ];
 
     for (const {conditionGroups, expectedSchema, inputs} of data) {
-        const profileConditions = new ProfileConditions();
+        const profileConditions = new ProfileConditionsUtil();
         const schema = profileConditions.createSchema(conditionGroups);
         if (typeof expectedSchema !== 'undefined') {
             vm.assert.deepStrictEqual(schema, expectedSchema);
