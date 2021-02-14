@@ -58,7 +58,7 @@
                     "fg/js/popup-proxy.js",
                     "fg/js/popup-window.js",
                     "fg/js/frontend.js",
-                    "fg/js/content-script-main.js"
+                    "js/app/content-script-main.js"
                 ],
                 "match_about_blank": true,
                 "all_frames": true
