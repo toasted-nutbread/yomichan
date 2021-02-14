@@ -172,7 +172,7 @@
                 "ext/js/data/database.js",
                 "ext/js/language/deinflector.js",
                 "ext/js/language/dictionary-database.js",
-                "ext/bg/js/json-schema.js",
+                "ext/js/data/json-schema.js",
                 "ext/js/comm/mecab.js",
                 "ext/js/media/media-utility.js",
                 "ext/bg/js/options.js",

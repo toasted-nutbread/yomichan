@@ -32,7 +32,7 @@ self.importScripts(
     '/js/data/database.js',
     '/js/language/deinflector.js',
     '/js/language/dictionary-database.js',
-    '/bg/js/json-schema.js',
+    '/js/data/json-schema.js',
     '/js/comm/mecab.js',
     '/js/media/media-utility.js',
     '/bg/js/options.js',
