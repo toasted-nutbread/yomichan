@@ -41,7 +41,7 @@ self.importScripts(
     '/js/background/request-builder.js',
     '/js/dom/simple-dom-parser.js',
     '/js/templates/template-patcher.js',
-    '/bg/js/text-source-map.js',
+    '/js/general/text-source-map.js',
     '/js/language/translator.js',
     '/js/background/backend.js',
     '/bg/js/background-main.js'

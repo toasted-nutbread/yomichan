@@ -44,7 +44,7 @@ async function createVM() {
         'bg/js/dictionary-importer.js',
         'bg/js/database.js',
         'bg/js/dictionary-database.js',
-        'bg/js/text-source-map.js',
+        'js/general/text-source-map.js',
         'js/language/deinflector.js',
         'js/language/translator.js'
     ]);
