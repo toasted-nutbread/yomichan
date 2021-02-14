@@ -42,7 +42,7 @@
                     "js/core.js",
                     "js/yomichan.js",
                     "js/comm/cross-frame-api.js",
-                    "mixed/js/api.js",
+                    "js/comm/api.js",
                     "mixed/js/dynamic-loader.js",
                     "mixed/js/frame-client.js",
                     "mixed/js/text-scanner.js",
