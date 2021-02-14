@@ -1574,7 +1574,7 @@ class Display extends EventDispatcher {
             '/js/language/text-scanner.js',
             '/js/comm/frame-client.js',
             '/fg/js/popup.js',
-            '/fg/js/popup-proxy.js',
+            '/js/app/popup-proxy.js',
             '/fg/js/popup-window.js',
             '/js/app/popup-factory.js',
             '/js/comm/frame-ancestry-handler.js',
