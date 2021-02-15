@@ -189,7 +189,10 @@ class DisplayAudio {
         switch (action) {
             case 'playAudioFromSource':
                 {
-                    const {source, index} = item.dataset;
+                    const group = item.closest('.popup-menu-item-group');
+                    if (group === null) { break; }
+
+                    const {source, index} = group.dataset;
                     let sourceDetailsMap = null;
                     if (typeof index !== 'undefined') {
                         const index2 = Number.parseInt(index, 10);
