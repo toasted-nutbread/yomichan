@@ -211,6 +211,16 @@ class DisplayAudio {
         }
     }
 
+    _getCacheItem(expression, reading, create) {
+        const key = this._getExpressionReadingKey(expression, reading);
+        let cacheEntry = this._cache.get(key);
+        if (typeof cacheEntry === 'undefined' && create) {
+            cacheEntry = {sourceMap: new Map()};
+            this._cache.set(key, cacheEntry);
+        }
+        return cacheEntry;
+    }
+
     _getAudioPlayButtonExpressionIndex(button) {
         const expressionNode = button.closest('.term-expression');
         if (expressionNode !== null) {
@@ -234,14 +244,7 @@ class DisplayAudio {
     }
 
     async _createExpressionAudio(sources, sourceDetailsMap, expression, reading, details) {
-        const key = this._getExpressionReadingKey(expression, reading);
-
-        let cacheEntry = this._cache.get(key);
-        if (typeof cacheEntry === 'undefined') {
-            cacheEntry = {sourceMap: new Map()};
-            this._cache.set(key, cacheEntry);
-        }
-        const {sourceMap} = cacheEntry;
+        const {sourceMap} = this._getCacheItem(expression, reading, true);
 
         for (let i = 0, ii = sources.length; i < ii; ++i) {
             const source = sources[i];
@@ -389,8 +392,7 @@ class DisplayAudio {
     }
 
     _getPotentialAvailableAudioCount(expression, reading) {
-        const key = this._getExpressionReadingKey(expression, reading);
-        const cacheEntry = this._cache.get(key);
+        const cacheEntry = this._getCacheItem(expression, reading, false);
         if (typeof cacheEntry === 'undefined') { return null; }
 
         const {sourceMap} = cacheEntry;
@@ -512,8 +514,7 @@ class DisplayAudio {
     }
 
     _getMenuItemEntries(source, expression, reading) {
-        const key = this._getExpressionReadingKey(expression, reading);
-        const cacheEntry = this._cache.get(key);
+        const cacheEntry = this._getCacheItem(expression, reading, false);
         if (typeof cacheEntry !== 'undefined') {
             const {sourceMap} = cacheEntry;
             const sourceInfo = sourceMap.get(source);
