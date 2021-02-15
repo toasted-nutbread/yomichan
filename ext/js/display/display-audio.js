@@ -203,6 +203,11 @@ class DisplayAudio {
                     this.playAudio(definitionIndex, expressionIndex, [source], sourceDetailsMap);
                 }
                 break;
+            case 'setPrimaryAudio':
+                {
+                    e.preventDefault();
+                }
+                break;
         }
     }
 
@@ -420,16 +425,16 @@ class DisplayAudio {
         }
 
         const rawSources = [
-            ['jpod101', 'JapanesePod101', true],
-            ['jpod101-alternate', 'JapanesePod101 (Alternate)', true],
-            ['jisho', 'Jisho.org', true],
-            ['text-to-speech', 'Text-to-speech', ttsSupported],
-            ['text-to-speech-reading', 'Text-to-speech (Kana reading)', ttsSupported],
-            ['custom', 'Custom', customSupported]
+            ['jpod101', 'JapanesePod101', true, true],
+            ['jpod101-alternate', 'JapanesePod101 (Alternate)', true, true],
+            ['jisho', 'Jisho.org', true, true],
+            ['text-to-speech', 'Text-to-speech', ttsSupported, false],
+            ['text-to-speech-reading', 'Text-to-speech (Kana reading)', ttsSupported, false],
+            ['custom', 'Custom', customSupported, true]
         ];
 
         const results = [];
-        for (const [source, displayName, supported] of rawSources) {
+        for (const [source, displayName, supported, downloadable] of rawSources) {
             if (!supported) { continue; }
             let optionsIndex = sourceIndexMap.get(source);
             const isInOptions = typeof optionsIndex !== 'undefined';
@@ -441,7 +446,8 @@ class DisplayAudio {
                 displayName,
                 index: results.length,
                 optionsIndex,
-                isInOptions
+                isInOptions,
+                downloadable
             });
         }
 
@@ -465,20 +471,23 @@ class DisplayAudio {
 
         // Set up items based on options and cache data
         let showIcons = false;
-        for (const {source, displayName, isInOptions} of sources) {
+        for (const {source, displayName, isInOptions, downloadable} of sources) {
             const entries = this._getMenuItemEntries(source, expression, reading);
             for (let i = 0, ii = entries.length; i < ii; ++i) {
                 const {valid, index, name} = entries[i];
                 const node = displayGenerator.instantiateTemplate('audio-button-popup-menu-item');
 
-                const labelNode = node.querySelector('.popup-menu-item-label');
+                const labelNode = node.querySelector('.popup-menu-item-audio-button .popup-menu-item-label');
                 let label = displayName;
                 if (ii > 1) { label = `${label} ${i + 1}`; }
                 if (typeof name === 'string' && name.length > 0) { label += `: ${name}`; }
                 labelNode.textContent = label;
 
+                const cardButton = node.querySelector('.popup-menu-item-set-primary-audio-button');
+                cardButton.hidden = !downloadable;
+
                 if (valid !== null) {
-                    const icon = node.querySelector('.popup-menu-item-icon');
+                    const icon = node.querySelector('.popup-menu-item-audio-button .popup-menu-item-icon');
                     icon.dataset.icon = valid ? 'checkmark' : 'cross';
                     showIcons = true;
                 }
@@ -488,6 +497,7 @@ class DisplayAudio {
                 }
                 node.dataset.valid = `${valid}`;
                 node.dataset.sourceInOptions = `${isInOptions}`;
+                node.dataset.downloadable = `${downloadable}`;
 
                 menuBody.appendChild(node);
             }
@@ -500,7 +510,8 @@ class DisplayAudio {
     }
 
     _getMenuItemEntries(source, expression, reading) {
-        const sourceMap = this._cache.get(this._getExpressionReadingKey(expression, reading));
+        const key = this._getExpressionReadingKey(expression, reading);
+        const sourceMap = this._cache.get(key);
         if (typeof sourceMap !== 'undefined') {
             const sourceInfo = sourceMap.get(source);
             if (typeof sourceInfo !== 'undefined') {
