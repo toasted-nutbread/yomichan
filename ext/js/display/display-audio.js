@@ -236,11 +236,12 @@ class DisplayAudio {
     async _createExpressionAudio(sources, sourceDetailsMap, expression, reading, details) {
         const key = this._getExpressionReadingKey(expression, reading);
 
-        let sourceMap = this._cache.get(key);
-        if (typeof sourceMap === 'undefined') {
-            sourceMap = new Map();
-            this._cache.set(key, sourceMap);
+        let cacheEntry = this._cache.get(key);
+        if (typeof cacheEntry === 'undefined') {
+            cacheEntry = {sourceMap: new Map()};
+            this._cache.set(key, cacheEntry);
         }
+        const {sourceMap} = cacheEntry;
 
         for (let i = 0, ii = sources.length; i < ii; ++i) {
             const source = sources[i];
@@ -389,9 +390,10 @@ class DisplayAudio {
 
     _getPotentialAvailableAudioCount(expression, reading) {
         const key = this._getExpressionReadingKey(expression, reading);
-        const sourceMap = this._cache.get(key);
-        if (typeof sourceMap === 'undefined') { return null; }
+        const cacheEntry = this._cache.get(key);
+        if (typeof cacheEntry === 'undefined') { return null; }
 
+        const {sourceMap} = cacheEntry;
         let count = 0;
         for (const {infoList} of sourceMap.values()) {
             if (infoList === null) { continue; }
@@ -511,8 +513,9 @@ class DisplayAudio {
 
     _getMenuItemEntries(source, expression, reading) {
         const key = this._getExpressionReadingKey(expression, reading);
-        const sourceMap = this._cache.get(key);
-        if (typeof sourceMap !== 'undefined') {
+        const cacheEntry = this._cache.get(key);
+        if (typeof cacheEntry !== 'undefined') {
+            const {sourceMap} = cacheEntry;
             const sourceInfo = sourceMap.get(source);
             if (typeof sourceInfo !== 'undefined') {
                 const {infoList} = sourceInfo;
