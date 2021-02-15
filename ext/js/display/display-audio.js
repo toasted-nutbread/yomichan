@@ -188,20 +188,7 @@ class DisplayAudio {
         const {detail: {action, item}} = e;
         switch (action) {
             case 'playAudioFromSource':
-                {
-                    const group = item.closest('.popup-menu-item-group');
-                    if (group === null) { break; }
-
-                    const {source, index} = group.dataset;
-                    let sourceDetailsMap = null;
-                    if (typeof index !== 'undefined') {
-                        const index2 = Number.parseInt(index, 10);
-                        sourceDetailsMap = new Map([
-                            [source, {start: index2, end: index2 + 1}]
-                        ]);
-                    }
-                    this.playAudio(definitionIndex, expressionIndex, [source], sourceDetailsMap);
-                }
+                this._playAudioFromSource(definitionIndex, expressionIndex, item);
                 break;
             case 'setPrimaryAudio':
                 {
@@ -219,6 +206,21 @@ class DisplayAudio {
             this._cache.set(key, cacheEntry);
         }
         return cacheEntry;
+    }
+
+    _playAudioFromSource(definitionIndex, expressionIndex, item) {
+        const group = item.closest('.popup-menu-item-group');
+        if (group === null) { return; }
+
+        const {source, index} = group.dataset;
+        let sourceDetailsMap = null;
+        if (typeof index !== 'undefined') {
+            const index2 = Number.parseInt(index, 10);
+            sourceDetailsMap = new Map([
+                [source, {start: index2, end: index2 + 1}]
+            ]);
+        }
+        this.playAudio(definitionIndex, expressionIndex, [source], sourceDetailsMap);
     }
 
     _getAudioPlayButtonExpressionIndex(button) {
