@@ -166,6 +166,12 @@ class DisplayAudio {
         }
     }
 
+    getPrimaryCardAudio(expression, reading) {
+        const cacheEntry = this._getCacheItem(expression, reading, false);
+        const primaryCardAudio = typeof cacheEntry !== 'undefined' ? cacheEntry.primaryCardAudio : null;
+        return primaryCardAudio;
+    }
+
     // Private
 
     _onAudioPlayButtonClick(definitionIndex, expressionIndex, e) {
@@ -185,15 +191,14 @@ class DisplayAudio {
     }
 
     _onAudioPlayMenuCloseClick(definitionIndex, expressionIndex, e) {
-        const {detail: {action, item}} = e;
+        const {detail: {action, item, menu}} = e;
         switch (action) {
             case 'playAudioFromSource':
                 this._playAudioFromSource(definitionIndex, expressionIndex, item);
                 break;
             case 'setPrimaryAudio':
-                {
-                    e.preventDefault();
-                }
+                e.preventDefault();
+                this._setPrimaryAudio(definitionIndex, expressionIndex, item, menu);
                 break;
         }
     }
@@ -202,7 +207,10 @@ class DisplayAudio {
         const key = this._getExpressionReadingKey(expression, reading);
         let cacheEntry = this._cache.get(key);
         if (typeof cacheEntry === 'undefined' && create) {
-            cacheEntry = {sourceMap: new Map()};
+            cacheEntry = {
+                sourceMap: new Map(),
+                primaryCardAudio: null
+            };
             this._cache.set(key, cacheEntry);
         }
         return cacheEntry;
@@ -212,15 +220,42 @@ class DisplayAudio {
         const group = item.closest('.popup-menu-item-group');
         if (group === null) { return; }
 
-        const {source, index} = group.dataset;
+        let {source, index} = group.dataset;
         let sourceDetailsMap = null;
         if (typeof index !== 'undefined') {
-            const index2 = Number.parseInt(index, 10);
-            sourceDetailsMap = new Map([
-                [source, {start: index2, end: index2 + 1}]
-            ]);
+            index = Number.parseInt(index, 10);
+            if (Number.isFinite(index) && Math.floor(index) === index) {
+                sourceDetailsMap = new Map([
+                    [source, {start: index, end: index + 1}]
+                ]);
+            }
         }
         this.playAudio(definitionIndex, expressionIndex, [source], sourceDetailsMap);
+    }
+
+    _setPrimaryAudio(definitionIndex, expressionIndex, item, menu) {
+        const group = item.closest('.popup-menu-item-group');
+        if (group === null) { return; }
+
+        let {source, index} = group.dataset;
+        if (index !== 'undefined') {
+            index = Number.parseInt(index, 10);
+        }
+        if (!(Number.isFinite(index) && Math.floor(index) === index)) {
+            index = 0;
+        }
+
+        const expressionReading = this._getExpressionAndReading(definitionIndex, expressionIndex);
+        if (expressionReading === null) { return; }
+
+        const {expression, reading} = expressionReading;
+        const cacheEntry = this._getCacheItem(expression, reading, true);
+
+        let {primaryCardAudio} = cacheEntry;
+        primaryCardAudio = (primaryCardAudio === null || primaryCardAudio.source !== source || primaryCardAudio.index !== index) ? {source, index} : null;
+        cacheEntry.primaryCardAudio = primaryCardAudio;
+
+        this._updateMenuPrimaryCardAudio(menu.bodyNode, expression, reading);
     }
 
     _getAudioPlayButtonExpressionIndex(button) {
@@ -473,7 +508,7 @@ class DisplayAudio {
         // Create menu
         const {displayGenerator} = this._display;
         const menuNode = displayGenerator.instantiateTemplate('audio-button-popup-menu');
-        const menuBody = menuNode.querySelector('.popup-menu-body');
+        const menuBodyNode = menuNode.querySelector('.popup-menu-body');
 
         // Set up items based on options and cache data
         let showIcons = false;
@@ -505,10 +540,13 @@ class DisplayAudio {
                 node.dataset.sourceInOptions = `${isInOptions}`;
                 node.dataset.downloadable = `${downloadable}`;
 
-                menuBody.appendChild(node);
+                menuBodyNode.appendChild(node);
             }
         }
         menuNode.dataset.showIcons = `${showIcons}`;
+
+        // Update primary card audio display
+        this._updateMenuPrimaryCardAudio(menuBodyNode, expression, reading);
 
         // Create popup menu
         this._menuContainer.appendChild(menuNode);
@@ -540,5 +578,26 @@ class DisplayAudio {
             }
         }
         return [{valid: null, index: null, name: null}];
+    }
+
+    _updateMenuPrimaryCardAudio(menuBodyNode, expression, reading) {
+        const primaryCardAudio = this.getPrimaryCardAudio(expression, reading);
+        const {source: primaryCardAudioSource, index: primaryCardAudioIndex} = (primaryCardAudio !== null ? primaryCardAudio : {source: null, index: -1});
+
+        const itemGroups = menuBodyNode.querySelectorAll('.popup-menu-item-group');
+        let sourceIndex = 0;
+        let sourcePre = null;
+        for (const node of itemGroups) {
+            const {source} = node.dataset;
+            if (source !== sourcePre) {
+                sourcePre = source;
+                sourceIndex = 0;
+            } else {
+                ++sourceIndex;
+            }
+
+            const isPrimaryCardAudio = (source === primaryCardAudioSource && sourceIndex === primaryCardAudioIndex);
+            node.dataset.isPrimaryCardAudio = `${isPrimaryCardAudio}`;
+        }
     }
 }

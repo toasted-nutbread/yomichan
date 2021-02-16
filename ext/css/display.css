@@ -1708,10 +1708,10 @@ button.footer-notification-close-button:active {
 .popup-menu-item-group .popup-menu-item-set-primary-audio-button:hover .popup-menu-item-icon,
 .popup-menu-item-group .popup-menu-item-set-primary-audio-button:active .popup-menu-item-icon,
 .popup-menu-item-group .popup-menu-item-set-primary-audio-button:focus .popup-menu-item-icon {
-    opacity: 0.5;
+    opacity: 0.375;
 }
 .popup-menu-item-group[data-is-primary-card-audio=true] .popup-menu-item-set-primary-audio-button .popup-menu-item-icon {
-    opacity: 0.75;
+    opacity: 1;
 }
 .popup-menu-item-group[data-is-primary-card-audio=true] .popup-menu-item-set-primary-audio-button:hover .popup-menu-item-icon,
 .popup-menu-item-group[data-is-primary-card-audio=true] .popup-menu-item-set-primary-audio-button:active .popup-menu-item-icon,
