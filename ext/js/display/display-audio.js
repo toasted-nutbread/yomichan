@@ -194,7 +194,7 @@ class DisplayAudio {
         const {detail: {action, item, menu}} = e;
         switch (action) {
             case 'playAudioFromSource':
-                this._playAudioFromSource(definitionIndex, expressionIndex, item);
+                this._playAudioFromSource(definitionIndex, expressionIndex, item, menu);
                 break;
             case 'setPrimaryAudio':
                 e.preventDefault();
@@ -231,12 +231,14 @@ class DisplayAudio {
         return {source, index, hasIndex};
     }
 
-    _playAudioFromSource(definitionIndex, expressionIndex, item) {
+    _playAudioFromSource(definitionIndex, expressionIndex, item, menu) {
         const sourceInfo = this._getMenuItemSourceInfo(item);
         if (sourceInfo === null) { return; }
 
         const {source, index, hasIndex} = sourceInfo;
         const sourceDetailsMap = hasIndex ? new Map([[source, {start: index, end: index + 1}]]) : null;
+
+        this._setPrimaryAudio(definitionIndex, expressionIndex, item, menu, false);
 
         this.playAudio(definitionIndex, expressionIndex, [source], sourceDetailsMap);
     }
