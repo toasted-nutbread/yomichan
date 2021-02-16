@@ -198,7 +198,7 @@ class DisplayAudio {
                 break;
             case 'setPrimaryAudio':
                 e.preventDefault();
-                this._setPrimaryAudio(definitionIndex, expressionIndex, item, menu);
+                this._setPrimaryAudio(definitionIndex, expressionIndex, item, menu, true);
                 break;
         }
     }
@@ -241,11 +241,12 @@ class DisplayAudio {
         this.playAudio(definitionIndex, expressionIndex, [source], sourceDetailsMap);
     }
 
-    _setPrimaryAudio(definitionIndex, expressionIndex, item, menu) {
+    _setPrimaryAudio(definitionIndex, expressionIndex, item, menu, canToggleOff) {
         const sourceInfo = this._getMenuItemSourceInfo(item);
         if (sourceInfo === null) { return; }
 
         const {source, index} = sourceInfo;
+        if (!this._sourceIsDownloadable(source)) { return; }
 
         const expressionReading = this._getExpressionAndReading(definitionIndex, expressionIndex);
         if (expressionReading === null) { return; }
@@ -254,7 +255,7 @@ class DisplayAudio {
         const cacheEntry = this._getCacheItem(expression, reading, true);
 
         let {primaryCardAudio} = cacheEntry;
-        primaryCardAudio = (primaryCardAudio === null || primaryCardAudio.source !== source || primaryCardAudio.index !== index) ? {source, index} : null;
+        primaryCardAudio = (!canToggleOff || primaryCardAudio === null || primaryCardAudio.source !== source || primaryCardAudio.index !== index) ? {source, index} : null;
         cacheEntry.primaryCardAudio = primaryCardAudio;
 
         this._updateMenuPrimaryCardAudio(menu.bodyNode, expression, reading);
@@ -456,6 +457,16 @@ class DisplayAudio {
         popupMenu.prepare();
     }
 
+    _sourceIsDownloadable(source) {
+        switch (source) {
+            case 'text-to-speech':
+            case 'text-to-speech-reading':
+                return false;
+            default:
+                return true;
+        }
+    }
+
     _getAudioSources(audioOptions) {
         const {sources, textToSpeechVoice, customSourceUrl} = audioOptions;
         const ttsSupported = (textToSpeechVoice.length > 0);
@@ -468,17 +479,18 @@ class DisplayAudio {
         }
 
         const rawSources = [
-            ['jpod101', 'JapanesePod101', true, true],
-            ['jpod101-alternate', 'JapanesePod101 (Alternate)', true, true],
-            ['jisho', 'Jisho.org', true, true],
-            ['text-to-speech', 'Text-to-speech', ttsSupported, false],
-            ['text-to-speech-reading', 'Text-to-speech (Kana reading)', ttsSupported, false],
-            ['custom', 'Custom', customSupported, true]
+            ['jpod101', 'JapanesePod101', true],
+            ['jpod101-alternate', 'JapanesePod101 (Alternate)', true],
+            ['jisho', 'Jisho.org', true],
+            ['text-to-speech', 'Text-to-speech', ttsSupported],
+            ['text-to-speech-reading', 'Text-to-speech (Kana reading)', ttsSupported],
+            ['custom', 'Custom', customSupported]
         ];
 
         const results = [];
-        for (const [source, displayName, supported, downloadable] of rawSources) {
+        for (const [source, displayName, supported] of rawSources) {
             if (!supported) { continue; }
+            const downloadable = this._sourceIsDownloadable(source);
             let optionsIndex = sourceIndexMap.get(source);
             const isInOptions = typeof optionsIndex !== 'undefined';
             if (!isInOptions) {
