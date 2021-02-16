@@ -216,34 +216,36 @@ class DisplayAudio {
         return cacheEntry;
     }
 
-    _playAudioFromSource(definitionIndex, expressionIndex, item) {
+    _getMenuItemSourceInfo(item) {
         const group = item.closest('.popup-menu-item-group');
-        if (group === null) { return; }
+        if (group === null) { return null; }
 
         let {source, index} = group.dataset;
-        let sourceDetailsMap = null;
         if (typeof index !== 'undefined') {
             index = Number.parseInt(index, 10);
-            if (Number.isFinite(index) && Math.floor(index) === index) {
-                sourceDetailsMap = new Map([
-                    [source, {start: index, end: index + 1}]
-                ]);
-            }
         }
+        const hasIndex = (Number.isFinite(index) && Math.floor(index) === index);
+        if (!hasIndex) {
+            index = 0;
+        }
+        return {source, index, hasIndex};
+    }
+
+    _playAudioFromSource(definitionIndex, expressionIndex, item) {
+        const sourceInfo = this._getMenuItemSourceInfo(item);
+        if (sourceInfo === null) { return; }
+
+        const {source, index, hasIndex} = sourceInfo;
+        const sourceDetailsMap = hasIndex ? new Map([[source, {start: index, end: index + 1}]]) : null;
+
         this.playAudio(definitionIndex, expressionIndex, [source], sourceDetailsMap);
     }
 
     _setPrimaryAudio(definitionIndex, expressionIndex, item, menu) {
-        const group = item.closest('.popup-menu-item-group');
-        if (group === null) { return; }
+        const sourceInfo = this._getMenuItemSourceInfo(item);
+        if (sourceInfo === null) { return; }
 
-        let {source, index} = group.dataset;
-        if (index !== 'undefined') {
-            index = Number.parseInt(index, 10);
-        }
-        if (!(Number.isFinite(index) && Math.floor(index) === index)) {
-            index = 0;
-        }
+        const {source, index} = sourceInfo;
 
         const expressionReading = this._getExpressionAndReading(definitionIndex, expressionIndex);
         if (expressionReading === null) { return; }
