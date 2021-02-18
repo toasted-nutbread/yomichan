@@ -415,7 +415,7 @@ class DisplayGenerator {
     _createTag(details) {
         const node = this._templates.instantiate('tag');
 
-        const inner = node.querySelector('.tag-inner');
+        const inner = node.querySelector('.tag-label-content');
 
         node.title = details.notes;
         this._setTextContent(inner, details.name);
