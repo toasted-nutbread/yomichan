@@ -704,93 +704,95 @@ button:focus {
 button:hover {
     transition: background-color var(--animation-duration) ease-out, box-shadow var(--animation-duration) ease-out, border-color var(--animation-duration) ease-out;
 }
-button:hover:not(:disabled) {
+button:hover {
     box-shadow: var(--button-shadow-params) var(--shadow-color-light);
 }
-button:active:not(:disabled) {
+button:active {
     box-shadow: var(--button-shadow-params) var(--shadow-color);
 }
 
 /* Standard button */
-button:not(:disabled) {
+button {
     color: var(--button-text-color);
     border-color: var(--accent-color);
     background-color: var(--accent-color);
 }
-button:hover:not(:disabled) {
+button:hover {
     background-color: var(--accent-color-light);
     border-color: var(--accent-color-light);
 }
-button:focus:not(:disabled) {
+button:focus {
     background-color: var(--accent-color-light);
 }
-button:active:not(:disabled) {
+button:active {
     border-color: var(--accent-color-lighter);
     background-color: var(--accent-color-lighter);
 }
 
 /* Standard danger button */
-button.danger:not(:disabled) {
+button.danger {
     color: var(--button-text-color);
     border-color: var(--danger-color);
     background-color: var(--danger-color);
 }
-button.danger:hover:not(:disabled) {
+button.danger:hover {
     background-color: var(--danger-color-light);
     border-color: var(--danger-color-light);
 }
-button.danger:focus:not(:disabled) {
+button.danger:focus {
     background-color: var(--danger-color-light);
 }
-button.danger:active:not(:disabled) {
+button.danger:active {
     border-color: var(--danger-color-lighter);
     background-color: var(--danger-color-lighter);
 }
 
 /* Low emphasis button */
-button.low-emphasis:not(:disabled) {
+button.low-emphasis {
     color: var(--accent-color);
     border-color: var(--button-border-color);
     background-color: var(--accent-color-transparent0);
 }
-button.low-emphasis:hover:not(:disabled) {
+button.low-emphasis:hover {
     background-color: var(--accent-color-transparent5);
     border-color: var(--accent-color-light);
 }
-button.low-emphasis:focus:not(:disabled) {
+button.low-emphasis:focus {
     border-color: var(--accent-color);
 }
-button.low-emphasis:active:not(:disabled) {
+button.low-emphasis:active {
     border-color: var(--accent-color);
     background-color: var(--accent-color-transparent25);
 }
 
 /* Low emphasis danger button */
-button.low-emphasis.danger:not(:disabled) {
+button.low-emphasis.danger {
     color: var(--danger-color);
     border-color: var(--button-border-color);
     background-color: var(--danger-color-transparent0);
 }
-button.low-emphasis.danger:hover:not(:disabled) {
+button.low-emphasis.danger:hover {
     border-color: var(--danger-color-light);
     background-color: var(--danger-color-transparent5);
 }
-button.low-emphasis.danger:focus:not(:disabled) {
+button.low-emphasis.danger:focus {
     border-color: var(--danger-color);
 }
-button.low-emphasis.danger:active:not(:disabled) {
+button.low-emphasis.danger:active {
     border-color: var(--danger-color);
     background-color: var(--danger-color-transparent25);
 }
 
 /* Disabled buttons */
-button:disabled {
+button:disabled,
+button.danger:disabled {
     color: var(--button-text-color);
     border-color: var(--disabled-color);
     background-color: var(--disabled-color);
     cursor: default;
 }
-button.low-emphasis:disabled {
+button.low-emphasis:disabled,
+button.low-emphasis.danger:disabled {
     color: var(--disabled-color);
     border-color: var(--disabled-color);
     background-color: transparent;
@@ -965,17 +967,19 @@ button.popup-menu-item {
 button.popup-menu-item:not([hidden]) {
     display: flex;
 }
-button.popup-menu-item:hover:not(:disabled),
-button.popup-menu-item:focus:not(:disabled) {
+button.popup-menu-item:hover,
+button.popup-menu-item:focus {
     background-color: var(--menu-item-hover-color);
     box-shadow: none;
 }
-button.popup-menu-item:active:not(:disabled) {
+button.popup-menu-item:active {
     background-color: var(--menu-item-active-color);
     box-shadow: none;
 }
 button.popup-menu-item:disabled {
     color: var(--text-color-light2);
+    background-color: transparent;
+    box-shadow: none;
 }
 .popup-menu-item-icon {
     width: calc(16em / 14);
