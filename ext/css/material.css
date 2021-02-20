@@ -400,6 +400,7 @@ label.toggle {
     transition: var(--focus-indicator-transition1);
 }
 .toggle>input[type=checkbox]:focus:not(:disabled)+.toggle-body>.toggle-knob::after,
+.toggle>input[type=checkbox]:active:not(:disabled)+.toggle-body>.toggle-knob::after,
 .toggle:active>input[type=checkbox]:not(:disabled)+.toggle-body>.toggle-knob::after {
     transform: scale(1);
     opacity: 1;
@@ -409,6 +410,7 @@ label.toggle {
 .toggle>input[type=checkbox]:focus+.toggle-body>.toggle-knob::after {
     opacity: 0.5;
 }
+.toggle>input[type=checkbox]:active:focus+.toggle-body>.toggle-knob::after,
 .toggle:active>input[type=checkbox]:focus+.toggle-body>.toggle-knob::after {
     opacity: 1;
 }
@@ -422,6 +424,7 @@ label.toggle {
     background-color: var(--accent-color);
 }
 .toggle>input[type=checkbox]:focus:checked:not(:disabled)+.toggle-body>.toggle-knob::after,
+.toggle>input[type=checkbox]:active:checked:not(:disabled)+.toggle-body>.toggle-knob::after,
 .toggle:active>input[type=checkbox]:checked:not(:disabled)+.toggle-body>.toggle-knob::after {
     background-color: var(--accent-color-transparent25);
 }
@@ -527,6 +530,7 @@ label.radio {
     transition: var(--focus-indicator-transition1);
 }
 .radio>input[type=radio]:focus:not(:disabled)+.radio-body::after,
+.radio>input[type=radio]:active:not(:disabled)+.radio-body::after,
 .radio:active>input[type=radio]:not(:disabled)+.radio-body::after {
     transform: scale(1);
     opacity: 1;
@@ -536,6 +540,7 @@ label.radio {
 .radio>input[type=radio]:focus+.radio-body::after {
     opacity: 0.5;
 }
+.radio>input[type=radio]:active:focus+.radio-body::after,
 .radio:active>input[type=radio]:focus+.radio-body::after {
     opacity: 1;
 }
