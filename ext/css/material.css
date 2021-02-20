@@ -51,6 +51,17 @@
     --menu-border-radius: 0.3em;
     --menu-shadow: 0 1px 3px 1px var(--shadow-color), 0 2px 4px 3px var(--shadow-color);
 
+    --focus-indicator-transition1:
+        transform 0s ease-in-out var(--animation-duration2),
+        background-color var(--animation-duration2) ease-in-out,
+        opacity var(--animation-duration2) ease-in-out,
+        visibility 0s ease-in-out var(--animation-duration2);
+    --focus-indicator-transition2:
+        transform var(--animation-duration2) ease-in-out,
+        background-color var(--animation-duration2) ease-in-out,
+        opacity var(--animation-duration2) ease-in-out,
+        visibility var(--animation-duration2) ease-in-out;
+
     --text-color: #222222;
     --text-color-light1: #555555;
     --text-color-light2: #666666;
@@ -386,22 +397,14 @@ label.toggle {
     transform: scale(0);
     opacity: 0;
     visibility: hidden;
-    transition:
-        transform 0s ease-in-out var(--animation-duration2),
-        background-color var(--animation-duration2) ease-in-out,
-        opacity var(--animation-duration2) ease-in-out,
-        visibility 0s ease-in-out var(--animation-duration2);
+    transition: var(--focus-indicator-transition1);
 }
 .toggle>input[type=checkbox]:focus:not(:disabled)+.toggle-body>.toggle-knob::after,
 .toggle:active>input[type=checkbox]:not(:disabled)+.toggle-body>.toggle-knob::after {
     transform: scale(1);
     opacity: 1;
     visibility: visible;
-    transition:
-        transform var(--animation-duration2) ease-in-out,
-        background-color var(--animation-duration2) ease-in-out,
-        opacity var(--animation-duration2) ease-in-out,
-        visibility var(--animation-duration2) ease-in-out;
+    transition: var(--focus-indicator-transition2);
 }
 .toggle>input[type=checkbox]:focus+.toggle-body>.toggle-knob::after {
     opacity: 0.5;
@@ -521,22 +524,14 @@ label.radio {
     transform: scale(0);
     opacity: 0;
     visibility: hidden;
-    transition:
-        transform 0s ease-in-out var(--animation-duration2),
-        background-color var(--animation-duration2) ease-in-out,
-        opacity var(--animation-duration2) ease-in-out,
-        visibility 0s ease-in-out var(--animation-duration2);
+    transition: var(--focus-indicator-transition1);
 }
 .radio>input[type=radio]:focus:not(:disabled)+.radio-body::after,
 .radio:active>input[type=radio]:not(:disabled)+.radio-body::after {
     transform: scale(1);
     opacity: 1;
     visibility: visible;
-    transition:
-        transform var(--animation-duration2) ease-in-out,
-        background-color var(--animation-duration2) ease-in-out,
-        opacity var(--animation-duration2) ease-in-out,
-        visibility var(--animation-duration2) ease-in-out;
+    transition: var(--focus-indicator-transition2);
 }
 .radio>input[type=radio]:focus+.radio-body::after {
     opacity: 0.5;
@@ -869,21 +864,13 @@ button.icon-button:active {
     transform: scale(0);
     opacity: 0;
     visibility: hidden;
-    transition:
-        transform 0s ease-in-out var(--animation-duration2),
-        background-color var(--animation-duration2) ease-in-out,
-        opacity var(--animation-duration2) ease-in-out,
-        visibility 0s ease-in-out var(--animation-duration2);
+    transition: var(--focus-indicator-transition1);
 }
 .icon-button:focus>.icon-button-inner::after {
     transform: scale(1);
     opacity: 1;
     visibility: visible;
-    transition:
-        transform var(--animation-duration2) ease-in-out,
-        background-color var(--animation-duration2) ease-in-out,
-        opacity var(--animation-duration2) ease-in-out,
-        visibility var(--animation-duration2) ease-in-out;
+    transition: var(--focus-indicator-transition2);
 }
 .icon-button>.icon-button-inner>.icon {
     display: block;
