@@ -51,12 +51,12 @@
     --menu-border-radius: 0.3em;
     --menu-shadow: 0 1px 3px 1px var(--shadow-color), 0 2px 4px 3px var(--shadow-color);
 
-    --focus-indicator-transition1:
+    --selectable-indicator-transition1:
         transform 0s ease-in-out var(--animation-duration2),
         background-color var(--animation-duration2) ease-in-out,
         opacity var(--animation-duration2) ease-in-out,
         visibility 0s ease-in-out var(--animation-duration2);
-    --focus-indicator-transition2:
+    --selectable-indicator-transition2:
         transform var(--animation-duration2) ease-in-out,
         background-color var(--animation-duration2) ease-in-out,
         opacity var(--animation-duration2) ease-in-out,
@@ -341,7 +341,7 @@ label.checkbox {
     transform: scale(0);
     opacity: 0;
     visibility: hidden;
-    transition: var(--focus-indicator-transition1);
+    transition: var(--selectable-indicator-transition1);
 }
 .checkbox>input[type=checkbox]:focus+.checkbox-body::after,
 .checkbox>input[type=checkbox]:active+.checkbox-body::after,
@@ -349,7 +349,7 @@ label.checkbox {
     transform: scale(1);
     opacity: 1;
     visibility: visible;
-    transition: var(--focus-indicator-transition2);
+    transition: var(--selectable-indicator-transition2);
 }
 .checkbox>input[type=checkbox]:focus+.checkbox-body::after {
     opacity: 0.5;
@@ -362,7 +362,7 @@ label.checkbox {
     transform: scale(0);
     opacity: 0;
     visibility: hidden;
-    transition: var(--focus-indicator-transition1);
+    transition: var(--selectable-indicator-transition1);
 }
 
 
@@ -434,7 +434,7 @@ label.toggle {
     transform: scale(0);
     opacity: 0;
     visibility: hidden;
-    transition: var(--focus-indicator-transition1);
+    transition: var(--selectable-indicator-transition1);
 }
 .toggle>input[type=checkbox]:focus+.toggle-body>.toggle-knob::after,
 .toggle>input[type=checkbox]:active+.toggle-body>.toggle-knob::after,
@@ -442,7 +442,7 @@ label.toggle {
     transform: scale(1);
     opacity: 1;
     visibility: visible;
-    transition: var(--focus-indicator-transition2);
+    transition: var(--selectable-indicator-transition2);
 }
 .toggle>input[type=checkbox]:focus+.toggle-body>.toggle-knob::after {
     opacity: 0.5;
@@ -478,7 +478,7 @@ label.toggle {
     transform: scale(0);
     opacity: 0;
     visibility: hidden;
-    transition: var(--focus-indicator-transition1);
+    transition: var(--selectable-indicator-transition1);
 }
 
 
@@ -570,7 +570,7 @@ label.radio {
     transform: scale(0);
     opacity: 0;
     visibility: hidden;
-    transition: var(--focus-indicator-transition1);
+    transition: var(--selectable-indicator-transition1);
 }
 .radio>input[type=radio]:focus+.radio-body::after,
 .radio>input[type=radio]:active+.radio-body::after,
@@ -578,7 +578,7 @@ label.radio {
     transform: scale(1);
     opacity: 1;
     visibility: visible;
-    transition: var(--focus-indicator-transition2);
+    transition: var(--selectable-indicator-transition2);
 }
 .radio>input[type=radio]:focus+.radio-body::after {
     opacity: 0.5;
@@ -591,7 +591,7 @@ label.radio {
     transform: scale(0);
     opacity: 0;
     visibility: hidden;
-    transition: var(--focus-indicator-transition1);
+    transition: var(--selectable-indicator-transition1);
 }
 .radio-label {
     cursor: pointer;
@@ -920,13 +920,13 @@ button.icon-button:active {
     transform: scale(0);
     opacity: 0;
     visibility: hidden;
-    transition: var(--focus-indicator-transition1);
+    transition: var(--selectable-indicator-transition1);
 }
 .icon-button:focus>.icon-button-inner::after {
     transform: scale(1);
     opacity: 1;
     visibility: visible;
-    transition: var(--focus-indicator-transition2);
+    transition: var(--selectable-indicator-transition2);
 }
 .icon-button>.icon-button-inner>.icon {
     display: block;
