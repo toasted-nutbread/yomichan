@@ -399,9 +399,9 @@ label.toggle {
     visibility: hidden;
     transition: var(--focus-indicator-transition1);
 }
-.toggle>input[type=checkbox]:focus:not(:disabled)+.toggle-body>.toggle-knob::after,
-.toggle>input[type=checkbox]:active:not(:disabled)+.toggle-body>.toggle-knob::after,
-.toggle:active>input[type=checkbox]:not(:disabled)+.toggle-body>.toggle-knob::after {
+.toggle>input[type=checkbox]:focus+.toggle-body>.toggle-knob::after,
+.toggle>input[type=checkbox]:active+.toggle-body>.toggle-knob::after,
+.toggle:active>input[type=checkbox]+.toggle-body>.toggle-knob::after {
     transform: scale(1);
     opacity: 1;
     visibility: visible;
@@ -417,15 +417,15 @@ label.toggle {
 .toggle>input[type=checkbox]:checked+.toggle-body>.toggle-knob {
     transform: translateX(1em);
 }
-.toggle>input[type=checkbox]:checked:not(:disabled)+.toggle-body>.toggle-track {
+.toggle>input[type=checkbox]:checked+.toggle-body>.toggle-track {
     background-color: var(--accent-color-lighter);
 }
-.toggle>input[type=checkbox]:checked:not(:disabled)+.toggle-body>.toggle-knob {
+.toggle>input[type=checkbox]:checked+.toggle-body>.toggle-knob {
     background-color: var(--accent-color);
 }
-.toggle>input[type=checkbox]:focus:checked:not(:disabled)+.toggle-body>.toggle-knob::after,
-.toggle>input[type=checkbox]:active:checked:not(:disabled)+.toggle-body>.toggle-knob::after,
-.toggle:active>input[type=checkbox]:checked:not(:disabled)+.toggle-body>.toggle-knob::after {
+.toggle>input[type=checkbox]:focus:checked+.toggle-body>.toggle-knob::after,
+.toggle>input[type=checkbox]:active:checked+.toggle-body>.toggle-knob::after,
+.toggle:active>input[type=checkbox]:checked+.toggle-body>.toggle-knob::after {
     background-color: var(--accent-color-transparent25);
 }
 .toggle>input[type=checkbox]:disabled+.toggle-body {
@@ -436,6 +436,12 @@ label.toggle {
 }
 .toggle>input[type=checkbox]:disabled+.toggle-body>.toggle-knob {
     background-color: var(--disabled-color-lighter);
+}
+.toggle>input[type=checkbox]:disabled+.toggle-body>.toggle-knob::after {
+    transform: scale(0);
+    opacity: 0;
+    visibility: hidden;
+    transition: var(--focus-indicator-transition1);
 }
 
 
@@ -455,19 +461,19 @@ label.radio {
     margin: 0;
     padding: 0;
     border: none;
-    cursor: default;
     appearance: none;
     -moz-appearance: none;
     -webkit-appearance: none;
 }
-.radio>input[type=radio]:not(:disabled)+.radio-body {
-    cursor: pointer;
-}
 .radio-body {
+    cursor: pointer;
     display: block;
     position: relative;
     width: var(--radio-size);
     height: var(--radio-size);
+}
+.radio>input[type=radio]:disabled+.radio-body {
+    cursor: default;
 }
 .radio-border,
 .radio-dot {
@@ -529,9 +535,9 @@ label.radio {
     visibility: hidden;
     transition: var(--focus-indicator-transition1);
 }
-.radio>input[type=radio]:focus:not(:disabled)+.radio-body::after,
-.radio>input[type=radio]:active:not(:disabled)+.radio-body::after,
-.radio:active>input[type=radio]:not(:disabled)+.radio-body::after {
+.radio>input[type=radio]:focus+.radio-body::after,
+.radio>input[type=radio]:active+.radio-body::after,
+.radio:active>input[type=radio]+.radio-body::after {
     transform: scale(1);
     opacity: 1;
     visibility: visible;
@@ -543,6 +549,12 @@ label.radio {
 .radio>input[type=radio]:active:focus+.radio-body::after,
 .radio:active>input[type=radio]:focus+.radio-body::after {
     opacity: 1;
+}
+.radio>input[type=radio]:disabled+.radio-body::after {
+    transform: scale(0);
+    opacity: 0;
+    visibility: hidden;
+    transition: var(--focus-indicator-transition1);
 }
 .radio-label {
     cursor: pointer;
