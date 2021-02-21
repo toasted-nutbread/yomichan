@@ -761,7 +761,8 @@ input[type=number].code {
 
 
 /* Material design button */
-button {
+button,
+.button {
     --button-content-color: var(--button-default-text-color);
     --button-border-color: var(--accent-color);
     --button-background-color: var(--accent-color);
@@ -811,13 +812,15 @@ button {
     background-color: var(--button-current-background-color);
     box-shadow: var(--button-current-shadow);
 }
-button:hover {
+button:hover,
+.button:hover {
     --button-current-content-color: var(--button-hover-content-color);
     --button-current-border-color: var(--button-hover-border-color);
     --button-current-background-color: var(--button-hover-background-color);
     --button-current-shadow: var(--button-hover-shadow);
 }
-button:focus {
+button:focus,
+.button:focus {
     --button-current-content-color: var(--button-focus-content-color);
     --button-current-border-color: var(--button-focus-border-color);
     --button-current-background-color: var(--button-focus-background-color);
@@ -825,57 +828,71 @@ button:focus {
 
     outline: none;
 }
-button:active {
+button:active,
+.button:active {
     --button-current-content-color: var(--button-active-content-color);
     --button-current-border-color: var(--button-active-border-color);
     --button-current-background-color: var(--button-active-background-color);
     --button-current-shadow: var(--button-active-shadow);
 }
-button:focus:not(:focus-visible) {
+button:focus:not(:focus-visible),
+.button:focus:not(:focus-visible) {
     --button-current-content-color: var(--button-content-color);
     --button-current-border-color: var(--button-border-color);
     --button-current-background-color: var(--button-background-color);
     --button-current-shadow: var(--button-shadow);
 }
-button:focus-visible {
+button:focus-visible,
+.button:focus-visible {
     --button-current-content-color: var(--button-focus-content-color);
     --button-current-border-color: var(--button-focus-border-color);
     --button-current-background-color: var(--button-focus-background-color);
     --button-current-shadow: var(--button-focus-shadow);
 }
 button:hover:focus-visible,
-button:hover:not(:focus-visible) {
+button:hover:not(:focus-visible),
+.button:hover:focus-visible,
+.button:hover:not(:focus-visible) {
     --button-current-content-color: var(--button-hover-content-color);
     --button-current-border-color: var(--button-hover-border-color);
     --button-current-background-color: var(--button-hover-background-color);
     --button-current-shadow: var(--button-hover-shadow);
 }
-button:focus:focus-visible {
+button:focus:focus-visible,
+.button:focus:focus-visible {
     --button-current-content-color: var(--button-focus-content-color);
     --button-current-border-color: var(--button-focus-border-color);
     --button-current-background-color: var(--button-focus-background-color);
     --button-current-shadow: var(--button-focus-shadow);
 }
 button:active:focus-visible,
-button:active:not(:focus-visible) {
+button:active:not(:focus-visible),
+.button:active:focus-visible,
+.button:active:not(:focus-visible) {
     --button-current-content-color: var(--button-active-content-color);
     --button-current-border-color: var(--button-active-border-color);
     --button-current-background-color: var(--button-active-background-color);
     --button-current-shadow: var(--button-active-shadow);
 }
-button:disabled {
+button:disabled,
+.button:disabled {
     cursor: default;
 }
 button:disabled,
 button:disabled:focus,
 button:disabled:hover,
-button:disabled:active {
+button:disabled:active,
+.button:disabled,
+.button:disabled:focus,
+.button:disabled:hover,
+.button:disabled:active {
     --button-current-content-color: var(--button-disabled-content-color);
     --button-current-border-color: var(--button-disabled-border-color);
     --button-current-background-color: var(--button-disabled-background-color);
     --button-current-shadow: var(--button-disabled-shadow);
 }
-button:disabled:focus-visible {
+button:disabled:focus-visible,
+.button:disabled:focus-visible {
     --button-current-content-color: var(--button-disabled-content-color);
     --button-current-border-color: var(--button-disabled-border-color);
     --button-current-background-color: var(--button-disabled-background-color);

@@ -392,6 +392,22 @@ a.heading-link-light {
     padding-bottom: 2em;
 }
 .outline-item {
+    --button-content-color: var(--text-color);
+    --button-border-color: transparent;
+    --button-background-color: var(--outline-item-background-color);
+    --button-shadow: none;
+
+    --button-hover-border-color: transparent;
+    --button-hover-background-color: var(--outline-item-background-color-hover);
+    --button-hover-shadow: none;
+
+    --button-active-border-color: transparent;
+    --button-active-background-color: var(--outline-item-background-color-hover);
+    --button-active-shadow: none;
+
+    font-weight: normal;
+    border-style: none;
+    border-width: 0;
     display: flex;
     align-items: center;
     width: 100%;
@@ -399,24 +415,11 @@ a.heading-link-light {
     line-height: var(--outline-item-height);
     padding: 0 1.5em;
     cursor: pointer;
-    background-color: var(--outline-item-background-color);
     transition: background-color var(--animation-duration) ease-in-out;
 }
 .outline-item,
 .outline-item:hover {
     text-decoration: none;
-    color: var(--text-color);
-}
-.outline-item:hover,
-.outline-item:focus {
-    outline: none;
-    background-color: var(--outline-item-background-color-hover);
-}
-.outline-item:focus:not(:focus-visible) {
-    background-color: var(--outline-item-background-color);
-}
-.outline-item:focus-visible {
-    background-color: var(--outline-item-background-color-hover);
 }
 .outline-item-left {
     display: inline-block;
