@@ -690,7 +690,7 @@ button.action-button[data-icon=source-term]::before {
     align-items: center;
     background-color: var(--tag-color);
     border-radius: 0.25em;
-    padding: 0.2em 0.375em 0.2em 0.375em;
+    padding: calc(2.5em / var(--font-size-no-units)) 0.375em calc(2.5em / var(--font-size-no-units)) 0.375em;
     color: var(--tag-text-color);
     cursor: pointer;
 }
