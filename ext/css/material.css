@@ -773,7 +773,7 @@ button,
     --button-hover-background-color: var(--accent-color-light);
     --button-hover-shadow: var(--button-default-shadow-params) var(--shadow-color-light);
 
-    --button-focus-content-color: var(--button-content-color);
+    --button-focus-content-color: var(--button-hover-content-color);
     --button-focus-border-color: var(--button-hover-border-color);
     --button-focus-background-color: var(--button-hover-background-color);
     --button-focus-shadow: var(--button-hover-shadow);
