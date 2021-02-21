@@ -1067,6 +1067,19 @@ button.icon-button.modal-header-button:active>.icon-button-inner>.icon {
     padding-bottom: var(--fab-button-padding);
 }
 button.fab-button {
+    --button-content-color: var(--button-default-text-color);
+    --button-border-color: transparent;
+    --button-background-color: transparent;
+    --button-shadow: none;
+
+    --button-hover-border-color: transparent;
+    --button-hover-background-color: transparent;
+    --button-hover-shadow: none;
+
+    --button-active-border-color: transparent;
+    --button-active-background-color: transparent;
+    --button-active-shadow: none;
+
     display: block;
     padding: 0;
     margin: 0;
@@ -1075,13 +1088,6 @@ button.fab-button {
 button.fab-button>.icon-button-inner {
     width: var(--fab-button-size);
     height: var(--fab-button-size);
-}
-button.fab-button,
-button.fab-button:hover,
-button.fab-button:focus,
-button.fab-button:active {
-    background-color: transparent;
-    box-shadow: none;
 }
 .fab-button-background {
     position: absolute;
@@ -1096,7 +1102,7 @@ button.fab-button:active {
     box-shadow: var(--shadow-vertical);
 }
 button.fab-button>.icon-button-inner>.icon {
-    background-color: #ffffff;
+    background-color: var(--button-content-color);
 }
 .fab-container-item.fab-container-item-popup-preview {
     display: none;
