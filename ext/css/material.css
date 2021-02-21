@@ -795,27 +795,71 @@ button:active {
 
 /* Standard button */
 button {
-    color: var(--button-default-text-color);
-    border-color: var(--accent-color);
-    background-color: var(--accent-color);
+    --button-content-color: var(--button-default-text-color);
+    --button-border-color: var(--accent-color);
+    --button-background-color: var(--accent-color);
+
+    --button-hover-content-color: var(--button-default-text-color);
+    --button-hover-background-color: var(--accent-color-light);
+    --button-hover-border-color: var(--button-hover-background-color);
+
+    --button-focus-content-color: var(--button-hover-content-color);
+    --button-focus-background-color: var(--button-hover-background-color);
+    --button-focus-border-color: var(--button-hover-border-color);
+
+    --button-active-content-color: var(--button-default-text-color);
+    --button-active-background-color: var(--accent-color-lighter);
+    --button-active-border-color: var(--button-active-background-color);
+
+    --button-disabled-content-color: var(--button-default-text-color);
+    --button-disabled-border-color: var(--disabled-color);
+    --button-disabled-background-color: var(--disabled-color);
+
+    color: var(--button-content-color);
+    border-color: var(--button-border-color);
+    background-color: var(--button-background-color);
 }
-button:hover,
+button:hover {
+    color: var(--button-hover-content-color);
+    border-color: var(--button-hover-border-color);
+    background-color: var(--button-hover-background-color);
+}
 button:focus {
-    background-color: var(--accent-color-light);
-    border-color: var(--accent-color-light);
+    color: var(--button-focus-content-color);
+    border-color: var(--button-focus-border-color);
+    background-color: var(--button-focus-background-color);
 }
-button:focus:not(:focus-visible):not(:hover):not(:active) {
-    background-color: var(--accent-color);
-    border-color: var(--accent-color);
+button:active {
+    color: var(--button-active-content-color);
+    border-color: var(--button-active-border-color);
+    background-color: var(--button-active-background-color);
+}
+button:focus:not(:focus-visible) {
+    color: var(--button-content-color);
+    border-color: var(--button-border-color);
+    background-color: var(--button-background-color);
 }
 button:focus-visible {
-    background-color: var(--accent-color-light);
-    border-color: var(--accent-color-light);
+    color: var(--button-focus-content-color);
+    border-color: var(--button-focus-border-color);
+    background-color: var(--button-focus-background-color);
 }
-button:active,
-button:active:focus {
-    border-color: var(--accent-color-lighter);
-    background-color: var(--accent-color-lighter);
+button:hover:focus-visible,
+button:hover:not(:focus-visible) {
+    color: var(--button-hover-content-color);
+    border-color: var(--button-hover-border-color);
+    background-color: var(--button-hover-background-color);
+}
+button:focus:focus-visible {
+    color: var(--button-focus-content-color);
+    border-color: var(--button-focus-border-color);
+    background-color: var(--button-focus-background-color);
+}
+button:active:focus-visible,
+button:active:not(:focus-visible) {
+    color: var(--button-active-content-color);
+    border-color: var(--button-active-border-color);
+    background-color: var(--button-active-background-color);
 }
 
 /* Standard danger button */
