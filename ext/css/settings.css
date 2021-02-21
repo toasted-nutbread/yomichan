@@ -1451,16 +1451,6 @@ input.anki-card-field-value {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
 }
-button.anki-card-field-value-menu-button {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-    border: none;
-    height: var(--input-height);
-    line-height: var(--input-height);
-    background-color: var(--input-background-color);
-    box-sizing: border-box;
-    padding: 0 0.5em;
-}
 #anki-error-message-details {
     margin-top: 0.25em;
     font-family: 'Courier New', Courier, monospace;

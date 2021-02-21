@@ -915,36 +915,24 @@ button.low-emphasis.danger {
 
 /* Input suffix button */
 button.input-suffix-button {
+    --button-content-color: var(--button-default-icon-color);
+    --button-border-color: var(--input-background-color);
+    --button-background-color: var(--input-background-color);
+    --button-hover-background-color: var(--input-background-color-dark);
+    --button-active-background-color: var(--input-background-color-darker);
+
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
-    border: none;
+    border-style: none;
+    border-width: 0;
     height: var(--input-height);
     line-height: var(--input-height);
-    background-color: var(--input-background-color);
     box-sizing: border-box;
     padding: 0 0.5em;
-    border-color: transparent;
-    transition:
-        background-color var(--animation-duration) ease-in,
-        box-shadow var(--animation-duration) ease-in;
+    position: relative;
 }
 button.input-suffix-button.input-suffix-icon-button {
     width: 2.125em;
-    position: relative;
-}
-button.input-suffix-button.input-suffix-icon-button:hover,
-button.input-suffix-button.input-suffix-icon-button:focus {
-    background-color: var(--input-background-color-dark);
-}
-button.input-suffix-button.input-suffix-icon-button:focus:not(:focus-visible):not(:hover):not(:active) {
-    background-color: var(--input-background-color);
-}
-button.input-suffix-button.input-suffix-icon-button:focus-visible {
-    background-color: var(--input-background-color-dark);
-}
-button.input-suffix-button.input-suffix-icon-button:active,
-button.input-suffix-button.input-suffix-icon-button:active:focus {
-    background-color: var(--input-background-color-darker);
 }
 button.input-suffix-button.input-suffix-icon-button>.icon {
     display: block;
@@ -956,7 +944,13 @@ input[type=text]:invalid+button.input-suffix-button,
 input[type=number]:invalid+button.input-suffix-button,
 input[type=text][data-invalid=true]+button.input-suffix-button,
 input[type=number][data-invalid=true]+button.input-suffix-button {
-    border: var(--thin-border-size) solid var(--danger-color);
+    --button-border-color: var(--danger-color);
+    --button-hover-border-color: var(--danger-color);
+    --button-active-border-color: var(--danger-color);
+    --button-disabled-border-color: var(--danger-color);
+
+    border-width: var(--thin-border-size);
+    border-style: solid;
     border-left-style: none;
 }
 
