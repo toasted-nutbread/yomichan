@@ -44,7 +44,7 @@
     --material-arrow-dimension1: calc(5em / var(--font-size-no-units));
     --material-arrow-dimension2: calc(10em / var(--font-size-no-units));
 
-    --button-shadow-params: 0 0.0625em 0.125em 0;
+    --button-default-shadow-params: 0 0.0625em 0.125em 0;
 
     --thin-border-size: calc(1em / var(--font-size-no-units));
 
@@ -102,10 +102,10 @@
     --input-background-color-darker: #cccccc;
     --input-outline-color: var(--text-color);
 
-    --button-text-color: #ffffff;
-    --button-border-color: #cccccc;
-    --button-icon-color: #333333;
-    --button-icon-color-light: #666666;
+    --button-default-text-color: #ffffff;
+    --button-default-border-color: #cccccc;
+    --button-default-icon-color: #333333;
+    --button-default-icon-color-light: #666666;
 
     --checkbox-checked-color: var(--accent-color);
     --checkbox-unchecked-color: #666666;
@@ -160,10 +160,10 @@
     --input-background-color-darker: #484848;
     --input-outline-color: var(--text-color);
 
-    --button-text-color: #000000;
-    --button-border-color: #333333;
-    --button-icon-color: #cccccc;
-    --button-icon-color-light: #999999;
+    --button-default-text-color: #000000;
+    --button-default-border-color: #333333;
+    --button-default-icon-color: #cccccc;
+    --button-default-icon-color-light: #999999;
 
     --checkbox-unchecked-color: #999999;
 
@@ -770,7 +770,7 @@ button {
     font-family: inherit;
     cursor: pointer;
     background-color: transparent;
-    box-shadow: var(--button-shadow-params) var(--shadow-color-off);
+    box-shadow: var(--button-default-shadow-params) var(--shadow-color-off);
     transition:
         background-color var(--animation-duration) ease-in,
         box-shadow var(--animation-duration) ease-in,
@@ -787,15 +787,15 @@ button:hover {
         border-color var(--animation-duration) ease-out;
 }
 button:hover {
-    box-shadow: var(--button-shadow-params) var(--shadow-color-light);
+    box-shadow: var(--button-default-shadow-params) var(--shadow-color-light);
 }
 button:active {
-    box-shadow: var(--button-shadow-params) var(--shadow-color);
+    box-shadow: var(--button-default-shadow-params) var(--shadow-color);
 }
 
 /* Standard button */
 button {
-    color: var(--button-text-color);
+    color: var(--button-default-text-color);
     border-color: var(--accent-color);
     background-color: var(--accent-color);
 }
@@ -820,7 +820,7 @@ button:active:focus {
 
 /* Standard danger button */
 button.danger {
-    color: var(--button-text-color);
+    color: var(--button-default-text-color);
     border-color: var(--danger-color);
     background-color: var(--danger-color);
 }
@@ -846,7 +846,7 @@ button.danger:active:focus {
 /* Low emphasis button */
 button.low-emphasis {
     color: var(--accent-color);
-    border-color: var(--button-border-color);
+    border-color: var(--button-default-border-color);
     background-color: var(--accent-color-transparent0);
 }
 button.low-emphasis:hover,
@@ -855,7 +855,7 @@ button.low-emphasis:focus {
     background-color: var(--accent-color-transparent5);
 }
 button.low-emphasis:focus:not(:focus-visible):not(:hover):not(:active) {
-    border-color: var(--button-border-color);
+    border-color: var(--button-default-border-color);
     background-color: var(--accent-color-transparent0);
 }
 button.low-emphasis:focus-visible {
@@ -871,7 +871,7 @@ button.low-emphasis:active:focus {
 /* Low emphasis danger button */
 button.low-emphasis.danger {
     color: var(--danger-color);
-    border-color: var(--button-border-color);
+    border-color: var(--button-default-border-color);
     background-color: var(--danger-color-transparent0);
 }
 button.low-emphasis.danger:hover,
@@ -880,7 +880,7 @@ button.low-emphasis.danger:focus {
     background-color: var(--danger-color-transparent5);
 }
 button.low-emphasis.danger:focus:not(:focus-visible):not(:hover):not(:active) {
-    border-color: var(--button-border-color);
+    border-color: var(--button-default-border-color);
     background-color: var(--danger-color-transparent0);
 }
 button.low-emphasis.danger:focus-visible {
@@ -898,7 +898,7 @@ button:disabled,
 button:disabled:focus,
 button:disabled:hover,
 button:disabled:active {
-    color: var(--button-text-color);
+    color: var(--button-default-text-color);
     border-color: var(--disabled-color);
     background-color: var(--disabled-color);
     cursor: default;
@@ -949,7 +949,7 @@ button.input-suffix-button.input-suffix-icon-button>.icon {
     display: block;
     width: 100%;
     height: 100%;
-    background-color: var(--button-icon-color);
+    background-color: var(--button-default-icon-color);
 }
 input[type=text]:invalid+button.input-suffix-button,
 input[type=number]:invalid+button.input-suffix-button,
@@ -1041,11 +1041,11 @@ button.icon-button:focus:active:not(:focus-visible) {
     top: 0;
     right: 0;
     bottom: 0;
-    background-color: var(--button-icon-color);
+    background-color: var(--button-default-icon-color);
     --icon-size: calc(16em / var(--font-size-no-units)) calc(16em / var(--font-size-no-units));
 }
 .icon-button>.icon-button-inner>.icon.icon-button-icon-light {
-    background-color: var(--button-icon-color-light);
+    background-color: var(--button-default-icon-color-light);
 }
 .icon-button>.icon-button-inner>.icon[data-icon=material-right-arrow] { --icon-size: var(--material-arrow-dimension1) var(--material-arrow-dimension2); }
 .icon-button>.icon-button-inner>.icon[data-icon=material-down-arrow] { --icon-size: var(--material-arrow-dimension2) var(--material-arrow-dimension1); }
