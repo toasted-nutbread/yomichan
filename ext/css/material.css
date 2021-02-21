@@ -778,6 +778,11 @@ button,
     --button-focus-background-color: var(--button-hover-background-color);
     --button-focus-shadow: var(--button-hover-shadow);
 
+    --button-focus-visible-content-color: var(--button-focus-content-color);
+    --button-focus-visible-border-color: var(--button-focus-border-color);
+    --button-focus-visible-background-color: var(--button-focus-background-color);
+    --button-focus-visible-shadow: var(--button-focus-shadow);
+
     --button-active-content-color: var(--button-content-color);
     --button-active-border-color: var(--button-active-background-color);
     --button-active-background-color: var(--accent-color-lighter);
@@ -844,10 +849,10 @@ button:focus:not(:focus-visible),
 }
 button:focus-visible,
 .button:focus-visible {
-    --button-current-content-color: var(--button-focus-content-color);
-    --button-current-border-color: var(--button-focus-border-color);
-    --button-current-background-color: var(--button-focus-background-color);
-    --button-current-shadow: var(--button-focus-shadow);
+    --button-current-content-color: var(--button-focus-visible-content-color);
+    --button-current-border-color: var(--button-focus-visible-border-color);
+    --button-current-background-color: var(--button-focus-visible-background-color);
+    --button-current-shadow: var(--button-focus-visible-shadow);
 }
 button:hover:focus-visible,
 button:hover:not(:focus-visible),
@@ -860,10 +865,10 @@ button:hover:not(:focus-visible),
 }
 button:focus:focus-visible,
 .button:focus:focus-visible {
-    --button-current-content-color: var(--button-focus-content-color);
-    --button-current-border-color: var(--button-focus-border-color);
-    --button-current-background-color: var(--button-focus-background-color);
-    --button-current-shadow: var(--button-focus-shadow);
+    --button-current-content-color: var(--button-focus-visible-content-color);
+    --button-current-border-color: var(--button-focus-visible-border-color);
+    --button-current-background-color: var(--button-focus-visible-background-color);
+    --button-current-shadow: var(--button-focus-visible-shadow);
 }
 button:active:focus-visible,
 button:active:not(:focus-visible),

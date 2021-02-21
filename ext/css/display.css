@@ -1593,31 +1593,37 @@ button.action-button[data-icon=source-term]::before {
     top: 0;
     right: 0;
 }
-button.footer-notification-close-button,
-button.footer-notification-close-button:focus,
-button.footer-notification-close-button:hover,
-button.footer-notification-close-button:active {
+button.footer-notification-close-button {
+    --button-content-color: var(--notification-text-color);
+    --button-border-color: transparent;
+    --button-background-color: transparent;
+    --button-shadow: none;
+
+    --button-hover-border-color: transparent;
+    --button-hover-background-color: transparent;
+    --button-hover-shadow: none;
+
+    --button-active-border-color: transparent;
+    --button-active-background-color: transparent;
+    --button-active-shadow: none;
+
+    --button-focus-visible-border-color: transparent;
+    --button-focus-visible-background-color: var(--notification-background-color-light);
+    --button-focus-visible-shadow: none;
+
     flex: 0 0 auto;
-    background-color: transparent;
     margin: -0.25em;
     padding: 0.5em;
-    border: none;
-    outline: none;
+    border-style: none;
+    border-width: 0;
     cursor: pointer;
     font-size: inherit;
-    box-shadow: none;
-}
-button.footer-notification-close-button:focus-visible {
-    background-color: var(--notification-background-color-light);
-}
-button.footer-notification-close-button:focus-visible:active {
-    background-color: var(--notification-background-color-lighter);
 }
 .footer-notification-close-button-icon {
     display: block;
     width: calc(16em / var(--font-size-no-units));
     height: calc(16em / var(--font-size-no-units));
-    background-color: var(--notification-text-color);
+    background-color: var(--button-content-color);
 }
 
 
