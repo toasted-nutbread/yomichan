@@ -893,13 +893,13 @@ select.short-height {
     right: 0;
     bottom: 0;
 }
-button.icon-button.modal-header-button>.icon-button-inner>.icon {
-    background-color: var(--button-default-icon-color-light);
-    transition: background-color var(--animation-duration) ease-in-out;
+button.icon-button.modal-header-button {
+    --button-content-color: var(--button-default-icon-color-light);
+    --button-hover-content-color: var(--button-default-icon-color);
+    --button-active-content-color: var(--button-default-icon-color);
 }
-button.icon-button.modal-header-button:hover>.icon-button-inner>.icon,
-button.icon-button.modal-header-button:active>.icon-button-inner>.icon {
-    background-color: var(--button-default-icon-color);
+button.icon-button.modal-header-button>.icon-button-inner>.icon {
+    transition: background-color var(--animation-duration) ease-in-out;
 }
 .modal-header-button[data-modal-action=expand],
 .modal-header-button[data-modal-action=collapse] {
