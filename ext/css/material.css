@@ -780,7 +780,7 @@ button {
     --button-active-content-color: var(--button-content-color);
     --button-active-border-color: var(--button-active-background-color);
     --button-active-background-color: var(--accent-color-lighter);
-    --button-box-shadow: var(--button-default-shadow-params) var(--shadow-color);
+    --button-active-shadow: var(--button-default-shadow-params) var(--shadow-color);
 
     --button-disabled-content-color: var(--button-default-text-color);
     --button-disabled-border-color: var(--disabled-color);
@@ -976,7 +976,7 @@ button.icon-button {
 
     --button-active-border-color: transparent;
     --button-active-background-color: transparent;
-    --button-box-shadow: none;
+    --button-active-shadow: none;
 
     --button-disabled-content-color: var(--button-default-icon-color);
     --button-disabled-border-color: transparent;
@@ -1100,12 +1100,29 @@ button.icon-button>.icon-button-inner {
     white-space: nowrap;
 }
 button.popup-menu-item {
+    --button-content-color: var(--text-color);
+    --button-border-color: transparent;
+    --button-background-color: transparent;
+    --button-shadow: none;
+
+    --button-hover-border-color: transparent;
+    --button-hover-background-color: var(--menu-item-hover-color);
+    --button-hover-shadow: none;
+
+    --button-active-border-color: transparent;
+    --button-active-background-color: var(--menu-item-active-color);
+    --button-active-shadow: none;
+
+    --button-disabled-content-color: var(--text-color-light2);
+    --button-disabled-border-color: transparent;
+    --button-disabled-background-color: transparent;
+    --button-disabled-shadow: none;
+
     padding: 0.625em 1.5em;
     flex: 1 1 auto;
     border-radius: 0;
-    background-color: transparent;
-    color: var(--text-color);
-    border: none;
+    border-style: none;
+    border-width: 0;
     text-align: left;
     font-size: 1em;
     font-weight: normal;
@@ -1115,30 +1132,10 @@ button.popup-menu-item {
 button.popup-menu-item:not([hidden]) {
     display: flex;
 }
-button.popup-menu-item:hover,
-button.popup-menu-item:focus {
-    background-color: var(--menu-item-hover-color);
-    box-shadow: none;
-}
-button.popup-menu-item:focus:not(:focus-visible):not(:hover):not(:disabled) {
-    background-color: transparent;
-}
-button.popup-menu-item:focus-visible:not(:disabled) {
-    background-color: var(--menu-item-hover-color);
-}
-button.popup-menu-item:active:not(:disabled) {
-    background-color: var(--menu-item-active-color);
-    box-shadow: none;
-}
-button.popup-menu-item:disabled {
-    color: var(--text-color-light2);
-    background-color: transparent;
-    box-shadow: none;
-}
 .popup-menu-item-icon {
     width: calc(16em / 14);
     height: calc(16em / 14);
-    background-color: var(--text-color);
+    background-color: var(--button-current-content-color);
     flex: 0 0 auto;
 }
 .popup-menu-item-icon:not([hidden]) {
