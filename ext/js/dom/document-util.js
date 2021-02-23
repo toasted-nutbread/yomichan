@@ -532,6 +532,10 @@ class DocumentUtil {
                         // Elements with user-select: all will return the element
                         // instead of a text point inside the element.
                         if (this._isElementUserSelectAll(node)) {
+                            if (previousStyles.has(node)) {
+                                // Recursive
+                                return null;
+                            }
                             nextElement = node;
                             continue;
                         }
