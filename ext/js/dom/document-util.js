@@ -479,17 +479,18 @@ class DocumentUtil {
             return null;
         }
 
-        const range = document.createRange();
         const offset = (node.nodeType === Node.TEXT_NODE ? position.offset : 0);
+
         try {
+            const range = document.createRange();
             range.setStart(node, offset);
             range.setEnd(node, offset);
+            return range;
         } catch (e) {
             // Firefox throws new DOMException("The operation is insecure.")
             // when trying to select a node from within a ShadowRoot.
             return null;
         }
-        return range;
     }
 
     _caretRangeFromPointExt(x, y, elements) {
