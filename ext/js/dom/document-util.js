@@ -479,7 +479,20 @@ class DocumentUtil {
             return null;
         }
 
-        const offset = (node.nodeType === Node.TEXT_NODE ? position.offset : 0);
+        let offset = 0;
+        const {nodeType} = node;
+        switch (nodeType) {
+            case Node.TEXT_NODE:
+                offset = position.offset;
+                break;
+            case Node.ELEMENT_NODE:
+                // Elements with user-select: all will return the element
+                // instead of a text point inside the element.
+                if (this._isElementUserSelectAll(node)) {
+                    return this._caretPositionFromPointNormalizeStyles(x, y, node);
+                }
+                break;
+        }
 
         try {
             const range = document.createRange();
@@ -490,6 +503,54 @@ class DocumentUtil {
             // Firefox throws new DOMException("The operation is insecure.")
             // when trying to select a node from within a ShadowRoot.
             return null;
+        }
+    }
+
+    _caretPositionFromPointNormalizeStyles(x, y, nextElement) {
+        const previousStyles = new Map();
+        try {
+            while (true) {
+                this._recordPreviousStyle(previousStyles, nextElement);
+                nextElement.style.setProperty('user-select', 'text', 'important');
+
+                const position = document.caretPositionFromPoint(x, y);
+                if (position === null) {
+                    return null;
+                }
+                const node = position.offsetNode;
+                if (node === null) {
+                    return null;
+                }
+
+                let offset = 0;
+                const {nodeType} = node;
+                switch (nodeType) {
+                    case Node.TEXT_NODE:
+                        offset = position.offset;
+                        break;
+                    case Node.ELEMENT_NODE:
+                        // Elements with user-select: all will return the element
+                        // instead of a text point inside the element.
+                        if (this._isElementUserSelectAll(node)) {
+                            nextElement = node;
+                            continue;
+                        }
+                        break;
+                }
+
+                try {
+                    const range = document.createRange();
+                    range.setStart(node, offset);
+                    range.setEnd(node, offset);
+                    return range;
+                } catch (e) {
+                    // Firefox throws new DOMException("The operation is insecure.")
+                    // when trying to select a node from within a ShadowRoot.
+                    return null;
+                }
+            }
+        } finally {
+            this._revertStyles(previousStyles);
         }
     }
 
@@ -573,5 +634,9 @@ class DocumentUtil {
 
     _isColorTransparent(cssColor) {
         return this._transparentColorPattern.test(cssColor);
+    }
+
+    _isElementUserSelectAll(element) {
+        return getComputedStyle(element).userSelect === 'all';
     }
 }
