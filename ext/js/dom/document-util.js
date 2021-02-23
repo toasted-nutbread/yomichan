@@ -493,7 +493,7 @@ class DocumentUtil {
     }
 
     _caretRangeFromPointExt(x, y, elements) {
-        const modifications = [];
+        let previousStyles = null;
         try {
             let i = 0;
             let startContinerPre = null;
@@ -511,19 +511,20 @@ class DocumentUtil {
                     startContinerPre = startContainer;
                 }
 
-                i = this._disableTransparentElement(elements, i, modifications);
+                previousStyles = new Map();
+                i = this._disableTransparentElement(elements, i, previousStyles);
                 if (i < 0) {
                     return null;
                 }
             }
         } finally {
-            if (modifications.length > 0) {
-                this._restoreElementStyleModifications(modifications);
+            if (previousStyles !== null && previousStyles.size > 0) {
+                this._revertStyles(previousStyles);
             }
         }
     }
 
-    _disableTransparentElement(elements, i, modifications) {
+    _disableTransparentElement(elements, i, previousStyles) {
         while (true) {
             if (i >= elements.length) {
                 return -1;
@@ -531,16 +532,21 @@ class DocumentUtil {
 
             const element = elements[i++];
             if (this._isElementTransparent(element)) {
-                const style = element.hasAttribute('style') ? element.getAttribute('style') : null;
-                modifications.push({element, style});
+                this._recordPreviousStyle(previousStyles, element);
                 element.style.setProperty('pointer-events', 'none', 'important');
                 return i;
             }
         }
     }
 
-    _restoreElementStyleModifications(modifications) {
-        for (const {element, style} of modifications) {
+    _recordPreviousStyle(previousStyles, element) {
+        if (previousStyles.has(element)) { return; }
+        const style = element.hasAttribute('style') ? element.getAttribute('style') : null;
+        previousStyles.set(element, style);
+    }
+
+    _revertStyles(previousStyles) {
+        for (const [element, style] of previousStyles.entries()) {
             if (style === null) {
                 element.removeAttribute('style');
             } else {
