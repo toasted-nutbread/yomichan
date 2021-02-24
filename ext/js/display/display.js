@@ -811,6 +811,7 @@ class Display extends EventDispatcher {
         data.ankiEnabled = `${options.anki.enable}`;
         data.glossaryLayoutMode = `${options.general.glossaryLayoutMode}`;
         data.compactTags = `${options.general.compactTags}`;
+        data.frequencyDisplayMode = `${options.general.frequencyDisplayMode}`;
         data.enableSearchTags = `${options.scanning.enableSearchTags}`;
         data.showPitchAccentDownstepNotation = `${options.general.showPitchAccentDownstepNotation}`;
         data.showPitchAccentPositionNotation = `${options.general.showPitchAccentPositionNotation}`;
