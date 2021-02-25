@@ -17,6 +17,7 @@
 
 /* global
  * AnkiConnect
+ * AnkiUtil
  * AudioDownloader
  * ClipboardMonitor
  * ClipboardReader
@@ -457,7 +458,7 @@ class Backend {
         for (let i = 0; i < notes.length; ++i) {
             const note = notes[i];
             const canAdd = canAddArray[i];
-            const valid = true;
+            const valid = AnkiUtil.isNoteDataValid(note);
             const info = {canAdd, valid, noteIds: null};
             results.push(info);
             if (!canAdd && valid) {
