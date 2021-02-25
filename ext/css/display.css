@@ -87,6 +87,8 @@
 
     --overlay-panel-translate-distance: 4em;
 
+    --disambiguation-space: 0.25em;
+
     --animation-duration: 0.125s;
     --animation-duration2: calc(2 * var(--animation-duration));
 
@@ -1052,6 +1054,7 @@ button.action-button[data-icon=source-term]::before {
 }
 .term-definition-disambiguation-list {
     color: var(--text-color-light3);
+    padding-right: var(--disambiguation-space);
 }
 .term-definition-disambiguation-list[data-count='0'] {
     display: none;
@@ -1060,7 +1063,7 @@ button.action-button[data-icon=source-term]::before {
     content: var(--disambiguation-prefix);
 }
 .term-definition-disambiguation-list::after {
-    content: var(--disambiguation-suffix) ' ';
+    content: var(--disambiguation-suffix);
 }
 .term-definition-disambiguation+.term-definition-disambiguation::before {
     content: var(--disambiguation-separator);
@@ -1088,7 +1091,7 @@ button.action-button[data-icon=source-term]::before {
 }
 .frequency-disambiguation {
     color: var(--text-color-light3);
-    padding-right: 0.25em;
+    padding-right: var(--disambiguation-space);
 }
 .frequency-disambiguation-separator::before {
     content: var(--disambiguation-reading-separator);
@@ -1312,8 +1315,8 @@ button.action-button[data-icon=source-term]::before {
     margin-right: 0.375em;
 }
 .term-pitch-accent-disambiguation-list {
-    padding-right: 0.25em;
     color: var(--text-color-light3);
+    padding-right: var(--disambiguation-space);
 }
 .term-pitch-accent-disambiguation-list::before {
     content: var(--disambiguation-prefix);
