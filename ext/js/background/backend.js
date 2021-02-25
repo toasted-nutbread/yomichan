@@ -457,9 +457,10 @@ class Backend {
         for (let i = 0; i < notes.length; ++i) {
             const note = notes[i];
             const canAdd = canAddArray[i];
-            const info = {canAdd, noteIds: null};
+            const valid = true;
+            const info = {canAdd, valid, noteIds: null};
             results.push(info);
-            if (!canAdd) {
+            if (!canAdd && valid) {
                 cannotAdd.push({note, info});
             }
         }
