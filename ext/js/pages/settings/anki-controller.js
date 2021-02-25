@@ -17,7 +17,6 @@
 
 /* global
  * AnkiConnect
- * AnkiNoteBuilder
  * AnkiUtil
  * ObjectPropertyAccessor
  * SelectorObserver
