@@ -20,6 +20,9 @@
     /* Strings */
     --compact-list-separator: ' | ';
 
+    --disambiguation-prefix: '(';
+    --disambiguation-suffix: ' only)';
+
     /* Layout */
     --font-size-no-units: 14;
     --font-size: calc(1px * var(--font-size-no-units));
@@ -1052,10 +1055,10 @@ button.action-button[data-icon=source-term]::before {
     display: none;
 }
 .term-definition-disambiguation-list::before {
-    content: '(';
+    content: var(--disambiguation-prefix);
 }
 .term-definition-disambiguation-list::after {
-    content: ' only) ';
+    content: var(--disambiguation-suffix) ' ';
 }
 .term-definition-disambiguation+.term-definition-disambiguation::before {
     content: ', ';
@@ -1089,10 +1092,10 @@ button.action-button[data-icon=source-term]::before {
     content: ':';
 }
 .frequency-disambiguation::before {
-    content: '(';
+    content: var(--disambiguation-prefix);
 }
 .frequency-disambiguation::after {
-    content: ' only)';
+    content: var(--disambiguation-suffix);
 }
 .frequency-disambiguation-reading {
     display: inline;
@@ -1311,10 +1314,10 @@ button.action-button[data-icon=source-term]::before {
     color: var(--text-color-light3);
 }
 .term-pitch-accent-disambiguation-list::before {
-    content: '(';
+    content: var(--disambiguation-prefix);
 }
 .term-pitch-accent-disambiguation-list::after {
-    content: ' only)';
+    content: var(--disambiguation-suffix);
 }
 .term-pitch-accent-disambiguation+.term-pitch-accent-disambiguation::before {
     content: ', ';
