@@ -22,6 +22,8 @@
 
     --disambiguation-prefix: '(';
     --disambiguation-suffix: ' only)';
+    --disambiguation-separator: ', ';
+    --disambiguation-reading-separator: ':';
 
     /* Layout */
     --font-size-no-units: 14;
@@ -1061,7 +1063,7 @@ button.action-button[data-icon=source-term]::before {
     content: var(--disambiguation-suffix) ' ';
 }
 .term-definition-disambiguation+.term-definition-disambiguation::before {
-    content: ', ';
+    content: var(--disambiguation-separator);
 }
 .term-glossary-separator,
 .term-reason-separator {
@@ -1089,7 +1091,7 @@ button.action-button[data-icon=source-term]::before {
     padding-right: 0.25em;
 }
 .frequency-disambiguation-separator::before {
-    content: ':';
+    content: var(--disambiguation-reading-separator);
 }
 .frequency-disambiguation::before {
     content: var(--disambiguation-prefix);
@@ -1320,7 +1322,7 @@ button.action-button[data-icon=source-term]::before {
     content: var(--disambiguation-suffix);
 }
 .term-pitch-accent-disambiguation+.term-pitch-accent-disambiguation::before {
-    content: ', ';
+    content: var(--disambiguation-separator);
 }
 .term-pitch-accent-disambiguation-list[data-count='0'] {
     display: none;
