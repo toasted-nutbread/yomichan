@@ -457,8 +457,9 @@ class Backend {
 
         for (let i = 0; i < notes.length; ++i) {
             const note = notes[i];
-            const canAdd = canAddArray[i];
+            let canAdd = canAddArray[i];
             const valid = AnkiUtil.isNoteDataValid(note);
+            if (!valid) { canAdd = false; }
             const info = {canAdd, valid, noteIds: null};
             results.push(info);
             if (!canAdd && valid) {
