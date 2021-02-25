@@ -72,6 +72,15 @@ class AnkiUtil {
         }
         return false;
     }
+
+    /**
+     * Returns a regular expression which can be used to find markers in a string.
+     * @param global Whether or not the regular expression should have the global flag.
+     * @returns A new `RegExp` instance.
+     */
+    static cloneFieldMarkerPattern(global) {
+        return new RegExp(this._markerPattern.source, global ? 'g' : '');
+    }
 }
 
 // eslint-disable-next-line no-underscore-dangle

@@ -22,7 +22,7 @@
 
 class AnkiNoteBuilder {
     constructor() {
-        this._markerPattern = /\{([\w-]+)\}/g;
+        this._markerPattern = AnkiUtil.cloneFieldMarkerPattern(true);
         this._templateRenderer = new TemplateRendererProxy();
     }
 
