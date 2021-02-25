@@ -56,6 +56,22 @@ class AnkiUtil {
         }
         return markers;
     }
+
+    /**
+     * Checks whether an object of key-value pairs has a value which contains a specific marker.
+     * @param fieldsObject An object with key-value pairs, where the value corresponds to the field value.
+     * @param marker The marker string to check for, excluding brackets.
+     * @returns `true` if any of the fields contains the marker, `false` otherwise.
+     */
+    static fieldsObjectContainsMarker(fieldsObject, marker) {
+        marker = `{${marker}}`;
+        for (const [, fieldValue] of fieldsObject) {
+            if (fieldValue.includes(marker)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
 // eslint-disable-next-line no-underscore-dangle

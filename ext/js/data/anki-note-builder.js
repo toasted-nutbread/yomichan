@@ -90,16 +90,6 @@ class AnkiNoteBuilder {
         };
     }
 
-    containsMarker(fields, marker) {
-        marker = `{${marker}}`;
-        for (const [, fieldValue] of fields) {
-            if (fieldValue.includes(marker)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     // Private
 
     async _formatField(field, data, templates, errors=null) {
