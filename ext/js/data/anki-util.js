@@ -29,4 +29,18 @@ class AnkiUtil {
         const index = deckName.indexOf('::');
         return index >= 0 ? deckName.substring(0, index) : deckName;
     }
+
+    /**
+     * Checks whether or not any marker is contained in a string.
+     * @param string A string to check.
+     * @return `true` if the text contains an Anki field marker, `false` otherwise.
+     */
+    static stringContainsAnyFieldMarker(string) {
+        const result = this._markerPattern.test(string);
+        this._markerPattern.lastIndex = 0;
+        return result;
+    }
 }
+
+// eslint-disable-next-line no-underscore-dangle
+AnkiUtil._markerPattern = /\{([\w-]+)\}/g;

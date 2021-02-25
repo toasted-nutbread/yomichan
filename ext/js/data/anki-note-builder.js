@@ -100,12 +100,6 @@ class AnkiNoteBuilder {
         return false;
     }
 
-    containsAnyMarker(field) {
-        const result = this._markerPattern.test(field);
-        this._markerPattern.lastIndex = 0;
-        return result;
-    }
-
     // Private
 
     async _formatField(field, data, templates, errors=null) {

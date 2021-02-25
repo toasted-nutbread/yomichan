@@ -18,6 +18,7 @@
 /* global
  * AnkiConnect
  * AnkiNoteBuilder
+ * AnkiUtil
  * ObjectPropertyAccessor
  * SelectorObserver
  */
@@ -26,7 +27,6 @@ class AnkiController {
     constructor(settingsController) {
         this._settingsController = settingsController;
         this._ankiConnect = new AnkiConnect();
-        this._ankiNoteBuilder = new AnkiNoteBuilder(false);
         this._selectorObserver = new SelectorObserver({
             selector: '.anki-card',
             ignoreSelector: null,
@@ -154,10 +154,6 @@ class AnkiController {
 
     getRequiredPermissions(fieldValue) {
         return this._settingsController.permissionsUtil.getRequiredPermissionsForAnkiFieldValue(fieldValue);
-    }
-
-    containsAnyMarker(field) {
-        return this._ankiNoteBuilder.containsAnyMarker(field);
     }
 
     // Private
@@ -439,7 +435,7 @@ class AnkiCardController {
 
     _validateField(node, index) {
         let valid = (node.dataset.hasPermissions !== 'false');
-        if (valid && index === 0 && !this._ankiController.containsAnyMarker(node.value)) {
+        if (valid && index === 0 && !AnkiUtil.stringContainsAnyFieldMarker(node.value)) {
             valid = false;
         }
         node.dataset.invalid = `${!valid}`;
