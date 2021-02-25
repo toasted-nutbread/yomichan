@@ -16,6 +16,7 @@
  */
 
 /* global
+ * AnkiUtil
  * TemplateRendererProxy
  */
 
@@ -46,7 +47,7 @@ class AnkiNoteBuilder {
         let duplicateScopeCheckChildren = false;
         if (duplicateScope === 'deck-root') {
             duplicateScope = 'deck';
-            duplicateScopeDeckName = this.getRootDeckName(deckName);
+            duplicateScopeDeckName = AnkiUtil.getRootDeckName(deckName);
             duplicateScopeCheckChildren = true;
         }
 
@@ -103,11 +104,6 @@ class AnkiNoteBuilder {
         const result = this._markerPattern.test(field);
         this._markerPattern.lastIndex = 0;
         return result;
-    }
-
-    getRootDeckName(deckName) {
-        const index = deckName.indexOf('::');
-        return index >= 0 ? deckName.substring(0, index) : deckName;
     }
 
     // Private
