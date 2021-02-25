@@ -40,6 +40,22 @@ class AnkiUtil {
         this._markerPattern.lastIndex = 0;
         return result;
     }
+
+    /**
+     * Gets a list of all markers that are contained in a string.
+     * @param string A string to check.
+     * @return An array of marker strings.
+     */
+    static getFieldMarkers(string) {
+        const pattern = this._markerPattern;
+        const markers = [];
+        while (true) {
+            const match = pattern.exec(string);
+            if (match === null) { break; }
+            markers.push(match[1]);
+        }
+        return markers;
+    }
 }
 
 // eslint-disable-next-line no-underscore-dangle
