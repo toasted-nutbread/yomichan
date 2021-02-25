@@ -17,6 +17,9 @@
 
 /* Variables */
 :root {
+    /* Strings */
+    --compact-list-separator: ' | ';
+
     /* Layout */
     --font-size-no-units: 14;
     --font-size: calc(1px * var(--font-size-no-units));
@@ -71,7 +74,6 @@
     --tag-font-weight: bold;
     --tag-border-radius: 0.25em;
 
-    --compact-list-separator: ' | ';
     --list-padding1: 1.4em;
     --list-padding2: var(--list-padding1);
 
