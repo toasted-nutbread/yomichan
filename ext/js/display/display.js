@@ -86,7 +86,7 @@ class Display extends EventDispatcher {
         });
         this._ankiFieldTemplates = null;
         this._ankiFieldTemplatesDefault = null;
-        this._ankiNoteBuilder = new AnkiNoteBuilder(true);
+        this._ankiNoteBuilder = new AnkiNoteBuilder();
         this._updateAdderButtonsPromise = Promise.resolve();
         this._contentScrollElement = document.querySelector('#content-scroll');
         this._contentScrollBodyElement = document.querySelector('#content-body');

@@ -21,9 +21,9 @@
  */
 
 class AnkiNoteBuilder {
-    constructor(enabled) {
+    constructor() {
         this._markerPattern = /\{([\w-]+)\}/g;
-        this._templateRenderer = enabled ? new TemplateRendererProxy() : null;
+        this._templateRenderer = new TemplateRendererProxy();
     }
 
     async createNote({
