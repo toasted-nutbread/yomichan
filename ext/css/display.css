@@ -859,9 +859,6 @@ button.action-button[data-icon=source-term]::before {
 .expression-tag-list {
     display: none;
 }
-.expression-details>.frequencies {
-    display: none;
-}
 .expression-list-details {
     display: inline;
 }
