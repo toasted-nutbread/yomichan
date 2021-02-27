@@ -32,19 +32,21 @@
     --font-size: calc(1px * var(--font-size-no-units));
     --query-parser-font-size-no-units: 2;
     --query-parser-font-size: calc(1em * var(--query-parser-font-size-no-units));
+    --h2-font-size-no-units: 1.25;
+    --h2-font-size: calc(1em * var(--h2-font-size-no-units));
+
     --expression-font-size-no-units: 2;
     --expression-font-size: calc(1em * var(--expression-font-size-no-units));
     --expression-reading-font-size-scale: 0.75;
     --expression-reading-font-size: calc(var(--expression-reading-font-size-scale) * var(--expression-font-size));
     --expression-reading-space: 0.5em;
-    --h2-font-size-no-units: 1.25;
-    --h2-font-size: calc(1em * var(--h2-font-size-no-units));
+    --expression-space-size: 0.5em;
+    --expression-thin-border-size: calc(1em / (var(--expression-font-size-no-units) * var(--font-size-no-units)));
 
     --line-height-no-units: 20;
     --line-height: calc(var(--line-height-no-units) / var(--font-size-no-units));
 
     --thin-border-size: calc(1em / var(--font-size-no-units));
-    --expression-thin-border-size: calc(1em / (var(--expression-font-size-no-units) * var(--font-size-no-units)));
 
     --action-button-size-no-units: 16;
     --action-button-size: calc(1em * (var(--action-button-size-no-units) / var(--font-size-no-units)));
@@ -73,8 +75,6 @@
     --entry-current-indicator-width-no-units: 4;
     --entry-current-indicator-width: calc(1em * var(--entry-current-indicator-width-no-units) / var(--font-size-no-units));
     --entry-current-indicator-transition-duration: 0.125s;
-
-    --expression-space-size: 0.5em;
 
     --tag-font-size-no-units: 11;
     --tag-font-size: calc(1em * var(--tag-font-size-no-units) / var(--font-size-no-units));
