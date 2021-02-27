@@ -54,7 +54,7 @@ class DisplayGenerator {
         const node = this._templates.instantiate('term-entry');
 
         const expressionsContainer = node.querySelector('.expression-list');
-        const reasonsContainer = node.querySelector('.term-reasons');
+        const reasonsContainer = node.querySelector('.inflection-list');
         const pitchesContainer = node.querySelector('.pitch-accent-group-list');
         const frequencyGroupListContainer = node.querySelector('.frequency-group-list');
         const definitionsContainer = node.querySelector('.term-definition-list');
@@ -253,8 +253,8 @@ class DisplayGenerator {
     }
 
     _createTermReason(reason) {
-        const fragment = this._templates.instantiateFragment('term-reason');
-        const node = fragment.querySelector('.term-reason');
+        const fragment = this._templates.instantiateFragment('inflection');
+        const node = fragment.querySelector('.inflection');
         this._setTextContent(node, reason);
         node.dataset.reason = reason;
         return fragment;
