@@ -789,10 +789,6 @@ button.action-button[data-icon=source-term]::before {
     padding: var(--entry-vertical-padding) var(--entry-horizontal-padding);
     position: relative;
 }
-.entry-header2,
-.entry-header3 {
-    display: inline;
-}
 .entry+.entry {
     border-top: var(--thin-border-size) solid var(--light-border-color);
 }
