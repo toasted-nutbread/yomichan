@@ -105,10 +105,10 @@
     --text-color: #000000;
     --reason-text-color: var(--text-color-light3);
 
-    --kanji-text-color: var(--text-color);
-    --kanji-popular-text-color: var(--accent-color);
-    --kanji-rare-text-color: var(--text-color-light4);
-    --kanji-furigana-text-color: inherit;
+    --expression-text-color: var(--text-color);
+    --expression-text-color-popular: var(--accent-color);
+    --expression-text-color-rare: var(--text-color-light4);
+    --expression-furigana-text-color: inherit;
     --expression-kanji-border-color: var(--dark-border-color);
 
     --light-border-color: #eeeeee;
@@ -170,10 +170,10 @@
     --text-color: #d4d4d4;
     --reason-text-color: var(--text-color-light3);
 
-    --kanji-text-color: var(--text-color);
-    --kanji-popular-text-color: var(--accent-color);
-    --kanji-rare-text-color: var(--text-color-light4);
-    --kanji-furigana-text-color: inherit;
+    --expression-text-color: var(--text-color);
+    --expression-text-color-popular: var(--accent-color);
+    --expression-text-color-rare: var(--text-color-light4);
+    --expression-furigana-text-color: inherit;
     --expression-kanji-border-color: var(--dark-border-color);
 
     --light-border-color: #2f2f2f;
@@ -791,7 +791,7 @@ button.action-button[data-icon=source-term]::before {
 }
 .kanji-link {
     border-bottom: var(--expression-thin-border-size) dashed var(--expression-kanji-border-color);
-    color: var(--kanji-text-color);
+    color: var(--expression-text-color);
     text-decoration: none;
     cursor: pointer;
 }
@@ -810,11 +810,11 @@ button.action-button[data-icon=source-term]::before {
     margin-left: var(--expression-reading-space);
 }
 .term-expression-text {
-    color: var(--kanji-text-color);
+    color: var(--expression-text-color);
     font-size: var(--expression-font-size);
 }
 .term-expression-reading {
-    color: var(--kanji-text-color);
+    color: var(--expression-text-color);
     font-size: var(--expression-reading-font-size);
 }
 .term-expression-list>.term-expression:not(:last-of-type)>.term-expression-text-container>.term-expression-text-outer::after {
@@ -828,15 +828,15 @@ button.action-button[data-icon=source-term]::before {
 .entry[data-expression-multi=true] .term-expression[data-frequency=popular] .term-expression-text,
 .entry[data-expression-multi=true] .term-expression[data-frequency=popular] .term-expression-reading,
 .entry[data-expression-multi=true] .term-expression[data-frequency=popular] .kanji-link {
-    color: var(--kanji-popular-text-color);
+    color: var(--expression-text-color-popular);
 }
 .entry[data-expression-multi=true] .term-expression[data-frequency=rare] .term-expression-text,
 .entry[data-expression-multi=true] .term-expression[data-frequency=rare] .term-expression-reading,
 .entry[data-expression-multi=true] .term-expression[data-frequency=rare] .kanji-link {
-    color: var(--kanji-rare-text-color);
+    color: var(--expression-text-color-rare);
 }
 .term-expression-text>ruby>rt {
-    color: var(--kanji-furigana-text-color);
+    color: var(--expression-furigana-text-color);
 }
 .entry-header2,
 .entry-header3 {
