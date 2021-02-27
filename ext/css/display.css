@@ -814,7 +814,7 @@ button.action-button[data-icon=source-term]::before {
 
 
 /* Expressions */
-.kanji-link {
+.expression-kanji-link {
     border-bottom: var(--expression-thin-border-size) dashed var(--expression-kanji-border-color);
     color: var(--expression-text-color);
     text-decoration: none;
@@ -877,12 +877,12 @@ button.action-button[data-icon=source-term]::before {
 }
 .entry[data-expression-multi=true] .expression[data-frequency=popular] .expression-text,
 .entry[data-expression-multi=true] .expression[data-frequency=popular] .expression-reading,
-.entry[data-expression-multi=true] .expression[data-frequency=popular] .kanji-link {
+.entry[data-expression-multi=true] .expression[data-frequency=popular] .expression-kanji-link {
     color: var(--expression-text-color-popular);
 }
 .entry[data-expression-multi=true] .expression[data-frequency=rare] .expression-text,
 .entry[data-expression-multi=true] .expression[data-frequency=rare] .expression-reading,
-.entry[data-expression-multi=true] .expression[data-frequency=rare] .kanji-link {
+.entry[data-expression-multi=true] .expression[data-frequency=rare] .expression-kanji-link {
     color: var(--expression-text-color-rare);
 }
 .entry[data-expression-multi=true] .expression-list-details {
