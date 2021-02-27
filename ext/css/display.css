@@ -1068,13 +1068,13 @@ button.action-button[data-icon=source-term]::before {
 
 
 /* Definitions */
-.term-definition-list {
+.definition-list {
     margin: 0;
     padding: 0 0 0 var(--list-padding1);
     list-style-type: decimal;
 }
-.term-definition-list[data-count='0'],
-.term-definition-list[data-count='1'] {
+.definition-list[data-count='0'],
+.definition-list[data-count='1'] {
     padding-left: 0;
     list-style-type: none;
 }
@@ -1088,27 +1088,27 @@ button.action-button[data-icon=source-term]::before {
     padding-left: 0;
     list-style-type: none;
 }
-.term-definition-item::marker,
+.definition-item::marker,
 .glossary-item::marker {
     color: var(--text-color-light3);
 }
 .glossary {
     white-space: pre-line;
 }
-.term-definition-disambiguation-list {
+.definition-disambiguation-list {
     color: var(--text-color-light3);
     padding-right: var(--disambiguation-space);
 }
-.term-definition-disambiguation-list[data-count='0'] {
+.definition-disambiguation-list[data-count='0'] {
     display: none;
 }
-.term-definition-disambiguation-list::before {
+.definition-disambiguation-list::before {
     content: var(--disambiguation-prefix);
 }
-.term-definition-disambiguation-list::after {
+.definition-disambiguation-list::after {
     content: var(--disambiguation-suffix);
 }
-.term-definition-disambiguation+.term-definition-disambiguation::before {
+.definition-disambiguation+.definition-disambiguation::before {
     content: var(--disambiguation-separator);
 }
 .glossary-separator,
@@ -1954,8 +1954,8 @@ button.footer-notification-close-button {
 :root[data-audio-enabled=false] .action-play-audio {
     display: none;
 }
-:root[data-glossary-layout-mode=compact] .term-definition-tag-list,
-:root[data-glossary-layout-mode=compact] .term-definition-disambiguation-list:not([data-count='0']) {
+:root[data-glossary-layout-mode=compact] .definition-tag-list,
+:root[data-glossary-layout-mode=compact] .definition-disambiguation-list:not([data-count='0']) {
     display: inline;
 }
 :root[data-glossary-layout-mode=compact] .glossary-list {

@@ -57,7 +57,7 @@ class DisplayGenerator {
         const reasonsContainer = node.querySelector('.inflection-list');
         const pitchesContainer = node.querySelector('.pitch-accent-group-list');
         const frequencyGroupListContainer = node.querySelector('.frequency-group-list');
-        const definitionsContainer = node.querySelector('.term-definition-list');
+        const definitionsContainer = node.querySelector('.definition-list');
         const termTagsContainer = node.querySelector('.expression-list-tag-list');
 
         const {expressions, type, reasons, frequencies} = details;
@@ -261,10 +261,10 @@ class DisplayGenerator {
     }
 
     _createTermDefinitionItem(details, dictionaryTag) {
-        const node = this._templates.instantiate('term-definition-item');
+        const node = this._templates.instantiate('definition-item');
 
-        const tagListContainer = node.querySelector('.term-definition-tag-list');
-        const onlyListContainer = node.querySelector('.term-definition-disambiguation-list');
+        const tagListContainer = node.querySelector('.definition-tag-list');
+        const onlyListContainer = node.querySelector('.definition-disambiguation-list');
         const glossaryContainer = node.querySelector('.glossary-list');
 
         const {dictionary, definitionTags} = details;
@@ -360,7 +360,7 @@ class DisplayGenerator {
     }
 
     _createTermDisambiguation(disambiguation) {
-        const node = this._templates.instantiate('term-definition-disambiguation');
+        const node = this._templates.instantiate('definition-disambiguation');
         node.dataset.term = disambiguation;
         this._setTextContent(node, disambiguation, 'ja');
         return node;
