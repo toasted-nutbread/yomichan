@@ -108,8 +108,12 @@
     --expression-text-color: var(--text-color);
     --expression-text-color-popular: var(--accent-color);
     --expression-text-color-rare: var(--text-color-light4);
-    --expression-furigana-text-color: inherit;
+    --expression-furigana-text-color: var(--expression-text-color);
+    --expression-furigana-text-color-popular: var(--expression-text-color-popular);
+    --expression-furigana-text-color-rare: var(--expression-text-color-rare);
     --expression-reading-text-color: var(--expression-furigana-text-color);
+    --expression-reading-text-color-popular: var(--expression-furigana-text-color-popular);
+    --expression-reading-text-color-rare: var(--expression-furigana-text-color-rare);
     --expression-kanji-border-color: var(--dark-border-color);
 
     --light-border-color: #eeeeee;
@@ -174,8 +178,12 @@
     --expression-text-color: var(--text-color);
     --expression-text-color-popular: var(--accent-color);
     --expression-text-color-rare: var(--text-color-light4);
-    --expression-furigana-text-color: inherit;
+    --expression-furigana-text-color: var(--expression-text-color);
+    --expression-furigana-text-color-popular: var(--expression-text-color-popular);
+    --expression-furigana-text-color-rare: var(--expression-text-color-rare);
     --expression-reading-text-color: var(--expression-furigana-text-color);
+    --expression-reading-text-color-popular: var(--expression-furigana-text-color-popular);
+    --expression-reading-text-color-rare: var(--expression-furigana-text-color-rare);
     --expression-kanji-border-color: var(--dark-border-color);
 
     --light-border-color: #2f2f2f;
@@ -835,9 +843,15 @@ button.action-button[data-icon=source-term]::before {
 }
 .entry[data-expression-multi=true] .expression[data-frequency=popular] {
     --expression-current-text-color: var(--expression-text-color-popular);
+    --expression-current-kanji-text-color: var(--expression-current-text-color-popular);
+    --expression-current-reading-text-color: var(--expression-reading-text-color-popular);
+    --expression-current-furigana-text-color: var(--expression-furigana-text-color-popular);
 }
 .entry[data-expression-multi=true] .expression[data-frequency=rare] {
     --expression-current-text-color: var(--expression-text-color-rare);
+    --expression-current-kanji-text-color: var(--expression-current-text-color-rare);
+    --expression-current-reading-text-color: var(--expression-reading-text-color-rare);
+    --expression-current-furigana-text-color: var(--expression-furigana-text-color-rare);
 }
 .expression-details {
     display: inline;
