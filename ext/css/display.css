@@ -109,7 +109,7 @@
     --kanji-popular-text-color: var(--accent-color);
     --kanji-rare-text-color: var(--text-color-light4);
     --kanji-furigana-text-color: inherit;
-    --kanji-border-color: var(--dark-border-color);
+    --expression-kanji-border-color: var(--dark-border-color);
 
     --light-border-color: #eeeeee;
     --medium-border-color: #dddddd;
@@ -174,7 +174,7 @@
     --kanji-popular-text-color: var(--accent-color);
     --kanji-rare-text-color: var(--text-color-light4);
     --kanji-furigana-text-color: inherit;
-    --kanji-border-color: var(--dark-border-color);
+    --expression-kanji-border-color: var(--dark-border-color);
 
     --light-border-color: #2f2f2f;
     --medium-border-color: #3f3f3f;
@@ -790,7 +790,7 @@ button.action-button[data-icon=source-term]::before {
     position: relative;
 }
 .kanji-link {
-    border-bottom: var(--expression-thin-border-size) dashed var(--kanji-border-color);
+    border-bottom: var(--expression-thin-border-size) dashed var(--expression-kanji-border-color);
     color: var(--kanji-text-color);
     text-decoration: none;
     cursor: pointer;
