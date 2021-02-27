@@ -867,7 +867,7 @@ button.action-button[data-icon=source-term]::before {
 .expression-details {
     display: inline;
 }
-.expression-details>.tags {
+.expression-tag-list {
     display: none;
 }
 .expression-details>.frequencies {
@@ -876,7 +876,7 @@ button.action-button[data-icon=source-term]::before {
 .expression-list-details {
     display: inline;
 }
-.term-tags {
+.expression-list-tag-list {
     display: inline;
 }
 .entry[data-expression-multi=true] .expression-list-details {
@@ -1055,14 +1055,14 @@ button.action-button[data-icon=source-term]::before {
 .entry:not([data-expression-multi=true]) .expression-list .expression-details>.action-play-audio {
     display: none;
 }
-.entry[data-expression-multi=true] .expression-list .expression-details>.tags {
+.entry[data-expression-multi=true] .expression-list .expression-tag-list {
     display: block;
     position: absolute;
     left: 0;
     bottom: -0.5em;
     white-space: nowrap;
 }
-.entry[data-type=term][data-expression-multi=true] .term-tags>.tag[data-category=search] {
+.entry[data-type=term][data-expression-multi=true] .expression-list-tag-list>.tag[data-category=search] {
     display: none;
 }
 

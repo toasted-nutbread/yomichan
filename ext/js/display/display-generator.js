@@ -58,7 +58,7 @@ class DisplayGenerator {
         const pitchesContainer = node.querySelector('.pitch-accent-group-list');
         const frequencyGroupListContainer = node.querySelector('.frequency-group-list');
         const definitionsContainer = node.querySelector('.term-definition-list');
-        const termTagsContainer = node.querySelector('.term-tags');
+        const termTagsContainer = node.querySelector('.expression-list-tag-list');
 
         const {expressions, type, reasons, frequencies} = details;
         const definitions = (type === 'term' ? [details] : details.definitions);
@@ -129,7 +129,7 @@ class DisplayGenerator {
 
         const glyphContainer = node.querySelector('.kanji-glyph');
         const frequencyGroupListContainer = node.querySelector('.frequency-group-list');
-        const tagContainer = node.querySelector('.tags');
+        const tagContainer = node.querySelector('.kanji-tag-list');
         const glossaryContainer = node.querySelector('.kanji-glossary-list');
         const chineseReadingsContainer = node.querySelector('.kanji-readings-chinese');
         const japaneseReadingsContainer = node.querySelector('.kanji-readings-japanese');
@@ -238,7 +238,7 @@ class DisplayGenerator {
         const node = this._templates.instantiate('expression');
 
         const expressionContainer = node.querySelector('.expression-text');
-        const tagContainer = node.querySelector('.tags');
+        const tagContainer = node.querySelector('.expression-tag-list');
 
         node.dataset.readingIsSame = `${!reading || reading === expression}`;
         node.dataset.frequency = termFrequency;
