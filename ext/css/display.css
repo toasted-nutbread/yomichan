@@ -37,8 +37,8 @@
 
     --expression-font-size-no-units: 2;
     --expression-font-size: calc(1em * var(--expression-font-size-no-units));
-    --expression-reading-font-size-scale: 0.75;
-    --expression-reading-font-size: calc(var(--expression-reading-font-size-scale) * var(--expression-font-size));
+    --expression-reading-font-size-no-units: 0.75;
+    --expression-reading-font-size: calc(var(--expression-reading-font-size-no-units) * var(--expression-font-size));
     --expression-reading-space: 0.5em;
     --expression-space-size: 0.5em;
     --expression-thin-border-size: calc(1em / (var(--expression-font-size-no-units) * var(--font-size-no-units)));
