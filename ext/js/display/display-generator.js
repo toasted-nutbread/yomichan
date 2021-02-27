@@ -265,7 +265,7 @@ class DisplayGenerator {
 
         const tagListContainer = node.querySelector('.term-definition-tag-list');
         const onlyListContainer = node.querySelector('.term-definition-disambiguation-list');
-        const glossaryContainer = node.querySelector('.term-glossary-list');
+        const glossaryContainer = node.querySelector('.glossary-list');
 
         const {dictionary, definitionTags} = details;
         node.dataset.dictionary = dictionary;
@@ -291,8 +291,8 @@ class DisplayGenerator {
     }
 
     _createTermGlossaryItemText(glossary) {
-        const node = this._templates.instantiate('term-glossary-item');
-        const container = node.querySelector('.term-glossary');
+        const node = this._templates.instantiate('glossary-item');
+        const container = node.querySelector('.glossary');
         this._setTextContent(container, glossary);
         return node;
     }
@@ -312,22 +312,22 @@ class DisplayGenerator {
             width / height
         );
 
-        const node = this._templates.instantiate('term-glossary-item-image');
+        const node = this._templates.instantiate('glossary-item-image');
         node.dataset.path = path;
         node.dataset.dictionary = dictionary;
         node.dataset.imageLoadState = 'not-loaded';
 
-        const imageContainer = node.querySelector('.term-glossary-image-container');
+        const imageContainer = node.querySelector('.glossary-image-container');
         imageContainer.style.width = `${usedWidth}em`;
         if (typeof title === 'string') {
             imageContainer.title = title;
         }
 
-        const aspectRatioSizer = node.querySelector('.term-glossary-image-aspect-ratio-sizer');
+        const aspectRatioSizer = node.querySelector('.glossary-image-aspect-ratio-sizer');
         aspectRatioSizer.style.paddingTop = `${aspectRatio * 100.0}%`;
 
-        const image = node.querySelector('img.term-glossary-image');
-        const imageLink = node.querySelector('.term-glossary-image-link');
+        const image = node.querySelector('img.glossary-image');
+        const imageLink = node.querySelector('.glossary-image-link');
         image.dataset.pixelated = `${pixelated === true}`;
 
         if (this._mediaLoader !== null) {
@@ -340,7 +340,7 @@ class DisplayGenerator {
         }
 
         if (typeof description === 'string') {
-            const container = node.querySelector('.term-glossary-image-description');
+            const container = node.querySelector('.glossary-image-description');
             this._setTextContent(container, description);
         }
 
