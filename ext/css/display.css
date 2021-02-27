@@ -103,16 +103,17 @@
     --link-color: var(--accent-color);
 
     --text-color: #000000;
+    --reason-text-color: var(--text-color-light3);
+
     --kanji-text-color: var(--text-color);
     --kanji-popular-text-color: var(--accent-color);
     --kanji-rare-text-color: var(--text-color-light4);
     --kanji-furigana-text-color: inherit;
-    --reason-text-color: var(--text-color-light3);
+    --kanji-border-color: var(--dark-border-color);
 
     --light-border-color: #eeeeee;
     --medium-border-color: #dddddd;
     --dark-border-color: #777777;
-    --kanji-border-color: var(--dark-border-color);
 
     --pitch-accent-annotation-color: #000000;
 
@@ -167,16 +168,17 @@
     --link-color: var(--accent-color);
 
     --text-color: #d4d4d4;
+    --reason-text-color: var(--text-color-light3);
+
     --kanji-text-color: var(--text-color);
     --kanji-popular-text-color: var(--accent-color);
     --kanji-rare-text-color: var(--text-color-light4);
     --kanji-furigana-text-color: inherit;
-    --reason-text-color: var(--text-color-light3);
+    --kanji-border-color: var(--dark-border-color);
 
     --light-border-color: #2f2f2f;
     --medium-border-color: #3f3f3f;
     --dark-border-color: #888888;
-    --kanji-border-color: var(--dark-border-color);
 
     --pitch-accent-annotation-color: #ffffff;
 
