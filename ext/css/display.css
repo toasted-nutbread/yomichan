@@ -795,47 +795,47 @@ button.action-button[data-icon=source-term]::before {
     text-decoration: none;
     cursor: pointer;
 }
-.term-expression-text-container {
+.expression-text-container {
     display: inline-block;
     margin-left: calc(-1 * var(--expression-reading-space));
 }
-.term-expression-text-outer {
+.expression-text-outer {
     display: inline-block;
     position: relative;
     margin-left: var(--expression-reading-space);
 }
-.term-expression-reading-outer {
+.expression-reading-outer {
     display: none;
     position: relative;
     margin-left: var(--expression-reading-space);
 }
-.term-expression-text {
+.expression-text {
     color: var(--expression-text-color);
     font-size: var(--expression-font-size);
 }
-.term-expression-reading {
+.expression-reading {
     color: var(--expression-text-color);
     font-size: var(--expression-reading-font-size);
 }
-.term-expression-list>.term-expression:not(:last-of-type)>.term-expression-text-container>.term-expression-text-outer::after {
+.expression-list>.expression:not(:last-of-type)>.expression-text-container>.expression-text-outer::after {
     content: var(--expression-separator);
     font-size: var(--expression-font-size);
 }
-.term-expression-list>.term-expression:not(:last-of-type)>.term-expression-text-container>.term-expression-reading-outer::after {
+.expression-list>.expression:not(:last-of-type)>.expression-text-container>.expression-reading-outer::after {
     content: var(--expression-separator);
     font-size: var(--expression-reading-font-size);
 }
-.entry[data-expression-multi=true] .term-expression[data-frequency=popular] .term-expression-text,
-.entry[data-expression-multi=true] .term-expression[data-frequency=popular] .term-expression-reading,
-.entry[data-expression-multi=true] .term-expression[data-frequency=popular] .kanji-link {
+.entry[data-expression-multi=true] .expression[data-frequency=popular] .expression-text,
+.entry[data-expression-multi=true] .expression[data-frequency=popular] .expression-reading,
+.entry[data-expression-multi=true] .expression[data-frequency=popular] .kanji-link {
     color: var(--expression-text-color-popular);
 }
-.entry[data-expression-multi=true] .term-expression[data-frequency=rare] .term-expression-text,
-.entry[data-expression-multi=true] .term-expression[data-frequency=rare] .term-expression-reading,
-.entry[data-expression-multi=true] .term-expression[data-frequency=rare] .kanji-link {
+.entry[data-expression-multi=true] .expression[data-frequency=rare] .expression-text,
+.entry[data-expression-multi=true] .expression[data-frequency=rare] .expression-reading,
+.entry[data-expression-multi=true] .expression[data-frequency=rare] .kanji-link {
     color: var(--expression-text-color-rare);
 }
-.term-expression-text>ruby>rt {
+.expression-text>ruby>rt {
     color: var(--expression-furigana-text-color);
 }
 .entry-header2,
@@ -857,20 +857,20 @@ button.action-button[data-icon=source-term]::before {
     white-space: pre-wrap;
     display: inline;
 }
-.term-expression-list {
+.expression-list {
     display: inline;
     margin-right: var(--expression-list-end-space);
 }
-.term-expression {
+.expression {
     display: inline-block;
 }
-.term-expression-details {
+.expression-details {
     display: inline;
 }
-.term-expression-details>.tags {
+.expression-details>.tags {
     display: none;
 }
-.term-expression-details>.frequencies {
+.expression-details>.frequencies {
     display: none;
 }
 .term-details {
@@ -882,23 +882,23 @@ button.action-button[data-icon=source-term]::before {
 .entry[data-expression-multi=true] .term-details {
     display: block;
 }
-:root[data-term-display-mode=ruby-and-reading] .term-expression-text-outer::after,
-:root[data-term-display-mode=term-and-reading] .term-expression-text-outer::after {
+:root[data-term-display-mode=ruby-and-reading] .expression-text-outer::after,
+:root[data-term-display-mode=term-and-reading] .expression-text-outer::after {
     display: none;
 }
-:root[data-term-display-mode=ruby-and-reading] .term-expression-reading-outer,
-:root[data-term-display-mode=term-and-reading] .term-expression-reading-outer {
+:root[data-term-display-mode=ruby-and-reading] .expression-reading-outer,
+:root[data-term-display-mode=term-and-reading] .expression-reading-outer {
     display: inline-block;
 }
-:root[data-term-display-mode=ruby-and-reading] .term-expression[data-reading-is-same=true] .term-expression-text-outer::after,
-:root[data-term-display-mode=term-and-reading] .term-expression[data-reading-is-same=true] .term-expression-text-outer::after {
+:root[data-term-display-mode=ruby-and-reading] .expression[data-reading-is-same=true] .expression-text-outer::after,
+:root[data-term-display-mode=term-and-reading] .expression[data-reading-is-same=true] .expression-text-outer::after {
     display: inline-block;
 }
-:root[data-term-display-mode=ruby-and-reading] .term-expression[data-reading-is-same=true] .term-expression-reading-outer,
-:root[data-term-display-mode=term-and-reading] .term-expression[data-reading-is-same=true] .term-expression-reading-outer {
+:root[data-term-display-mode=ruby-and-reading] .expression[data-reading-is-same=true] .expression-reading-outer,
+:root[data-term-display-mode=term-and-reading] .expression[data-reading-is-same=true] .expression-reading-outer {
     display: none;
 }
-:root[data-term-display-mode=term-and-reading] .term-expression-text>ruby>rt {
+:root[data-term-display-mode=term-and-reading] .expression-text>ruby>rt {
     display: none;
 }
 
@@ -961,7 +961,7 @@ button.action-button[data-icon=source-term]::before {
 
 
 /* Triangle entry indicator */
-.term-expression-current-indicator {
+.expression-current-indicator {
     pointer-events: none;
     position: absolute;
     left: calc(-1 * var(--main-content-horizontal-padding));
@@ -973,17 +973,17 @@ button.action-button[data-icon=source-term]::before {
         opacity var(--entry-current-indicator-transition-duration) linear,
         visibility 0s linear var(--entry-current-indicator-transition-duration);
 }
-.term-expression-text .term-expression-current-indicator {
+.expression-text .expression-current-indicator {
     font-size: calc(1em / var(--expression-font-size-no-units));
 }
-.entry.entry-current .term-expression-current-indicator {
+.entry.entry-current .expression-current-indicator {
     opacity: 1;
     visibility: visible;
     transition:
         opacity var(--entry-current-indicator-transition-duration) linear,
         visibility 0s linear 0s;
 }
-.term-expression-current-indicator::after {
+.expression-current-indicator::after {
     content: '';
     display: block;
     position: absolute;
@@ -1003,8 +1003,8 @@ button.action-button[data-icon=source-term]::before {
     -webkit-mask-size: contain;
     -webkit-mask-image: url(/images/material-right-arrow.svg);
 }
-.term-expression:not(:first-of-type) .term-expression-current-indicator,
-:root:not([data-popup-current-indicator-mode=triangle]) .term-expression-current-indicator {
+.expression:not(:first-of-type) .expression-current-indicator,
+:root:not([data-popup-current-indicator-mode=triangle]) .expression-current-indicator {
     display: none;
     transition: none;
 }
@@ -1033,7 +1033,7 @@ button.action-button[data-icon=source-term]::before {
 
 
 /* Merged term styles */
-.entry[data-expression-multi=true] .term-expression-list .term-expression-details {
+.entry[data-expression-multi=true] .expression-list .expression-details {
     display: inline-block;
     position: relative;
     width: 0;
@@ -1041,21 +1041,21 @@ button.action-button[data-icon=source-term]::before {
     visibility: hidden;
     z-index: 1;
 }
-.entry[data-expression-multi=true] .term-expression-list>.term-expression:not(:last-of-type) .term-expression-details {
+.entry[data-expression-multi=true] .expression-list>.expression:not(:last-of-type) .expression-details {
     left: calc(-1 * var(--expression-font-size));
 }
-.entry[data-expression-multi=true] .term-expression:hover .term-expression-details {
+.entry[data-expression-multi=true] .expression:hover .expression-details {
     visibility: visible;
 }
-.entry[data-expression-multi=true] .term-expression-list .term-expression-details>.action-play-audio {
+.entry[data-expression-multi=true] .expression-list .expression-details>.action-play-audio {
     position: absolute;
     left: 0;
     bottom: 0.5em;
 }
-.entry:not([data-expression-multi=true]) .term-expression-list .term-expression-details>.action-play-audio {
+.entry:not([data-expression-multi=true]) .expression-list .expression-details>.action-play-audio {
     display: none;
 }
-.entry[data-expression-multi=true] .term-expression-list .term-expression-details>.tags {
+.entry[data-expression-multi=true] .expression-list .expression-details>.tags {
     display: block;
     position: absolute;
     left: 0;

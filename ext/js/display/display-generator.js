@@ -53,7 +53,7 @@ class DisplayGenerator {
     createTermEntry(details) {
         const node = this._templates.instantiate('term-entry');
 
-        const expressionsContainer = node.querySelector('.term-expression-list');
+        const expressionsContainer = node.querySelector('.expression-list');
         const reasonsContainer = node.querySelector('.term-reasons');
         const pitchesContainer = node.querySelector('.term-pitch-accent-group-list');
         const frequencyGroupListContainer = node.querySelector('.frequency-group-list');
@@ -235,15 +235,15 @@ class DisplayGenerator {
         if (expression) { searchQueries.push(expression); }
         if (reading) { searchQueries.push(reading); }
 
-        const node = this._templates.instantiate('term-expression');
+        const node = this._templates.instantiate('expression');
 
-        const expressionContainer = node.querySelector('.term-expression-text');
+        const expressionContainer = node.querySelector('.expression-text');
         const tagContainer = node.querySelector('.tags');
 
         node.dataset.readingIsSame = `${!reading || reading === expression}`;
         node.dataset.frequency = termFrequency;
 
-        this._setTextContent(node.querySelector('.term-expression-reading'), reading.length > 0 ? reading : expression);
+        this._setTextContent(node.querySelector('.expression-reading'), reading.length > 0 ? reading : expression);
 
         this._appendFurigana(expressionContainer, furiganaSegments, this._appendKanjiLinks.bind(this));
         this._appendMultiple(tagContainer, this._createTag.bind(this), termTags);
