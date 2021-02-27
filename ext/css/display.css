@@ -40,7 +40,7 @@
     --expression-reading-font-size-no-units: 0.75;
     --expression-reading-font-size: calc(var(--expression-reading-font-size-no-units) * var(--expression-font-size));
     --expression-reading-space: 0.5em;
-    --expression-space-size: 0.5em;
+    --expression-list-end-space: 0.5em;
     --expression-thin-border-size: calc(1em / (var(--expression-font-size-no-units) * var(--font-size-no-units)));
 
     --line-height-no-units: 20;
@@ -857,6 +857,7 @@ button.action-button[data-icon=source-term]::before {
 }
 .term-expression-list {
     display: inline;
+    margin-right: var(--expression-list-end-space);
 }
 .term-expression {
     display: inline-block;
@@ -1030,10 +1031,6 @@ button.action-button[data-icon=source-term]::before {
 
 
 /* Merged term styles */
-.entry[data-expression-multi=true] .term-expression-list,
-.entry:not([data-expression-multi=true]) .term-expression-text-container {
-    margin-right: var(--expression-space-size);
-}
 .entry[data-expression-multi=true] .term-expression-list .term-expression-details {
     display: inline-block;
     position: relative;
