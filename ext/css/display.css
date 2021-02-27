@@ -1320,70 +1320,70 @@ button.action-button[data-icon=source-term]::before {
 
 
 /* Pitch accent styles */
-.term-pitch-accent-group-list {
+.pitch-accent-group-list {
     margin: 0;
     padding: 0 0 0 var(--list-padding1);
     list-style-type: decimal;
 }
-.term-pitch-accent-group-list[data-count='0'],
-.term-pitch-accent-group-list[data-count='1'] {
+.pitch-accent-group-list[data-count='0'],
+.pitch-accent-group-list[data-count='1'] {
     padding-left: 0;
     list-style-type: none;
 }
-.term-pitch-accent-list {
+.pitch-accent-list {
     margin: 0;
     padding: 0 0 0 var(--list-padding2);
     list-style-type: circle;
     display: block;
 }
-.term-pitch-accent-list[data-count='0'],
-.term-pitch-accent-list[data-count='1'] {
+.pitch-accent-list[data-count='0'],
+.pitch-accent-list[data-count='1'] {
     padding-left: 0;
     list-style-type: none;
     display: inline;
 }
-.term-pitch-accent-group::marker,
-.term-pitch-accent::marker {
+.pitch-accent-group::marker,
+.pitch-accent::marker {
     color: var(--text-color-light3);
 }
-.term-pitch-accent {
+.pitch-accent {
     display: list-item;
     line-height: 1.5;
 }
-.term-pitch-accent-list[data-count='0'] .term-pitch-accent,
-.term-pitch-accent-list[data-count='1'] .term-pitch-accent {
+.pitch-accent-list[data-count='0'] .pitch-accent,
+.pitch-accent-list[data-count='1'] .pitch-accent {
     display: inline;
 }
-.term-pitch-accent-group-tag-list {
+.pitch-accent-group-tag-list {
     margin-right: 0.375em;
 }
-.term-pitch-accent-disambiguation-list {
+.pitch-accent-disambiguation-list {
     color: var(--text-color-light3);
     padding-right: var(--disambiguation-space);
 }
-.term-pitch-accent-disambiguation-list::before {
+.pitch-accent-disambiguation-list::before {
     content: var(--disambiguation-prefix);
 }
-.term-pitch-accent-disambiguation-list::after {
+.pitch-accent-disambiguation-list::after {
     content: var(--disambiguation-suffix);
 }
-.term-pitch-accent-disambiguation+.term-pitch-accent-disambiguation::before {
+.pitch-accent-disambiguation+.pitch-accent-disambiguation::before {
     content: var(--disambiguation-separator);
 }
-.term-pitch-accent-disambiguation-list[data-count='0'] {
+.pitch-accent-disambiguation-list[data-count='0'] {
     display: none;
 }
-.term-pitch-accent-tag-list:not([data-count='0']) {
+.pitch-accent-tag-list:not([data-count='0']) {
     margin-right: 0.375em;
 }
-.term-pitch-accent-character {
+.pitch-accent-character {
     display: inline-block;
     position: relative;
 }
-.term-pitch-accent-character::before {
+.pitch-accent-character::before {
     border-color: var(--pitch-accent-annotation-color);
 }
-.term-pitch-accent-character[data-pitch='high']::before {
+.pitch-accent-character[data-pitch='high']::before {
     content: '';
     display: block;
     user-select: none;
@@ -1396,23 +1396,23 @@ button.action-button[data-icon=source-term]::before {
     border-top-width: 0.1em;
     border-top-style: solid;
 }
-.term-pitch-accent-character[data-pitch='high'][data-pitch-next='low']::before {
+.pitch-accent-character[data-pitch='high'][data-pitch-next='low']::before {
     right: -0.1em;
     height: 0.4em;
     border-right-width: 0.1em;
     border-right-style: solid;
 }
-.term-pitch-accent-character[data-pitch='high'][data-pitch-next='low'] {
+.pitch-accent-character[data-pitch='high'][data-pitch-next='low'] {
     padding-right: 0.1em;
     margin-right: 0.1em;
 }
-.term-pitch-accent-position::before {
+.pitch-accent-position::before {
     content: ' [';
 }
-.term-pitch-accent-position::after {
+.pitch-accent-position::after {
     content: ']';
 }
-.term-pitch-accent-details {
+.pitch-accent-details {
     display: inline-block;
     height: 0;
     padding: 0 0.25em;
@@ -1421,34 +1421,34 @@ button.action-button[data-icon=source-term]::before {
 
 
 /* Pitch accent graph styles */
-.term-pitch-accent-graph {
+.pitch-accent-graph {
     display: block;
     height: 1.5em;
     transform: translateY(-0.875em);
 }
-.term-pitch-accent-graph-line,
-.term-pitch-accent-graph-line-tail {
+.pitch-accent-graph-line,
+.pitch-accent-graph-line-tail {
     fill: none;
     stroke: var(--pitch-accent-annotation-color);
     stroke-width: 5;
 }
-.term-pitch-accent-graph-line-tail {
+.pitch-accent-graph-line-tail {
     stroke-dasharray: 5 5;
 }
-#term-pitch-accent-graph-dot {
+#pitch-accent-graph-dot {
     fill: var(--pitch-accent-annotation-color);
     stroke: var(--pitch-accent-annotation-color);
     stroke-width: 5;
 }
-#term-pitch-accent-graph-dot-downstep {
+#pitch-accent-graph-dot-downstep {
     fill: none;
     stroke: var(--pitch-accent-annotation-color);
     stroke-width: 5;
 }
-#term-pitch-accent-graph-dot-downstep>circle:last-of-type {
+#pitch-accent-graph-dot-downstep>circle:last-of-type {
     fill: var(--pitch-accent-annotation-color);
 }
-#term-pitch-accent-graph-triangle {
+#pitch-accent-graph-triangle {
     fill: none;
     stroke: var(--pitch-accent-annotation-color);
     stroke-width: 5;
@@ -1973,29 +1973,29 @@ button.footer-notification-close-button {
     color: var(--text-color-light3);
 }
 
-:root[data-show-pitch-accent-downstep-notation=true] .term-pitch-accent-disambiguation-list[data-expression-count='0'],
-:root[data-show-pitch-accent-downstep-notation=true] .term-pitch-accent-disambiguation[data-type=reading] {
+:root[data-show-pitch-accent-downstep-notation=true] .pitch-accent-disambiguation-list[data-expression-count='0'],
+:root[data-show-pitch-accent-downstep-notation=true] .pitch-accent-disambiguation[data-type=reading] {
     display: none;
 }
-:root[data-show-pitch-accent-downstep-notation=false] .term-pitch-accent-characters {
+:root[data-show-pitch-accent-downstep-notation=false] .pitch-accent-characters {
     display: none;
 }
-:root[data-show-pitch-accent-position-notation=false] .term-pitch-accent-position {
+:root[data-show-pitch-accent-position-notation=false] .pitch-accent-position {
     display: none;
 }
-:root[data-show-pitch-accent-graph=false] .term-pitch-accent-details {
+:root[data-show-pitch-accent-graph=false] .pitch-accent-details {
     display: none;
 }
 
-:root[data-glossary-layout-mode=compact][data-show-pitch-accent-graph=false] .term-pitch-accent-list:not([data-has-tags=true]) {
+:root[data-glossary-layout-mode=compact][data-show-pitch-accent-graph=false] .pitch-accent-list:not([data-has-tags=true]) {
     display: inline;
     list-style: none;
     padding-left: 0;
 }
-:root[data-glossary-layout-mode=compact][data-show-pitch-accent-graph=false] .term-pitch-accent-list:not([data-has-tags=true]) .term-pitch-accent {
+:root[data-glossary-layout-mode=compact][data-show-pitch-accent-graph=false] .pitch-accent-list:not([data-has-tags=true]) .pitch-accent {
     display: inline;
 }
-:root[data-glossary-layout-mode=compact][data-show-pitch-accent-graph=false] .term-pitch-accent-list:not([data-has-tags=true]) .term-pitch-accent:not(:first-child)::before {
+:root[data-glossary-layout-mode=compact][data-show-pitch-accent-graph=false] .pitch-accent-list:not([data-has-tags=true]) .pitch-accent:not(:first-child)::before {
     white-space: pre-wrap;
     content: var(--compact-list-separator);
     display: inline;

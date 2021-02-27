@@ -26,7 +26,7 @@
             <div class="entry-body-section-content frequency-group-list"></div>
         </div>
         <div class="entry-body-section" data-section-type="pitch-accents">
-            <ol class="entry-body-section-content term-pitch-accent-group-list"></ol>
+            <ol class="entry-body-section-content pitch-accent-group-list"></ol>
         </div>
         <div class="entry-body-section" data-section-type="definitions">
             <ol class="entry-body-section-content term-definition-list"></ol>
@@ -77,17 +77,17 @@
 </span></span></template>
 
 <!-- Pitch accent templates -->
-<template id="term-pitch-accent-static-template"><svg xmlns="http://www.w3.org/2000/svg" style="display: none;" focusable="false">
+<template id="pitch-accent-static-template"><svg xmlns="http://www.w3.org/2000/svg" style="display: none;" focusable="false">
     <defs>
-        <g id="term-pitch-accent-graph-dot"><circle cx="0" cy="0" r="15" /></g>
-        <g id="term-pitch-accent-graph-dot-downstep"><circle cx="0" cy="0" r="15" /><circle cx="0" cy="0" r="5" /></g>
-        <g id="term-pitch-accent-graph-triangle"><path d="M0 13 L15 -13 L-15 -13 Z" /></g>
+        <g id="pitch-accent-graph-dot"><circle cx="0" cy="0" r="15" /></g>
+        <g id="pitch-accent-graph-dot-downstep"><circle cx="0" cy="0" r="15" /><circle cx="0" cy="0" r="5" /></g>
+        <g id="pitch-accent-graph-triangle"><path d="M0 13 L15 -13 L-15 -13 Z" /></g>
     </defs>
 </svg></template>
-<template id="term-pitch-accent-group-template"><li class="term-pitch-accent-group"><span class="term-pitch-accent-group-tag-list tag-list"></span><ul class="term-pitch-accent-list"></ul></li></template>
-<template id="term-pitch-accent-disambiguation-template"><span class="term-pitch-accent-disambiguation"></span></template>
-<template id="term-pitch-accent-template"><li class="term-pitch-accent"><span class="term-pitch-accent-tag-list tag-list"></span><span class="term-pitch-accent-disambiguation-list"></span><span class="term-pitch-accent-characters"></span><span class="term-pitch-accent-position"></span><span class="term-pitch-accent-details"><svg class="term-pitch-accent-graph" xmlns="http://www.w3.org/2000/svg" focusable="false"><path class="term-pitch-accent-graph-line" /><path class="term-pitch-accent-graph-line-tail" /></svg></span></li></template>
-<template id="term-pitch-accent-character-template"><span class="term-pitch-accent-character"><span class="term-pitch-accent-character-inner"></span></span></template>
+<template id="pitch-accent-group-template"><li class="pitch-accent-group"><span class="pitch-accent-group-tag-list tag-list"></span><ul class="pitch-accent-list"></ul></li></template>
+<template id="pitch-accent-disambiguation-template"><span class="pitch-accent-disambiguation"></span></template>
+<template id="pitch-accent-template"><li class="pitch-accent"><span class="pitch-accent-tag-list tag-list"></span><span class="pitch-accent-disambiguation-list"></span><span class="pitch-accent-characters"></span><span class="pitch-accent-position"></span><span class="pitch-accent-details"><svg class="pitch-accent-graph" xmlns="http://www.w3.org/2000/svg" focusable="false"><path class="pitch-accent-graph-line" /><path class="pitch-accent-graph-line-tail" /></svg></span></li></template>
+<template id="pitch-accent-character-template"><span class="pitch-accent-character"><span class="pitch-accent-character-inner"></span></span></template>
 
 <!-- Kanji entry templates -->
 <template id="kanji-entry-template" data-remove-whitespace-text="true"><div class="entry" data-type="kanji">
