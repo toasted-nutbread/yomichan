@@ -873,13 +873,13 @@ button.action-button[data-icon=source-term]::before {
 .expression-details>.frequencies {
     display: none;
 }
-.term-details {
+.expression-list-details {
     display: inline;
 }
 .term-tags {
     display: inline;
 }
-.entry[data-expression-multi=true] .term-details {
+.entry[data-expression-multi=true] .expression-list-details {
     display: block;
 }
 :root[data-term-display-mode=ruby-and-reading] .expression-text-outer::after,
