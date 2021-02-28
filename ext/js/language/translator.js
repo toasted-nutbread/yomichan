@@ -683,19 +683,20 @@ class Translator {
 
         const metas = await this._database.findTermMetaBulk(uniqueExpressions, enabledDictionaryMap);
         for (const {expression, mode, data, dictionary, index} of metas) {
+            const dictionaryPriority = this._getDictionaryPriority(dictionary, enabledDictionaryMap);
             const map2 = uniqueTargets[index];
             for (const [reading, targets] of map2.entries()) {
                 switch (mode) {
                     case 'freq':
                         {
-                            const frequencyData = this._getTermFrequencyData(expression, reading, dictionary, data);
+                            const frequencyData = this._getTermFrequencyData(expression, reading, dictionary, dictionaryPriority, data);
                             if (frequencyData === null) { continue; }
                             for (const {frequencies} of targets) { frequencies.push(frequencyData); }
                         }
                         break;
                     case 'pitch':
                         {
-                            const pitchData = await this._getPitchData(expression, reading, dictionary, data);
+                            const pitchData = await this._getPitchData(expression, reading, dictionary, dictionaryPriority, data);
                             if (pitchData === null) { continue; }
                             for (const {pitches} of targets) { pitches.push(pitchData); }
                         }
@@ -713,10 +714,11 @@ class Translator {
 
         const metas = await this._database.findKanjiMetaBulk(kanjiList, enabledDictionaryMap);
         for (const {character, mode, data, dictionary, index} of metas) {
+            const dictionaryPriority = this._getDictionaryPriority(dictionary, enabledDictionaryMap);
             switch (mode) {
                 case 'freq':
                     {
-                        const frequencyData = this._getKanjiFrequencyData(character, dictionary, data);
+                        const frequencyData = this._getKanjiFrequencyData(character, dictionary, dictionaryPriority, data);
                         definitions[index].frequencies.push(frequencyData);
                     }
                     break;
@@ -790,21 +792,21 @@ class Translator {
         return tagMetaList;
     }
 
-    _getTermFrequencyData(expression, reading, dictionary, data) {
+    _getTermFrequencyData(expression, reading, dictionary, dictionaryPriority, data) {
         let frequency = data;
         const hasReading = (data !== null && typeof data === 'object');
         if (hasReading) {
             if (data.reading !== reading) { return null; }
             frequency = data.frequency;
         }
-        return {dictionary, expression, reading, hasReading, frequency};
+        return {dictionary, dictionaryPriority, expression, reading, hasReading, frequency};
     }
 
-    _getKanjiFrequencyData(character, dictionary, data) {
-        return {dictionary, character, frequency: data};
+    _getKanjiFrequencyData(character, dictionary, dictionaryPriority, data) {
+        return {dictionary, dictionaryPriority, character, frequency: data};
     }
 
-    async _getPitchData(expression, reading, dictionary, data) {
+    async _getPitchData(expression, reading, dictionary, dictionaryPriority, data) {
         if (data.reading !== reading) { return null; }
 
         const pitches = [];
@@ -813,7 +815,7 @@ class Translator {
             pitches.push({position, tags});
         }
 
-        return {expression, reading, dictionary, pitches};
+        return {expression, reading, dictionary, dictionaryPriority, pitches};
     }
 
     // Simple helpers
