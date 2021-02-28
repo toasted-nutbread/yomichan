@@ -689,16 +689,28 @@ class Translator {
                 switch (mode) {
                     case 'freq':
                         {
-                            const frequencyData = this._getTermFrequencyData(expression, reading, dictionary, dictionaryPriority, data);
-                            if (frequencyData === null) { continue; }
-                            for (const {frequencies} of targets) { frequencies.push(frequencyData); }
+                            let frequency = data;
+                            const hasReading = (data !== null && typeof data === 'object');
+                            if (hasReading) {
+                                if (data.reading !== reading) { continue; }
+                                frequency = data.frequency;
+                            }
+                            for (const {frequencies} of targets) {
+                                frequencies.push({index: frequencies.length, dictionary, dictionaryPriority, expression, reading, hasReading, frequency});
+                            }
                         }
                         break;
                     case 'pitch':
                         {
-                            const pitchData = await this._getPitchData(expression, reading, dictionary, dictionaryPriority, data);
-                            if (pitchData === null) { continue; }
-                            for (const {pitches} of targets) { pitches.push(pitchData); }
+                            if (data.reading !== reading) { continue; }
+                            const pitches2 = [];
+                            for (let {position, tags} of data.pitches) {
+                                tags = Array.isArray(tags) ? await this._expandTags(tags, dictionary) : [];
+                                pitches2.push({position, tags});
+                            }
+                            for (const {pitches} of targets) {
+                                pitches.push({index: pitches.length, expression, reading, dictionary, dictionaryPriority, pitches: pitches2});
+                            }
                         }
                         break;
                 }
@@ -718,8 +730,8 @@ class Translator {
             switch (mode) {
                 case 'freq':
                     {
-                        const frequencyData = this._getKanjiFrequencyData(character, dictionary, dictionaryPriority, data);
-                        definitions[index].frequencies.push(frequencyData);
+                        const {frequencies} = definitions[index];
+                        frequencies.push({index: frequencies.length, dictionary, dictionaryPriority, character, frequency: data});
                     }
                     break;
             }
@@ -790,32 +802,6 @@ class Translator {
         }
 
         return tagMetaList;
-    }
-
-    _getTermFrequencyData(expression, reading, dictionary, dictionaryPriority, data) {
-        let frequency = data;
-        const hasReading = (data !== null && typeof data === 'object');
-        if (hasReading) {
-            if (data.reading !== reading) { return null; }
-            frequency = data.frequency;
-        }
-        return {dictionary, dictionaryPriority, expression, reading, hasReading, frequency};
-    }
-
-    _getKanjiFrequencyData(character, dictionary, dictionaryPriority, data) {
-        return {dictionary, dictionaryPriority, character, frequency: data};
-    }
-
-    async _getPitchData(expression, reading, dictionary, dictionaryPriority, data) {
-        if (data.reading !== reading) { return null; }
-
-        const pitches = [];
-        for (let {position, tags} of data.pitches) {
-            tags = Array.isArray(tags) ? await this._expandTags(tags, dictionary) : [];
-            pitches.push({position, tags});
-        }
-
-        return {expression, reading, dictionary, dictionaryPriority, pitches};
     }
 
     // Simple helpers
