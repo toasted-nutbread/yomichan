@@ -1894,7 +1894,7 @@ class Backend {
         const enabledDictionaryMap = new Map();
         for (let i = 0, ii = dictionaries.length; i < ii; ++i) {
             const {title, allowSecondarySearches} = dictionaries[i];
-            enabledDictionaryMap.set(title, {priority: ii - i, allowSecondarySearches});
+            enabledDictionaryMap.set(title, {order: i, allowSecondarySearches});
         }
         return enabledDictionaryMap;
     }
