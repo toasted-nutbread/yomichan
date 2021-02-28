@@ -661,7 +661,8 @@ class Translator {
         const expressionKeys = [];
 
         for (const {expressions, frequencies: frequencies1, pitches: pitches1} of allDefinitions) {
-            for (const {expression, reading, frequencies: frequencies2, pitches: pitches2} of expressions) {
+            for (let i = 0, ii = expressions.length; i < ii; ++i) {
+                const {expression, reading, frequencies: frequencies2, pitches: pitches2} = expressions[i];
                 let readingMap = expressionMap.get(expression);
                 if (typeof readingMap === 'undefined') {
                     readingMap = new Map();
@@ -675,8 +676,8 @@ class Translator {
                     readingMap.set(reading, targets);
                 }
                 targets.push(
-                    {frequencies: frequencies1, pitches: pitches1},
-                    {frequencies: frequencies2, pitches: pitches2}
+                    {frequencies: frequencies1, pitches: pitches1, index: i},
+                    {frequencies: frequencies2, pitches: pitches2, index: i}
                 );
             }
         }
@@ -695,8 +696,8 @@ class Translator {
                                 if (data.reading !== reading) { continue; }
                                 frequency = data.frequency;
                             }
-                            for (const {frequencies} of targets) {
-                                frequencies.push({index: frequencies.length, dictionary, dictionaryPriority, expression, reading, hasReading, frequency});
+                            for (const {frequencies, index: expressionIndex} of targets) {
+                                frequencies.push({index: frequencies.length, expressionIndex, dictionary, dictionaryPriority, expression, reading, hasReading, frequency});
                             }
                         }
                         break;
@@ -708,8 +709,8 @@ class Translator {
                                 tags = Array.isArray(tags) ? await this._expandTags(tags, dictionary) : [];
                                 pitches2.push({position, tags});
                             }
-                            for (const {pitches} of targets) {
-                                pitches.push({index: pitches.length, dictionary, dictionaryPriority, expression, reading, pitches: pitches2});
+                            for (const {pitches, index: expressionIndex} of targets) {
+                                pitches.push({index: pitches.length, expressionIndex, dictionary, dictionaryPriority, expression, reading, pitches: pitches2});
                             }
                         }
                         break;
