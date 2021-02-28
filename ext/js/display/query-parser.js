@@ -221,11 +221,6 @@ class QueryParser extends EventDispatcher {
     }
 
     _addSegmentText(text, container) {
-        for (const character of text) {
-            const node = document.createElement('span');
-            node.className = 'query-parser-char';
-            node.textContent = character;
-            container.appendChild(node);
-        }
+        container.textContent = text;
     }
 }
