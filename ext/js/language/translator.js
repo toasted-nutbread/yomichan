@@ -656,23 +656,23 @@ class Translator {
 
     async _buildTermMeta(definitions, enabledDictionaryMap) {
         const allDefinitions = this._getAllDefinitions(definitions);
-        const uniqueTargetMap = new Map();
-        const uniqueTargets = [];
-        const uniqueExpressions = [];
+        const expressionMap = new Map();
+        const expressionValues = [];
+        const expressionKeys = [];
 
         for (const {expressions, frequencies: frequencies1, pitches: pitches1} of allDefinitions) {
             for (const {expression, reading, frequencies: frequencies2, pitches: pitches2} of expressions) {
-                let map2 = uniqueTargetMap.get(expression);
-                if (typeof map2 === 'undefined') {
-                    map2 = new Map();
-                    uniqueTargetMap.set(expression, map2);
-                    uniqueTargets.push(map2);
-                    uniqueExpressions.push(expression);
+                let readingMap = expressionMap.get(expression);
+                if (typeof readingMap === 'undefined') {
+                    readingMap = new Map();
+                    expressionMap.set(expression, readingMap);
+                    expressionValues.push(readingMap);
+                    expressionKeys.push(expression);
                 }
-                let targets = map2.get(reading);
+                let targets = readingMap.get(reading);
                 if (typeof targets === 'undefined') {
                     targets = [];
-                    map2.set(reading, targets);
+                    readingMap.set(reading, targets);
                 }
                 targets.push(
                     {frequencies: frequencies1, pitches: pitches1},
@@ -681,10 +681,10 @@ class Translator {
             }
         }
 
-        const metas = await this._database.findTermMetaBulk(uniqueExpressions, enabledDictionaryMap);
+        const metas = await this._database.findTermMetaBulk(expressionKeys, enabledDictionaryMap);
         for (const {expression, mode, data, dictionary, index} of metas) {
             const dictionaryPriority = this._getDictionaryPriority(dictionary, enabledDictionaryMap);
-            const map2 = uniqueTargets[index];
+            const map2 = expressionValues[index];
             for (const [reading, targets] of map2.entries()) {
                 switch (mode) {
                     case 'freq':
