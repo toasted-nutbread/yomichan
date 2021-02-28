@@ -1038,6 +1038,7 @@ class Backend {
         const {scanning: {length: scanningLength}, parsing: {readingMode}} = options;
         const findTermsOptions = this._getTranslatorFindTermsOptions({wildcard: null}, options);
         const results = [];
+        let previousUngroupedSegment = null;
         while (text.length > 0) {
             const term = [];
             const [definitions, sourceLength] = await this._translator.findTerms(
@@ -1050,6 +1051,7 @@ class Backend {
                 sourceLength > 0 &&
                 (sourceLength !== 1 || this._japaneseUtil.isCodePointJapanese(text[0]))
             ) {
+                previousUngroupedSegment = null;
                 const {expression, reading} = definitions[0];
                 const source = text.substring(0, sourceLength);
                 for (const {text: text2, furigana} of jp.distributeFuriganaInflected(expression, reading, source)) {
@@ -1058,11 +1060,18 @@ class Backend {
                 }
                 text = text.substring(source.length);
             } else {
-                const reading = jp.convertReading(text[0], '', readingMode);
-                term.push({text: text[0], reading});
+                const character = text[0];
+                if (previousUngroupedSegment === null) {
+                    previousUngroupedSegment = {text: character, reading: ''};
+                    term.push(previousUngroupedSegment);
+                } else {
+                    previousUngroupedSegment.text += character;
+                }
                 text = text.substring(1);
             }
-            results.push(term);
+            if (term.length > 0) {
+                results.push(term);
+            }
         }
         return results;
     }
