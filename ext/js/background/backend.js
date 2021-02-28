@@ -1047,11 +1047,12 @@ class Backend {
                 text.substring(i, i + scanningLength),
                 findTermsOptions
             );
-            const character = text[i];
+            const codePoint = text.codePointAt(i);
+            const character = String.fromCodePoint(codePoint);
             if (
                 definitions.length > 0 &&
                 sourceLength > 0 &&
-                (sourceLength !== 1 || this._japaneseUtil.isCodePointJapanese(character))
+                (sourceLength !== character.length || this._japaneseUtil.isCodePointJapanese(codePoint))
             ) {
                 previousUngroupedSegment = null;
                 const {expression, reading} = definitions[0];
@@ -1070,7 +1071,7 @@ class Backend {
                 } else {
                     previousUngroupedSegment.text += character;
                 }
-                ++i;
+                i += character.length;
             }
         }
         return results;
