@@ -717,6 +717,10 @@ class Translator {
                 }
             }
         }
+
+        for (const definition of allDefinitions) {
+            this._sortTermDefinitionMeta(definition);
+        }
     }
 
     async _buildKanjiMeta(definitions, enabledDictionaryMap) {
@@ -736,6 +740,10 @@ class Translator {
                     }
                     break;
             }
+        }
+
+        for (const definition of definitions) {
+            this._sortKanjiDefinitionMeta(definition);
         }
     }
 
@@ -1316,6 +1324,45 @@ class Translator {
 
             return stringComparer.compare(v1.notes, v2.notes);
         });
+    }
+
+    _sortTermDefinitionMeta(definition) {
+        const compareFunction = (v1, v2) => {
+            // Sort by dictionary
+            let i = v2.dictionaryPriority - v1.dictionaryPriority;
+            if (i !== 0) { return i; }
+
+            // Sory by expression order
+            i = v1.expressionIndex - v2.expressionIndex;
+            if (i !== 0) { return i; }
+
+            // Default order
+            i = v1.index - v2.index;
+            return i;
+        };
+
+        const {expressions, frequencies: frequencies1, pitches: pitches1} = definition;
+        frequencies1.sort(compareFunction);
+        pitches1.sort(compareFunction);
+        for (const {frequencies: frequencies2, pitches: pitches2} of expressions) {
+            frequencies2.sort(compareFunction);
+            pitches2.sort(compareFunction);
+        }
+    }
+
+    _sortKanjiDefinitionMeta(definition) {
+        const compareFunction = (v1, v2) => {
+            // Sort by dictionary
+            let i = v2.dictionaryPriority - v1.dictionaryPriority;
+            if (i !== 0) { return i; }
+
+            // Default order
+            i = v1.index - v2.index;
+            return i;
+        };
+
+        const {frequencies} = definition;
+        frequencies.sort(compareFunction);
     }
 
     // Regex functions
