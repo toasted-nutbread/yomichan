@@ -709,7 +709,7 @@ class Translator {
                                 pitches2.push({position, tags});
                             }
                             for (const {pitches} of targets) {
-                                pitches.push({index: pitches.length, expression, reading, dictionary, dictionaryPriority, pitches: pitches2});
+                                pitches.push({index: pitches.length, dictionary, dictionaryPriority, expression, reading, pitches: pitches2});
                             }
                         }
                         break;
