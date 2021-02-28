@@ -655,6 +655,57 @@ class Translator {
     // Metadata building
 
     async _buildTermMeta(definitions, enabledDictionaryMap) {
+        const allDefinitions = this._getAllDefinitions(definitions);
+        const uniqueTargetMap = new Map();
+        const uniqueTargets = [];
+        const uniqueExpressions = [];
+
+        for (const {expressions, frequencies: frequencies1, pitches: pitches1} of allDefinitions) {
+            for (const {expression, reading, frequencies: frequencies2, pitches: pitches2} of expressions) {
+                let map2 = uniqueTargetMap.get(expression);
+                if (typeof map2 === 'undefined') {
+                    map2 = new Map();
+                    uniqueTargetMap.set(expression, map2);
+                    uniqueTargets.push(map2);
+                    uniqueExpressions.push(expression);
+                }
+                let targets = map2.get(reading);
+                if (typeof targets === 'undefined') {
+                    targets = [];
+                    map2.set(reading, targets);
+                }
+                targets.push(
+                    {frequencies: frequencies1, pitches: pitches1},
+                    {frequencies: frequencies2, pitches: pitches2}
+                );
+            }
+        }
+
+        const metas = await this._database.findTermMetaBulk(uniqueExpressions, enabledDictionaryMap);
+        for (const {expression, mode, data, dictionary, index} of metas) {
+            const map2 = uniqueTargets[index];
+            for (const [reading, targets] of map2.entries()) {
+                switch (mode) {
+                    case 'freq':
+                        {
+                            const frequencyData = this._getTermFrequencyData(expression, reading, dictionary, data);
+                            if (frequencyData === null) { continue; }
+                            for (const {frequencies} of targets) { frequencies.push(frequencyData); }
+                        }
+                        break;
+                    case 'pitch':
+                        {
+                            const pitchData = await this._getPitchData(expression, reading, dictionary, data);
+                            if (pitchData === null) { continue; }
+                            for (const {pitches} of targets) { pitches.push(pitchData); }
+                        }
+                        break;
+                }
+            }
+        }
+    }
+
+    async _buildTermMetaOld(definitions, enabledDictionaryMap) {
         const addMetadataTargetInfo = (targetMap1, target, parents) => {
             let {expression, reading} = target;
             if (!reading) { reading = expression; }
@@ -998,6 +1049,17 @@ class Translator {
             }
         }
         return result;
+    }
+
+    _getAllDefinitions(definitions) {
+        definitions = [...definitions];
+        for (let i = 0; i < definitions.length; ++i) {
+            const childDefinitions = definitions[i].definitions;
+            if (Array.isArray(childDefinitions)) {
+                definitions.push(...childDefinitions);
+            }
+        }
+        return definitions;
     }
 
     // Reduction functions
