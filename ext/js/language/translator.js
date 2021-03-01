@@ -388,18 +388,7 @@ class Translator {
         }
 
         if (sequenceList.length > 0) {
-            const databaseDefinitions = await this._database.findTermsBySequenceBulk(sequenceList, mainDictionary);
-            for (const databaseDefinition of databaseDefinitions) {
-                const {relatedDefinitions, relatedDefinitionIds} = sequencedDefinitions[databaseDefinition.index];
-                const {id} = databaseDefinition;
-                if (relatedDefinitionIds.has(id)) { continue; }
-
-                const {source, rawSource, sourceTerm} = relatedDefinitions[0];
-                const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, sourceTerm, [], false, enabledDictionaryMap);
-                relatedDefinitions.push(definition);
-                relatedDefinitionIds.add(id);
-                unsequencedDefinitions.delete(id);
-            }
+            await this._addRelatedDefinitions(sequencedDefinitions, unsequencedDefinitions, sequenceList, mainDictionary, enabledDictionaryMap);
         }
 
         for (const {relatedDefinitions} of sequencedDefinitions) {
@@ -407,6 +396,21 @@ class Translator {
         }
 
         return {sequencedDefinitions, unsequencedDefinitions: [...unsequencedDefinitions.values()]};
+    }
+
+    async _addRelatedDefinitions(sequencedDefinitions, unsequencedDefinitions, sequenceList, mainDictionary, enabledDictionaryMap) {
+        const databaseDefinitions = await this._database.findTermsBySequenceBulk(sequenceList, mainDictionary);
+        for (const databaseDefinition of databaseDefinitions) {
+            const {relatedDefinitions, relatedDefinitionIds} = sequencedDefinitions[databaseDefinition.index];
+            const {id} = databaseDefinition;
+            if (relatedDefinitionIds.has(id)) { continue; }
+
+            const {source, rawSource, sourceTerm} = relatedDefinitions[0];
+            const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, sourceTerm, [], false, enabledDictionaryMap);
+            relatedDefinitions.push(definition);
+            relatedDefinitionIds.add(id);
+            unsequencedDefinitions.delete(id);
+        }
     }
 
     async _getMergedSecondarySearchResults(expressionsMap, secondarySearchDictionaryMap) {
