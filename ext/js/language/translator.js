@@ -363,6 +363,7 @@ class Translator {
      * @param enabledDictionaryMap The map of enabled dictionaries and their settings.
      */
     async _getSequencedDefinitions(definitions, mainDictionary, enabledDictionaryMap) {
+        const secondarySearchDictionaryMap = this._getSecondarySearchDictionaryMap(enabledDictionaryMap);
         const sequenceList = [];
         const sequencedDefinitionMap = new Map();
         const sequencedDefinitions = [];
@@ -374,7 +375,8 @@ class Translator {
                 if (typeof sequencedDefinition === 'undefined') {
                     sequencedDefinition = {
                         relatedDefinitions: [],
-                        relatedDefinitionIds: new Set()
+                        relatedDefinitionIds: new Set(),
+                        secondaryDefinitions: []
                     };
                     sequencedDefinitionMap.set(sequence, sequencedDefinition);
                     sequencedDefinitions.push(sequencedDefinition);
@@ -389,6 +391,10 @@ class Translator {
 
         if (sequenceList.length > 0) {
             await this._addRelatedDefinitions(sequencedDefinitions, unsequencedDefinitions, sequenceList, mainDictionary, enabledDictionaryMap);
+        }
+
+        if (secondarySearchDictionaryMap.size > 0) {
+            await this._addSecondaryDefinitions(sequencedDefinitions, unsequencedDefinitions, enabledDictionaryMap, secondarySearchDictionaryMap);
         }
 
         for (const {relatedDefinitions} of sequencedDefinitions) {
@@ -410,6 +416,48 @@ class Translator {
             relatedDefinitions.push(definition);
             relatedDefinitionIds.add(id);
             unsequencedDefinitions.delete(id);
+        }
+    }
+
+    async _addSecondaryDefinitions(sequencedDefinitions, unsequencedDefinitions, enabledDictionaryMap, secondarySearchDictionaryMap) {
+        const expressionList = [];
+        const readingList = [];
+        const targetsList = [];
+        const targetsMap = new Map();
+
+        for (const sequencedDefinition of sequencedDefinitions) {
+            const {relatedDefinitions} = sequencedDefinition;
+            for (const definition of relatedDefinitions) {
+                if (definition.isPrimary) { continue; }
+                const {expressions: [{expression, reading}]} = definition;
+                const key = this._createMapKey([expression, reading]);
+                let targets = targetsMap.get(key);
+                if (typeof targets === 'undefined') {
+                    targets = [];
+                    expressionList.push(expression);
+                    readingList.push(reading);
+                    targetsList.push(targets);
+                    targetsMap.set(key, targets);
+                }
+                targets.push(sequencedDefinition);
+            }
+        }
+
+        const databaseDefinitions = await this._database.findTermsExactBulk(expressionList, readingList, secondarySearchDictionaryMap);
+        this._sortDatabaseDefinitionsByIndex(databaseDefinitions);
+
+        for (const databaseDefinition of databaseDefinitions) {
+            const {index, id} = databaseDefinition;
+            const source = expressionList[index];
+            const targets = targetsList[index];
+            for (const {relatedDefinitionIds, secondaryDefinitions} of targets) {
+                if (relatedDefinitionIds.has(id)) { continue; }
+
+                const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, source, source, [], false, enabledDictionaryMap);
+                secondaryDefinitions.push(definition);
+                relatedDefinitionIds.add(id);
+                unsequencedDefinitions.delete(id);
+            }
         }
     }
 
