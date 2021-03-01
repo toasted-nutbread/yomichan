@@ -565,10 +565,16 @@ class Translator {
         }
     }
 
+    /**
+     * Groups definitions with the same [source, expression, reading, reasons].
+     * @param definitions An array of 'term' definitions.
+     * @returns An array of 'termGrouped' definitions.
+     */
     _groupTerms(definitions) {
         const groups = new Map();
         for (const definition of definitions) {
-            const key = this._createMapKey([definition.source, definition.expression, definition.reading, ...definition.reasons]);
+            const {source, expression, reading, reasons} = definition;
+            const key = this._createMapKey([source, expression, reading, ...reasons]);
             let groupDefinitions = groups.get(key);
             if (typeof groupDefinitions === 'undefined') {
                 groupDefinitions = [];
