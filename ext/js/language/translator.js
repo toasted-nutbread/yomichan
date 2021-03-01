@@ -244,7 +244,7 @@ class Translator {
             if (databaseDefinitions.length === 0) { continue; }
             maxLength = Math.max(maxLength, rawSource.length);
             for (const databaseDefinition of databaseDefinitions) {
-                const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, term, reasons, enabledDictionaryMap);
+                const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, term, reasons, true, enabledDictionaryMap);
                 definitions.push(definition);
             }
         }
@@ -398,7 +398,7 @@ class Translator {
                 if (relatedDefinitionIds.has(id)) { continue; }
 
                 const {source, rawSource, sourceTerm} = relatedDefinitions[0];
-                const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, sourceTerm, [], enabledDictionaryMap);
+                const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, sourceTerm, [], false, enabledDictionaryMap);
                 relatedDefinitions.push(definition);
             }
         }
@@ -430,7 +430,7 @@ class Translator {
         const definitions = [];
         for (const databaseDefinition of databaseDefinitions) {
             const source = expressionList[databaseDefinition.index];
-            const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, source, source, [], secondarySearchDictionaryMap);
+            const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, source, source, [], false, secondarySearchDictionaryMap);
             definitions.push(definition);
         }
 
@@ -1091,7 +1091,7 @@ class Translator {
         };
     }
 
-    async _createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, sourceTerm, reasons, enabledDictionaryMap) {
+    async _createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, sourceTerm, reasons, isPrimary, enabledDictionaryMap) {
         const {expression, reading, definitionTags, termTags, glossary, score, dictionary, id, sequence} = databaseDefinition;
         const dictionaryOrder = this._getDictionaryOrder(dictionary, enabledDictionaryMap);
         const termTagsExpanded = await this._expandTags(termTags, dictionary);
@@ -1112,6 +1112,7 @@ class Translator {
             sourceTerm,
             reasons,
             score,
+            isPrimary,
             sequence,
             dictionary,
             dictionaryOrder,
@@ -1147,6 +1148,7 @@ class Translator {
             sourceTerm,
             reasons: [...reasons],
             score,
+            // isPrimary
             // sequence
             dictionary: dictionaryNames[0],
             dictionaryOrder,
@@ -1178,6 +1180,7 @@ class Translator {
             // sourceTerm
             reasons,
             score,
+            // isPrimary
             // sequence
             dictionary: dictionaryNames[0],
             dictionaryOrder,
@@ -1227,6 +1230,7 @@ class Translator {
             // sourceTerm
             reasons: [],
             score,
+            // isPrimary
             // sequence
             dictionary: dictionaryNames[0],
             dictionaryOrder,
