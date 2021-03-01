@@ -366,9 +366,9 @@ class Translator {
         const sequenceList = [];
         const sequencedDefinitionMap = new Map();
         const sequencedDefinitions = [];
-        const unsequencedDefinitions = [];
+        const unsequencedDefinitions = new Map();
         for (const definition of definitions) {
-            const {sequence, dictionary} = definition;
+            const {sequence, dictionary, id} = definition;
             if (mainDictionary === dictionary && sequence >= 0) {
                 let sequencedDefinition = sequencedDefinitionMap.get(sequence);
                 if (typeof sequencedDefinition === 'undefined') {
@@ -381,9 +381,9 @@ class Translator {
                     sequenceList.push(sequence);
                 }
                 sequencedDefinition.relatedDefinitions.push(definition);
-                sequencedDefinition.relatedDefinitionIds.add(definition.id);
+                sequencedDefinition.relatedDefinitionIds.add(id);
             } else {
-                unsequencedDefinitions.push(definition);
+                unsequencedDefinitions.set(id, definition);
             }
         }
 
@@ -398,6 +398,7 @@ class Translator {
                 const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, sourceTerm, [], false, enabledDictionaryMap);
                 relatedDefinitions.push(definition);
                 relatedDefinitionIds.add(id);
+                unsequencedDefinitions.delete(id);
             }
         }
 
@@ -405,7 +406,7 @@ class Translator {
             this._sortDefinitionsById(relatedDefinitions);
         }
 
-        return {sequencedDefinitions, unsequencedDefinitions};
+        return {sequencedDefinitions, unsequencedDefinitions: [...unsequencedDefinitions.values()]};
     }
 
     async _getMergedSecondarySearchResults(expressionsMap, secondarySearchDictionaryMap) {
