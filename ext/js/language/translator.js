@@ -397,6 +397,7 @@ class Translator {
                 const {source, rawSource, sourceTerm} = relatedDefinitions[0];
                 const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, sourceTerm, [], false, enabledDictionaryMap);
                 relatedDefinitions.push(definition);
+                relatedDefinitionIds.add(id);
             }
         }
 
