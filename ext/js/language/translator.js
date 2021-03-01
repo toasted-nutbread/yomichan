@@ -185,9 +185,8 @@ class Translator {
         const definitionsMerged = [];
         const usedDefinitions = new Set();
 
-        for (const {sourceDefinitions, relatedDefinitions} of sequencedDefinitions) {
+        for (const {relatedDefinitions} of sequencedDefinitions) {
             const result = await this._getMergedDefinition(
-                sourceDefinitions,
                 relatedDefinitions,
                 unsequencedDefinitions,
                 secondarySearchDictionaryMap,
@@ -374,7 +373,6 @@ class Translator {
                 let sequencedDefinition = sequencedDefinitionMap.get(sequence);
                 if (typeof sequencedDefinition === 'undefined') {
                     sequencedDefinition = {
-                        sourceDefinitions: [],
                         relatedDefinitions: [],
                         relatedDefinitionIds: new Set()
                     };
@@ -382,7 +380,6 @@ class Translator {
                     sequencedDefinitions.push(sequencedDefinition);
                     sequenceList.push(sequence);
                 }
-                sequencedDefinition.sourceDefinitions.push(definition);
                 sequencedDefinition.relatedDefinitions.push(definition);
                 sequencedDefinition.relatedDefinitionIds.add(definition.id);
             } else {
@@ -437,9 +434,9 @@ class Translator {
         return definitions;
     }
 
-    async _getMergedDefinition(sourceDefinitions, relatedDefinitions, unsequencedDefinitions, secondarySearchDictionaryMap, usedDefinitions) {
-        const {reasons, source, rawSource} = sourceDefinitions[0];
-        const score = this._getMaxDefinitionScore(sourceDefinitions);
+    async _getMergedDefinition(relatedDefinitions, unsequencedDefinitions, secondarySearchDictionaryMap, usedDefinitions) {
+        const {reasons, source, rawSource} = relatedDefinitions[0];
+        const score = this._getMaxPrimaryDefinitionScore(relatedDefinitions);
         const termInfoMap = new Map();
         const glossaryDefinitions = [];
         const glossaryDefinitionGroupMap = new Map();
@@ -1025,6 +1022,14 @@ class Translator {
         let result = Number.MIN_SAFE_INTEGER;
         for (const {score} of definitions) {
             if (score > result) { result = score; }
+        }
+        return result;
+    }
+
+    _getMaxPrimaryDefinitionScore(definitions) {
+        let result = Number.MIN_SAFE_INTEGER;
+        for (const {isPrimary, score} of definitions) {
+            if (isPrimary && score > result) { result = score; }
         }
         return result;
     }
