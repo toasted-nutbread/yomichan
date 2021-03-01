@@ -573,7 +573,7 @@ class Translator {
     _groupTerms(definitions) {
         const groups = new Map();
         for (const definition of definitions) {
-            const {source, expression, reading, reasons} = definition;
+            const {source, reasons, expressions: [{expression, reading}]} = definition;
             const key = this._createMapKey([source, expression, reading, ...reasons]);
             let groupDefinitions = groups.get(key);
             if (typeof groupDefinitions === 'undefined') {
