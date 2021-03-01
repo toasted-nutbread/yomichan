@@ -358,6 +358,11 @@ class Translator {
         return deinflections;
     }
 
+    /**
+     * @param definitions An array of 'term' definitions.
+     * @param mainDictionary The name of the main dictionary.
+     * @param enabledDictionaryMap The map of enabled dictionaries and their settings.
+     */
     async _getSequencedDefinitions(definitions, mainDictionary, enabledDictionaryMap) {
         const sequenceList = [];
         const sequencedDefinitionMap = new Map();
