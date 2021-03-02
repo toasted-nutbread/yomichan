@@ -622,33 +622,6 @@ class Translator {
         return results;
     }
 
-    _addUniqueTermInfos(definitions, termInfoMap) {
-        for (const {expression, reading, sourceTerm, furiganaSegments, termTags} of definitions) {
-            let readingMap = termInfoMap.get(expression);
-            if (typeof readingMap === 'undefined') {
-                readingMap = new Map();
-                termInfoMap.set(expression, readingMap);
-            }
-
-            let termInfo = readingMap.get(reading);
-            if (typeof termInfo === 'undefined') {
-                termInfo = {
-                    sourceTerm,
-                    furiganaSegments,
-                    termTagsMap: new Map()
-                };
-                readingMap.set(reading, termInfo);
-            }
-
-            const {termTagsMap} = termInfo;
-            for (const tag of termTags) {
-                const {name} = tag;
-                if (termTagsMap.has(name)) { continue; }
-                termTagsMap.set(name, this._cloneTag(tag));
-            }
-        }
-    }
-
     _convertTermDefinitionsToMergedGlossaryTermDefinitions(definitions) {
         const convertedDefinitions = [];
         for (const definition of definitions) {
@@ -1256,7 +1229,30 @@ class Translator {
 
     _createTermDetailsListFromTermInfoMap(definitions) {
         const termInfoMap = new Map();
-        this._addUniqueTermInfos(definitions, termInfoMap);
+        for (const {expression, reading, sourceTerm, furiganaSegments, termTags} of definitions) {
+            let readingMap = termInfoMap.get(expression);
+            if (typeof readingMap === 'undefined') {
+                readingMap = new Map();
+                termInfoMap.set(expression, readingMap);
+            }
+
+            let termInfo = readingMap.get(reading);
+            if (typeof termInfo === 'undefined') {
+                termInfo = {
+                    sourceTerm,
+                    furiganaSegments,
+                    termTagsMap: new Map()
+                };
+                readingMap.set(reading, termInfo);
+            }
+
+            const {termTagsMap} = termInfo;
+            for (const tag of termTags) {
+                const {name} = tag;
+                if (termTagsMap.has(name)) { continue; }
+                termTagsMap.set(name, this._cloneTag(tag));
+            }
+        }
 
         const termDetailsList = [];
         for (const [expression, readingMap] of termInfoMap.entries()) {
