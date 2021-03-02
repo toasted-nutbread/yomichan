@@ -371,7 +371,7 @@ class Translator {
                 if (typeof sequencedDefinition === 'undefined') {
                     sequencedDefinition = {
                         relatedDefinitions: [],
-                        relatedDefinitionIds: new Set(),
+                        definitionIds: new Set(),
                         secondaryDefinitions: []
                     };
                     sequencedDefinitionMap.set(sequence, sequencedDefinition);
@@ -379,7 +379,7 @@ class Translator {
                     sequenceList.push(sequence);
                 }
                 sequencedDefinition.relatedDefinitions.push(definition);
-                sequencedDefinition.relatedDefinitionIds.add(id);
+                sequencedDefinition.definitionIds.add(id);
             } else {
                 unsequencedDefinitions.set(id, definition);
             }
@@ -403,14 +403,14 @@ class Translator {
     async _addRelatedDefinitions(sequencedDefinitions, unsequencedDefinitions, sequenceList, mainDictionary, enabledDictionaryMap) {
         const databaseDefinitions = await this._database.findTermsBySequenceBulk(sequenceList, mainDictionary);
         for (const databaseDefinition of databaseDefinitions) {
-            const {relatedDefinitions, relatedDefinitionIds} = sequencedDefinitions[databaseDefinition.index];
+            const {relatedDefinitions, definitionIds} = sequencedDefinitions[databaseDefinition.index];
             const {id} = databaseDefinition;
-            if (relatedDefinitionIds.has(id)) { continue; }
+            if (definitionIds.has(id)) { continue; }
 
             const {source, rawSource, sourceTerm} = relatedDefinitions[0];
             const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, sourceTerm, [], false, enabledDictionaryMap);
             relatedDefinitions.push(definition);
-            relatedDefinitionIds.add(id);
+            definitionIds.add(id);
             unsequencedDefinitions.delete(id);
         }
     }
@@ -446,12 +446,12 @@ class Translator {
             const {index, id} = databaseDefinition;
             const source = expressionList[index];
             const targets = targetsList[index];
-            for (const {relatedDefinitionIds, secondaryDefinitions} of targets) {
-                if (relatedDefinitionIds.has(id)) { continue; }
+            for (const {definitionIds, secondaryDefinitions} of targets) {
+                if (definitionIds.has(id)) { continue; }
 
                 const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, source, source, [], false, enabledDictionaryMap);
                 secondaryDefinitions.push(definition);
-                relatedDefinitionIds.add(id);
+                definitionIds.add(id);
                 unsequencedDefinitions.delete(id);
             }
         }
