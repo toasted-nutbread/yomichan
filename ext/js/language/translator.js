@@ -457,10 +457,8 @@ class Translator {
     _getMergedDefinition(relatedDefinitions, secondaryDefinitions) {
         const {reasons, source, rawSource} = relatedDefinitions[0];
         const score = this._getMaxPrimaryDefinitionScore(relatedDefinitions);
-        const termInfoMap = new Map();
         const glossaryDefinitions = [];
         const allDefinitions = secondaryDefinitions.length > 0 ? [...relatedDefinitions, ...secondaryDefinitions] : relatedDefinitions;
-        this._addUniqueTermInfos(allDefinitions, termInfoMap);
 
         // Merge by glossary
         const allExpressions = new Set();
@@ -502,7 +500,7 @@ class Translator {
 
         this._sortDefinitions(glossaryDefinitions);
 
-        const termDetailsList = this._createTermDetailsListFromTermInfoMap(termInfoMap);
+        const termDetailsList = this._createTermDetailsListFromTermInfoMap(allDefinitions);
 
         return this._createMergedTermDefinition(
             source,
@@ -1220,9 +1218,7 @@ class Translator {
         const sourceTermExactMatchCount = this._getSourceTermMatchCountSum(definitions);
         const dictionaryNames = this._getUniqueDictionaryNames(definitions);
 
-        const termInfoMap = new Map();
-        this._addUniqueTermInfos(definitions, termInfoMap);
-        const termDetailsList = this._createTermDetailsListFromTermInfoMap(termInfoMap);
+        const termDetailsList = this._createTermDetailsListFromTermInfoMap(definitions);
 
         const definitionTags = this._getUniqueDefinitionTags(definitions);
         this._sortTags(definitionTags);
@@ -1258,7 +1254,10 @@ class Translator {
         };
     }
 
-    _createTermDetailsListFromTermInfoMap(termInfoMap) {
+    _createTermDetailsListFromTermInfoMap(definitions) {
+        const termInfoMap = new Map();
+        this._addUniqueTermInfos(definitions, termInfoMap);
+
         const termDetailsList = [];
         for (const [expression, readingMap] of termInfoMap.entries()) {
             for (const [reading, {termTagsMap, sourceTerm, furiganaSegments}] of readingMap.entries()) {
