@@ -389,9 +389,7 @@ class Translator {
             await this._addRelatedDefinitions(sequencedDefinitions, unsequencedDefinitions, sequenceList, mainDictionary, enabledDictionaryMap);
         }
 
-        if (secondarySearchDictionaryMap.size > 0) {
-            await this._addSecondaryDefinitions(sequencedDefinitions, unsequencedDefinitions, enabledDictionaryMap, secondarySearchDictionaryMap);
-        }
+        await this._addSecondaryDefinitions(sequencedDefinitions, unsequencedDefinitions, enabledDictionaryMap, secondarySearchDictionaryMap);
 
         for (const {relatedDefinitions} of sequencedDefinitions) {
             this._sortDefinitionsById(relatedDefinitions);
@@ -416,6 +414,8 @@ class Translator {
     }
 
     async _addSecondaryDefinitions(sequencedDefinitions, unsequencedDefinitions, enabledDictionaryMap, secondarySearchDictionaryMap) {
+        if (unsequencedDefinitions.length === 0 || secondarySearchDictionaryMap.size === 0) { return; }
+
         const expressionList = [];
         const readingList = [];
         const targetList = [];
@@ -444,7 +444,23 @@ class Translator {
             }
         }
 
-        if (expressionList.length === 0) { return; }
+        for (const [id, definition] of unsequencedDefinitions.entries()) {
+            const {expressions: [{expression, reading}]} = definition;
+            const key = this._createMapKey([expression, reading]);
+            const target = targetMap.get(key);
+            if (typeof target === 'undefined') { continue; }
+
+            for (const {definitionIds, secondaryDefinitions} of target.sequencedDefinitions) {
+                if (definitionIds.has(id)) { continue; }
+
+                secondaryDefinitions.push(definition);
+                definitionIds.add(id);
+                unsequencedDefinitions.delete(id);
+                break;
+            }
+        }
+
+        if (expressionList.length === 0 || secondarySearchDictionaryMap.size === 0) { return; }
 
         const databaseDefinitions = await this._database.findTermsExactBulk(expressionList, readingList, secondarySearchDictionaryMap);
         this._sortDatabaseDefinitionsByIndex(databaseDefinitions);
