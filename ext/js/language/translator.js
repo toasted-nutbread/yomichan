@@ -500,7 +500,7 @@ class Translator {
 
         this._sortDefinitions(glossaryDefinitions);
 
-        const termDetailsList = this._createTermDetailsListFromTermInfoMap(allDefinitions);
+        const termDetailsList = this._createTermDetailsList(allDefinitions);
 
         return this._createMergedTermDefinition(
             source,
@@ -1191,7 +1191,7 @@ class Translator {
         const sourceTermExactMatchCount = this._getSourceTermMatchCountSum(definitions);
         const dictionaryNames = this._getUniqueDictionaryNames(definitions);
 
-        const termDetailsList = this._createTermDetailsListFromTermInfoMap(definitions);
+        const termDetailsList = this._createTermDetailsList(definitions);
 
         const definitionTags = this._getUniqueDefinitionTags(definitions);
         this._sortTags(definitionTags);
@@ -1227,7 +1227,7 @@ class Translator {
         };
     }
 
-    _createTermDetailsListFromTermInfoMap(definitions) {
+    _createTermDetailsList(definitions) {
         const termInfoMap = new Map();
         for (const {expression, reading, sourceTerm, furiganaSegments, termTags} of definitions) {
             let readingMap = termInfoMap.get(expression);
