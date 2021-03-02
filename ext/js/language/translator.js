@@ -385,9 +385,8 @@ class Translator {
 
         if (sequenceList.length > 0) {
             await this._addRelatedDefinitions(sequencedDefinitions, unsequencedDefinitions, sequenceList, mainDictionary, enabledDictionaryMap);
+            await this._addSecondaryDefinitions(sequencedDefinitions, unsequencedDefinitions, enabledDictionaryMap, secondarySearchDictionaryMap);
         }
-
-        await this._addSecondaryDefinitions(sequencedDefinitions, unsequencedDefinitions, enabledDictionaryMap, secondarySearchDictionaryMap);
 
         for (const {relatedDefinitions} of sequencedDefinitions) {
             this._sortDefinitionsById(relatedDefinitions);
