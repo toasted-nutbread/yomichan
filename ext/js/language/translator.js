@@ -460,14 +460,31 @@ class Translator {
         const termInfoMap = new Map();
         const glossaryDefinitions = [];
         const allDefinitions = secondaryDefinitions.length > 0 ? [...relatedDefinitions, ...secondaryDefinitions] : relatedDefinitions;
-        const glossaryDefinitionGroupMap = this._mergeByGlossary(allDefinitions);
         this._addUniqueTermInfos(allDefinitions, termInfoMap);
 
+        // Merge by glossary
         const allExpressions = new Set();
         const allReadings = new Set();
-        for (const {expressions, readings} of glossaryDefinitionGroupMap.values()) {
-            for (const expression of expressions) { allExpressions.add(expression); }
-            for (const reading of readings) { allReadings.add(reading); }
+        const glossaryDefinitionGroupMap = new Map();
+        for (const definition of allDefinitions) {
+            const {dictionary, glossary, expressions: [{expression, reading}]} = definition;
+
+            const key = this._createMapKey([dictionary, ...glossary]);
+            let group = glossaryDefinitionGroupMap.get(key);
+            if (typeof group === 'undefined') {
+                group = {
+                    expressions: new Set(),
+                    readings: new Set(),
+                    definitions: []
+                };
+                glossaryDefinitionGroupMap.set(key, group);
+            }
+
+            allExpressions.add(expression);
+            allReadings.add(reading);
+            group.expressions.add(expression);
+            group.readings.add(reading);
+            group.definitions.push(definition);
         }
 
         for (const {expressions, readings, definitions} of glossaryDefinitionGroupMap.values()) {
@@ -605,29 +622,6 @@ class Translator {
         }
 
         return results;
-    }
-
-    _mergeByGlossary(definitions) {
-        const glossaryDefinitionGroupMap = new Map();
-        for (const definition of definitions) {
-            const {dictionary, glossary, expressions: [{expression, reading}]} = definition;
-
-            const key = this._createMapKey([dictionary, ...glossary]);
-            let group = glossaryDefinitionGroupMap.get(key);
-            if (typeof group === 'undefined') {
-                group = {
-                    expressions: new Set(),
-                    readings: new Set(),
-                    definitions: []
-                };
-                glossaryDefinitionGroupMap.set(key, group);
-            }
-
-            group.expressions.add(expression);
-            group.readings.add(reading);
-            group.definitions.push(definition);
-        }
-        return glossaryDefinitionGroupMap;
     }
 
     _addUniqueTermInfos(definitions, termInfoMap) {
