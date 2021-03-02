@@ -181,15 +181,13 @@ class Translator {
         const [definitions, length] = await this._findTermsInternal(text, enabledDictionaryMap, options);
         const {sequencedDefinitions, unsequencedDefinitions} = await this._getSequencedDefinitions(definitions, mainDictionary, enabledDictionaryMap);
         const definitionsMerged = [];
-        const usedDefinitions = new Set();
 
         for (const {relatedDefinitions, secondaryDefinitions} of sequencedDefinitions) {
             const mergedDefinition = this._getMergedDefinition(relatedDefinitions, secondaryDefinitions);
             definitionsMerged.push(mergedDefinition);
         }
 
-        const unusedDefinitions = unsequencedDefinitions.filter((definition) => !usedDefinitions.has(definition));
-        for (const groupedDefinition of this._groupTerms(unusedDefinitions, enabledDictionaryMap)) {
+        for (const groupedDefinition of this._groupTerms(unsequencedDefinitions, enabledDictionaryMap)) {
             const {reasons, score, expression, reading, source, rawSource, sourceTerm, furiganaSegments, termTags, definitions: definitions2} = groupedDefinition;
             const termDetailsList = [this._createTermDetails(sourceTerm, expression, reading, furiganaSegments, termTags)];
             const compatibilityDefinition = this._createMergedTermDefinition(
