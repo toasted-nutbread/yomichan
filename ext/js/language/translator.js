@@ -418,24 +418,29 @@ class Translator {
     async _addSecondaryDefinitions(sequencedDefinitions, unsequencedDefinitions, enabledDictionaryMap, secondarySearchDictionaryMap) {
         const expressionList = [];
         const readingList = [];
-        const targetsList = [];
-        const targetsMap = new Map();
+        const targetList = [];
+        const targetMap = new Map();
 
         for (const sequencedDefinition of sequencedDefinitions) {
             const {relatedDefinitions} = sequencedDefinition;
             for (const definition of relatedDefinitions) {
-                if (definition.isPrimary) { continue; }
                 const {expressions: [{expression, reading}]} = definition;
                 const key = this._createMapKey([expression, reading]);
-                let targets = targetsMap.get(key);
-                if (typeof targets === 'undefined') {
-                    targets = [];
+                let target = targetMap.get(key);
+                if (typeof target === 'undefined') {
+                    target = {
+                        sequencedDefinitions: [],
+                        searchSecondary: false
+                    };
+                    targetMap.set(key, target);
+                }
+                target.sequencedDefinitions.push(sequencedDefinition);
+                if (!definition.isPrimary && !target.searchSecondary) {
+                    target.searchSecondary = true;
                     expressionList.push(expression);
                     readingList.push(reading);
-                    targetsList.push(targets);
-                    targetsMap.set(key, targets);
+                    targetList.push(target);
                 }
-                targets.push(sequencedDefinition);
             }
         }
 
@@ -445,8 +450,8 @@ class Translator {
         for (const databaseDefinition of databaseDefinitions) {
             const {index, id} = databaseDefinition;
             const source = expressionList[index];
-            const targets = targetsList[index];
-            for (const {definitionIds, secondaryDefinitions} of targets) {
+            const target = targetList[index];
+            for (const {definitionIds, secondaryDefinitions} of target.sequencedDefinitions) {
                 if (definitionIds.has(id)) { continue; }
 
                 const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, source, source, [], false, enabledDictionaryMap);
