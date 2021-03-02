@@ -413,6 +413,7 @@ class Translator {
     async _addSecondaryDefinitions(sequencedDefinitions, unsequencedDefinitions, enabledDictionaryMap, secondarySearchDictionaryMap) {
         if (unsequencedDefinitions.length === 0 && secondarySearchDictionaryMap.size === 0) { return; }
 
+        // Prepare grouping info
         const expressionList = [];
         const readingList = [];
         const targetList = [];
@@ -441,6 +442,7 @@ class Translator {
             }
         }
 
+        // Group unsequenced definitions with sequenced definitions that have a matching [expression, reading].
         for (const [id, definition] of unsequencedDefinitions.entries()) {
             const {expressions: [{expression, reading}]} = definition;
             const key = this._createMapKey([expression, reading]);
@@ -457,6 +459,7 @@ class Translator {
             }
         }
 
+        // Search database for additional secondary terms
         if (expressionList.length === 0 || secondarySearchDictionaryMap.size === 0) { return; }
 
         const databaseDefinitions = await this._database.findTermsExactBulk(expressionList, readingList, secondarySearchDictionaryMap);
