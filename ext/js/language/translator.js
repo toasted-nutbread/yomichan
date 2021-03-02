@@ -444,6 +444,8 @@ class Translator {
             }
         }
 
+        if (expressionList.length === 0) { return; }
+
         const databaseDefinitions = await this._database.findTermsExactBulk(expressionList, readingList, secondarySearchDictionaryMap);
         this._sortDatabaseDefinitionsByIndex(databaseDefinitions);
 
