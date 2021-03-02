@@ -456,9 +456,8 @@ class Translator {
 
     _getMergedDefinition(relatedDefinitions, secondaryDefinitions) {
         const {reasons, source, rawSource} = relatedDefinitions[0];
-        const score = this._getMaxPrimaryDefinitionScore(relatedDefinitions);
-        const glossaryDefinitions = [];
         const allDefinitions = secondaryDefinitions.length > 0 ? [...relatedDefinitions, ...secondaryDefinitions] : relatedDefinitions;
+        const score = this._getMaxPrimaryDefinitionScore(allDefinitions);
 
         // Merge by glossary
         const allExpressions = new Set();
@@ -485,6 +484,7 @@ class Translator {
             group.definitions.push(definition);
         }
 
+        const glossaryDefinitions = [];
         for (const {expressions, readings, definitions} of glossaryDefinitionGroupMap.values()) {
             const glossaryDefinition = this._createMergedGlossaryTermDefinition(
                 source,
@@ -497,7 +497,6 @@ class Translator {
             );
             glossaryDefinitions.push(glossaryDefinition);
         }
-
         this._sortDefinitions(glossaryDefinitions);
 
         const termDetailsList = this._createTermDetailsList(allDefinitions);
