@@ -232,16 +232,19 @@ class Translator {
 
         let maxLength = 0;
         const definitions = [];
+        const definitionIds = new Set();
         for (const {databaseDefinitions, source, rawSource, term, reasons} of deinflections) {
             if (databaseDefinitions.length === 0) { continue; }
             maxLength = Math.max(maxLength, rawSource.length);
             for (const databaseDefinition of databaseDefinitions) {
+                const {id} = databaseDefinition;
+                if (definitionIds.has(id)) { continue; }
                 const definition = await this._createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, term, reasons, true, enabledDictionaryMap);
                 definitions.push(definition);
+                definitionIds.add(id);
             }
         }
 
-        this._removeDuplicateDefinitions(definitions);
         return [definitions, maxLength];
     }
 
@@ -541,29 +544,6 @@ class Translator {
             }
         }
         return [...definitionTagsMap.values()];
-    }
-
-    _removeDuplicateDefinitions(definitions) {
-        const definitionGroups = new Map();
-        for (let i = 0, ii = definitions.length; i < ii; ++i) {
-            const definition = definitions[i];
-            const {id} = definition;
-            const existing = definitionGroups.get(id);
-            if (typeof existing === 'undefined') {
-                definitionGroups.set(id, [i, definition]);
-                continue;
-            }
-
-            let removeIndex = i;
-            if (definition.source.length > existing[1].source.length) {
-                definitionGroups.set(id, [i, definition]);
-                removeIndex = existing[0];
-            }
-
-            definitions.splice(removeIndex, 1);
-            --i;
-            --ii;
-        }
     }
 
     _flagRedundantDefinitionTags(definitions) {
