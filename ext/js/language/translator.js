@@ -610,7 +610,7 @@ class Translator {
     _mergeByGlossary(definitions) {
         const glossaryDefinitionGroupMap = new Map();
         for (const definition of definitions) {
-            const {expression, reading, dictionary, glossary} = definition;
+            const {dictionary, glossary, expressions: [{expression, reading}]} = definition;
 
             const key = this._createMapKey([dictionary, ...glossary]);
             let group = glossaryDefinitionGroupMap.get(key);
