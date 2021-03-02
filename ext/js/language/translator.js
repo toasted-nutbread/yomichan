@@ -412,7 +412,7 @@ class Translator {
     }
 
     async _addSecondaryDefinitions(sequencedDefinitions, unsequencedDefinitions, enabledDictionaryMap, secondarySearchDictionaryMap) {
-        if (unsequencedDefinitions.length === 0 || secondarySearchDictionaryMap.size === 0) { return; }
+        if (unsequencedDefinitions.length === 0 && secondarySearchDictionaryMap.size === 0) { return; }
 
         const expressionList = [];
         const readingList = [];
