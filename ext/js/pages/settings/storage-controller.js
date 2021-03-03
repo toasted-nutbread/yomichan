@@ -37,11 +37,23 @@ class StorageController {
         this._storageUseValidNodes = document.querySelectorAll('.storage-use-valid');
         this._storageUseInvalidNodes = document.querySelectorAll('.storage-use-invalid');
 
-        this.updateStats();
-        document.querySelector('#storage-refresh').addEventListener('click', this.updateStats.bind(this), false);
+        document.querySelector('#storage-refresh').addEventListener('click', this._onStorageRefreshButtonClick.bind(this), false);
+        yomichan.on('storageChanged', this._onStorageChanged.bind(this));
+
+        this._updateStats();
     }
 
-    async updateStats() {
+    // Private
+
+    _onStorageRefreshButtonClick() {
+        this._updateStats();
+    }
+
+    _onStorageChanged() {
+        this._updateStats();
+    }
+
+    async _updateStats() {
         if (this._isUpdating) { return; }
 
         try {
