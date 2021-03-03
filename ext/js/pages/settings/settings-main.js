@@ -86,7 +86,7 @@ async function setupGenericSettingsController(genericSettingController) {
         const storageController = new StorageController(persistentStorageController);
         storageController.prepare();
 
-        const dictionaryController = new DictionaryController(settingsController, modalController, storageController, statusFooter);
+        const dictionaryController = new DictionaryController(settingsController, modalController, statusFooter);
         dictionaryController.prepare();
 
         const dictionaryImportController = new DictionaryImportController(settingsController, modalController, storageController, statusFooter);

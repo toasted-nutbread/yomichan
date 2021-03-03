@@ -85,7 +85,7 @@ async function setupEnvironmentInfo() {
         const profileController = new ProfileController(settingsController, modalController);
         profileController.prepare();
 
-        const dictionaryController = new DictionaryController(settingsController, modalController, storageController, null);
+        const dictionaryController = new DictionaryController(settingsController, modalController, null);
         dictionaryController.prepare();
 
         const dictionaryImportController = new DictionaryImportController(settingsController, modalController, storageController, null);
