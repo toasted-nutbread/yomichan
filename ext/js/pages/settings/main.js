@@ -88,7 +88,7 @@ async function setupEnvironmentInfo() {
         const dictionaryController = new DictionaryController(settingsController, modalController, null);
         dictionaryController.prepare();
 
-        const dictionaryImportController = new DictionaryImportController(settingsController, modalController, storageController, null);
+        const dictionaryImportController = new DictionaryImportController(settingsController, modalController, null);
         dictionaryImportController.prepare();
 
         const ankiController = new AnkiController(settingsController);
