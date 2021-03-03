@@ -30,6 +30,7 @@
  * ModalController
  * NestedPopupsController
  * PermissionsToggleController
+ * PersistentStorageController
  * PopupPreviewController
  * PopupWindowController
  * ProfileController
@@ -79,7 +80,10 @@ async function setupGenericSettingsController(genericSettingController) {
         const settingsController = new SettingsController(optionsFull.profileCurrent);
         settingsController.prepare();
 
-        const storageController = new StorageController();
+        const persistentStorageController = new PersistentStorageController();
+        persistentStorageController.prepare();
+
+        const storageController = new StorageController(persistentStorageController);
         storageController.prepare();
 
         const dictionaryController = new DictionaryController(settingsController, modalController, storageController, statusFooter);

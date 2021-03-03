@@ -25,6 +25,7 @@
  * GenericSettingController
  * ModalController
  * PermissionsToggleController
+ * PersistentStorageController
  * PopupPreviewController
  * ProfileController
  * ScanInputsController
@@ -63,7 +64,10 @@ async function setupEnvironmentInfo() {
         const settingsController = new SettingsController(optionsFull.profileCurrent);
         settingsController.prepare();
 
-        const storageController = new StorageController();
+        const persistentStorageController = new PersistentStorageController();
+        persistentStorageController.prepare();
+
+        const storageController = new StorageController(persistentStorageController);
         storageController.prepare();
 
         const genericSettingController = new GenericSettingController(settingsController);
