@@ -1314,14 +1314,18 @@ class Translator {
             i = v2.score - v1.score;
             if (i !== 0) { return i; }
 
+            // Skip if either expression is not a string (array)
             const expression1 = v1.expression;
             const expression2 = v2.expression;
-            if (typeof expression1 !== 'string' || typeof expression2 !== 'string') { return 0; } // Skip if either is not a string (array)
+            if (typeof expression1 === 'string' && typeof expression2 === 'string') {
+                i = expression2.length - expression1.length;
+                if (i !== 0) { return i; }
 
-            i = expression2.length - expression1.length;
-            if (i !== 0) { return i; }
+                i = stringComparer.compare(expression1, expression2);
+                if (i !== 0) { return i; }
+            }
 
-            return stringComparer.compare(expression1, expression2);
+            return 0;
         };
         definitions.sort(compareFunction);
     }
