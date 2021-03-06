@@ -721,12 +721,13 @@ class DisplayGenerator {
     }
 
     _setTextContent(node, value, language) {
-        node.textContent = value;
         if (typeof language === 'string') {
             node.lang = language;
         } else if (this._japaneseUtil.isStringPartiallyJapanese(value)) {
             node.lang = 'ja';
         }
+
+        node.textContent = value;
     }
 
     _getPitchAccentCategories(pitches) {
