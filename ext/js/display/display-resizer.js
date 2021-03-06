@@ -125,7 +125,10 @@ class DisplayResizer {
     }
 
     async _initializeFrameResize(token) {
-        const size = await this._invokeContentOrigin('getFrameSize');
+        const {parentPopupId} = this._display;
+        if (parentPopupId === null) { return; }
+
+        const size = await this._display.invokeParentFrame('popup.getFrameSize', {id: parentPopupId});
         if (this._token !== token) { return; }
         this._startSize = size;
     }
@@ -146,13 +149,16 @@ class DisplayResizer {
     }
 
     async _updateFrameSize(x, y) {
+        const {parentPopupId} = this._display;
+        if (parentPopupId === null) { return; }
+
         const handleSize = this._handle.getBoundingClientRect();
         let {width, height} = this._startSize;
         width += x - this._startOffset.x;
         height += y - this._startOffset.y;
         width = Math.max(Math.max(0, handleSize.width), width);
         height = Math.max(Math.max(0, handleSize.height), height);
-        await this._invokeContentOrigin('setFrameSize', {width, height});
+        await this._display.invokeParentFrame('popup.setFrameSize', {id: parentPopupId, width, height});
     }
 
     _getTouch(touchList, identifier) {
@@ -162,9 +168,5 @@ class DisplayResizer {
             }
         }
         return null;
-    }
-
-    async _invokeContentOrigin(action, params={}) {
-        return await this._display.invokeContentOrigin(action, params);
     }
 }

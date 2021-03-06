@@ -198,6 +198,10 @@ class Display extends EventDispatcher {
         return this._frameId;
     }
 
+    get parentPopupId() {
+        return this._parentPopupId;
+    }
+
     async prepare() {
         // State setup
         const {documentElement} = document;
@@ -433,6 +437,13 @@ class Display extends EventDispatcher {
             throw new Error('Content origin is same page');
         }
         return await yomichan.crossFrame.invokeTab(this._contentOriginTabId, this._contentOriginFrameId, action, params);
+    }
+
+    async invokeParentFrame(action, params={}) {
+        if (this._parentFrameId === null || this._parentFrameId === this._frameId) {
+            throw new Error('Invalid parent frame');
+        }
+        return await yomichan.crossFrame.invoke(this._parentFrameId, action, params);
     }
 
     // Message handlers
