@@ -97,7 +97,12 @@ class AudioDownloader {
 
     async _getInfoJpod101Alternate(expression, reading) {
         const fetchUrl = 'https://www.japanesepod101.com/learningcenter/reference/dictionary_post';
-        const data = `post=dictionary_reference&match_type=exact&search_query=${encodeURIComponent(expression)}&vulgar=true`;
+        const data = new URLSearchParams({
+            post: 'dictionary_reference',
+            match_type: 'exact',
+            search_query: expression,
+            vulgar: 'true'
+        });
         const response = await this._requestBuilder.fetchAnonymous(fetchUrl, {
             method: 'POST',
             mode: 'cors',
