@@ -399,7 +399,7 @@ class Display extends EventDispatcher {
     close() {
         switch (this._pageType) {
             case 'popup':
-                this._invokeContentOrigin('closePopup');
+                this.invokeContentOrigin('closePopup');
                 break;
             case 'search':
                 this._closeTab();
@@ -437,6 +437,13 @@ class Display extends EventDispatcher {
             }
         };
         this.setContent(details);
+    }
+
+    async invokeContentOrigin(action, params={}) {
+        if (this._contentOriginTabId === this._tabId && this._contentOriginFrameId === this._frameId) {
+            throw new Error('Content origin is same page');
+        }
+        return await yomichan.crossFrame.invokeTab(this._contentOriginTabId, this._contentOriginFrameId, action, params);
     }
 
     // Message handlers
@@ -1618,13 +1625,6 @@ class Display extends EventDispatcher {
         await frontend.prepare();
     }
 
-    async _invokeContentOrigin(action, params={}) {
-        if (this._contentOriginTabId === this._tabId && this._contentOriginFrameId === this._frameId) {
-            throw new Error('Content origin is same page');
-        }
-        return await yomichan.crossFrame.invokeTab(this._contentOriginTabId, this._contentOriginFrameId, action, params);
-    }
-
     _copyHostSelection() {
         if (this._contentOriginFrameId === null || window.getSelection().toString()) { return false; }
         this._copyHostSelectionSafe();
@@ -1646,7 +1646,7 @@ class Display extends EventDispatcher {
                 {
                     let text;
                     try {
-                        text = await this._invokeContentOrigin('getSelectionText');
+                        text = await this.invokeContentOrigin('getSelectionText');
                     } catch (e) {
                         break;
                     }
@@ -1654,7 +1654,7 @@ class Display extends EventDispatcher {
                 }
                 break;
             default:
-                await this._invokeContentOrigin('copySelection');
+                await this.invokeContentOrigin('copySelection');
                 break;
         }
     }
@@ -1872,7 +1872,7 @@ class Display extends EventDispatcher {
     }
 
     async _initializeFrameResize(token) {
-        const size = await this._invokeContentOrigin('getFrameSize');
+        const size = await this.invokeContentOrigin('getFrameSize');
         if (this._frameResizeToken !== token) { return; }
         this._frameResizeStartSize = size;
     }
@@ -1899,7 +1899,7 @@ class Display extends EventDispatcher {
         height += y - this._frameResizeStartOffset.y;
         width = Math.max(Math.max(0, handleSize.width), width);
         height = Math.max(Math.max(0, handleSize.height), height);
-        await this._invokeContentOrigin('setFrameSize', {width, height});
+        await this.invokeContentOrigin('setFrameSize', {width, height});
     }
 
     _getTouch(touchList, identifier) {
