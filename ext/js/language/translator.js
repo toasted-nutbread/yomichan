@@ -1011,7 +1011,7 @@ class Translator {
         return result;
     }
 
-    _getMinDictionaryOrder(definitions) {
+    _getBestDictionaryOrder(definitions) {
         let result = Number.MAX_SAFE_INTEGER;
         for (const {dictionaryOrder} of definitions) {
             if (dictionaryOrder < result) { result = dictionaryOrder; }
@@ -1117,7 +1117,7 @@ class Translator {
     _createGroupedTermDefinition(definitions) {
         const {expression, reading, furiganaSegments, reasons, source, rawSource, sourceTerm} = definitions[0];
         const score = this._getMaxDefinitionScore(definitions);
-        const dictionaryOrder = this._getMinDictionaryOrder(definitions);
+        const dictionaryOrder = this._getBestDictionaryOrder(definitions);
         const dictionaryNames = this._getUniqueDictionaryNames(definitions);
         const termTags = this._getUniqueTermTags(definitions);
         const termDetailsList = [this._createTermDetails(sourceTerm, expression, reading, furiganaSegments, termTags)];
@@ -1151,7 +1151,7 @@ class Translator {
     }
 
     _createMergedTermDefinition(source, rawSource, definitions, expressions, readings, termDetailsList, reasons, score) {
-        const dictionaryOrder = this._getMinDictionaryOrder(definitions);
+        const dictionaryOrder = this._getBestDictionaryOrder(definitions);
         const sourceTermExactMatchCount = this._getSourceTermMatchCountSum(definitions);
         const dictionaryNames = this._getUniqueDictionaryNames(definitions);
         return {
@@ -1201,7 +1201,7 @@ class Translator {
 
         const {glossary} = definitions[0];
         const score = this._getMaxDefinitionScore(definitions);
-        const dictionaryOrder = this._getMinDictionaryOrder(definitions);
+        const dictionaryOrder = this._getBestDictionaryOrder(definitions);
         return {
             type: 'termMergedByGlossary',
             // id
