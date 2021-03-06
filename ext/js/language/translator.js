@@ -1079,7 +1079,8 @@ class Translator {
     }
 
     async _createTermDefinitionFromDatabaseDefinition(databaseDefinition, source, rawSource, sourceTerm, reasons, isPrimary, enabledDictionaryMap) {
-        const {expression, reading, definitionTags, termTags, glossary, score, dictionary, id, sequence} = databaseDefinition;
+        const {expression, reading: rawReading, definitionTags, termTags, glossary, score, dictionary, id, sequence} = databaseDefinition;
+        const reading = (rawReading.length > 0 ? rawReading : expression);
         const dictionaryOrder = this._getDictionaryOrder(dictionary, enabledDictionaryMap);
         const termTagsExpanded = await this._expandTags(termTags, dictionary);
         const definitionTagsExpanded = await this._expandTags(definitionTags, dictionary);
