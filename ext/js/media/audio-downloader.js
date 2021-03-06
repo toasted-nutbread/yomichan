@@ -78,23 +78,20 @@ class AudioDownloader {
     }
 
     async _getInfoJpod101(expression, reading) {
-        let kana = reading;
-        let kanji = expression;
-
-        if (!kana && this._japaneseUtil.isStringEntirelyKana(kanji)) {
-            kana = kanji;
-            kanji = null;
+        if (reading === expression && this._japaneseUtil.isStringEntirelyKana(expression)) {
+            reading = expression;
+            expression = null;
         }
 
-        const params = [];
-        if (kanji) {
-            params.push(`kanji=${encodeURIComponent(kanji)}`);
+        const params = new URLSearchParams();
+        if (expression) {
+            params.set('kanji', expression);
         }
-        if (kana) {
-            params.push(`kana=${encodeURIComponent(kana)}`);
+        if (reading) {
+            params.set('kana', reading);
         }
 
-        const url = `https://assets.languagepod101.com/dictionary/japanese/audiomp3.php?${params.join('&')}`;
+        const url = `https://assets.languagepod101.com/dictionary/japanese/audiomp3.php?${params.toString()}`;
         return [{type: 'url', url}];
     }
 
