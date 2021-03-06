@@ -18,20 +18,20 @@
 class DisplayResizer {
     constructor(display) {
         this._display = display;
-        this._frameResizeToken = null;
-        this._frameResizeHandle = null;
-        this._frameResizeTouchIdentifier = null;
-        this._frameResizeStartSize = null;
-        this._frameResizeStartOffset = null;
-        this._frameResizeEventListeners = new EventListenerCollection();
+        this._token = null;
+        this._handle = null;
+        this._touchIdentifier = null;
+        this._startSize = null;
+        this._startOffset = null;
+        this._eventListeners = new EventListenerCollection();
     }
 
     prepare() {
-        this._frameResizeHandle = document.querySelector('#frame-resizer-handle');
-        if (this._frameResizeHandle === null) { return; }
+        this._handle = document.querySelector('#frame-resizer-handle');
+        if (this._handle === null) { return; }
 
-        this._frameResizeHandle.addEventListener('mousedown', this._onFrameResizerMouseDown.bind(this), false);
-        this._frameResizeHandle.addEventListener('touchstart', this._onFrameResizerTouchStart.bind(this), false);
+        this._handle.addEventListener('mousedown', this._onFrameResizerMouseDown.bind(this), false);
+        this._handle.addEventListener('touchstart', this._onFrameResizerTouchStart.bind(this), false);
     }
 
     // Private
@@ -60,40 +60,40 @@ class DisplayResizer {
         if ((e.buttons & 0x1) === 0x0) {
             this._stopFrameResize();
         } else {
-            if (this._frameResizeStartSize === null) { return; }
+            if (this._startSize === null) { return; }
             const {clientX: x, clientY: y} = e;
             this._updateFrameSize(x, y);
         }
     }
 
     _onFrameResizerTouchEnd(e) {
-        if (this._getTouch(e.changedTouches, this._frameResizeTouchIdentifier) === null) { return; }
+        if (this._getTouch(e.changedTouches, this._touchIdentifier) === null) { return; }
         this._stopFrameResize();
     }
 
     _onFrameResizerTouchCancel(e) {
-        if (this._getTouch(e.changedTouches, this._frameResizeTouchIdentifier) === null) { return; }
+        if (this._getTouch(e.changedTouches, this._touchIdentifier) === null) { return; }
         this._stopFrameResize();
     }
 
     _onFrameResizerTouchMove(e) {
-        if (this._frameResizeStartSize === null) { return; }
-        const primaryTouch = this._getTouch(e.changedTouches, this._frameResizeTouchIdentifier);
+        if (this._startSize === null) { return; }
+        const primaryTouch = this._getTouch(e.changedTouches, this._touchIdentifier);
         if (primaryTouch === null) { return; }
         const {clientX: x, clientY: y} = primaryTouch;
         this._updateFrameSize(x, y);
     }
 
     _startFrameResize(e) {
-        if (this._frameResizeToken !== null) { return; }
+        if (this._token !== null) { return; }
 
         const {clientX: x, clientY: y} = e;
         const token = {};
-        this._frameResizeToken = token;
-        this._frameResizeStartOffset = {x, y};
-        this._frameResizeEventListeners.addEventListener(window, 'mouseup', this._onFrameResizerMouseUp.bind(this), false);
-        this._frameResizeEventListeners.addEventListener(window, 'blur', this._onFrameResizerWindowBlur.bind(this), false);
-        this._frameResizeEventListeners.addEventListener(window, 'mousemove', this._onFrameResizerMouseMove.bind(this), false);
+        this._token = token;
+        this._startOffset = {x, y};
+        this._eventListeners.addEventListener(window, 'mouseup', this._onFrameResizerMouseUp.bind(this), false);
+        this._eventListeners.addEventListener(window, 'blur', this._onFrameResizerWindowBlur.bind(this), false);
+        this._eventListeners.addEventListener(window, 'mousemove', this._onFrameResizerMouseMove.bind(this), false);
 
         const {documentElement} = document;
         if (documentElement !== null) {
@@ -104,17 +104,17 @@ class DisplayResizer {
     }
 
     _startFrameResizeTouch(e) {
-        if (this._frameResizeToken !== null) { return; }
+        if (this._token !== null) { return; }
 
         const {clientX: x, clientY: y, identifier} = e.changedTouches[0];
         const token = {};
-        this._frameResizeToken = token;
-        this._frameResizeStartOffset = {x, y};
-        this._frameResizeTouchIdentifier = identifier;
-        this._frameResizeEventListeners.addEventListener(window, 'touchend', this._onFrameResizerTouchEnd.bind(this), false);
-        this._frameResizeEventListeners.addEventListener(window, 'touchcancel', this._onFrameResizerTouchCancel.bind(this), false);
-        this._frameResizeEventListeners.addEventListener(window, 'blur', this._onFrameResizerWindowBlur.bind(this), false);
-        this._frameResizeEventListeners.addEventListener(window, 'touchmove', this._onFrameResizerTouchMove.bind(this), false);
+        this._token = token;
+        this._startOffset = {x, y};
+        this._touchIdentifier = identifier;
+        this._eventListeners.addEventListener(window, 'touchend', this._onFrameResizerTouchEnd.bind(this), false);
+        this._eventListeners.addEventListener(window, 'touchcancel', this._onFrameResizerTouchCancel.bind(this), false);
+        this._eventListeners.addEventListener(window, 'blur', this._onFrameResizerWindowBlur.bind(this), false);
+        this._eventListeners.addEventListener(window, 'touchmove', this._onFrameResizerTouchMove.bind(this), false);
 
         const {documentElement} = document;
         if (documentElement !== null) {
@@ -126,18 +126,18 @@ class DisplayResizer {
 
     async _initializeFrameResize(token) {
         const size = await this._invokeContentOrigin('getFrameSize');
-        if (this._frameResizeToken !== token) { return; }
-        this._frameResizeStartSize = size;
+        if (this._token !== token) { return; }
+        this._startSize = size;
     }
 
     _stopFrameResize() {
-        if (this._frameResizeToken === null) { return; }
+        if (this._token === null) { return; }
 
-        this._frameResizeEventListeners.removeAllEventListeners();
-        this._frameResizeStartSize = null;
-        this._frameResizeStartOffset = null;
-        this._frameResizeTouchIdentifier = null;
-        this._frameResizeToken = null;
+        this._eventListeners.removeAllEventListeners();
+        this._startSize = null;
+        this._startOffset = null;
+        this._touchIdentifier = null;
+        this._token = null;
 
         const {documentElement} = document;
         if (documentElement !== null) {
@@ -146,10 +146,10 @@ class DisplayResizer {
     }
 
     async _updateFrameSize(x, y) {
-        const handleSize = this._frameResizeHandle.getBoundingClientRect();
-        let {width, height} = this._frameResizeStartSize;
-        width += x - this._frameResizeStartOffset.x;
-        height += y - this._frameResizeStartOffset.y;
+        const handleSize = this._handle.getBoundingClientRect();
+        let {width, height} = this._startSize;
+        width += x - this._startOffset.x;
+        height += y - this._startOffset.y;
         width = Math.max(Math.max(0, handleSize.width), width);
         height = Math.max(Math.max(0, handleSize.height), height);
         await this._invokeContentOrigin('setFrameSize', {width, height});
