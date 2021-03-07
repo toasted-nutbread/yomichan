@@ -1119,8 +1119,13 @@ class Translator {
         };
     }
 
+    /**
+     * Creates a grouped definition from an array of 'term' definitions.
+     * @param definitions An array of 'term' definitions.
+     * @returns A single 'termGrouped' definition.
+     */
     _createGroupedTermDefinition(definitions) {
-        const {expression, reading, furiganaSegments, reasons, source, rawSource, sourceTerm} = definitions[0];
+        const {reasons, source, rawSource, sourceTerm, expressions: [{expression, reading, furiganaSegments}]} = definitions[0];
         const score = this._getMaxDefinitionScore(definitions);
         const dictionaryOrder = this._getBestDictionaryOrder(definitions);
         const dictionaryNames = this._getUniqueDictionaryNames(definitions);
