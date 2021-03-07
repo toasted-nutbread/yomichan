@@ -63,8 +63,8 @@ class Deinflector {
                 variants.push([
                     kanaIn,
                     kanaOut,
-                    Deinflector.rulesToRuleFlags(rulesIn),
-                    Deinflector.rulesToRuleFlags(rulesOut)
+                    this.rulesToRuleFlags(rulesIn),
+                    this.rulesToRuleFlags(rulesOut)
                 ]);
             }
             normalizedReasons.push([reason, variants]);
@@ -73,7 +73,7 @@ class Deinflector {
     }
 
     static rulesToRuleFlags(rules) {
-        const ruleTypes = Deinflector.ruleTypes;
+        const ruleTypes = this._ruleTypes;
         let value = 0;
         for (const rule of rules) {
             const ruleBits = ruleTypes.get(rule);
@@ -84,7 +84,8 @@ class Deinflector {
     }
 }
 
-Deinflector.ruleTypes = new Map([
+// eslint-disable-next-line no-underscore-dangle
+Deinflector._ruleTypes = new Map([
     ['v1',    0b00000001], // Verb ichidan
     ['v5',    0b00000010], // Verb godan
     ['vs',    0b00000100], // Verb suru
