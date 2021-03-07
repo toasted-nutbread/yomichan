@@ -21,14 +21,7 @@ class Deinflector {
     }
 
     deinflect(source, rawSource) {
-        const results = [{
-            source,
-            rawSource,
-            term: source,
-            rules: 0,
-            reasons: [],
-            databaseDefinitions: []
-        }];
+        const results = [this.createDeinflection(source, rawSource, source, 0, [])];
         for (let i = 0; i < results.length; ++i) {
             const {rules, term, reasons} = results[i];
             for (const [reason, variants] of this.reasons) {
@@ -41,18 +34,28 @@ class Deinflector {
                         continue;
                     }
 
-                    results.push({
+                    results.push(this.createDeinflection(
                         source,
                         rawSource,
-                        term: term.substring(0, term.length - kanaIn.length) + kanaOut,
-                        rules: rulesOut,
-                        reasons: [reason, ...reasons],
-                        databaseDefinitions: []
-                    });
+                        term.substring(0, term.length - kanaIn.length) + kanaOut,
+                        rulesOut,
+                        [reason, ...reasons]
+                    ));
                 }
             }
         }
         return results;
+    }
+
+    createDeinflection(source, rawSource, term, rules, reasons) {
+        return {
+            source,
+            rawSource,
+            term,
+            rules,
+            reasons,
+            databaseDefinitions: []
+        };
     }
 
     static normalizeReasons(reasons) {
