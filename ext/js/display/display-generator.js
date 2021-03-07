@@ -651,7 +651,6 @@ class DisplayGenerator {
     }
 
     _appendKanjiLinks(container, text) {
-        container.lang = 'ja';
         const jp = this._japaneseUtil;
         let part = '';
         for (const c of text) {
