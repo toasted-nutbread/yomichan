@@ -534,24 +534,6 @@ class Translator {
         );
     }
 
-    _removeUsedDefinitions(definitions, termInfoMap, usedDefinitions) {
-        for (let i = 0, ii = definitions.length; i < ii; ++i) {
-            const definition = definitions[i];
-            const {expression, reading} = definition;
-            const expressionMap = termInfoMap.get(expression);
-            if (
-                typeof expressionMap !== 'undefined' &&
-                typeof expressionMap.get(reading) !== 'undefined'
-            ) {
-                usedDefinitions.add(definition);
-            } else {
-                definitions.splice(i, 1);
-                --i;
-                --ii;
-            }
-        }
-    }
-
     _getUniqueDefinitionTags(definitions) {
         const definitionTagsMap = new Map();
         for (const {definitionTags} of definitions) {
