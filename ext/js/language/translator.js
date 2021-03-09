@@ -776,16 +776,6 @@ class Translator {
 
     // Simple helpers
 
-    _scoreToTermFrequency(score) {
-        if (score > 0) {
-            return 'popular';
-        } else if (score < 0) {
-            return 'rare';
-        } else {
-            return 'normal';
-        }
-    }
-
     _getNameBase(name) {
         const pos = name.indexOf(':');
         return (pos >= 0 ? name.substring(0, pos) : name);
