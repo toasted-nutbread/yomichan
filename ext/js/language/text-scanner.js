@@ -394,15 +394,15 @@ class TextScanner extends EventDispatcher {
     }
 
     _onClick(e) {
-        if (this._searchOnClick) {
-            this._onSearchClick(e);
-        }
-
         if (this._preventNextClick) {
             this._preventNextClick = false;
             e.preventDefault();
             e.stopPropagation();
             return false;
+        }
+
+        if (this._searchOnClick) {
+            this._onSearchClick(e);
         }
     }
 
