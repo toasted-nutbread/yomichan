@@ -946,14 +946,6 @@ class Translator {
 
     // Reduction functions
 
-    _getTermTagsScoreSum(termTags) {
-        let result = 0;
-        for (const {score} of termTags) {
-            result += score;
-        }
-        return result;
-    }
-
     _getSourceTermMatchCountSum(definitions) {
         let result = 0;
         for (const {sourceTermExactMatchCount} of definitions) {
