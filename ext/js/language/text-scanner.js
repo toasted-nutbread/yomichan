@@ -718,11 +718,6 @@ class TextScanner extends EventDispatcher {
         ];
     }
 
-    _getMouseClickOnlyEventListeners() {
-        return [
-            [this._node, 'click', this._onClick.bind(this)]
-        ];
-    }
     _getTouchEventListeners() {
         return [
             [this._node, 'auxclick', this._onAuxClick.bind(this)],
@@ -731,6 +726,12 @@ class TextScanner extends EventDispatcher {
             [this._node, 'touchcancel', this._onTouchCancel.bind(this)],
             [this._node, 'touchmove', this._onTouchMove.bind(this), {passive: false}],
             [this._node, 'contextmenu', this._onContextMenu.bind(this)]
+        ];
+    }
+
+    _getMouseClickOnlyEventListeners() {
+        return [
+            [this._node, 'click', this._onClick.bind(this)]
         ];
     }
 
