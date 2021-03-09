@@ -395,10 +395,7 @@ class TextScanner extends EventDispatcher {
 
     _onClick(e) {
         if (this._searchOnClick) {
-            const modifiers = DocumentUtil.getActiveModifiersAndButtons(e);
-            const modifierKeys = DocumentUtil.getActiveModifiers(e);
-            const inputInfo = this._createInputInfo(null, 'mouse', 'click', false, modifiers, modifierKeys);
-            this._searchAt(e.clientX, e.clientY, inputInfo);
+            this._onSearchClick(e);
         }
 
         if (this._preventNextClick) {
@@ -407,6 +404,13 @@ class TextScanner extends EventDispatcher {
             e.stopPropagation();
             return false;
         }
+    }
+
+    _onSearchClick(e) {
+        const modifiers = DocumentUtil.getActiveModifiersAndButtons(e);
+        const modifierKeys = DocumentUtil.getActiveModifiers(e);
+        const inputInfo = this._createInputInfo(null, 'mouse', 'click', false, modifiers, modifierKeys);
+        this._searchAt(e.clientX, e.clientY, inputInfo);
     }
 
     _onAuxClick() {
