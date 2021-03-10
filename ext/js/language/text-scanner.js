@@ -71,6 +71,11 @@ class TextScanner extends EventDispatcher {
         this._enabledValue = false;
         this._eventListeners = new EventListenerCollection();
 
+        this._preventNextClickScan = false;
+        this._preventNextClickScanTimer = null;
+        this._preventNextClickScanTimerDuration = 50;
+        this._preventNextClickScanTimerCallback = this._onPreventNextClickScanTimeout.bind(this);
+
         this._primaryTouchIdentifier = null;
         this._preventNextContextMenu = false;
         this._preventNextMouseDown = false;
@@ -350,6 +355,30 @@ class TextScanner extends EventDispatcher {
         return results;
     }
 
+    _resetPreventNextClickScan() {
+        this._preventNextClickScan = false;
+        if (this._preventNextClickScanTimer !== null) { clearTimeout(this._preventNextClickScanTimer); }
+        this._preventNextClickScanTimer = setTimeout(this._preventNextClickScanTimerCallback, this._preventNextClickScanTimerDuration);
+    }
+
+    _onPreventNextClickScanTimeout() {
+        this._preventNextClickScanTimer = null;
+    }
+
+    _onSelectionChange() {
+        if (this._preventNextClickScanTimer !== null) { return; } // Ignore deselection that occurs at the start of the click
+        this._preventNextClickScan = true;
+    }
+
+    _onSearchClickMouseDown(e) {
+        if (e.button !== 0) { return; }
+        this._resetPreventNextClickScan();
+    }
+
+    _onSearchClickTouchStart() {
+        this._resetPreventNextClickScan();
+    }
+
     _onMouseOver(e) {
         if (this._ignoreElements !== null && this._ignoreElements().includes(e.target)) {
             this._scanTimerClear();
@@ -376,6 +405,7 @@ class TextScanner extends EventDispatcher {
 
         switch (e.button) {
             case 0: // Primary
+                if (this._searchOnClick) { this._resetPreventNextClickScan(); }
                 this._scanTimerClear();
                 this.clearSelection(false);
                 break;
@@ -407,6 +437,15 @@ class TextScanner extends EventDispatcher {
     }
 
     _onSearchClick(e) {
+        const preventNextClickScan = this._preventNextClickScan;
+        this._preventNextClickScan = false;
+        if (this._preventNextClickScanTimer !== null) {
+            clearTimeout(this._preventNextClickScanTimer);
+            this._preventNextClickScanTimer = null;
+        }
+
+        if (preventNextClickScan) { return; }
+
         const modifiers = DocumentUtil.getActiveModifiersAndButtons(e);
         const modifierKeys = DocumentUtil.getActiveModifiers(e);
         const inputInfo = this._createInputInfo(null, 'mouse', 'click', false, modifiers, modifierKeys);
@@ -691,6 +730,9 @@ class TextScanner extends EventDispatcher {
                 eventListenerInfos.push(...this._getTouchEventListeners());
             }
         }
+        if (this._searchOnClick) {
+            eventListenerInfos.push(...this._getMouseClickOnlyEventListeners2());
+        }
 
         for (const args of eventListenerInfos) {
             this._eventListeners.addEventListener(...args);
@@ -737,6 +779,20 @@ class TextScanner extends EventDispatcher {
         return [
             [this._node, 'click', this._onClick.bind(this)]
         ];
+    }
+
+    _getMouseClickOnlyEventListeners2() {
+        const {documentElement} = document;
+        const entries = [
+            [document, 'selectionchange', this._onSelectionChange.bind(this)]
+        ];
+        if (documentElement !== null) {
+            entries.push([documentElement, 'mousedown', this._onSearchClickMouseDown.bind(this)]);
+            if (this._touchInputEnabled) {
+                entries.push([documentElement, 'touchstart', this._onSearchClickTouchStart.bind(this)]);
+            }
+        }
+        return entries;
     }
 
     _getTouch(touchList, identifier) {
