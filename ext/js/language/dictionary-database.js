@@ -296,7 +296,7 @@ class DictionaryDatabase {
 
     findTagForTitle(name, title) {
         const query = IDBKeyRange.only(name);
-        return this._db.find('tagMeta', 'name', query, (row) => (row.dictionary === title), null);
+        return this._db.find('tagMeta', 'name', query, (row) => (row.dictionary === title), null, null);
     }
 
     getMedia(targets) {
@@ -393,7 +393,7 @@ class DictionaryDatabase {
 
     async dictionaryExists(title) {
         const query = IDBKeyRange.only(title);
-        const result = await this._db.find('dictionaries', 'title', query);
+        const result = await this._db.find('dictionaries', 'title', query, null, null, void 0);
         return typeof result !== 'undefined';
     }
 
