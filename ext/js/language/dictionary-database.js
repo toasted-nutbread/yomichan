@@ -369,8 +369,8 @@ class DictionaryDatabase {
             }
 
             const transaction = this._db.transaction([objectStoreName], 'readonly');
-            const terms = transaction.objectStore(objectStoreName);
-            const index = terms.index(indexName);
+            const objectStore = transaction.objectStore(objectStoreName);
+            const index = objectStore.index(indexName);
             let completeCount = 0;
             for (let i = 0; i < count; ++i) {
                 const itemIndex = i;
@@ -401,9 +401,8 @@ class DictionaryDatabase {
             }
 
             const transaction = this._db.transaction([objectStoreName], 'readonly');
-            const terms = transaction.objectStore(objectStoreName);
-            const index = terms.index(indexName);
-
+            const objectStore = transaction.objectStore(objectStoreName);
+            const index = objectStore.index(indexName);
             let completeCount = 0;
             for (let i = 0; i < count; ++i) {
                 const itemIndex = i;
