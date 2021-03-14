@@ -26,6 +26,10 @@ class DictionaryDatabase {
         this._schemas = new Map();
         this._createOnlyQuery1 = (item) => IDBKeyRange.only(item);
         this._createOnlyQuery2 = (item) => IDBKeyRange.only(item.query);
+        this._createTermBind = this._createTerm.bind(this);
+        this._createTermMetaBind = this._createTermMeta.bind(this);
+        this._createKanjiBind = this._createKanji.bind(this);
+        this._createKanjiMetaBind = this._createKanjiMeta.bind(this);
     }
 
     // Public
@@ -252,22 +256,22 @@ class DictionaryDatabase {
 
     findTermsBySequenceBulk(items) {
         const predicate = (row, item) => (row.dictionary === item.dictionary);
-        return this._findMultiBulk('terms', 'sequence', items, this._createOnlyQuery2, predicate, this._createTerm.bind(this));
+        return this._findMultiBulk('terms', 'sequence', items, this._createOnlyQuery2, predicate, this._createTermBind);
     }
 
     findTermMetaBulk(termList, dictionaries) {
         const predicate = (row) => dictionaries.has(row.dictionary);
-        return this._findMultiBulk('termMeta', 'expression', termList, this._createOnlyQuery1, predicate, this._createTermMeta.bind(this));
+        return this._findMultiBulk('termMeta', 'expression', termList, this._createOnlyQuery1, predicate, this._createTermMetaBind);
     }
 
     findKanjiBulk(kanjiList, dictionaries) {
         const predicate = (row) => dictionaries.has(row.dictionary);
-        return this._findMultiBulk('kanji', 'character', kanjiList, this._createOnlyQuery1, predicate, this._createKanji.bind(this));
+        return this._findMultiBulk('kanji', 'character', kanjiList, this._createOnlyQuery1, predicate, this._createKanjiBind);
     }
 
     findKanjiMetaBulk(kanjiList, dictionaries) {
         const predicate = (row) => dictionaries.has(row.dictionary);
-        return this._findMultiBulk('kanjiMeta', 'character', kanjiList, this._createOnlyQuery1, predicate, this._createKanjiMeta.bind(this));
+        return this._findMultiBulk('kanjiMeta', 'character', kanjiList, this._createOnlyQuery1, predicate, this._createKanjiMetaBind);
     }
 
     findTagMetaBulk(items) {
