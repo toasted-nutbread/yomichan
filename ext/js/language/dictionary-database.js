@@ -27,12 +27,14 @@ class DictionaryDatabase {
         this._createOnlyQuery1 = (item) => IDBKeyRange.only(item);
         this._createOnlyQuery2 = (item) => IDBKeyRange.only(item.query);
         this._createOnlyQuery3 = (item) => IDBKeyRange.only(item.expression);
+        this._createOnlyQuery4 = (item) => IDBKeyRange.only(item.path);
         this._createBoundQuery1 = (item) => IDBKeyRange.bound(item, `${item}\uffff`, false, false);
         this._createBoundQuery2 = (item) => { item = stringReverse(item); return IDBKeyRange.bound(item, `${item}\uffff`, false, false); };
         this._createTermBind = this._createTerm.bind(this);
         this._createTermMetaBind = this._createTermMeta.bind(this);
         this._createKanjiBind = this._createKanji.bind(this);
         this._createKanjiMetaBind = this._createKanjiMeta.bind(this);
+        this._createMediaBind = this._createMedia.bind(this);
     }
 
     // Public
@@ -242,38 +244,9 @@ class DictionaryDatabase {
         return this._db.find('tagMeta', 'name', query, (row) => (row.dictionary === title), null, null);
     }
 
-    getMedia(targets) {
-        return new Promise((resolve, reject) => {
-            const count = targets.length;
-            const results = new Array(count).fill(null);
-            if (count === 0) {
-                resolve(results);
-                return;
-            }
-
-            let completeCount = 0;
-            const transaction = this._db.transaction(['media'], 'readonly');
-            const objectStore = transaction.objectStore('media');
-            const index = objectStore.index('path');
-
-            for (let i = 0; i < count; ++i) {
-                const inputIndex = i;
-                const {path, dictionaryName} = targets[i];
-                const query = IDBKeyRange.only(path);
-
-                const onGetAll = (rows) => {
-                    for (const row of rows) {
-                        if (row.dictionary !== dictionaryName) { continue; }
-                        results[inputIndex] = this._createMedia(row, inputIndex);
-                    }
-                    if (++completeCount >= count) {
-                        resolve(results);
-                    }
-                };
-
-                this._db.getAll(index, query, onGetAll, reject);
-            }
-        });
+    getMedia(items) {
+        const predicate = (row, item) => (row.dictionary === item.dictionary);
+        return this._findMultiBulk('media', ['path'], items, this._createOnlyQuery4, predicate, this._createMediaBind);
     }
 
     getDictionaryInfo() {
