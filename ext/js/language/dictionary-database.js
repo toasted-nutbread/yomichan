@@ -442,6 +442,38 @@ class DictionaryDatabase {
         });
     }
 
+    _findMultiBulk(objectStoreName, indexName, items, predicate, createResult) {
+        return new Promise((resolve, reject) => {
+            const count = items.length;
+            const results = [];
+            if (count === 0) {
+                resolve(results);
+                return;
+            }
+
+            const transaction = this._db.transaction([objectStoreName], 'readonly');
+            const terms = transaction.objectStore(objectStoreName);
+            const index = terms.index(indexName);
+            let completeCount = 0;
+            for (let i = 0; i < count; ++i) {
+                const itemIndex = i;
+                const item = items[i];
+                const query = IDBKeyRange.only(item.query);
+                const onGetAll = (rows) => {
+                    for (const row of rows) {
+                        if (predicate(row, item)) {
+                            results.push(createResult(row, itemIndex));
+                        }
+                    }
+                    if (++completeCount >= count) {
+                        resolve(results);
+                    }
+                };
+                this._db.getAll(index, query, onGetAll, reject);
+            }
+        });
+    }
+
     _findFirstBulk(objectStoreName, indexName, items, predicate) {
         return new Promise((resolve, reject) => {
             const count = items.length;
