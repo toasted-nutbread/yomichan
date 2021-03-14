@@ -255,15 +255,21 @@ class DictionaryDatabase {
     }
 
     findTermMetaBulk(termList, dictionaries) {
-        return this._findGenericBulk('termMeta', 'expression', termList, dictionaries, this._createTermMeta.bind(this));
+        const predicate = (row) => dictionaries.has(row.dictionary);
+        const createQuery = (item) => IDBKeyRange.only(item);
+        return this._findMultiBulk('termMeta', 'expression', termList, createQuery, predicate, this._createTermMeta.bind(this));
     }
 
     findKanjiBulk(kanjiList, dictionaries) {
-        return this._findGenericBulk('kanji', 'character', kanjiList, dictionaries, this._createKanji.bind(this));
+        const predicate = (row) => dictionaries.has(row.dictionary);
+        const createQuery = (item) => IDBKeyRange.only(item);
+        return this._findMultiBulk('kanji', 'character', kanjiList, createQuery, predicate, this._createKanji.bind(this));
     }
 
     findKanjiMetaBulk(kanjiList, dictionaries) {
-        return this._findGenericBulk('kanjiMeta', 'character', kanjiList, dictionaries, this._createKanjiMeta.bind(this));
+        const predicate = (row) => dictionaries.has(row.dictionary);
+        const createQuery = (item) => IDBKeyRange.only(item);
+        return this._findMultiBulk('kanjiMeta', 'character', kanjiList, createQuery, predicate, this._createKanjiMeta.bind(this));
     }
 
     findTagMetaBulk(items) {
@@ -380,40 +386,6 @@ class DictionaryDatabase {
     }
 
     // Private
-
-    async _findGenericBulk(objectStoreName, indexName, indexValueList, dictionaries, createResult) {
-        return new Promise((resolve, reject) => {
-            const results = [];
-            const count = indexValueList.length;
-            if (count === 0) {
-                resolve(results);
-                return;
-            }
-
-            const transaction = this._db.transaction([objectStoreName], 'readonly');
-            const terms = transaction.objectStore(objectStoreName);
-            const index = terms.index(indexName);
-
-            let completeCount = 0;
-            for (let i = 0; i < count; ++i) {
-                const inputIndex = i;
-                const query = IDBKeyRange.only(indexValueList[i]);
-
-                const onGetAll = (rows) => {
-                    for (const row of rows) {
-                        if (dictionaries.has(row.dictionary)) {
-                            results.push(createResult(row, inputIndex));
-                        }
-                    }
-                    if (++completeCount >= count) {
-                        resolve(results);
-                    }
-                };
-
-                this._db.getAll(index, query, onGetAll, reject);
-            }
-        });
-    }
 
     _findMultiBulk(objectStoreName, indexName, items, createQuery, predicate, createResult) {
         return new Promise((resolve, reject) => {
