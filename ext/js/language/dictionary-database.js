@@ -24,6 +24,8 @@ class DictionaryDatabase {
         this._db = new Database();
         this._dbName = 'dict';
         this._schemas = new Map();
+        this._createOnlyQuery1 = (item) => IDBKeyRange.only(item);
+        this._createOnlyQuery2 = (item) => IDBKeyRange.only(item.query);
     }
 
     // Public
@@ -250,32 +252,27 @@ class DictionaryDatabase {
 
     findTermsBySequenceBulk(items) {
         const predicate = (row, item) => (row.dictionary === item.dictionary);
-        const createQuery = (item) => IDBKeyRange.only(item.query);
-        return this._findMultiBulk('terms', 'sequence', items, createQuery, predicate, this._createTerm.bind(this));
+        return this._findMultiBulk('terms', 'sequence', items, this._createOnlyQuery2, predicate, this._createTerm.bind(this));
     }
 
     findTermMetaBulk(termList, dictionaries) {
         const predicate = (row) => dictionaries.has(row.dictionary);
-        const createQuery = (item) => IDBKeyRange.only(item);
-        return this._findMultiBulk('termMeta', 'expression', termList, createQuery, predicate, this._createTermMeta.bind(this));
+        return this._findMultiBulk('termMeta', 'expression', termList, this._createOnlyQuery1, predicate, this._createTermMeta.bind(this));
     }
 
     findKanjiBulk(kanjiList, dictionaries) {
         const predicate = (row) => dictionaries.has(row.dictionary);
-        const createQuery = (item) => IDBKeyRange.only(item);
-        return this._findMultiBulk('kanji', 'character', kanjiList, createQuery, predicate, this._createKanji.bind(this));
+        return this._findMultiBulk('kanji', 'character', kanjiList, this._createOnlyQuery1, predicate, this._createKanji.bind(this));
     }
 
     findKanjiMetaBulk(kanjiList, dictionaries) {
         const predicate = (row) => dictionaries.has(row.dictionary);
-        const createQuery = (item) => IDBKeyRange.only(item);
-        return this._findMultiBulk('kanjiMeta', 'character', kanjiList, createQuery, predicate, this._createKanjiMeta.bind(this));
+        return this._findMultiBulk('kanjiMeta', 'character', kanjiList, this._createOnlyQuery1, predicate, this._createKanjiMeta.bind(this));
     }
 
     findTagMetaBulk(items) {
         const predicate = (row, item) => (row.dictionary === item.dictionary);
-        const createQuery = (item) => IDBKeyRange.only(item.query);
-        return this._findFirstBulk('tagMeta', 'name', items, createQuery, predicate);
+        return this._findFirstBulk('tagMeta', 'name', items, this._createOnlyQuery2, predicate);
     }
 
     findTagForTitle(name, title) {
