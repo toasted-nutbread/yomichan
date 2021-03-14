@@ -250,7 +250,8 @@ class DictionaryDatabase {
 
     findTermsBySequenceBulk(items) {
         const predicate = (row, item) => (row.dictionary === item.dictionary);
-        return this._findMultiBulk('terms', 'sequence', items, predicate, this._createTerm.bind(this));
+        const createQuery = (item) => IDBKeyRange.only(item.query);
+        return this._findMultiBulk('terms', 'sequence', items, createQuery, predicate, this._createTerm.bind(this));
     }
 
     findTermMetaBulk(termList, dictionaries) {
@@ -267,7 +268,8 @@ class DictionaryDatabase {
 
     findTagMetaBulk(items) {
         const predicate = (row, item) => (row.dictionary === item.dictionary);
-        return this._findFirstBulk('tagMeta', 'name', items, predicate);
+        const createQuery = (item) => IDBKeyRange.only(item.query);
+        return this._findFirstBulk('tagMeta', 'name', items, createQuery, predicate);
     }
 
     findTagForTitle(name, title) {
@@ -413,7 +415,7 @@ class DictionaryDatabase {
         });
     }
 
-    _findMultiBulk(objectStoreName, indexName, items, predicate, createResult) {
+    _findMultiBulk(objectStoreName, indexName, items, createQuery, predicate, createResult) {
         return new Promise((resolve, reject) => {
             const count = items.length;
             const results = [];
@@ -429,7 +431,7 @@ class DictionaryDatabase {
             for (let i = 0; i < count; ++i) {
                 const itemIndex = i;
                 const item = items[i];
-                const query = IDBKeyRange.only(item.query);
+                const query = createQuery(item);
                 const onGetAll = (rows) => {
                     for (const row of rows) {
                         if (predicate(row, item)) {
@@ -445,7 +447,7 @@ class DictionaryDatabase {
         });
     }
 
-    _findFirstBulk(objectStoreName, indexName, items, predicate) {
+    _findFirstBulk(objectStoreName, indexName, items, createQuery, predicate) {
         return new Promise((resolve, reject) => {
             const count = items.length;
             const results = new Array(count);
@@ -462,7 +464,7 @@ class DictionaryDatabase {
             for (let i = 0; i < count; ++i) {
                 const itemIndex = i;
                 const item = items[i];
-                const query = IDBKeyRange.only(item.query);
+                const query = createQuery(item);
                 const onFind = (row) => {
                     results[itemIndex] = row;
                     if (++completeCount >= count) {
