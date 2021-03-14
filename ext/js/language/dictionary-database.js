@@ -27,6 +27,8 @@ class DictionaryDatabase {
         this._createOnlyQuery1 = (item) => IDBKeyRange.only(item);
         this._createOnlyQuery2 = (item) => IDBKeyRange.only(item.query);
         this._createOnlyQuery3 = (item) => IDBKeyRange.only(item.expression);
+        this._createBoundQuery1 = (item) => IDBKeyRange.bound(item, `${item}\uffff`, false, false);
+        this._createBoundQuery2 = (item) => { item = stringReverse(item); return IDBKeyRange.bound(item, `${item}\uffff`, false, false); };
         this._createTermBind = this._createTerm.bind(this);
         this._createTermMetaBind = this._createTermMeta.bind(this);
         this._createKanjiBind = this._createKanji.bind(this);
@@ -178,46 +180,31 @@ class DictionaryDatabase {
     }
 
     findTermsBulk(termList, dictionaries, wildcard) {
-        return new Promise((resolve, reject) => {
-            const results = [];
-            const count = termList.length;
-            if (count === 0) {
-                resolve(results);
-                return;
-            }
+        const visited = new Set();
+        const predicate = (row) => {
+            if (!dictionaries.has(row.dictionary)) { return false; }
+            const {id} = row;
+            if (visited.has(id)) { return false; }
+            visited.add(id);
+            return true;
+        };
 
-            const visited = new Set();
-            const useWildcard = !!wildcard;
-            const prefixWildcard = wildcard === 'prefix';
+        const indexNames = (wildcard === 'prefix') ? ['expressionReverse', 'readingReverse'] : ['expression', 'reading'];
 
-            const transaction = this._db.transaction(['terms'], 'readonly');
-            const terms = transaction.objectStore('terms');
-            const index1 = terms.index(prefixWildcard ? 'expressionReverse' : 'expression');
-            const index2 = terms.index(prefixWildcard ? 'readingReverse' : 'reading');
+        let createQuery;
+        switch (wildcard) {
+            case 'suffix':
+                createQuery = this._createBoundQuery1;
+                break;
+            case 'prefix':
+                createQuery = this._createBoundQuery2;
+                break;
+            default:
+                createQuery = this._createOnlyQuery1;
+                break;
+        }
 
-            const count2 = count * 2;
-            let completeCount = 0;
-            for (let i = 0; i < count; ++i) {
-                const inputIndex = i;
-                const term = prefixWildcard ? stringReverse(termList[i]) : termList[i];
-                const query = useWildcard ? IDBKeyRange.bound(term, `${term}\uffff`, false, false) : IDBKeyRange.only(term);
-
-                const onGetAll = (rows) => {
-                    for (const row of rows) {
-                        if (dictionaries.has(row.dictionary) && !visited.has(row.id)) {
-                            visited.add(row.id);
-                            results.push(this._createTerm(row, inputIndex));
-                        }
-                    }
-                    if (++completeCount >= count2) {
-                        resolve(results);
-                    }
-                };
-
-                this._db.getAll(index1, query, onGetAll, reject);
-                this._db.getAll(index2, query, onGetAll, reject);
-            }
-        });
+        return this._findMultiBulk('terms', indexNames, termList, createQuery, predicate, this._createTermBind);
     }
 
     findTermsExactBulk(termList, dictionaries) {
