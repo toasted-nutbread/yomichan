@@ -26,6 +26,7 @@ class DictionaryDatabase {
         this._schemas = new Map();
         this._createOnlyQuery1 = (item) => IDBKeyRange.only(item);
         this._createOnlyQuery2 = (item) => IDBKeyRange.only(item.query);
+        this._createOnlyQuery3 = (item) => IDBKeyRange.only(item.expression);
         this._createTermBind = this._createTerm.bind(this);
         this._createTermMetaBind = this._createTermMeta.bind(this);
         this._createKanjiBind = this._createKanji.bind(this);
@@ -219,39 +220,9 @@ class DictionaryDatabase {
         });
     }
 
-    findTermsExactBulk(termList, readingList, dictionaries) {
-        return new Promise((resolve, reject) => {
-            const results = [];
-            const count = termList.length;
-            if (count === 0) {
-                resolve(results);
-                return;
-            }
-
-            const transaction = this._db.transaction(['terms'], 'readonly');
-            const terms = transaction.objectStore('terms');
-            const index = terms.index('expression');
-
-            let completeCount = 0;
-            for (let i = 0; i < count; ++i) {
-                const inputIndex = i;
-                const reading = readingList[i];
-                const query = IDBKeyRange.only(termList[i]);
-
-                const onGetAll = (rows) => {
-                    for (const row of rows) {
-                        if (row.reading === reading && dictionaries.has(row.dictionary)) {
-                            results.push(this._createTerm(row, inputIndex));
-                        }
-                    }
-                    if (++completeCount >= count) {
-                        resolve(results);
-                    }
-                };
-
-                this._db.getAll(index, query, onGetAll, reject);
-            }
-        });
+    findTermsExactBulk(termList, dictionaries) {
+        const predicate = (row, item) => (row.reading === item.reading && dictionaries.has(row.dictionary));
+        return this._findMultiBulk('terms', 'expression', termList, this._createOnlyQuery3, predicate, this._createTermBind);
     }
 
     findTermsBySequenceBulk(items) {
