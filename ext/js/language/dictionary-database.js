@@ -460,7 +460,6 @@ class DictionaryDatabase {
                 const itemIndex = i;
                 const item = items[i];
                 const query = IDBKeyRange.only(item.query);
-
                 const onFind = (row) => {
                     results[itemIndex] = row;
                     if (++completeCount >= count) {
