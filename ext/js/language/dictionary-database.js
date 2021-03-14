@@ -248,38 +248,9 @@ class DictionaryDatabase {
         });
     }
 
-    findTermsBySequenceBulk(sequenceList, mainDictionary) {
-        return new Promise((resolve, reject) => {
-            const results = [];
-            const count = sequenceList.length;
-            if (count === 0) {
-                resolve(results);
-                return;
-            }
-
-            const transaction = this._db.transaction(['terms'], 'readonly');
-            const terms = transaction.objectStore('terms');
-            const index = terms.index('sequence');
-
-            let completeCount = 0;
-            for (let i = 0; i < count; ++i) {
-                const inputIndex = i;
-                const query = IDBKeyRange.only(sequenceList[i]);
-
-                const onGetAll = (rows) => {
-                    for (const row of rows) {
-                        if (row.dictionary === mainDictionary) {
-                            results.push(this._createTerm(row, inputIndex));
-                        }
-                    }
-                    if (++completeCount >= count) {
-                        resolve(results);
-                    }
-                };
-
-                this._db.getAll(index, query, onGetAll, reject);
-            }
-        });
+    findTermsBySequenceBulk(items) {
+        const predicate = (row, item) => (row.dictionary === item.dictionary);
+        return this._findMultiBulk('terms', 'sequence', items, predicate, this._createTerm.bind(this));
     }
 
     findTermMetaBulk(termList, dictionaries) {

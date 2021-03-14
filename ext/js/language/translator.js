@@ -392,7 +392,8 @@ class Translator {
     }
 
     async _addRelatedDefinitions(sequencedDefinitions, unsequencedDefinitions, sequenceList, mainDictionary, enabledDictionaryMap) {
-        const databaseDefinitions = await this._database.findTermsBySequenceBulk(sequenceList, mainDictionary);
+        const items = sequenceList.map((query) => ({query, dictionary: mainDictionary}));
+        const databaseDefinitions = await this._database.findTermsBySequenceBulk(items);
         for (const databaseDefinition of databaseDefinitions) {
             const {relatedDefinitions, definitionIds} = sequencedDefinitions[databaseDefinition.index];
             const {id} = databaseDefinition;
