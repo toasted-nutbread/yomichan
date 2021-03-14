@@ -222,27 +222,27 @@ class DictionaryDatabase {
 
     findTermsExactBulk(termList, dictionaries) {
         const predicate = (row, item) => (row.reading === item.reading && dictionaries.has(row.dictionary));
-        return this._findMultiBulk('terms', 'expression', termList, this._createOnlyQuery3, predicate, this._createTermBind);
+        return this._findMultiBulk('terms', ['expression'], termList, this._createOnlyQuery3, predicate, this._createTermBind);
     }
 
     findTermsBySequenceBulk(items) {
         const predicate = (row, item) => (row.dictionary === item.dictionary);
-        return this._findMultiBulk('terms', 'sequence', items, this._createOnlyQuery2, predicate, this._createTermBind);
+        return this._findMultiBulk('terms', ['sequence'], items, this._createOnlyQuery2, predicate, this._createTermBind);
     }
 
     findTermMetaBulk(termList, dictionaries) {
         const predicate = (row) => dictionaries.has(row.dictionary);
-        return this._findMultiBulk('termMeta', 'expression', termList, this._createOnlyQuery1, predicate, this._createTermMetaBind);
+        return this._findMultiBulk('termMeta', ['expression'], termList, this._createOnlyQuery1, predicate, this._createTermMetaBind);
     }
 
     findKanjiBulk(kanjiList, dictionaries) {
         const predicate = (row) => dictionaries.has(row.dictionary);
-        return this._findMultiBulk('kanji', 'character', kanjiList, this._createOnlyQuery1, predicate, this._createKanjiBind);
+        return this._findMultiBulk('kanji', ['character'], kanjiList, this._createOnlyQuery1, predicate, this._createKanjiBind);
     }
 
     findKanjiMetaBulk(kanjiList, dictionaries) {
         const predicate = (row) => dictionaries.has(row.dictionary);
-        return this._findMultiBulk('kanjiMeta', 'character', kanjiList, this._createOnlyQuery1, predicate, this._createKanjiMetaBind);
+        return this._findMultiBulk('kanjiMeta', ['character'], kanjiList, this._createOnlyQuery1, predicate, this._createKanjiMetaBind);
     }
 
     findTagMetaBulk(items) {
@@ -359,20 +359,25 @@ class DictionaryDatabase {
 
     // Private
 
-    _findMultiBulk(objectStoreName, indexName, items, createQuery, predicate, createResult) {
+    _findMultiBulk(objectStoreName, indexNames, items, createQuery, predicate, createResult) {
         return new Promise((resolve, reject) => {
-            const count = items.length;
+            const itemCount = items.length;
+            const indexCount = indexNames.length;
             const results = [];
-            if (count === 0) {
+            if (itemCount === 0 || indexCount === 0) {
                 resolve(results);
                 return;
             }
 
             const transaction = this._db.transaction([objectStoreName], 'readonly');
             const objectStore = transaction.objectStore(objectStoreName);
-            const index = objectStore.index(indexName);
+            const indexList = [];
+            for (const indexName of indexNames) {
+                indexList.push(objectStore.index(indexName));
+            }
             let completeCount = 0;
-            for (let i = 0; i < count; ++i) {
+            const requiredCompleteCount = itemCount * indexCount;
+            for (let i = 0; i < itemCount; ++i) {
                 const itemIndex = i;
                 const item = items[i];
                 const query = createQuery(item);
@@ -382,20 +387,22 @@ class DictionaryDatabase {
                             results.push(createResult(row, itemIndex));
                         }
                     }
-                    if (++completeCount >= count) {
+                    if (++completeCount >= requiredCompleteCount) {
                         resolve(results);
                     }
                 };
-                this._db.getAll(index, query, onGetAll, reject);
+                for (let j = 0; j < indexCount; ++j) {
+                    this._db.getAll(indexList[j], query, onGetAll, reject);
+                }
             }
         });
     }
 
     _findFirstBulk(objectStoreName, indexName, items, createQuery, predicate) {
         return new Promise((resolve, reject) => {
-            const count = items.length;
-            const results = new Array(count);
-            if (count === 0) {
+            const itemCount = items.length;
+            const results = new Array(itemCount);
+            if (itemCount === 0) {
                 resolve(results);
                 return;
             }
@@ -404,13 +411,13 @@ class DictionaryDatabase {
             const objectStore = transaction.objectStore(objectStoreName);
             const index = objectStore.index(indexName);
             let completeCount = 0;
-            for (let i = 0; i < count; ++i) {
+            for (let i = 0; i < itemCount; ++i) {
                 const itemIndex = i;
                 const item = items[i];
                 const query = createQuery(item);
                 const onFind = (row) => {
                     results[itemIndex] = row;
-                    if (++completeCount >= count) {
+                    if (++completeCount >= itemCount) {
                         resolve(results);
                     }
                 };
