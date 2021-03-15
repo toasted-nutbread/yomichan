@@ -337,22 +337,21 @@ class DictionaryDatabase {
             }
             let completeCount = 0;
             const requiredCompleteCount = itemCount * indexCount;
+            const onGetAll = (rows, {item, itemIndex}) => {
+                for (const row of rows) {
+                    if (predicate(row, item)) {
+                        results.push(createResult(row, itemIndex));
+                    }
+                }
+                if (++completeCount >= requiredCompleteCount) {
+                    resolve(results);
+                }
+            };
             for (let i = 0; i < itemCount; ++i) {
-                const itemIndex = i;
                 const item = items[i];
                 const query = createQuery(item);
-                const onGetAll = (rows) => {
-                    for (const row of rows) {
-                        if (predicate(row, item)) {
-                            results.push(createResult(row, itemIndex));
-                        }
-                    }
-                    if (++completeCount >= requiredCompleteCount) {
-                        resolve(results);
-                    }
-                };
                 for (let j = 0; j < indexCount; ++j) {
-                    this._db.getAll(indexList[j], query, onGetAll, reject);
+                    this._db.getAll(indexList[j], query, onGetAll, reject, {item, itemIndex: i});
                 }
             }
         });
@@ -371,17 +370,16 @@ class DictionaryDatabase {
             const objectStore = transaction.objectStore(objectStoreName);
             const index = objectStore.index(indexName);
             let completeCount = 0;
+            const onFind = (row, itemIndex) => {
+                results[itemIndex] = row;
+                if (++completeCount >= itemCount) {
+                    resolve(results);
+                }
+            };
             for (let i = 0; i < itemCount; ++i) {
-                const itemIndex = i;
                 const item = items[i];
                 const query = createQuery(item);
-                const onFind = (row) => {
-                    results[itemIndex] = row;
-                    if (++completeCount >= itemCount) {
-                        resolve(results);
-                    }
-                };
-                this._db.findFirst(index, query, onFind, reject, predicate, item, void 0);
+                this._db.findFirst(index, query, onFind, reject, i, predicate, item, void 0);
             }
         });
     }
