@@ -142,20 +142,22 @@ async function main() {
     const write = (process.argv[2] === '--write');
     const {translator, dictionary: {title}} = await createVM();
 
-    const dataFilePath = path.join(__dirname, 'data', 'test-translator-data.json');
-    const data = JSON.parse(fs.readFileSync(dataFilePath, {encoding: 'utf8'}));
-    const {optionsPresets, tests} = data;
-    for (const test of tests) {
+    const testInputsFilePath = path.join(__dirname, 'data', 'translator-test-inputs.json');
+    const testResultsFilePath = path.join(__dirname, 'data', 'translator-test-results.json');
+    const {optionsPresets, tests} = JSON.parse(fs.readFileSync(testInputsFilePath, {encoding: 'utf8'}));
+    const expectedResults = JSON.parse(fs.readFileSync(testResultsFilePath, {encoding: 'utf8'}));
+    const actualResults = [];
+    for (let i = 0, ii = tests.length; i < ii; ++i) {
+        const test = tests[i];
+        const expected = expectedResults[i];
         switch (test.func) {
             case 'findTerms':
                 {
-                    const {mode, text} = test;
+                    const {name, mode, text} = test;
                     const options = buildOptions(optionsPresets, test.options, title);
                     const [definitions, length] = clone(await translator.findTerms(mode, text, options));
-                    if (write) {
-                        test.expected = {length, definitions};
-                    } else {
-                        const {expected} = test;
+                    actualResults.push({name, length, definitions});
+                    if (!write) {
                         assert.deepStrictEqual(length, expected.length);
                         assert.deepStrictEqual(definitions, expected.definitions);
                     }
@@ -163,13 +165,11 @@ async function main() {
                 break;
             case 'findKanji':
                 {
-                    const {text} = test;
+                    const {name, text} = test;
                     const options = buildOptions(optionsPresets, test.options, title);
                     const definitions = clone(await translator.findKanji(text, options));
-                    if (write) {
-                        test.expected = {definitions};
-                    } else {
-                        const {expected} = test;
+                    actualResults.push({name, definitions});
+                    if (!write) {
                         assert.deepStrictEqual(definitions, expected.definitions);
                     }
                 }
@@ -178,7 +178,8 @@ async function main() {
     }
 
     if (write) {
-        fs.writeFileSync(dataFilePath, JSON.stringify(data, null, 4), {encoding: 'utf8'});
+        // Use 2 indent instead of 4 to save a bit of file size
+        fs.writeFileSync(testResultsFilePath, JSON.stringify(actualResults, null, 2), {encoding: 'utf8'});
     }
 }
 
