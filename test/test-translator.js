@@ -37,12 +37,14 @@ async function createVM() {
     const vm = new DatabaseVM();
     vm.execute([
         'js/core.js',
+        'js/data/anki-note-data.js',
         'js/data/database.js',
         'js/data/json-schema.js',
         'js/general/cache-map.js',
         'js/general/regex-util.js',
         'js/general/text-source-map.js',
         'js/language/deinflector.js',
+        'js/language/dictionary-data-util.js',
         'js/language/dictionary-importer.js',
         'js/language/dictionary-database.js',
         'js/language/japanese-util.js',
@@ -53,12 +55,14 @@ async function createVM() {
         DictionaryImporter,
         DictionaryDatabase,
         JapaneseUtil,
-        Translator
+        Translator,
+        AnkiNoteData
     ] = vm.get([
         'DictionaryImporter',
         'DictionaryDatabase',
         'JapaneseUtil',
-        'Translator'
+        'Translator',
+        'AnkiNoteData'
     ]);
 
     // Dictionary
@@ -85,8 +89,11 @@ async function createVM() {
     const deinflectionReasions = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'ext', 'data/deinflect.json')));
     translator.prepare(deinflectionReasions);
 
+    // Note data creation
+    const createPublicAnkiNoteData = (marker, data) => new AnkiNoteData(japaneseUtil, marker, data).createPublic();
+
     // Done
-    return {vm, translator, dictionary: result};
+    return {vm, translator, dictionary: result, createPublicAnkiNoteData};
 }
 
 function buildOptions(optionsPresets, optionsArray, dictionaryTitle) {
@@ -140,26 +147,50 @@ function buildOptions(optionsPresets, optionsArray, dictionaryTitle) {
 
 async function main() {
     const write = (process.argv[2] === '--write');
-    const {translator, dictionary: {title}} = await createVM();
+    const {translator, dictionary: {title}, createPublicAnkiNoteData} = await createVM();
+
+    const createTestAnkiNoteData = (definition, mode) => createPublicAnkiNoteData('{marker}', {
+        definition,
+        resultOutputMode: mode,
+        mode: 'mode',
+        glossaryLayoutMode: 'default',
+        compactTags: false,
+        context: {
+            url: 'url:',
+            sentence: {text: '', offset: 0},
+            documentTitle: 'title'
+        },
+        injectedMedia: null
+    });
 
     const testInputsFilePath = path.join(__dirname, 'data', 'translator-test-inputs.json');
-    const testResultsFilePath = path.join(__dirname, 'data', 'translator-test-results.json');
     const {optionsPresets, tests} = JSON.parse(fs.readFileSync(testInputsFilePath, {encoding: 'utf8'}));
-    const expectedResults = JSON.parse(fs.readFileSync(testResultsFilePath, {encoding: 'utf8'}));
-    const actualResults = [];
+
+    const testResults1FilePath = path.join(__dirname, 'data', 'translator-test-results.json');
+    const expectedResults1 = JSON.parse(fs.readFileSync(testResults1FilePath, {encoding: 'utf8'}));
+    const actualResults1 = [];
+
+    const testResults2FilePath = path.join(__dirname, 'data', 'translator-test-results-note-data1.json');
+    const expectedResults2 = JSON.parse(fs.readFileSync(testResults2FilePath, {encoding: 'utf8'}));
+    const actualResults2 = [];
+
     for (let i = 0, ii = tests.length; i < ii; ++i) {
         const test = tests[i];
-        const expected = expectedResults[i];
+        const expected1 = expectedResults1[i];
+        const expected2 = expectedResults2[i];
         switch (test.func) {
             case 'findTerms':
                 {
                     const {name, mode, text} = test;
                     const options = buildOptions(optionsPresets, test.options, title);
                     const [definitions, length] = clone(await translator.findTerms(mode, text, options));
-                    actualResults.push({name, length, definitions});
+                    const noteDataList = clone(definitions.map((definition) => createTestAnkiNoteData(clone(definition), null)));
+                    actualResults1.push({name, length, definitions});
+                    actualResults2.push({name, noteDataList});
                     if (!write) {
-                        assert.deepStrictEqual(length, expected.length);
-                        assert.deepStrictEqual(definitions, expected.definitions);
+                        assert.deepStrictEqual(length, expected1.length);
+                        assert.deepStrictEqual(definitions, expected1.definitions);
+                        assert.deepStrictEqual(noteDataList, expected2.noteDataList);
                     }
                 }
                 break;
@@ -168,9 +199,12 @@ async function main() {
                     const {name, text} = test;
                     const options = buildOptions(optionsPresets, test.options, title);
                     const definitions = clone(await translator.findKanji(text, options));
-                    actualResults.push({name, definitions});
+                    const noteDataList = clone(definitions.map((definition) => createTestAnkiNoteData(clone(definition), null)));
+                    actualResults1.push({name, definitions});
+                    actualResults2.push({name, noteDataList});
                     if (!write) {
-                        assert.deepStrictEqual(definitions, expected.definitions);
+                        assert.deepStrictEqual(definitions, expected1.definitions);
+                        assert.deepStrictEqual(noteDataList, expected2.noteDataList);
                     }
                 }
                 break;
@@ -179,7 +213,8 @@ async function main() {
 
     if (write) {
         // Use 2 indent instead of 4 to save a bit of file size
-        fs.writeFileSync(testResultsFilePath, JSON.stringify(actualResults, null, 2), {encoding: 'utf8'});
+        fs.writeFileSync(testResults1FilePath, JSON.stringify(actualResults1, null, 2), {encoding: 'utf8'});
+        fs.writeFileSync(testResults2FilePath, JSON.stringify(actualResults2, null, 2), {encoding: 'utf8'});
     }
 }
 
