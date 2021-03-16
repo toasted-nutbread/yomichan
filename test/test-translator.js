@@ -37,17 +37,17 @@ async function createVM() {
     const vm = new DatabaseVM();
     vm.execute([
         'js/core.js',
-        'js/general/cache-map.js',
-        'js/language/japanese-util.js',
-        'js/data/json-schema.js',
-        'js/media/media-util.js',
-        'js/language/dictionary-importer.js',
         'js/data/database.js',
-        'js/language/dictionary-database.js',
+        'js/data/json-schema.js',
+        'js/general/cache-map.js',
         'js/general/regex-util.js',
         'js/general/text-source-map.js',
         'js/language/deinflector.js',
-        'js/language/translator.js'
+        'js/language/dictionary-importer.js',
+        'js/language/dictionary-database.js',
+        'js/language/japanese-util.js',
+        'js/language/translator.js',
+        'js/media/media-util.js'
     ]);
     const [
         DictionaryImporter,
