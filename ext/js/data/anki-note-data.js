@@ -248,6 +248,15 @@ class AnkiNoteData {
                 this._defineFuriganaSegments(expression);
                 this._defineTermFrequency(expression);
             }
+            // Remove all data except {glossary, only}
+            if (definition2 !== definition) {
+                const {dictionary, glossary, definitionTags, only} = definition2;
+                for (const key of Object.keys(definition2)) { delete definition2[key]; }
+                if (typeof dictionary !== 'undefined') { definition2.dictionary = dictionary; }
+                if (typeof glossary !== 'undefined') { definition2.glossary = glossary; }
+                if (typeof definitionTags !== 'undefined') { definition2.definitionTags = definitionTags; }
+                if (typeof only !== 'undefined') { definition2.only = only; }
+            }
         }
     }
 
