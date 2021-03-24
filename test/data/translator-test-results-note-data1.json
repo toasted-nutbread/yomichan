@@ -8845,7 +8845,7 @@
               ]
             }
           ],
-          "sourceTermExactMatchCount": 1,
+          "sourceTermExactMatchCount": 2,
           "screenshotFileName": null,
           "clipboardImageFileName": null,
           "clipboardText": null,
@@ -9167,7 +9167,7 @@
               ]
             }
           ],
-          "sourceTermExactMatchCount": 1,
+          "sourceTermExactMatchCount": 2,
           "screenshotFileName": null,
           "clipboardImageFileName": null,
           "clipboardText": null,
@@ -9439,7 +9439,7 @@
             }
           ],
           "pitches": [],
-          "sourceTermExactMatchCount": 1,
+          "sourceTermExactMatchCount": 2,
           "screenshotFileName": null,
           "clipboardImageFileName": null,
           "clipboardText": null,
@@ -9685,7 +9685,7 @@
             }
           ],
           "pitches": [],
-          "sourceTermExactMatchCount": 1,
+          "sourceTermExactMatchCount": 2,
           "screenshotFileName": null,
           "clipboardImageFileName": null,
           "clipboardText": null,
@@ -10539,7 +10539,7 @@
               "frequency": 3
             },
             {
-              "index": 2,
+              "index": 1,
               "expressionIndex": 0,
               "dictionary": "Test Dictionary 2",
               "dictionaryOrder": {
@@ -10552,7 +10552,7 @@
               "frequency": 8
             },
             {
-              "index": 1,
+              "index": 2,
               "expressionIndex": 1,
               "dictionary": "Test Dictionary 2",
               "dictionaryOrder": {
@@ -11024,7 +11024,7 @@
               "frequency": 2
             },
             {
-              "index": 2,
+              "index": 1,
               "expressionIndex": 0,
               "dictionary": "Test Dictionary 2",
               "dictionaryOrder": {
@@ -11037,7 +11037,7 @@
               "frequency": 6
             },
             {
-              "index": 1,
+              "index": 2,
               "expressionIndex": 1,
               "dictionary": "Test Dictionary 2",
               "dictionaryOrder": {
@@ -19791,7 +19791,7 @@
               "termFrequency": "normal"
             },
             {
-              "sourceTerm": "うちこむ",
+              "sourceTerm": "打ち込む",
               "expression": "打ち込む",
               "reading": "ぶちこむ",
               "termTags": [
@@ -20032,7 +20032,7 @@
               "frequency": 3
             },
             {
-              "index": 2,
+              "index": 1,
               "expressionIndex": 0,
               "dictionary": "Test Dictionary 2",
               "dictionaryOrder": {
@@ -20045,7 +20045,7 @@
               "frequency": 8
             },
             {
-              "index": 1,
+              "index": 2,
               "expressionIndex": 1,
               "dictionary": "Test Dictionary 2",
               "dictionaryOrder": {
@@ -20306,7 +20306,7 @@
               "termFrequency": "normal"
             },
             {
-              "sourceTerm": "うつ",
+              "sourceTerm": "打つ",
               "expression": "打つ",
               "reading": "ぶつ",
               "termTags": [
@@ -20517,7 +20517,7 @@
               "frequency": 2
             },
             {
-              "index": 2,
+              "index": 1,
               "expressionIndex": 0,
               "dictionary": "Test Dictionary 2",
               "dictionaryOrder": {
@@ -20530,7 +20530,7 @@
               "frequency": 6
             },
             {
-              "index": 1,
+              "index": 2,
               "expressionIndex": 1,
               "dictionary": "Test Dictionary 2",
               "dictionaryOrder": {
