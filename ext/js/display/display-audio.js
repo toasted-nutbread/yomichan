@@ -546,6 +546,8 @@ class DisplayAudio {
         // Create menu
         const menuContainerNode = this._display.displayGenerator.instantiateTemplate('audio-button-popup-menu');
         const menuBodyNode = menuContainerNode.querySelector('.popup-menu-body');
+        menuContainerNode.dataset.expression = expression;
+        menuContainerNode.dataset.reading = reading;
 
         // Set up items based on options and cache data
         this._createMenuItems(menuContainerNode, menuBodyNode, expression, reading);
