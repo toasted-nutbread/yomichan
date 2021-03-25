@@ -24,6 +24,7 @@ class PopupMenu extends EventDispatcher {
         this._bodyNode = containerNode.querySelector('.popup-menu-body');
         this._isClosed = false;
         this._eventListeners = new EventListenerCollection();
+        this._itemEventListeners = new EventListenerCollection();
     }
 
     get sourceElement() {
@@ -47,17 +48,13 @@ class PopupMenu extends EventDispatcher {
     }
 
     prepare() {
-        const items = this._bodyNode.querySelectorAll('.popup-menu-item');
         this._setPosition();
         this._containerNode.focus();
 
         this._eventListeners.addEventListener(window, 'resize', this._onWindowResize.bind(this), false);
         this._eventListeners.addEventListener(this._containerNode, 'click', this._onMenuContainerClick.bind(this), false);
 
-        const onMenuItemClick = this._onMenuItemClick.bind(this);
-        for (const item of items) {
-            this._eventListeners.addEventListener(item, 'click', onMenuItemClick, false);
-        }
+        this.updateMenuItems();
 
         PopupMenu.openMenus.add(this);
 
@@ -70,6 +67,15 @@ class PopupMenu extends EventDispatcher {
 
     close(cancelable=true) {
         return this._close(null, 'close', cancelable, {});
+    }
+
+    updateMenuItems() {
+        this._itemEventListeners.removeAllEventListeners();
+        const items = this._bodyNode.querySelectorAll('.popup-menu-item');
+        const onMenuItemClick = this._onMenuItemClick.bind(this);
+        for (const item of items) {
+            this._itemEventListeners.addEventListener(item, 'click', onMenuItemClick, false);
+        }
     }
 
     // Private
@@ -194,6 +200,7 @@ class PopupMenu extends EventDispatcher {
 
         this._isClosed = true;
         this._eventListeners.removeAllEventListeners();
+        this._itemEventListeners.removeAllEventListeners();
         if (this._containerNode.parentNode !== null) {
             this._containerNode.parentNode.removeChild(this._containerNode);
         }
