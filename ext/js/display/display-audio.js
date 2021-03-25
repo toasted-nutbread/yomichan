@@ -31,6 +31,7 @@ class DisplayAudio {
         this._cache = new Map();
         this._menuContainer = document.querySelector('#popup-menus');
         this._entriesToken = {};
+        this._openMenus = new Set();
     }
 
     get autoPlayAudioDelay() {
@@ -474,7 +475,13 @@ class DisplayAudio {
 
         const {expression, reading} = expressionReading;
         const popupMenu = this._createMenu(button, expression, reading);
+        this._openMenus.add(popupMenu);
         popupMenu.prepare();
+        popupMenu.on('close', this._onPopupMenuClose.bind(this));
+    }
+
+    _onPopupMenuClose({menu}) {
+        this._openMenus.delete(menu);
     }
 
     _sourceIsDownloadable(source) {
