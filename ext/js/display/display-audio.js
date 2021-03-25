@@ -198,9 +198,12 @@ class DisplayAudio {
     }
 
     _onAudioPlayMenuCloseClick(definitionIndex, expressionIndex, e) {
-        const {detail: {action, item, menu}} = e;
+        const {detail: {action, item, menu, shiftKey}} = e;
         switch (action) {
             case 'playAudioFromSource':
+                if (shiftKey) {
+                    e.preventDefault();
+                }
                 this._playAudioFromSource(definitionIndex, expressionIndex, item);
                 break;
             case 'setPrimaryAudio':
