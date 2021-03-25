@@ -564,11 +564,15 @@ class DisplayAudio {
         const sources = this._getAudioSources(this._getAudioOptions());
         const {displayGenerator} = this._display;
         let showIcons = false;
+        const currentItems = [...menuItemContainer.children];
         for (const {source, displayName, isInOptions, downloadable} of sources) {
             const entries = this._getMenuItemEntries(source, expression, reading);
             for (let i = 0, ii = entries.length; i < ii; ++i) {
                 const {valid, index, name} = entries[i];
-                const node = displayGenerator.instantiateTemplate('audio-button-popup-menu-item');
+                let node = this._getOrCreateMenuItem(currentItems, source, index);
+                if (node === null) {
+                    node = displayGenerator.instantiateTemplate('audio-button-popup-menu-item');
+                }
 
                 const labelNode = node.querySelector('.popup-menu-item-audio-button .popup-menu-item-label');
                 let label = displayName;
@@ -595,7 +599,29 @@ class DisplayAudio {
                 menuItemContainer.appendChild(node);
             }
         }
+        for (const node of currentItems) {
+            const {parentNode} = node;
+            if (parentNode === null) { continue; }
+            parentNode.removeChild(node);
+        }
         menuContainerNode.dataset.showIcons = `${showIcons}`;
+    }
+
+    _getOrCreateMenuItem(currentItems, source, index) {
+        if (index === null) { index = 0; }
+        index = `${index}`;
+        for (let i = 0, ii = currentItems.length; i < ii; ++i) {
+            const node = currentItems[i];
+            if (source !== node.dataset.source) { continue; }
+
+            let index2 = node.dataset.index;
+            if (typeof index2 === 'undefined') { index2 = '0'; }
+            if (index !== index2) { continue; }
+
+            currentItems.splice(i, 1);
+            return node;
+        }
+        return null;
     }
 
     _getMenuItemEntries(source, expression, reading) {
