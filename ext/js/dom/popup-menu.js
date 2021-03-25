@@ -69,7 +69,7 @@ class PopupMenu extends EventDispatcher {
     }
 
     close(cancelable=true) {
-        return this._close(null, 'close', cancelable);
+        return this._close(null, 'close', cancelable, {});
     }
 
     // Private
@@ -78,7 +78,7 @@ class PopupMenu extends EventDispatcher {
         if (e.currentTarget !== e.target) { return; }
         e.stopPropagation();
         e.preventDefault();
-        this._close(null, 'outside', true);
+        this._close(null, 'outside', true, e);
     }
 
     _onMenuItemClick(e) {
@@ -86,11 +86,11 @@ class PopupMenu extends EventDispatcher {
         if (item.disabled) { return; }
         e.stopPropagation();
         e.preventDefault();
-        this._close(item, 'item', true);
+        this._close(item, 'item', true, e);
     }
 
     _onWindowResize() {
-        this._close(null, 'resize', true);
+        this._close(null, 'resize', true, {});
     }
 
     _setPosition() {
@@ -172,15 +172,20 @@ class PopupMenu extends EventDispatcher {
         menu.style.top = `${y}px`;
     }
 
-    _close(item, cause, cancelable) {
+    _close(item, cause, cancelable, originalEvent) {
         if (this._isClosed) { return true; }
         const action = (item !== null ? item.dataset.menuAction : null);
 
+        const {altKey=false, ctrlKey=false, metaKey=false, shiftKey=false} = originalEvent;
         const detail = {
             menu: this,
             item,
             action,
-            cause
+            cause,
+            altKey,
+            ctrlKey,
+            metaKey,
+            shiftKey
         };
         const result = this._sourceElement.dispatchEvent(new CustomEvent('menuClose', {bubbles: false, cancelable, detail}));
         if (cancelable && !result) { return false; }
