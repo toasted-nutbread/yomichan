@@ -685,6 +685,7 @@ class DisplayAudio {
             const menuContainerNode = menu.containerNode;
             const {expression, reading} = menuContainerNode.dataset;
             this._createMenuItems(menuContainerNode, menu.bodyNode, expression, reading);
+            menu.updatePosition();
         }
     }
 }

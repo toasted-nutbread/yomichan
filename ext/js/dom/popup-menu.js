@@ -78,6 +78,10 @@ class PopupMenu extends EventDispatcher {
         }
     }
 
+    updatePosition() {
+        this._setPosition();
+    }
+
     // Private
 
     _onMenuContainerClick(e) {
