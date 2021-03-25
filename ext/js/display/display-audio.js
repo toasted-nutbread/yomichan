@@ -310,12 +310,14 @@ class DisplayAudio {
         for (let i = 0, ii = sources.length; i < ii; ++i) {
             const source = sources[i];
 
+            let cacheUpdated = false;
             let infoListPromise;
             let sourceInfo = sourceMap.get(source);
             if (typeof sourceInfo === 'undefined') {
                 infoListPromise = this._getExpressionAudioInfoList(source, expression, reading, details);
                 sourceInfo = {infoListPromise, infoList: null};
                 sourceMap.set(source, sourceInfo);
+                cacheUpdated = true;
             }
 
             let {infoList} = sourceInfo;
@@ -336,14 +338,17 @@ class DisplayAudio {
                 }
             }
 
-            const audio = await this._createAudioFromInfoList(source, infoList, start, end);
-            if (audio !== null) { return audio; }
+            const {result, cacheUpdated: cacheUpdated2} = await this._createAudioFromInfoList(source, infoList, start, end);
+            if (cacheUpdated || cacheUpdated2) { this._updateOpenMenu(); }
+            if (result !== null) { return result; }
         }
 
         return null;
     }
 
     async _createAudioFromInfoList(source, infoList, start, end) {
+        let result = null;
+        let cacheUpdated = false;
         for (let i = start; i < end; ++i) {
             const item = infoList[i];
 
@@ -356,6 +361,8 @@ class DisplayAudio {
                     item.audioPromise = audioPromise;
                 }
 
+                cacheUpdated = true;
+
                 try {
                     audio = await audioPromise;
                 } catch (e) {
@@ -367,11 +374,12 @@ class DisplayAudio {
                 item.audio = audio;
             }
 
-            if (audio === null) { continue; }
-
-            return {audio, source, infoListIndex: i};
+            if (audio !== null) {
+                result = {audio, source, infoListIndex: i};
+                break;
+            }
         }
-        return null;
+        return {result, cacheUpdated};
     }
 
     async _createAudioFromInfo(info, source) {
@@ -669,6 +677,14 @@ class DisplayAudio {
 
             const isPrimaryCardAudio = (source === primaryCardAudioSource && sourceIndex === primaryCardAudioIndex);
             node.dataset.isPrimaryCardAudio = `${isPrimaryCardAudio}`;
+        }
+    }
+
+    _updateOpenMenu() {
+        for (const menu of this._openMenus) {
+            const menuContainerNode = menu.containerNode;
+            const {expression, reading} = menuContainerNode.dataset;
+            this._createMenuItems(menuContainerNode, menu.bodyNode, expression, reading);
         }
     }
 }
