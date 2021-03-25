@@ -536,15 +536,25 @@ class DisplayAudio {
     }
 
     _createMenu(sourceButton, expression, reading) {
-        // Options
-        const sources = this._getAudioSources(this._getAudioOptions());
-
         // Create menu
-        const {displayGenerator} = this._display;
-        const menuNode = displayGenerator.instantiateTemplate('audio-button-popup-menu');
+        const menuNode = this._display.displayGenerator.instantiateTemplate('audio-button-popup-menu');
         const menuBodyNode = menuNode.querySelector('.popup-menu-body');
 
         // Set up items based on options and cache data
+        const showIcons = this._createMenuItems(menuBodyNode, expression, reading);
+        menuNode.dataset.showIcons = `${showIcons}`;
+
+        // Update primary card audio display
+        this._updateMenuPrimaryCardAudio(menuBodyNode, expression, reading);
+
+        // Create popup menu
+        this._menuContainer.appendChild(menuNode);
+        return new PopupMenu(sourceButton, menuNode);
+    }
+
+    _createMenuItems(container, expression, reading) {
+        const sources = this._getAudioSources(this._getAudioOptions());
+        const {displayGenerator} = this._display;
         let showIcons = false;
         for (const {source, displayName, isInOptions, downloadable} of sources) {
             const entries = this._getMenuItemEntries(source, expression, reading);
@@ -574,17 +584,10 @@ class DisplayAudio {
                 node.dataset.sourceInOptions = `${isInOptions}`;
                 node.dataset.downloadable = `${downloadable}`;
 
-                menuBodyNode.appendChild(node);
+                container.appendChild(node);
             }
         }
-        menuNode.dataset.showIcons = `${showIcons}`;
-
-        // Update primary card audio display
-        this._updateMenuPrimaryCardAudio(menuBodyNode, expression, reading);
-
-        // Create popup menu
-        this._menuContainer.appendChild(menuNode);
-        return new PopupMenu(sourceButton, menuNode);
+        return showIcons;
     }
 
     _getMenuItemEntries(source, expression, reading) {
