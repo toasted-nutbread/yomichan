@@ -537,22 +537,21 @@ class DisplayAudio {
 
     _createMenu(sourceButton, expression, reading) {
         // Create menu
-        const menuNode = this._display.displayGenerator.instantiateTemplate('audio-button-popup-menu');
-        const menuBodyNode = menuNode.querySelector('.popup-menu-body');
+        const menuContainerNode = this._display.displayGenerator.instantiateTemplate('audio-button-popup-menu');
+        const menuBodyNode = menuContainerNode.querySelector('.popup-menu-body');
 
         // Set up items based on options and cache data
-        const showIcons = this._createMenuItems(menuBodyNode, expression, reading);
-        menuNode.dataset.showIcons = `${showIcons}`;
+        this._createMenuItems(menuContainerNode, menuBodyNode, expression, reading);
 
         // Update primary card audio display
         this._updateMenuPrimaryCardAudio(menuBodyNode, expression, reading);
 
         // Create popup menu
-        this._menuContainer.appendChild(menuNode);
-        return new PopupMenu(sourceButton, menuNode);
+        this._menuContainer.appendChild(menuContainerNode);
+        return new PopupMenu(sourceButton, menuContainerNode);
     }
 
-    _createMenuItems(container, expression, reading) {
+    _createMenuItems(menuContainerNode, menuItemContainer, expression, reading) {
         const sources = this._getAudioSources(this._getAudioOptions());
         const {displayGenerator} = this._display;
         let showIcons = false;
@@ -584,10 +583,10 @@ class DisplayAudio {
                 node.dataset.sourceInOptions = `${isInOptions}`;
                 node.dataset.downloadable = `${downloadable}`;
 
-                container.appendChild(node);
+                menuItemContainer.appendChild(node);
             }
         }
-        return showIcons;
+        menuContainerNode.dataset.showIcons = `${showIcons}`;
     }
 
     _getMenuItemEntries(source, expression, reading) {
