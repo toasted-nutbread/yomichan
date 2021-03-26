@@ -250,9 +250,13 @@ class DisplayGenerator {
         node.dataset.readingIsSame = `${reading === expression}`;
         node.dataset.frequency = DictionaryDataUtil.getTermFrequency(termTags);
 
+        const {wordClasses} = headword;
         const pitchAccentCategories = this._getPitchAccentCategories(reading, pronunciations, headwordIndex);
         if (pitchAccentCategories !== null) {
             node.dataset.pitchAccentCategories = pitchAccentCategories;
+        }
+        if (wordClasses.length > 0) {
+            node.dataset.wordClasses = wordClasses.join(' ');
         }
 
         this._setTextContent(node.querySelector('.expression-reading'), reading);
