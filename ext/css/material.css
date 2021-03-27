@@ -943,6 +943,35 @@ button.low-emphasis.danger {
     --button-disabled-background-color: var(--danger-color-transparent0);
 }
 
+/* Input button */
+button.input-button {
+    --button-content-color: var(--button-default-icon-color);
+    --button-border-color: var(--input-background-color);
+    --button-background-color: var(--input-background-color);
+    --button-hover-background-color: var(--input-background-color-dark);
+    --button-active-background-color: var(--input-background-color-darker);
+
+    --button-padding-vertical: 0;
+    --button-padding-horizontal: 0.5em;
+
+    text-align: left;
+    font-weight: normal;
+    border-style: none;
+    border-width: 0;
+    width: var(--input-width-large);
+    height: var(--input-height);
+    line-height: var(--input-height);
+    box-sizing: border-box;
+    position: relative;
+}
+button.input-button.input-with-suffix-button {
+    flex: 1 1 auto;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right-style: none;
+    z-index: 1;
+}
+
 /* Input suffix button */
 button.input-suffix-button {
     --button-content-color: var(--button-default-icon-color);
