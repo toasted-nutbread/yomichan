@@ -321,13 +321,13 @@ class KeyboardShortcutHotkeyEntry {
             scopes.splice(index, 1);
         }
 
-        this._updateScopesButton();
-
         await this._modifyProfileSettings([{
             action: 'set',
             path: `${this._basePath}.scopes`,
             value: scopes
         }]);
+
+        this._updateScopesButton();
     }
 
     async _modifyProfileSettings(targets) {
@@ -388,6 +388,7 @@ class KeyboardShortcutHotkeyEntry {
 
         await this._modifyProfileSettings(targets);
 
+        this._updateScopesButton();
         this._updateCheckboxVisibility();
     }
 
