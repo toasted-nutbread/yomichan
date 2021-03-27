@@ -30,6 +30,28 @@ class KeyboardShortcutController {
         this._emptyIndicator = null;
         this._stringComparer = new Intl.Collator('en-US'); // Invariant locale
         this._scrollContainer = null;
+        this._actionDetails = new Map([
+            ['',                                 {scopes: new Set()}],
+            ['close',                            {scopes: new Set(['popup', 'search'])}],
+            ['focusSearchBox',                   {scopes: new Set(['search'])}],
+            ['nextEntry',                        {scopes: new Set(['popup', 'search'])}],
+            ['nextEntry3',                       {scopes: new Set(['popup', 'search'])}],
+            ['previousEntry',                    {scopes: new Set(['popup', 'search'])}],
+            ['previousEntry3',                   {scopes: new Set(['popup', 'search'])}],
+            ['lastEntry',                        {scopes: new Set(['popup', 'search'])}],
+            ['firstEntry',                       {scopes: new Set(['popup', 'search'])}],
+            ['nextEntryDifferentDictionary',     {scopes: new Set(['popup', 'search'])}],
+            ['previousEntryDifferentDictionary', {scopes: new Set(['popup', 'search'])}],
+            ['historyBackward',                  {scopes: new Set(['popup', 'search'])}],
+            ['historyForward',                   {scopes: new Set(['popup', 'search'])}],
+            ['addNoteKanji',                     {scopes: new Set(['popup', 'search'])}],
+            ['addNoteTermKanji',                 {scopes: new Set(['popup', 'search'])}],
+            ['addNoteTermKana',                  {scopes: new Set(['popup', 'search'])}],
+            ['viewNote',                         {scopes: new Set(['popup', 'search'])}],
+            ['playAudio',                        {scopes: new Set(['popup', 'search'])}],
+            ['copyHostSelection',                {scopes: new Set(['popup'])}],
+            ['scanSelectedText',                 {scopes: new Set(['web'])}]
+        ]);
     }
 
     get settingsController() {
@@ -94,6 +116,11 @@ class KeyboardShortcutController {
     async getDefaultHotkeys() {
         const defaultOptions = await this._settingsController.getDefaultOptions();
         return defaultOptions.profiles[0].options.inputs.hotkeys;
+    }
+
+    getValidScopesForAction(action) {
+        const details = this._actionDetails.get(action);
+        return typeof details !== 'undefined' ? details.scopes : null;
     }
 
     // Private
@@ -375,9 +402,7 @@ class KeyboardShortcutHotkeyEntry {
     }
 
     _getValidScopesForAction(action) {
-        const optionNode = this._actionSelect.querySelector(`option[value="${action}"]`);
-        const scopesString = (optionNode !== null ? optionNode.dataset.scopes : void 0);
-        return (typeof scopesString === 'string' ? new Set(scopesString.split(' ')) : null);
+        return this._parent.getValidScopesForAction(action);
     }
 
     _updateScopeMenuItems(menu) {
