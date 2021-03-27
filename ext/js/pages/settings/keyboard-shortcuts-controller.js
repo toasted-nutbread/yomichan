@@ -358,6 +358,8 @@ class KeyboardShortcutHotkeyEntry {
     }
 
     async _setAction(value) {
+        const validScopesOld = this._getValidScopesForAction(this._data.action);
+
         const targets = [{
             action: 'set',
             path: `${this._basePath}.action`,
@@ -370,14 +372,20 @@ class KeyboardShortcutHotkeyEntry {
         const validScopes = this._getValidScopesForAction(value);
         if (validScopes !== null) {
             let changed = false;
-            for (let i = 0, ii = scopes.length; i < ii; ++i) {
-                if (!validScopes.has(scopes[i])) {
-                    scopes.splice(i, 1);
-                    --i;
-                    --ii;
-                    changed = true;
+            if ((validScopesOld !== null ? validScopesOld.size : 0) === scopes.length) {
+                scopes.length = 0;
+                changed = true;
+            } else {
+                for (let i = 0, ii = scopes.length; i < ii; ++i) {
+                    if (!validScopes.has(scopes[i])) {
+                        scopes.splice(i, 1);
+                        --i;
+                        --ii;
+                        changed = true;
+                    }
                 }
             }
+
             if (changed) {
                 if (scopes.length === 0) {
                     scopes.push(...validScopes);
