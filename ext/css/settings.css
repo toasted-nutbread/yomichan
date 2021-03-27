@@ -2047,9 +2047,26 @@ input.sentence-termination-character-input2 {
 .hotkey-list-item-action {
     flex: 1 1 auto;
 }
-.hotkey-list-item-enabled-label {
-    align-self: center;
-    margin-left: 1em;
+.hotkey-list-item-enabled-button-container {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: stretch;
+    margin-left: 0.375em;
+}
+button.hotkey-list-item-enabled-button {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: stretch;
+    width: auto;
+}
+.hotkey-list-item-enabled-button-label {
+    flex: 1 1 auto;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+}
+.hotkey-list-item-enabled-button-label>.checkbox {
+    margin-right: 0.5em;
 }
 .hotkey-list-item-flex-row {
     display: flex;
@@ -2072,6 +2089,16 @@ input.sentence-termination-character-input2 {
 }
 .hotkey-scope-checkbox-container>span {
     padding-left: 0.375em;
+}
+
+.hotkey-scope-popup-menu-item-label {
+    flex: 1 1 auto;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+}
+.hotkey-scope-popup-menu-item-label>.checkbox {
+    margin-right: 0.5em;
 }
 
 .inline-icon {
