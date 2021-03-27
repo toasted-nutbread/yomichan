@@ -2068,6 +2068,11 @@ button.hotkey-list-item-enabled-button {
 .hotkey-list-item-enabled-button-label>.checkbox {
     margin-right: 0.5em;
 }
+.hotkey-list-item-action-argument {
+    margin-left: 0.375em;
+    flex: 1 1 auto;
+    visibility: hidden;
+}
 .hotkey-list-item-flex-row {
     display: flex;
     flex-flow: row nowrap;
