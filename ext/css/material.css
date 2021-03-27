@@ -988,6 +988,16 @@ input[type=number][data-invalid=true]+button.input-suffix-button {
 }
 
 
+/* Button inner label */
+.button-inner-label {
+    margin-top: calc(-1 * var(--button-padding-vertical));
+    margin-bottom: calc(-1 * var(--button-padding-vertical));
+    margin-left: calc(-1 * var(--button-padding-horizontal));
+    margin-right: calc(-1 * var(--button-padding-horizontal));
+    padding: var(--button-padding-vertical) var(--button-padding-horizontal);
+}
+
+
 /* Material design icon button */
 button.icon-button {
     --button-content-color: var(--button-default-icon-color);
