@@ -189,9 +189,6 @@ class KeyboardShortcutHotkeyEntry {
         enabledToggle.checked = this._data.enabled;
         enabledToggle.dataset.setting = `${this._basePath}.enabled`;
 
-        this._updateCheckboxVisibility();
-        this._updateCheckboxStates();
-
         this._eventListeners.addEventListener(scopesButton, 'menuOpen', this._onScopesMenuOpen.bind(this));
         this._eventListeners.addEventListener(scopesButton, 'menuClose', this._onScopesMenuClose.bind(this));
         this._eventListeners.addEventListener(menuButton, 'menuClose', this._onMenuClose.bind(this), false);
