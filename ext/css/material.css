@@ -798,10 +798,13 @@ button,
     --button-current-background-color: var(--button-background-color);
     --button-current-shadow: var(--button-shadow);
 
+    --button-padding-vertical: 0.5em;
+    --button-padding-horizontal: 1em;
+
     border-width: var(--thin-border-size);
     border-style: solid;
     border-radius: 0.3em;
-    padding: 0.5em 1em;
+    padding: var(--button-padding-vertical) var(--button-padding-horizontal);
     font-weight: bold;
     font-size: inherit;
     font-family: inherit;
@@ -1140,7 +1143,9 @@ button.popup-menu-item {
     --button-disabled-background-color: transparent;
     --button-disabled-shadow: none;
 
-    padding: 0.625em 1.5em;
+    --button-padding-vertical: 0.625em;
+    --button-padding-horizontal: 1.5em;
+
     flex: 1 1 auto;
     border-radius: 0;
     border-style: none;
@@ -1174,7 +1179,9 @@ button.popup-menu-item:not([hidden]) {
 }
 :root[data-page-type=popup] .popup-menu.popup-menu-auto-size button.popup-menu-item,
 .popup-menu.popup-menu-small button.popup-menu-item {
-    padding: 0.5em 0.75em;
+    --button-padding-vertical: 0.5em;
+    --button-padding-horizontal: 0.75em;
+
     font-size: var(--font-size-small);
 }
 .popup-menu-item-group {
