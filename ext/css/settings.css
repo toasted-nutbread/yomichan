@@ -2059,6 +2059,9 @@ button.hotkey-list-item-enabled-button {
     align-items: stretch;
     width: auto;
 }
+button.hotkey-list-item-enabled-button[data-scope-count='0'] {
+    text-decoration: line-through;
+}
 .hotkey-list-item-enabled-button-label {
     flex: 1 1 auto;
     display: flex;
@@ -2080,20 +2083,6 @@ button.hotkey-list-item-enabled-button {
 }
 .hotkey-list-item-flex-row-label {
     margin: 0 0.5em 0 1em;
-}
-.hotkey-scope-checkbox-container {
-    flex-flow: row nowrap;
-    align-items: center;
-    cursor: pointer;
-}
-.hotkey-scope-checkbox-container:not([hidden]) {
-    display: flex;
-}
-.hotkey-scope-checkbox-container:not(:last-child) {
-    margin-right: 0.75em;
-}
-.hotkey-scope-checkbox-container>span {
-    padding-left: 0.375em;
 }
 
 .hotkey-scope-popup-menu-item-label {

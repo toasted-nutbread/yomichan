@@ -166,6 +166,7 @@ class KeyboardShortcutHotkeyEntry {
         this._actionSelect = null;
         this._basePath = `inputs.hotkeys[${this._index}]`;
         this._stringComparer = stringComparer;
+        this._enabledButton = null;
         this._scopeMenu = null;
         this._scopeMenuEventListeners = new EventListenerCollection();
     }
@@ -178,8 +179,10 @@ class KeyboardShortcutHotkeyEntry {
         const action = node.querySelector('.hotkey-list-item-action');
         const enabledToggle = node.querySelector('.hotkey-list-item-enabled');
         const scopesButton = node.querySelector('.hotkey-list-item-scopes-button');
+        const enabledButton = node.querySelector('.hotkey-list-item-enabled-button');
 
         this._actionSelect = action;
+        this._enabledButton = enabledButton;
 
         this._inputField = new KeyboardMouseInputField(input, null, this._os);
         this._inputField.prepare(this._data.key, this._data.modifiers, false, true);
@@ -188,6 +191,8 @@ class KeyboardShortcutHotkeyEntry {
 
         enabledToggle.checked = this._data.enabled;
         enabledToggle.dataset.setting = `${this._basePath}.enabled`;
+
+        this._updateScopesButton();
 
         this._eventListeners.addEventListener(scopesButton, 'menuOpen', this._onScopesMenuOpen.bind(this));
         this._eventListeners.addEventListener(scopesButton, 'menuClose', this._onScopesMenuClose.bind(this));
@@ -288,6 +293,8 @@ class KeyboardShortcutHotkeyEntry {
         } else {
             scopes.splice(index, 1);
         }
+
+        this._updateScopesButton();
 
         await this._modifyProfileSettings([{
             action: 'set',
@@ -398,6 +405,11 @@ class KeyboardShortcutHotkeyEntry {
     _clearScopeMenu() {
         this._scopeMenuEventListeners.removeAllEventListeners();
         this._scopeMenu = null;
+    }
+
+    _updateScopesButton() {
+        const {scopes} = this._data;
+        this._enabledButton.dataset.scopeCount = `${scopes.length}`;
     }
 
     _updateDisplay(node) {
