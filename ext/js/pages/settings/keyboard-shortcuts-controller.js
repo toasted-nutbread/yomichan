@@ -118,9 +118,8 @@ class KeyboardShortcutController {
         return defaultOptions.profiles[0].options.inputs.hotkeys;
     }
 
-    getValidScopesForAction(action) {
-        const details = this._actionDetails.get(action);
-        return typeof details !== 'undefined' ? details.scopes : null;
+    getActionDetails(action) {
+        return this._actionDetails.get(action);
     }
 
     // Private
@@ -416,7 +415,8 @@ class KeyboardShortcutHotkeyEntry {
     }
 
     _getValidScopesForAction(action) {
-        return this._parent.getValidScopesForAction(action);
+        const details = this._parent.getActionDetails(action);
+        return typeof details !== 'undefined' ? details.scopes : null;
     }
 
     _updateScopeMenuItems(menu) {
