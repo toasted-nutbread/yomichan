@@ -255,6 +255,11 @@ class KeyboardShortcutHotkeyEntry {
 
     _onScopesMenuOpen(e) {
         const {menu} = e.detail;
+        const validScopes = this._getValidScopesForAction(this._data.action);
+        if (validScopes.size === 0) {
+            menu.close();
+            return;
+        }
         this._scopeMenu = menu;
         this._updateScopeMenuItems(menu);
         this._updateDisplay(menu.containerNode); // Fix a animation issue due to changing checkbox values
