@@ -16,6 +16,7 @@
  */
 
 /* global
+ * DOMDataBinder
  * KeyboardMouseInputField
  */
 
@@ -34,9 +35,9 @@ class KeyboardShortcutController {
             ['',                                 {scopes: new Set()}],
             ['close',                            {scopes: new Set(['popup', 'search'])}],
             ['focusSearchBox',                   {scopes: new Set(['search'])}],
-            ['nextEntry',                        {scopes: new Set(['popup', 'search'])}],
+            ['nextEntry',                        {scopes: new Set(['popup', 'search']), argument: {template: 'hotkey-argument-move-offset', default: '1'}}],
             ['nextEntry3',                       {scopes: new Set(['popup', 'search'])}],
-            ['previousEntry',                    {scopes: new Set(['popup', 'search'])}],
+            ['previousEntry',                    {scopes: new Set(['popup', 'search']), argument: {template: 'hotkey-argument-move-offset', default: '1'}}],
             ['previousEntry3',                   {scopes: new Set(['popup', 'search'])}],
             ['lastEntry',                        {scopes: new Set(['popup', 'search'])}],
             ['firstEntry',                       {scopes: new Set(['popup', 'search'])}],
@@ -196,6 +197,9 @@ class KeyboardShortcutHotkeyEntry {
         this._enabledButton = null;
         this._scopeMenu = null;
         this._scopeMenuEventListeners = new EventListenerCollection();
+        this._argumentContainer = null;
+        this._argumentInput = null;
+        this._argumentEventListeners = new EventListenerCollection();
     }
 
     prepare() {
@@ -210,6 +214,7 @@ class KeyboardShortcutHotkeyEntry {
 
         this._actionSelect = action;
         this._enabledButton = enabledButton;
+        this._argumentContainer = node.querySelector('.hotkey-list-item-action-argument-container');
 
         this._inputField = new KeyboardMouseInputField(input, null, this._os);
         this._inputField.prepare(this._data.key, this._data.modifiers, false, true);
@@ -220,6 +225,7 @@ class KeyboardShortcutHotkeyEntry {
         enabledToggle.dataset.setting = `${this._basePath}.enabled`;
 
         this._updateScopesButton();
+        this._updateActionArgument();
 
         this._eventListeners.addEventListener(scopesButton, 'menuOpen', this._onScopesMenuOpen.bind(this));
         this._eventListeners.addEventListener(scopesButton, 'menuClose', this._onScopesMenuClose.bind(this));
@@ -232,6 +238,7 @@ class KeyboardShortcutHotkeyEntry {
         this._eventListeners.removeAllEventListeners();
         this._inputField.cleanup();
         this._clearScopeMenu();
+        this._clearArgumentEventListeners();
         if (this._node.parentNode !== null) {
             this._node.parentNode.removeChild(this._node);
         }
@@ -290,6 +297,21 @@ class KeyboardShortcutHotkeyEntry {
     _onActionSelectChange(e) {
         const value = e.currentTarget.value;
         this._setAction(value);
+    }
+
+    _onArgumentValueChange(template, e) {
+        const node = e.currentTarget;
+        const value = this._getArgumentInputValue(node);
+        let newValue = value;
+        switch (template) {
+            case 'hotkey-argument-move-offset':
+                newValue = `${DOMDataBinder.convertToNumber(value, node)}`;
+                break;
+        }
+        if (value !== newValue) {
+            this._setArgumentInputValue(node, newValue);
+        }
+        this._setArgument(newValue);
     }
 
     async _delete() {
@@ -360,57 +382,72 @@ class KeyboardShortcutHotkeyEntry {
     async _setAction(value) {
         const validScopesOld = this._getValidScopesForAction(this._data.action);
 
-        const targets = [{
-            action: 'set',
-            path: `${this._basePath}.action`,
-            value
-        }];
+        const scopes = this._data.scopes;
+
+        let details = this._parent.getActionDetails(value);
+        if (typeof details === 'undefined') { details = {}; }
+
+        let validScopes = details.scopes;
+        if (typeof validScopes === 'undefined') { validScopes = new Set(); }
+
+        const {argument: argumentDetails} = details;
+        let defaultArgument = typeof argumentDetails !== 'undefined' ? argumentDetails.default : '';
+        if (typeof defaultArgument !== 'string') { defaultArgument = ''; }
 
         this._data.action = value;
+        this._data.argument = defaultArgument;
 
-        const scopes = this._data.scopes;
-        const validScopes = this._getValidScopesForAction(value);
-        if (validScopes !== null) {
-            let changed = false;
-            if ((validScopesOld !== null ? validScopesOld.size : 0) === scopes.length) {
-                scopes.length = 0;
-                changed = true;
-            } else {
-                for (let i = 0, ii = scopes.length; i < ii; ++i) {
-                    if (!validScopes.has(scopes[i])) {
-                        scopes.splice(i, 1);
-                        --i;
-                        --ii;
-                        changed = true;
-                    }
+        let scopesChanged = false;
+        if ((validScopesOld !== null ? validScopesOld.size : 0) === scopes.length) {
+            scopes.length = 0;
+            scopesChanged = true;
+        } else {
+            for (let i = 0, ii = scopes.length; i < ii; ++i) {
+                if (!validScopes.has(scopes[i])) {
+                    scopes.splice(i, 1);
+                    --i;
+                    --ii;
+                    scopesChanged = true;
                 }
-            }
-
-            if (changed) {
-                if (scopes.length === 0) {
-                    scopes.push(...validScopes);
-                }
-                targets.push({
-                    action: 'set',
-                    path: `${this._basePath}.scopes`,
-                    value: scopes
-                });
-                this._updateCheckboxStates();
             }
         }
+        if (scopesChanged && scopes.length === 0) {
+            scopes.push(...validScopes);
+        }
 
-        await this._modifyProfileSettings(targets);
+        await this._modifyProfileSettings([
+            {
+                action: 'set',
+                path: `${this._basePath}.action`,
+                value: this._data.action
+            },
+            {
+                action: 'set',
+                path: `${this._basePath}.argument`,
+                value: this._data.argument
+            },
+            {
+                action: 'set',
+                path: `${this._basePath}.scopes`,
+                value: this._data.scopes
+            }
+        ]);
 
         this._updateScopesButton();
-        this._updateCheckboxVisibility();
+        this._updateScopesMenu();
+        this._updateActionArgument();
     }
 
-    _updateCheckboxStates() {
-        if (this._scopeMenu === null) { return; }
-        this._updateScopeMenuItems(this._scopeMenu);
+    async _setArgument(value) {
+        this._data.argument = value;
+        await this._modifyProfileSettings([{
+            action: 'set',
+            path: `${this._basePath}.argument`,
+            value
+        }]);
     }
 
-    _updateCheckboxVisibility() {
+    _updateScopesMenu() {
         if (this._scopeMenu === null) { return; }
         this._updateScopeMenuItems(this._scopeMenu);
     }
@@ -458,5 +495,40 @@ class KeyboardShortcutHotkeyEntry {
         style.display = 'none';
         getComputedStyle(node).getPropertyValue('display');
         style.display = display;
+    }
+
+    _updateActionArgument() {
+        this._clearArgumentEventListeners();
+
+        const {action, argument} = this._data;
+        const details = this._parent.getActionDetails(action);
+        const {argument: argumentDetails} = typeof details !== 'undefined' ? details : {};
+
+        this._argumentContainer.textContent = '';
+        if (typeof argumentDetails !== 'undefined') {
+            const {template} = argumentDetails;
+            const node = this._parent.settingsController.instantiateTemplate(template);
+            const inputSelector = '.hotkey-argument-input';
+            const inputNode = node.matches(inputSelector) ? node : node.querySelector(inputSelector);
+            if (inputNode !== null) {
+                this._setArgumentInputValue(inputNode, argument);
+                this._argumentInput = inputNode;
+                this._argumentEventListeners.addEventListener(inputNode, 'change', this._onArgumentValueChange.bind(this, template), false);
+            }
+            this._argumentContainer.appendChild(node);
+        }
+    }
+
+    _clearArgumentEventListeners() {
+        this._argumentEventListeners.removeAllEventListeners();
+        this._argumentInput = null;
+    }
+
+    _getArgumentInputValue(node) {
+        return node.value;
+    }
+
+    _setArgumentInputValue(node, value) {
+        node.value = value;
     }
 }

@@ -2079,6 +2079,9 @@ button.hotkey-list-item-enabled-button[data-scope-count='0'] {
     align-items: stretch;
     width: var(--input-width-large);
 }
+.hotkey-argument-label {
+    margin-right: 0.25em;
+}
 .hotkey-list-item-flex-row {
     display: flex;
     flex-flow: row nowrap;
