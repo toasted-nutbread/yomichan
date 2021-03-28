@@ -81,9 +81,9 @@ class OptionToggleHotkeyHandler {
                 throw deserializeError(error2);
             }
 
-            this._showNotification(this._createSuccessMessage(path, value));
+            this._showNotification(this._createSuccessMessage(path, value), true);
         } catch (e) {
-            this._showNotification(this._createErrorMessage(path, e));
+            this._showNotification(this._createErrorMessage(path, e), false);
         }
     }
 
@@ -124,10 +124,10 @@ class OptionToggleHotkeyHandler {
         return fragment;
     }
 
-    _showNotification(message) {
+    _showNotification(message, autoClose) {
         if (this._notification === null) {
             const node = this._display.displayGenerator.createEmptyFooterNotification();
-            node.classList.add('click-scannable');
+            node.addEventListener('click', this._onNotificationClick.bind(this), false);
             this._notification = new DisplayNotification(this._display.notificationContainer, node);
         }
 
@@ -135,7 +135,9 @@ class OptionToggleHotkeyHandler {
         this._notification.open();
 
         this._stopHideNotificationTimer();
-        this._notificationHideTimer = setTimeout(this._onNotificationHideTimeout.bind(this), this._notificationHideTimeout);
+        if (autoClose) {
+            this._notificationHideTimer = setTimeout(this._onNotificationHideTimeout.bind(this), this._notificationHideTimeout);
+        }
     }
 
     _hideNotification(animate) {
@@ -154,5 +156,9 @@ class OptionToggleHotkeyHandler {
     _onNotificationHideTimeout() {
         this._notificationHideTimer = null;
         this._hideNotification(true);
+    }
+
+    _onNotificationClick() {
+        this._stopHideNotificationTimer();
     }
 }
