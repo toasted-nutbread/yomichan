@@ -160,6 +160,7 @@ class KeyboardShortcutController {
     async _addNewEntry() {
         const newEntry = {
             action: '',
+            argument: '',
             key: null,
             modifiers: [],
             scopes: ['popup', 'search'],
