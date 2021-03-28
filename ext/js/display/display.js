@@ -116,9 +116,7 @@ class Display extends EventDispatcher {
         this._hotkeyHandler.registerActions([
             ['close',             () => { this._onHotkeyClose(); }],
             ['nextEntry',         this._onHotkeyActionMoveRelative.bind(this, 1)],
-            ['nextEntry3',        () => { this._focusEntry(this._index + 3, true); }],
             ['previousEntry',     this._onHotkeyActionMoveRelative.bind(this, -1)],
-            ['previousEntry3',    () => { this._focusEntry(this._index - 3, true); }],
             ['lastEntry',         () => { this._focusEntry(this._definitions.length - 1, true); }],
             ['firstEntry',        () => { this._focusEntry(0, true); }],
             ['historyBackward',   () => { this._sourceTermView(); }],
