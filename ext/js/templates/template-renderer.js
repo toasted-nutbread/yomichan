@@ -56,6 +56,10 @@ class TemplateRenderer {
         }
     }
 
+    async getModifiedData(data, type) {
+        return this._getModifiedData(data, type);
+    }
+
     // Private
 
     _getModifier(type) {
