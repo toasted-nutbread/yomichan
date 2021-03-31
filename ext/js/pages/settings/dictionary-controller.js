@@ -248,6 +248,15 @@ class DictionaryController {
         this._updateDictionariesEnabledWarnings(options);
     }
 
+    static createDefaultDictionarySettings() {
+        return {
+            enabled: false,
+            allowSecondarySearches: false,
+            priority: 0,
+            definitionsCollapsible: 'not-collapsible'
+        };
+    }
+
     // Private
 
     _onOptionsChanged({options}) {
@@ -547,13 +556,5 @@ class DictionaryController {
 
     _triggerStorageChanged() {
         yomichan.trigger('storageChanged');
-    }
-
-    static createDefaultDictionarySettings() {
-        return {
-            enabled: false,
-            allowSecondarySearches: false,
-            priority: 0
-        };
     }
 }
