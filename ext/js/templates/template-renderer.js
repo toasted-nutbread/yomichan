@@ -29,8 +29,8 @@ class TemplateRenderer {
         this._dataTypes = new Map();
     }
 
-    registerDataType(name, {modifier=null, modifierPost=null}) {
-        this._dataTypes.set(name, {modifier, modifierPost});
+    registerDataType(name, {modifier=null}) {
+        this._dataTypes.set(name, {modifier});
     }
 
     async render(template, data, type) {
@@ -48,11 +48,10 @@ class TemplateRenderer {
         }
 
         let modifier = null;
-        let modifierPost = null;
         if (typeof type === 'string') {
             const typeInfo = this._dataTypes.get(type);
             if (typeof typeInfo !== 'undefined') {
-                ({modifier, modifierPost} = typeInfo);
+                ({modifier} = typeInfo);
             }
         }
 
@@ -65,10 +64,6 @@ class TemplateRenderer {
             return instance(data).trim();
         } finally {
             this._stateStack = null;
-
-            if (typeof modifierPost === 'function') {
-                modifierPost(data);
-            }
         }
     }
 
