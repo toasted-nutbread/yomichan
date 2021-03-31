@@ -102,6 +102,7 @@
     --animation-duration2: calc(2 * var(--animation-duration));
 
     --collapsible-definition-line-count: 3;
+    --collapsible-definition-test-offset: 0.2em;
 
     /* Colors */
     --background-color: #ffffff;
@@ -1160,9 +1161,12 @@ button.action-button[data-icon=source-term]::before {
     display: list-item;
     position: relative;
 }
-.definition-item-inner.collapsible.collapsed,
-.definition-item-inner.collapse-test {
+.definition-item-inner.collapsible.collapsed {
     max-height: calc(1em * var(--collapsible-definition-line-count) * var(--line-height));
+    overflow: hidden;
+}
+.definition-item-inner.collapse-test {
+    max-height: calc(1em * var(--collapsible-definition-line-count) * var(--line-height) + var(--collapsible-definition-test-offset));
     overflow: hidden;
 }
 .definition-item-inner {
