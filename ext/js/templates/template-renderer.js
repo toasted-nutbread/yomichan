@@ -47,15 +47,8 @@ class TemplateRenderer {
             cache.set(template, instance);
         }
 
-        let modifier = null;
-        if (typeof type === 'string') {
-            const typeInfo = this._dataTypes.get(type);
-            if (typeof typeInfo !== 'undefined') {
-                ({modifier} = typeInfo);
-            }
-        }
-
         try {
+            const modifier = this._getModifier(type);
             if (typeof modifier === 'function') {
                 data = modifier(data);
             }
@@ -68,6 +61,16 @@ class TemplateRenderer {
     }
 
     // Private
+
+    _getModifier(type) {
+        if (typeof type === 'string') {
+            const typeInfo = this._dataTypes.get(type);
+            if (typeof typeInfo !== 'undefined') {
+                return typeInfo.modifier;
+            }
+        }
+        return null;
+    }
 
     _updateCacheSize(maxSize) {
         const cache = this._cache;
