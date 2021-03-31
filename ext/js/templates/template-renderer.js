@@ -48,11 +48,7 @@ class TemplateRenderer {
         }
 
         try {
-            const modifier = this._getModifier(type);
-            if (typeof modifier === 'function') {
-                data = modifier(data);
-            }
-
+            data = this._getModifiedData(data, type);
             this._stateStack = [new Map()];
             return instance(data).trim();
         } finally {
@@ -70,6 +66,14 @@ class TemplateRenderer {
             }
         }
         return null;
+    }
+
+    _getModifiedData(data, type) {
+        const modifier = this._getModifier(type);
+        if (typeof modifier === 'function') {
+            data = modifier(data);
+        }
+        return data;
     }
 
     _updateCacheSize(maxSize) {
