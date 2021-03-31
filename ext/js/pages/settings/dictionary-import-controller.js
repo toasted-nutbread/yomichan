@@ -213,7 +213,7 @@ class DictionaryImportController {
         const profileCount = optionsFull.profiles.length;
         for (let i = 0; i < profileCount; ++i) {
             const {options} = optionsFull.profiles[i];
-            const value = DictionaryController.createDefaultDictionarySettings();
+            const value = DictionaryController.createDefaultDictionarySettings(true);
             const path1 = ObjectPropertyAccessor.getPathString(['profiles', i, 'options', 'dictionaries', title]);
             targets.push({action: 'set', path: path1, value});
 

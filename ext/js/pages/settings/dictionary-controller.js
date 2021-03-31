@@ -248,11 +248,11 @@ class DictionaryController {
         this._updateDictionariesEnabledWarnings(options);
     }
 
-    static createDefaultDictionarySettings() {
+    static createDefaultDictionarySettings(enabled) {
         return {
-            enabled: false,
-            allowSecondarySearches: false,
             priority: 0,
+            enabled,
+            allowSecondarySearches: false,
             definitionsCollapsible: 'not-collapsible'
         };
     }
@@ -544,7 +544,7 @@ class DictionaryController {
                 targets.push({
                     action: 'set',
                     path,
-                    value: DictionaryController.createDefaultDictionarySettings()
+                    value: DictionaryController.createDefaultDictionarySettings(false)
                 });
             }
         }
