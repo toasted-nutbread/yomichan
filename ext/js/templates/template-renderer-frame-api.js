@@ -20,7 +20,7 @@ class TemplateRendererFrameApi {
         this._templateRenderer = templateRenderer;
         this._windowMessageHandlers = new Map([
             ['render', {async: true, handler: this._onRender.bind(this)}],
-            ['getModifiedData', {async: true, handler: this._onGetModifiedData.bind(this)}],
+            ['getModifiedData', {async: true, handler: this._onGetModifiedData.bind(this)}]
         ]);
     }
 
