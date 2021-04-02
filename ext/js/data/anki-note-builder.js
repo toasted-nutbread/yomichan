@@ -30,7 +30,7 @@ class AnkiNoteBuilder {
         definition,
         mode,
         context,
-        templates,
+        template,
         deckName,
         modelName,
         fields,
@@ -54,7 +54,7 @@ class AnkiNoteBuilder {
         const commonData = this._createData(definition, mode, context, resultOutputMode, glossaryLayoutMode, compactTags, injectedMedia);
         const formattedFieldValuePromises = [];
         for (const [, fieldValue] of fields) {
-            const formattedFieldValuePromise = this._formatField(fieldValue, commonData, templates, errors);
+            const formattedFieldValuePromise = this._formatField(fieldValue, commonData, template, errors);
             formattedFieldValuePromises.push(formattedFieldValuePromise);
         }
 
@@ -110,10 +110,10 @@ class AnkiNoteBuilder {
         };
     }
 
-    async _formatField(field, commonData, templates, errors=null) {
+    async _formatField(field, commonData, template, errors=null) {
         return await this._stringReplaceAsync(field, this._markerPattern, async (g0, marker) => {
             try {
-                return await this._renderTemplate(templates, marker, commonData);
+                return await this._renderTemplate(template, marker, commonData);
             } catch (e) {
                 if (errors) {
                     const error = new Error(`Template render error for {${marker}}`);
