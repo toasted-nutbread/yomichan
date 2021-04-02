@@ -55,7 +55,7 @@ async function createVM() {
             const japaneseUtil = new JapaneseUtil(null);
             this._templateRenderer = new TemplateRenderer(japaneseUtil);
             this._templateRenderer.registerDataType('ankiNote', {
-                modifier: ({data, marker}) => ankiNoteDataCreator.create(marker, data)
+                modifier: ({marker, commonData}) => ankiNoteDataCreator.create(marker, commonData)
             });
         }
 
