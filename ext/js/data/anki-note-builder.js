@@ -115,7 +115,7 @@ class AnkiNoteBuilder {
             try {
                 return await this._renderTemplate(template, marker, commonData);
             } catch (e) {
-                if (errors) {
+                if (Array.isArray(errors)) {
                     const error = new Error(`Template render error for {${marker}}`);
                     error.data = {error: e};
                     errors.push(error);
