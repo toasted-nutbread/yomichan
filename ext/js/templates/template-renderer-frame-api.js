@@ -47,7 +47,7 @@ class TemplateRendererFrameApi {
             }
             response = {result};
         } catch (error) {
-            response = {error: this._errorToJson(error)};
+            response = {error: this._serializeError(error)};
         }
 
         if (typeof id === 'undefined') { return; }
@@ -63,9 +63,9 @@ class TemplateRendererFrameApi {
         return this._clone(result);
     }
 
-    _errorToJson(error) {
+    _serializeError(error) {
         try {
-            if (error !== null && typeof error === 'object') {
+            if (typeof error === 'object' && error !== null) {
                 return {
                     name: error.name,
                     message: error.message,
