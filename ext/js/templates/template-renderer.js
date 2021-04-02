@@ -33,7 +33,7 @@ class TemplateRenderer {
         this._dataTypes.set(name, {modifier});
     }
 
-    async render(template, data, type) {
+    render(template, data, type) {
         if (!this._helpersRegistered) {
             this._registerHelpers();
             this._helpersRegistered = true;
@@ -56,7 +56,7 @@ class TemplateRenderer {
         }
     }
 
-    async getModifiedData(data, type) {
+    getModifiedData(data, type) {
         return this._getModifiedData(data, type);
     }
 
