@@ -34,9 +34,20 @@ class TemplateRenderer {
     }
 
     render(template, data, type) {
+        const instance = this._getTemplateInstance(template);
+        data = this._getModifiedData(data, type);
+        return this._renderTemplate(instance, data);
+    }
+
+    getModifiedData(data, type) {
+        return this._getModifiedData(data, type);
+    }
+
+    // Private
+
+    _getTemplateInstance(template) {
         if (!this._helpersRegistered) {
             this._registerHelpers();
-            this._helpersRegistered = true;
         }
 
         const cache = this._cache;
@@ -47,20 +58,17 @@ class TemplateRenderer {
             cache.set(template, instance);
         }
 
+        return instance;
+    }
+
+    _renderTemplate(instance, data) {
         try {
-            data = this._getModifiedData(data, type);
             this._stateStack = [new Map()];
             return instance(data).trim();
         } finally {
             this._stateStack = null;
         }
     }
-
-    getModifiedData(data, type) {
-        return this._getModifiedData(data, type);
-    }
-
-    // Private
 
     _getModifier(type) {
         if (typeof type === 'string') {
@@ -122,6 +130,8 @@ class TemplateRenderer {
         for (const [name, helper] of helpers) {
             this._registerHelper(name, helper);
         }
+
+        this._helpersRegistered = true;
     }
 
     _registerHelper(name, helper) {
