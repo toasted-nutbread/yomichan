@@ -70,20 +70,15 @@ class TemplateRenderer {
         }
     }
 
-    _getModifier(type) {
+    _getModifiedData(data, type) {
         if (typeof type === 'string') {
             const typeInfo = this._dataTypes.get(type);
             if (typeof typeInfo !== 'undefined') {
-                return typeInfo.modifier;
+                const {modifier} = typeInfo;
+                if (typeof modifier === 'function') {
+                    data = modifier(data);
+                }
             }
-        }
-        return null;
-    }
-
-    _getModifiedData(data, type) {
-        const modifier = this._getModifier(type);
-        if (typeof modifier === 'function') {
-            data = modifier(data);
         }
         return data;
     }
