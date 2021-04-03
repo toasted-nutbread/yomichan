@@ -260,7 +260,7 @@ class DictionaryController {
         };
     }
 
-    static async ensureDictionarySettings(settingsController, dictionaries, optionsFull, modifyOptionsFull, newDictionariesEnabled) {
+    static async ensureDictionarySettings(settingsController, dictionaries, optionsFull, modifyGlobalSettings, newDictionariesEnabled) {
         if (typeof dictionaries === 'undefined') {
             dictionaries = await settingsController.getDictionaryInfo();
         }
@@ -268,24 +268,43 @@ class DictionaryController {
             optionsFull = await settingsController.getOptionsFull();
         }
 
+        const installedDictionaries = new Set();
+        for (const {title} of dictionaries) {
+            installedDictionaries.add(title);
+        }
+
         const targets = [];
         const {profiles} = optionsFull;
-        for (const {title} of dictionaries) {
-            for (let i = 0, ii = profiles.length; i < ii; ++i) {
-                const {options: {dictionaries: dictionaryOptions}} = profiles[i];
-                if (dictionaryOptions.findIndex(({name}) => name === title) < 0) { continue; }
-
-                const value = DictionaryController.createDefaultDictionarySettings(title, newDictionariesEnabled);
-                if (modifyOptionsFull) {
-                    dictionaryOptions.push(value);
+        for (let i = 0, ii = profiles.length; i < ii; ++i) {
+            let modified = false;
+            const missingDictionaries = new Set([...installedDictionaries]);
+            const dictionaryOptionsArray = profiles[i].options.dictionaries;
+            for (let j = dictionaryOptionsArray.length - 1; j >= 0; --j) {
+                const {name} = dictionaryOptionsArray[j];
+                if (installedDictionaries.has(name)) {
+                    missingDictionaries.delete(name);
                 } else {
-                    const path = ObjectPropertyAccessor.getPathString(['profiles', i, 'options', 'dictionaries']);
-                    targets.push({action: 'push', path, items: [value]});
+                    dictionaryOptionsArray.splice(j, 1);
+                    modified = true;
                 }
+            }
+
+            for (const name of missingDictionaries) {
+                const value = DictionaryController.createDefaultDictionarySettings(name, newDictionariesEnabled);
+                dictionaryOptionsArray.push(value);
+                modified = true;
+            }
+
+            if (modified) {
+                targets.push({
+                    action: 'set',
+                    path: `profiles[${i}].options.dictionaries`,
+                    value: dictionaryOptionsArray
+                });
             }
         }
 
-        if (!modifyOptionsFull && targets.length > 0) {
+        if (modifyGlobalSettings && targets.length > 0) {
             await settingsController.modifyGlobalSettings(targets);
         }
     }
@@ -328,7 +347,7 @@ class DictionaryController {
             node.hidden = hasDictionary;
         }
 
-        await DictionaryController.ensureDictionarySettings(this._settingsController, dictionaries, void 0, false, false);
+        await DictionaryController.ensureDictionarySettings(this._settingsController, dictionaries, void 0, true, false);
 
         const options = await this._settingsController.getOptions();
         this._updateDictionariesEnabledWarnings(options);
