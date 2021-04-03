@@ -17,7 +17,6 @@
 
 /* global
  * DictionaryDatabase
- * ObjectPropertyAccessor
  */
 
 class DictionaryEntry {
@@ -74,14 +73,14 @@ class DictionaryEntry {
             detailsToggleLink.hidden = !hasDetails;
         }
         if (enabledCheckbox !== null) {
-            enabledCheckbox.dataset.setting = ObjectPropertyAccessor.getPathString(['dictionaries', index, 'enabled']);
+            enabledCheckbox.dataset.setting = `dictionaries[${index}].enabled`;
             this._eventListeners.addEventListener(enabledCheckbox, 'settingChanged', this._onEnabledChanged.bind(this), false);
         }
         if (priorityInput !== null) {
-            priorityInput.dataset.setting = ObjectPropertyAccessor.getPathString(['dictionaries', index, 'priority']);
+            priorityInput.dataset.setting = `dictionaries[${index}].priority`;
         }
         if (allowSecondarySearchesCheckbox !== null) {
-            allowSecondarySearchesCheckbox.dataset.setting = ObjectPropertyAccessor.getPathString(['dictionaries', index, 'allowSecondarySearches']);
+            allowSecondarySearchesCheckbox.dataset.setting = `dictionaries[${index}].allowSecondarySearches`;
         }
         if (deleteButton !== null) {
             this._eventListeners.addEventListener(deleteButton, 'click', this._onDeleteButtonClicked.bind(this), false);
@@ -599,7 +598,7 @@ class DictionaryController {
             const {options: {dictionaries}} = profiles[i];
             for (let j = 0, jj = dictionaries.length; j < jj; ++j) {
                 if (dictionaries[j].name !== dictionaryTitle) { continue; }
-                const path = ObjectPropertyAccessor.getPathString(['profiles', i, 'options', 'dictionaries']);
+                const path = `profiles[${i}].options.dictionaries`;
                 targets.push({
                     action: 'splice',
                     path,

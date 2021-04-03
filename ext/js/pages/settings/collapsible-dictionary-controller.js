@@ -15,10 +15,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/* global
- * ObjectPropertyAccessor
- */
-
 class CollapsibleDictionaryController {
     constructor(settingsController) {
         this._settingsController = settingsController;
@@ -72,7 +68,7 @@ class CollapsibleDictionaryController {
             if (typeof dictionaryInfo === 'undefined') { continue; }
 
             const select = this._addSelect(fragment, name, `rev.${dictionaryInfo.revision}`);
-            select.dataset.setting = ObjectPropertyAccessor.getPathString(['dictionaries', i, 'definitionsCollapsible']);
+            select.dataset.setting = `dictionaries[${i}].definitionsCollapsible`;
             this._eventListeners.addEventListener(select, 'settingChanged', this._onDefinitionsCollapsibleChange.bind(this), false);
 
             this._selects.push(select);
@@ -144,7 +140,7 @@ class CollapsibleDictionaryController {
         const targets = [];
         const {dictionaries} = options;
         for (let i = 0, ii = dictionaries.length; i < ii; ++i) {
-            const path = ObjectPropertyAccessor.getPathString(['dictionaries', i, 'definitionsCollapsible']);
+            const path = `dictionaries[${i}].definitionsCollapsible`;
             targets.push({action: 'set', path, value});
         }
         await this._settingsController.modifyProfileSettings(targets);

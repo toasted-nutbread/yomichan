@@ -15,10 +15,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/* global
- * ObjectPropertyAccessor
- */
-
 class SecondarySearchDictionaryController {
     constructor(settingsController) {
         this._settingsController = settingsController;
@@ -76,7 +72,7 @@ class SecondarySearchDictionaryController {
             versionNode.textContent = `rev.${dictionaryInfo.revision}`;
 
             const toggle = node.querySelector('.dictionary-allow-secondary-searches');
-            toggle.dataset.setting = ObjectPropertyAccessor.getPathString(['dictionaries', i, 'allowSecondarySearches']);
+            toggle.dataset.setting = `dictionaries[${i}].allowSecondarySearches`;
             this._eventListeners.addEventListener(toggle, 'settingChanged', this._onEnabledChanged.bind(this, node), false);
         }
 
