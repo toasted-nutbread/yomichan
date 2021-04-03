@@ -213,9 +213,9 @@ class DictionaryImportController {
         const profileCount = optionsFull.profiles.length;
         for (let i = 0; i < profileCount; ++i) {
             const {options} = optionsFull.profiles[i];
-            const value = DictionaryController.createDefaultDictionarySettings(true);
-            const path1 = ObjectPropertyAccessor.getPathString(['profiles', i, 'options', 'dictionaries', title]);
-            targets.push({action: 'set', path: path1, value});
+            const value = DictionaryController.createDefaultDictionarySettings(title, true);
+            const path1 = ObjectPropertyAccessor.getPathString(['profiles', i, 'options', 'dictionaries']);
+            targets.push({action: 'push', path: path1, items: [value]});
 
             if (sequenced && options.general.mainDictionary === '') {
                 const path2 = ObjectPropertyAccessor.getPathString(['profiles', i, 'options', 'general', 'mainDictionary']);
@@ -231,7 +231,7 @@ class DictionaryImportController {
         const profileCount = optionsFull.profiles.length;
         for (let i = 0; i < profileCount; ++i) {
             const path1 = ObjectPropertyAccessor.getPathString(['profiles', i, 'options', 'dictionaries']);
-            targets.push({action: 'set', path: path1, value: {}});
+            targets.push({action: 'set', path: path1, value: []});
             const path2 = ObjectPropertyAccessor.getPathString(['profiles', i, 'options', 'general', 'mainDictionary']);
             targets.push({action: 'set', path: path2, value: ''});
         }

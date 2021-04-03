@@ -21,9 +21,10 @@
  */
 
 class DictionaryEntry {
-    constructor(dictionaryController, node, dictionaryInfo) {
+    constructor(dictionaryController, node, index, dictionaryInfo) {
         this._dictionaryController = dictionaryController;
         this._node = node;
+        this._index = index;
         this._dictionaryInfo = dictionaryInfo;
         this._eventListeners = new EventListenerCollection();
         this._detailsContainer = null;
@@ -41,6 +42,7 @@ class DictionaryEntry {
 
     prepare() {
         const node = this._node;
+        const index = this._index;
         const {title, revision, prefixWildcardsSupported, version} = this._dictionaryInfo;
 
         this._detailsContainer = node.querySelector('.dictionary-details');
@@ -72,14 +74,14 @@ class DictionaryEntry {
             detailsToggleLink.hidden = !hasDetails;
         }
         if (enabledCheckbox !== null) {
-            enabledCheckbox.dataset.setting = ObjectPropertyAccessor.getPathString(['dictionaries', title, 'enabled']);
+            enabledCheckbox.dataset.setting = ObjectPropertyAccessor.getPathString(['dictionaries', index, 'enabled']);
             this._eventListeners.addEventListener(enabledCheckbox, 'settingChanged', this._onEnabledChanged.bind(this), false);
         }
         if (priorityInput !== null) {
-            priorityInput.dataset.setting = ObjectPropertyAccessor.getPathString(['dictionaries', title, 'priority']);
+            priorityInput.dataset.setting = ObjectPropertyAccessor.getPathString(['dictionaries', index, 'priority']);
         }
         if (allowSecondarySearchesCheckbox !== null) {
-            allowSecondarySearchesCheckbox.dataset.setting = ObjectPropertyAccessor.getPathString(['dictionaries', title, 'allowSecondarySearches']);
+            allowSecondarySearchesCheckbox.dataset.setting = ObjectPropertyAccessor.getPathString(['dictionaries', index, 'allowSecondarySearches']);
         }
         if (deleteButton !== null) {
             this._eventListeners.addEventListener(deleteButton, 'click', this._onDeleteButtonClicked.bind(this), false);
@@ -248,8 +250,9 @@ class DictionaryController {
         this._updateDictionariesEnabledWarnings(options);
     }
 
-    static createDefaultDictionarySettings(enabled) {
+    static createDefaultDictionarySettings(name, enabled) {
         return {
+            name,
             priority: 0,
             enabled,
             allowSecondarySearches: false,
@@ -270,14 +273,14 @@ class DictionaryController {
         for (const {title} of dictionaries) {
             for (let i = 0, ii = profiles.length; i < ii; ++i) {
                 const {options: {dictionaries: dictionaryOptions}} = profiles[i];
-                if (Object.prototype.hasOwnProperty.call(dictionaryOptions, title)) { continue; }
+                if (dictionaryOptions.findIndex(({name}) => name === title) < 0) { continue; }
 
-                const value = DictionaryController.createDefaultDictionarySettings(newDictionariesEnabled);
+                const value = DictionaryController.createDefaultDictionarySettings(title, newDictionariesEnabled);
                 if (modifyOptionsFull) {
-                    dictionaryOptions[title] = value;
+                    dictionaryOptions.push(value);
                 } else {
-                    const path = ObjectPropertyAccessor.getPathString(['profiles', i, 'options', 'dictionaries', title]);
-                    targets.push({action: 'set', path, value});
+                    const path = ObjectPropertyAccessor.getPathString(['profiles', i, 'options', 'dictionaries']);
+                    targets.push({action: 'push', path, items: [value]});
                 }
             }
         }
@@ -291,6 +294,9 @@ class DictionaryController {
 
     _onOptionsChanged({options}) {
         this._updateDictionariesEnabledWarnings(options);
+        if (this._dictionaries !== null) {
+            this._updateEntries();
+        }
     }
 
     async _onDatabaseUpdated() {
@@ -298,10 +304,14 @@ class DictionaryController {
         this._databaseStateToken = token;
         this._dictionaries = null;
         const dictionaries = await this._settingsController.getDictionaryInfo();
-        const options = await this._settingsController.getOptions();
         if (this._databaseStateToken !== token) { return; }
         this._dictionaries = dictionaries;
 
+        await this._updateEntries();
+    }
+
+    async _updateEntries() {
+        const dictionaries = this._dictionaries;
         this._updateMainDictionarySelectOptions(dictionaries);
 
         for (const entry of this._dictionaryEntries) {
@@ -318,23 +328,38 @@ class DictionaryController {
             node.hidden = hasDictionary;
         }
 
+        await DictionaryController.ensureDictionarySettings(this._settingsController, dictionaries, void 0, false, false);
+
+        const options = await this._settingsController.getOptions();
         this._updateDictionariesEnabledWarnings(options);
 
-        await DictionaryController.ensureDictionarySettings(this._settingsController, dictionaries, void 0, false, false);
-        for (const dictionary of dictionaries) {
-            this._createDictionaryEntry(dictionary);
+        const dictionaryInfoMap = new Map();
+        for (const dictionary of this._dictionaries) {
+            dictionaryInfoMap.set(dictionary.title, dictionary);
+        }
+
+        const dictionaryOptionsArray = options.dictionaries;
+        for (let i = 0, ii = dictionaryOptionsArray.length; i < ii; ++i) {
+            const {name} = dictionaryOptionsArray[i];
+            const dictionaryInfo = dictionaryInfoMap.get(name);
+            if (typeof dictionaryInfo === 'undefined') { continue; }
+            this._createDictionaryEntry(i, dictionaryInfo);
         }
     }
 
     _updateDictionariesEnabledWarnings(options) {
         let enabledCount = 0;
         if (this._dictionaries !== null) {
+            const enabledDictionaries = new Set();
+            for (const {name, enabled} of options.dictionaries) {
+                if (enabled) {
+                    enabledDictionaries.add(name);
+                }
+            }
+
             for (const {title} of this._dictionaries) {
-                if (Object.prototype.hasOwnProperty.call(options.dictionaries, title)) {
-                    const {enabled} = options.dictionaries[title];
-                    if (enabled) {
-                        ++enabledCount;
-                    }
+                if (enabledDictionaries.has(title)) {
+                    ++enabledCount;
                 }
             }
         }
@@ -459,11 +484,11 @@ class DictionaryController {
         parent.removeChild(node);
     }
 
-    _createDictionaryEntry(dictionary) {
+    _createDictionaryEntry(index, dictionaryInfo) {
         const node = this.instantiateTemplate('dictionary');
         this._dictionaryEntryContainer.appendChild(node);
 
-        const entry = new DictionaryEntry(this, node, dictionary);
+        const entry = new DictionaryEntry(this, node, index, dictionaryInfo);
         this._dictionaryEntries.push(entry);
         entry.prepare();
     }
@@ -553,9 +578,16 @@ class DictionaryController {
         const targets = [];
         for (let i = 0, ii = profiles.length; i < ii; ++i) {
             const {options: {dictionaries}} = profiles[i];
-            if (Object.prototype.hasOwnProperty.call(dictionaries, dictionaryTitle)) {
-                const path = ObjectPropertyAccessor.getPathString(['profiles', i, 'options', 'dictionaries', dictionaryTitle]);
-                targets.push({action: 'delete', path});
+            for (let j = 0, jj = dictionaries.length; j < jj; ++j) {
+                if (dictionaries[j].name !== dictionaryTitle) { continue; }
+                const path = ObjectPropertyAccessor.getPathString(['profiles', i, 'options', 'dictionaries']);
+                targets.push({
+                    action: 'splice',
+                    path,
+                    start: j,
+                    deleteCount: 1,
+                    items: []
+                });
             }
         }
         await this._settingsController.modifyGlobalSettings(targets);

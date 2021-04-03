@@ -60,21 +60,23 @@ class SecondarySearchDictionaryController {
 
         const fragment = document.createDocumentFragment();
 
-        for (const dictionary of Object.keys(options.dictionaries)) {
-            const dictionaryInfo = this._dictionaryInfoMap.get(dictionary);
+        const {dictionaries} = options;
+        for (let i = 0, ii = dictionaries.length; i < ii; ++i) {
+            const {name} = dictionaries[i];
+            const dictionaryInfo = this._dictionaryInfoMap.get(name);
             if (typeof dictionaryInfo === 'undefined') { continue; }
 
             const node = this._settingsController.instantiateTemplate('secondary-search-dictionary');
             fragment.appendChild(node);
 
             const nameNode = node.querySelector('.dictionary-title');
-            nameNode.textContent = dictionary;
+            nameNode.textContent = name;
 
             const versionNode = node.querySelector('.dictionary-version');
             versionNode.textContent = `rev.${dictionaryInfo.revision}`;
 
             const toggle = node.querySelector('.dictionary-allow-secondary-searches');
-            toggle.dataset.setting = ObjectPropertyAccessor.getPathString(['dictionaries', dictionary, 'allowSecondarySearches']);
+            toggle.dataset.setting = ObjectPropertyAccessor.getPathString(['dictionaries', i, 'allowSecondarySearches']);
             this._eventListeners.addEventListener(toggle, 'settingChanged', this._onEnabledChanged.bind(this, node), false);
         }
 
