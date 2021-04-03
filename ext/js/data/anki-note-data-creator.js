@@ -362,7 +362,9 @@ class AnkiNoteDataCreator {
             }
             if (!hasDefinitions) { continue; }
             const only = merged ? DictionaryDataUtil.getDisambiguations(dictionaryEntry.headwords, headwordIndices, allTermsSet, allReadingsSet) : void 0;
+            const {sequence} = dictionaryEntry;
             definitions.push({
+                sequence,
                 dictionary,
                 glossary: entries,
                 definitionTags: definitionTags2,
