@@ -1100,17 +1100,17 @@ class Backend {
         for (const {name, lines} of parseTextResults) {
             const result = [];
             for (const line of lines) {
-                for (const {expression, reading, source} of line) {
-                    const term = [];
+                for (const {term, reading, source} of line) {
+                    const termParts = [];
                     for (const {text: text2, furigana} of jp.distributeFuriganaInflected(
-                        expression.length > 0 ? expression : source,
+                        term.length > 0 ? term : source,
                         jp.convertKatakanaToHiragana(reading),
                         source
                     )) {
                         const reading2 = jp.convertReading(text2, furigana, readingMode);
-                        term.push({text: text2, reading: reading2});
+                        termParts.push({text: text2, reading: reading2});
                     }
-                    result.push(term);
+                    result.push(termParts);
                 }
                 result.push([{text: '\n', reading: ''}]);
             }
