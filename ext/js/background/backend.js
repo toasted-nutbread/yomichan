@@ -405,9 +405,9 @@ class Backend {
         const options = this._getProfileOptions(optionsContext);
         const {general: {maxResults}} = options;
         const findKanjiOptions = this._getTranslatorFindKanjiOptions(options);
-        const definitions = await this._translator.findKanji(text, findKanjiOptions);
-        definitions.splice(maxResults);
-        return definitions;
+        const dictionaryEntries = await this._translator.findKanji(text, findKanjiOptions);
+        dictionaryEntries.splice(maxResults);
+        return dictionaryEntries;
     }
 
     async _onApiTermsFind({text, details, optionsContext}) {
