@@ -394,7 +394,7 @@ class DisplayAudio {
     }
 
     async _getTermAudioInfoList(source, term, reading, details) {
-        const infoList = await yomichan.api.getExpressionAudioInfoList(source, term, reading, details);
+        const infoList = await yomichan.api.getTermAudioInfoList(source, term, reading, details);
         return infoList.map((info) => ({info, audioPromise: null, audioResolved: false, audio: null}));
     }
 

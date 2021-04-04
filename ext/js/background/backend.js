@@ -101,7 +101,7 @@ class Backend {
             ['noteView',                     {async: true,  contentScript: true,  handler: this._onApiNoteView.bind(this)}],
             ['suspendAnkiCardsForNote',      {async: true,  contentScript: true,  handler: this._onApiSuspendAnkiCardsForNote.bind(this)}],
             ['commandExec',                  {async: false, contentScript: true,  handler: this._onApiCommandExec.bind(this)}],
-            ['getExpressionAudioInfoList',   {async: true,  contentScript: true,  handler: this._onApiGetExpressionAudioInfoList.bind(this)}],
+            ['getTermAudioInfoList',         {async: true,  contentScript: true,  handler: this._onApiGetTermAudioInfoList.bind(this)}],
             ['sendMessageToFrame',           {async: false, contentScript: true,  handler: this._onApiSendMessageToFrame.bind(this)}],
             ['broadcastTab',                 {async: false, contentScript: true,  handler: this._onApiBroadcastTab.bind(this)}],
             ['frameInformationGet',          {async: true,  contentScript: true,  handler: this._onApiFrameInformationGet.bind(this)}],
@@ -518,8 +518,8 @@ class Backend {
         return this._runCommand(command, params);
     }
 
-    async _onApiGetExpressionAudioInfoList({source, expression, reading, details}) {
-        return await this._audioDownloader.getExpressionAudioInfoList(source, expression, reading, details);
+    async _onApiGetTermAudioInfoList({source, term, reading, details}) {
+        return await this._audioDownloader.getTermAudioInfoList(source, term, reading, details);
     }
 
     _onApiSendMessageToFrame({frameId: targetFrameId, action, params}, sender) {
@@ -1742,7 +1742,7 @@ class Backend {
         let data;
         let contentType;
         try {
-            ({data, contentType} = await this._audioDownloader.downloadExpressionAudio(
+            ({data, contentType} = await this._audioDownloader.downloadTermAudio(
                 sources,
                 preferredAudioIndex,
                 term,
