@@ -343,7 +343,7 @@ class TextScanner extends EventDispatcher {
         const results = {
             textScanner: this,
             type,
-            definitions: dictionaryEntries,
+            dictionaryEntries,
             sentence,
             inputInfo,
             textSource,

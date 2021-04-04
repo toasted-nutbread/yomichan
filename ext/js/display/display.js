@@ -606,7 +606,7 @@ class Display extends EventDispatcher {
         }
     }
 
-    _onQueryParserSearch({type, definitions, sentence, inputInfo: {eventType}, textSource, optionsContext}) {
+    _onQueryParserSearch({type, dictionaryEntries, sentence, inputInfo: {eventType}, textSource, optionsContext}) {
         const query = textSource.text();
         const historyState = this._history.state;
         const history = (
@@ -624,7 +624,7 @@ class Display extends EventDispatcher {
                 cause: 'queryParser'
             },
             content: {
-                definitions,
+                definitions: dictionaryEntries,
                 contentOrigin: this.getContentOrigin()
             }
         };
@@ -1764,7 +1764,7 @@ class Display extends EventDispatcher {
         this._contentTextScanner.setEnabled(true);
     }
 
-    _onContentTextScannerSearched({type, definitions, sentence, textSource, optionsContext, error}) {
+    _onContentTextScannerSearched({type, dictionaryEntries, sentence, textSource, optionsContext, error}) {
         if (error !== null && !yomichan.isExtensionUnloaded) {
             log.error(error);
         }
@@ -1790,7 +1790,7 @@ class Display extends EventDispatcher {
                 documentTitle
             },
             content: {
-                definitions,
+                definitions: dictionaryEntries,
                 contentOrigin: this.getContentOrigin()
             }
         };
