@@ -134,7 +134,7 @@ class AnkiTemplatesController {
 
     async _getDictionaryEntry(text, optionsContext) {
         if (this._cachedDictionaryEntryText !== text) {
-            const {definitions: dictionaryEntries} = await yomichan.api.termsFind(text, {}, optionsContext);
+            const {dictionaryEntries} = await yomichan.api.termsFind(text, {}, optionsContext);
             if (dictionaryEntries.length === 0) { return null; }
 
             this._cachedDictionaryEntryValue = dictionaryEntries[0];

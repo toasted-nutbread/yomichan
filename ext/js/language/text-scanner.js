@@ -829,10 +829,10 @@ class TextScanner extends EventDispatcher {
         const searchText = this.getTextSourceContent(textSource, scanLength, layoutAwareScan);
         if (searchText.length === 0) { return null; }
 
-        const {definitions: dictionaryEntries, length} = await yomichan.api.termsFind(searchText, {}, optionsContext);
+        const {dictionaryEntries, originalTextLength} = await yomichan.api.termsFind(searchText, {}, optionsContext);
         if (dictionaryEntries.length === 0) { return null; }
 
-        textSource.setEndOffset(length, layoutAwareScan);
+        textSource.setEndOffset(originalTextLength, layoutAwareScan);
         const sentence = this._documentUtil.extractSentence(
             textSource,
             layoutAwareScan,

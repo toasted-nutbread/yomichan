@@ -416,7 +416,7 @@ class Backend {
         const findTermsOptions = this._getTranslatorFindTermsOptions(details, options);
         const {dictionaryEntries, originalTextLength} = await this._translator.findTerms(mode, text, findTermsOptions);
         dictionaryEntries.splice(maxResults);
-        return {length: originalTextLength, definitions: dictionaryEntries};
+        return {dictionaryEntries, originalTextLength};
     }
 
     async _onApiTextParse({text, optionsContext}) {

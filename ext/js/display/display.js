@@ -865,7 +865,7 @@ class Display extends EventDispatcher {
                 }
             }
 
-            const {definitions: dictionaryEntries} = await yomichan.api.termsFind(source, findDetails, optionsContext);
+            const {dictionaryEntries} = await yomichan.api.termsFind(source, findDetails, optionsContext);
             return dictionaryEntries;
         } else {
             const dictionaryEntries = await yomichan.api.kanjiFind(source, optionsContext);
