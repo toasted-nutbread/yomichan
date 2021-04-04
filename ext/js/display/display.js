@@ -181,11 +181,11 @@ class Display extends EventDispatcher {
         return this._hotkeyHandler;
     }
 
-    get definitions() {
+    get dictionaryEntries() {
         return this._dictionaryEntries;
     }
 
-    get definitionNodes() {
+    get dictionaryEntryNodes() {
         return this._dictionaryEntryNodes;
     }
 

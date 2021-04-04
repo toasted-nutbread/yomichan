@@ -73,7 +73,7 @@ class DisplayAudio {
 
         this.clearAutoPlayTimer();
 
-        const dictionaryEntries = this._display.definitions;
+        const {dictionaryEntries} = this._display;
         if (dictionaryEntries.length === 0) { return; }
 
         const firstDictionaryEntries = dictionaryEntries[0];
@@ -293,7 +293,7 @@ class DisplayAudio {
 
     _getAudioPlayButtons(dictionaryEntryIndex, headwordIndex) {
         const results = [];
-        const {definitionNodes: dictionaryEntryNodes} = this._display;
+        const {dictionaryEntryNodes} = this._display;
         if (dictionaryEntryIndex >= 0 && dictionaryEntryIndex < dictionaryEntryNodes.length) {
             const node = dictionaryEntryNodes[dictionaryEntryIndex];
             const button1 = (headwordIndex === 0 ? node.querySelector('.action-play-audio') : null);
@@ -399,7 +399,7 @@ class DisplayAudio {
     }
 
     _getHeadword(dictionaryEntryIndex, headwordIndex) {
-        const {definitions: dictionaryEntries} = this._display;
+        const {dictionaryEntries} = this._display;
         if (dictionaryEntryIndex < 0 || dictionaryEntryIndex >= dictionaryEntries.length) { return null; }
 
         const dictionaryEntry = dictionaryEntries[dictionaryEntryIndex];
