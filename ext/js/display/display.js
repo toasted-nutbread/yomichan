@@ -434,7 +434,7 @@ class Display extends EventDispatcher {
             params: this._createSearchParams(type, query, false),
             state,
             content: {
-                definitions: null,
+                dictionaryEntries: null,
                 contentOrigin: this.getContentOrigin()
             }
         };
@@ -624,7 +624,7 @@ class Display extends EventDispatcher {
                 cause: 'queryParser'
             },
             content: {
-                definitions: dictionaryEntries,
+                dictionaryEntries,
                 contentOrigin: this.getContentOrigin()
             }
         };
@@ -706,7 +706,7 @@ class Display extends EventDispatcher {
                     documentTitle
                 },
                 content: {
-                    definitions: dictionaryEntries,
+                    dictionaryEntries,
                     contentOrigin: this.getContentOrigin()
                 }
             };
@@ -901,11 +901,11 @@ class Display extends EventDispatcher {
         this._setFullQuery(queryFull);
         this._setTitleText(query);
 
-        let {definitions: dictionaryEntries} = content;
+        let {dictionaryEntries} = content;
         if (!Array.isArray(dictionaryEntries)) {
             dictionaryEntries = lookup && query.length > 0 ? await this._findDictionaryEntries(isTerms, query, wildcardsEnabled, optionsContext) : [];
             if (this._setContentToken !== token) { return; }
-            content.definitions = dictionaryEntries;
+            content.dictionaryEntries = dictionaryEntries;
             changeHistory = true;
         }
 
@@ -1790,7 +1790,7 @@ class Display extends EventDispatcher {
                 documentTitle
             },
             content: {
-                definitions: dictionaryEntries,
+                dictionaryEntries,
                 contentOrigin: this.getContentOrigin()
             }
         };

@@ -524,7 +524,7 @@ class Frontend {
                 documentTitle
             },
             content: {
-                definitions: dictionaryEntries,
+                dictionaryEntries,
                 contentOrigin: {
                     tabId: this._tabId,
                     frameId: this._frameId
