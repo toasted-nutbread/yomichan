@@ -1485,7 +1485,7 @@ class Display extends EventDispatcher {
         }
 
         return await this._ankiNoteBuilder.createNote({
-            definition: dictionaryEntry,
+            dictionaryEntry,
             mode,
             context,
             template,
@@ -1874,7 +1874,7 @@ class Display extends EventDispatcher {
             const context = this._getNoteContext();
             const {general: {resultOutputMode, glossaryLayoutMode, compactTags}} = this._options;
             ankiNoteData = await this._ankiNoteBuilder.getRenderingData({
-                definition: dictionaryEntry,
+                dictionaryEntry,
                 mode: 'test',
                 context,
                 resultOutputMode,

@@ -108,7 +108,7 @@ class TranslatorVM extends DatabaseVM {
     createTestAnkiNoteData(dictionaryEntry, mode) {
         const marker = '{marker}';
         const data = {
-            definition: dictionaryEntry,
+            dictionaryEntry,
             resultOutputMode: mode,
             mode: 'mode',
             glossaryLayoutMode: 'default',
