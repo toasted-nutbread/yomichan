@@ -74,11 +74,11 @@ class DisplayGenerator {
         }
 
         node.dataset.format = type;
-        node.dataset.expressionCount = `${headwords.length}`;
+        node.dataset.headwordCount = `${headwords.length}`;
         node.dataset.definitionCount = `${definitions.length}`;
         node.dataset.pitchAccentDictionaryCount = `${pitches.length}`;
         node.dataset.pitchAccentCount = `${pitchCount}`;
-        node.dataset.uniqueExpressionCount = `${uniqueTerms.size}`;
+        node.dataset.uniqueTermCount = `${uniqueTerms.size}`;
         node.dataset.uniqueReadingCount = `${uniqueReadings.size}`;
         node.dataset.frequencyCount = `${frequencies.length}`;
         node.dataset.groupedFrequencyCount = `${groupedFrequencies.length}`;
@@ -188,7 +188,7 @@ class DisplayGenerator {
 
             if (disambiguationHeadwords.length > 0 && disambiguationHeadwords.length < headwords.length) {
                 const disambiguationContainer = node.querySelector('.tag-details-disambiguation-list');
-                const copyAttributes = ['totalExpressionCount', 'matchedExpressionCount', 'unmatchedExpressionCount'];
+                const copyAttributes = ['totalHeadwordCount', 'matchedHeadwordCount', 'unmatchedHeadwordCount'];
                 for (const attribute of copyAttributes) {
                     const value = tagNode.dataset[attribute];
                     if (typeof value === 'undefined') { continue; }
@@ -242,10 +242,10 @@ class DisplayGenerator {
         if (term) { searchQueries.push(term); }
         if (reading) { searchQueries.push(reading); }
 
-        const node = this._templates.instantiate('expression');
+        const node = this._templates.instantiate('headword');
 
-        const termContainer = node.querySelector('.expression-text');
-        const tagContainer = node.querySelector('.expression-tag-list');
+        const termContainer = node.querySelector('.headword-term');
+        const tagContainer = node.querySelector('.headword-tag-list');
 
         node.dataset.readingIsSame = `${reading === term}`;
         node.dataset.frequency = DictionaryDataUtil.getTermFrequency(tags);
@@ -259,7 +259,7 @@ class DisplayGenerator {
             node.dataset.wordClasses = wordClasses.join(' ');
         }
 
-        this._setTextContent(node.querySelector('.expression-reading'), reading);
+        this._setTextContent(node.querySelector('.headword-reading'), reading);
 
         this._appendFurigana(termContainer, term, reading, this._appendKanjiLinks.bind(this));
         this._appendMultiple(tagContainer, this._createTag.bind(this), tags);
@@ -386,7 +386,7 @@ class DisplayGenerator {
 
     _createKanjiLink(character) {
         const node = document.createElement('a');
-        node.className = 'expression-kanji-link';
+        node.className = 'headword-kanji-link';
         this._setTextContent(node, character, 'ja');
         return node;
     }
@@ -452,9 +452,9 @@ class DisplayGenerator {
         const {tag, headwordIndices} = tagInfo;
         const node = this._createTag(tag);
         node.dataset.headwords = headwordIndices.join(' ');
-        node.dataset.totalExpressionCount = `${totalHeadwordCount}`;
-        node.dataset.matchedExpressionCount = `${headwordIndices.length}`;
-        node.dataset.unmatchedExpressionCount = `${Math.max(0, totalHeadwordCount - headwordIndices.length)}`;
+        node.dataset.totalHeadwordCount = `${totalHeadwordCount}`;
+        node.dataset.matchedHeadwordCount = `${headwordIndices.length}`;
+        node.dataset.unmatchedHeadwordCount = `${Math.max(0, totalHeadwordCount - headwordIndices.length)}`;
         return node;
     }
 
@@ -562,7 +562,7 @@ class DisplayGenerator {
         }
 
         container.dataset.count = `${exclusiveTerms.length + exclusiveReadings.length}`;
-        container.dataset.expressionCount = `${exclusiveTerms.length}`;
+        container.dataset.termCount = `${exclusiveTerms.length}`;
         container.dataset.readingCount = `${exclusiveReadings.length}`;
     }
 
