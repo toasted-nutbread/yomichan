@@ -1000,7 +1000,7 @@ button.action-button[data-icon=source-term]::before {
 
 
 /* Triangle entry indicator */
-.expression-current-indicator {
+.headword-current-indicator {
     pointer-events: none;
     position: absolute;
     left: calc(-1 * var(--main-content-horizontal-padding));
@@ -1012,17 +1012,17 @@ button.action-button[data-icon=source-term]::before {
         opacity var(--entry-current-indicator-transition-duration) linear,
         visibility 0s linear var(--entry-current-indicator-transition-duration);
 }
-.expression-text .expression-current-indicator {
+.expression-text .headword-current-indicator {
     font-size: calc(1em / var(--expression-font-size-no-units));
 }
-.entry.entry-current .expression-current-indicator {
+.entry.entry-current .headword-current-indicator {
     opacity: 1;
     visibility: visible;
     transition:
         opacity var(--entry-current-indicator-transition-duration) linear,
         visibility 0s linear 0s;
 }
-.expression-current-indicator::after {
+.headword-current-indicator::after {
     content: '';
     display: block;
     position: absolute;
@@ -1042,8 +1042,8 @@ button.action-button[data-icon=source-term]::before {
     -webkit-mask-size: contain;
     -webkit-mask-image: url(/images/material-right-arrow.svg);
 }
-.expression:not(:first-of-type) .expression-current-indicator,
-:root:not([data-popup-current-indicator-mode=triangle]) .expression-current-indicator {
+.expression:not(:first-of-type) .headword-current-indicator,
+:root:not([data-popup-current-indicator-mode=triangle]) .headword-current-indicator {
     display: none;
     transition: none;
 }
