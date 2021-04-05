@@ -549,7 +549,7 @@ class DisplayGenerator {
         const templateName = 'pitch-accent-disambiguation';
         for (const term of exclusiveTerms) {
             const node = this._templates.instantiate(templateName);
-            node.dataset.type = 'expression';
+            node.dataset.type = 'term';
             this._setTextContent(node, term, 'ja');
             container.appendChild(node);
         }
@@ -639,11 +639,11 @@ class DisplayGenerator {
 
         const frequency = values.join(', ');
 
-        this._setTextContent(node.querySelector('.frequency-disambiguation-expression'), term, 'ja');
+        this._setTextContent(node.querySelector('.frequency-disambiguation-term'), term, 'ja');
         this._setTextContent(node.querySelector('.frequency-disambiguation-reading'), (reading !== null ? reading : ''), 'ja');
         this._setTextContent(node.querySelector('.frequency-value'), frequency, 'ja');
 
-        node.dataset.expression = term;
+        node.dataset.term = term;
         node.dataset.reading = reading;
         node.dataset.hasReading = `${reading !== null}`;
         node.dataset.readingIsSame = `${reading === term}`;

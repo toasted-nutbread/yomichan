@@ -1263,7 +1263,7 @@ button.definition-item-expansion-button:focus:focus-visible+.definition-item-con
 .frequency-item[data-has-reading=false] .frequency-disambiguation-separator,
 .frequency-item[data-has-reading=false] .frequency-disambiguation-reading,
 .entry[data-unique-expression-count='1'] .frequency-disambiguation-separator,
-.entry[data-unique-expression-count='1'] .frequency-disambiguation-expression,
+.entry[data-unique-expression-count='1'] .frequency-disambiguation-term,
 .entry[data-unique-reading-count='1'] .frequency-disambiguation-separator,
 .entry[data-unique-reading-count='1'] .frequency-disambiguation-reading {
     display: none;
