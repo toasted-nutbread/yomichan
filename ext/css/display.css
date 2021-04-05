@@ -42,7 +42,7 @@
     --expression-reading-font-size-no-units: 0.75;
     --expression-reading-font-size: calc(var(--expression-reading-font-size-no-units) * var(--expression-font-size));
     --expression-reading-space: 0.5em;
-    --expression-list-end-space: 0.5em;
+    --headword-list-end-space: 0.5em;
     --expression-thin-border-size: calc(1em / (var(--expression-font-size-no-units) * var(--font-size-no-units)));
 
     --line-height-no-units: 20;
@@ -840,9 +840,9 @@ button.action-button[data-icon=source-term]::before {
 
 
 /* Expressions */
-.expression-list {
+.headword-list {
     display: inline;
-    margin-right: var(--expression-list-end-space);
+    margin-right: var(--headword-list-end-space);
 }
 .expression {
     --expression-current-text-color: var(--expression-text-color);
@@ -873,10 +873,10 @@ button.action-button[data-icon=source-term]::before {
 .expression-tag-list {
     display: none;
 }
-.expression-list-details {
+.headword-list-details {
     display: inline;
 }
-.expression-list-tag-list {
+.headword-list-tag-list {
     display: inline;
 }
 .expression-text-container {
@@ -901,11 +901,11 @@ button.action-button[data-icon=source-term]::before {
     color: var(--expression-current-reading-text-color);
     font-size: var(--expression-reading-font-size);
 }
-.expression-list>.expression:not(:last-of-type)>.expression-text-container>.expression-text-outer::after {
+.headword-list>.expression:not(:last-of-type)>.expression-text-container>.expression-text-outer::after {
     content: var(--expression-separator);
     font-size: var(--expression-font-size);
 }
-.expression-list>.expression:not(:last-of-type)>.expression-text-container>.expression-reading-outer::after {
+.headword-list>.expression:not(:last-of-type)>.expression-text-container>.expression-reading-outer::after {
     content: var(--expression-separator);
     font-size: var(--expression-reading-font-size);
 }
@@ -918,7 +918,7 @@ button.action-button[data-icon=source-term]::before {
     text-decoration: none;
     cursor: pointer;
 }
-:root[data-result-output-mode=merge] .expression-list-details {
+:root[data-result-output-mode=merge] .headword-list-details {
     display: block;
 }
 :root[data-term-display-mode=ruby-and-reading] .expression-text-outer::after,
@@ -1072,7 +1072,7 @@ button.action-button[data-icon=source-term]::before {
 
 
 /* Merged term styles */
-:root[data-result-output-mode=merge] .expression-list .expression-details {
+:root[data-result-output-mode=merge] .headword-list .expression-details {
     display: inline-block;
     position: relative;
     width: 0;
@@ -1080,28 +1080,28 @@ button.action-button[data-icon=source-term]::before {
     visibility: hidden;
     z-index: 1;
 }
-:root[data-result-output-mode=merge] .expression-list>.expression:not(:last-of-type) .expression-details {
+:root[data-result-output-mode=merge] .headword-list>.expression:not(:last-of-type) .expression-details {
     left: calc(-1 * var(--expression-font-size));
 }
 :root[data-result-output-mode=merge] .expression:hover .expression-details {
     visibility: visible;
 }
-:root[data-result-output-mode=merge] .expression-list .expression-details>.action-play-audio {
+:root[data-result-output-mode=merge] .headword-list .expression-details>.action-play-audio {
     position: absolute;
     left: 0;
     bottom: 0.5em;
 }
-:root:not([data-result-output-mode=merge]) .expression-list .expression-details>.action-play-audio {
+:root:not([data-result-output-mode=merge]) .headword-list .expression-details>.action-play-audio {
     display: none;
 }
-:root[data-result-output-mode=merge] .expression-list .expression-tag-list {
+:root[data-result-output-mode=merge] .headword-list .expression-tag-list {
     display: block;
     position: absolute;
     left: 0;
     bottom: -0.5em;
     white-space: nowrap;
 }
-:root[data-result-output-mode=merge] .entry[data-type=term] .expression-list-tag-list>.tag[data-category=search] {
+:root[data-result-output-mode=merge] .entry[data-type=term] .headword-list-tag-list>.tag[data-category=search] {
     display: none;
 }
 

@@ -53,12 +53,12 @@ class DisplayGenerator {
     createTermEntry(dictionaryEntry) {
         const node = this._templates.instantiate('term-entry');
 
-        const headwordsContainer = node.querySelector('.expression-list');
+        const headwordsContainer = node.querySelector('.headword-list');
         const inflectionsContainer = node.querySelector('.inflection-list');
         const pitchesContainer = node.querySelector('.pitch-accent-group-list');
         const frequencyGroupListContainer = node.querySelector('.frequency-group-list');
         const definitionsContainer = node.querySelector('.definition-list');
-        const termTagsContainer = node.querySelector('.expression-list-tag-list');
+        const headwordTagsContainer = node.querySelector('.headword-list-tag-list');
 
         const {headwords, type, inflections, definitions, frequencies, pronunciations} = dictionaryEntry;
         const pitches = DictionaryDataUtil.getPitchAccentInfos(dictionaryEntry);
@@ -93,14 +93,14 @@ class DisplayGenerator {
         this._appendMultiple(inflectionsContainer, this._createTermInflection.bind(this), inflections);
         this._appendMultiple(frequencyGroupListContainer, this._createFrequencyGroup.bind(this), groupedFrequencies, false);
         this._appendMultiple(pitchesContainer, this._createPitches.bind(this), pitches);
-        this._appendMultiple(termTagsContainer, this._createTermTag.bind(this), termTags, headwords.length);
+        this._appendMultiple(headwordTagsContainer, this._createTermTag.bind(this), termTags, headwords.length);
 
         for (const term of uniqueTerms) {
-            termTagsContainer.appendChild(this._createSearchTag(term));
+            headwordTagsContainer.appendChild(this._createSearchTag(term));
         }
         for (const reading of uniqueReadings) {
             if (uniqueTerms.has(reading)) { continue; }
-            termTagsContainer.appendChild(this._createSearchTag(reading));
+            headwordTagsContainer.appendChild(this._createSearchTag(reading));
         }
 
         // Add definitions
