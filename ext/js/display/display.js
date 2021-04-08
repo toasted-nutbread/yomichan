@@ -46,7 +46,7 @@ class Display extends EventDispatcher {
         this._japaneseUtil = japaneseUtil;
         this._documentFocusController = documentFocusController;
         this._hotkeyHandler = hotkeyHandler;
-        this._container = document.querySelector('#definitions');
+        this._container = document.querySelector('#dictionary-entries');
         this._dictionaryEntries = [];
         this._dictionaryEntryNodes = [];
         this._optionsContext = {depth: 0, url: window.location.href};
