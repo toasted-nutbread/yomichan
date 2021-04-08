@@ -132,7 +132,7 @@ class DisplayGenerator {
         const glyphContainer = node.querySelector('.kanji-glyph');
         const frequencyGroupListContainer = node.querySelector('.frequency-group-list');
         const tagContainer = node.querySelector('.kanji-tag-list');
-        const definitionsContainer = node.querySelector('.kanji-glossary-list');
+        const definitionsContainer = node.querySelector('.kanji-gloss-list');
         const chineseReadingsContainer = node.querySelector('.kanji-readings-chinese');
         const japaneseReadingsContainer = node.querySelector('.kanji-readings-japanese');
         const statisticsContainer = node.querySelector('.kanji-statistics');
@@ -284,7 +284,7 @@ class DisplayGenerator {
 
         const tagListContainer = node.querySelector('.definition-tag-list');
         const onlyListContainer = node.querySelector('.definition-disambiguation-list');
-        const entriesContainer = node.querySelector('.glossary-list');
+        const entriesContainer = node.querySelector('.gloss-list');
 
         node.dataset.dictionary = dictionary;
 
@@ -309,8 +309,8 @@ class DisplayGenerator {
     }
 
     _createTermDefinitionEntryText(text) {
-        const node = this._templates.instantiate('glossary-item');
-        const container = node.querySelector('.glossary');
+        const node = this._templates.instantiate('gloss-item');
+        const container = node.querySelector('.gloss');
         this._setMultilineTextContent(container, text);
         return node;
     }
@@ -330,22 +330,22 @@ class DisplayGenerator {
             width / height
         );
 
-        const node = this._templates.instantiate('glossary-item-image');
+        const node = this._templates.instantiate('gloss-item-image');
         node.dataset.path = path;
         node.dataset.dictionary = dictionary;
         node.dataset.imageLoadState = 'not-loaded';
 
-        const imageContainer = node.querySelector('.glossary-image-container');
+        const imageContainer = node.querySelector('.gloss-image-container');
         imageContainer.style.width = `${usedWidth}em`;
         if (typeof title === 'string') {
             imageContainer.title = title;
         }
 
-        const aspectRatioSizer = node.querySelector('.glossary-image-aspect-ratio-sizer');
+        const aspectRatioSizer = node.querySelector('.gloss-image-aspect-ratio-sizer');
         aspectRatioSizer.style.paddingTop = `${aspectRatio * 100.0}%`;
 
-        const image = node.querySelector('img.glossary-image');
-        const imageLink = node.querySelector('.glossary-image-link');
+        const image = node.querySelector('img.gloss-image');
+        const imageLink = node.querySelector('.gloss-image-link');
         image.dataset.pixelated = `${pixelated === true}`;
 
         if (this._mediaLoader !== null) {
@@ -358,7 +358,7 @@ class DisplayGenerator {
         }
 
         if (typeof description === 'string') {
-            const container = node.querySelector('.glossary-image-description');
+            const container = node.querySelector('.gloss-image-description');
             this._setMultilineTextContent(container, description);
         }
 
@@ -392,8 +392,8 @@ class DisplayGenerator {
     }
 
     _createKanjiDefinition(text) {
-        const node = this._templates.instantiate('kanji-glossary-item');
-        const container = node.querySelector('.kanji-glossary');
+        const node = this._templates.instantiate('kanji-gloss-item');
+        const container = node.querySelector('.kanji-gloss');
         this._setMultilineTextContent(container, text);
         return node;
     }
