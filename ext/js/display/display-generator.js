@@ -310,7 +310,7 @@ class DisplayGenerator {
 
     _createTermDefinitionEntryText(text) {
         const node = this._templates.instantiate('gloss-item');
-        const container = node.querySelector('.gloss');
+        const container = node.querySelector('.gloss-content');
         this._setMultilineTextContent(container, text);
         return node;
     }
@@ -393,7 +393,7 @@ class DisplayGenerator {
 
     _createKanjiDefinition(text) {
         const node = this._templates.instantiate('kanji-gloss-item');
-        const container = node.querySelector('.kanji-gloss');
+        const container = node.querySelector('.kanji-gloss-content');
         this._setMultilineTextContent(container, text);
         return node;
     }

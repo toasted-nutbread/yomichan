@@ -1131,7 +1131,7 @@ headword-list:not(:first-of-type) .headword-current-indicator,
 .gloss-item::marker {
     color: var(--text-color-light3);
 }
-.gloss {
+.gloss-content {
     white-space: pre-line;
 }
 .definition-disambiguation-list {
@@ -1698,7 +1698,7 @@ button.definition-item-expansion-button:focus:focus-visible+.definition-item-con
 .kanji-gloss-item::marker {
     color: var(--text-color-light3);
 }
-.kanji-gloss {
+.kanji-gloss-content {
     white-space: pre-line;
 }
 .kanji-tag-list {
