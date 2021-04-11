@@ -24,6 +24,7 @@
  * DictionaryController
  * DictionaryImportController
  * DocumentFocusController
+ * Environment
  * ExtensionKeyboardShortcutController
  * GenericSettingController
  * KeyboardShortcutController
@@ -47,11 +48,16 @@
  */
 
 async function setupEnvironmentInfo() {
+    const {dataset} = document.documentElement;
     const {manifest_version: manifestVersion} = chrome.runtime.getManifest();
-    const {browser, platform} = await yomichan.api.getEnvironmentInfo();
-    document.documentElement.dataset.browser = browser;
-    document.documentElement.dataset.os = platform.os;
-    document.documentElement.dataset.manifestVersion = `${manifestVersion}`;
+    dataset.manifestVersion = `${manifestVersion}`;
+
+    const environment = new Environment();
+    await environment.prepare();
+    const {browser, platform} = environment.getInfo();
+
+    dataset.browser = browser;
+    dataset.os = platform.os;
 }
 
 async function setupGenericSettingsController(genericSettingController) {
@@ -67,9 +73,9 @@ async function setupGenericSettingsController(genericSettingController) {
         const statusFooter = new StatusFooter(document.querySelector('.status-footer-container'));
         statusFooter.prepare();
 
-        await yomichan.prepare();
-
         setupEnvironmentInfo();
+
+        await yomichan.prepare();
 
         const optionsFull = await yomichan.api.optionsGetFull();
 
