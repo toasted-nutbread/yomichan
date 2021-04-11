@@ -75,7 +75,18 @@ async function setupGenericSettingsController(genericSettingController) {
 
         setupEnvironmentInfo();
 
+        let prepareTimer = setTimeout(() => {
+            prepareTimer = null;
+            document.documentElement.dataset.loadingStalled = 'true';
+        }, 1000);
+
         await yomichan.prepare();
+
+        if (prepareTimer !== null) {
+            clearTimeout(prepareTimer);
+            prepareTimer = null;
+        }
+        delete document.documentElement.dataset.loadingStalled;
 
         const optionsFull = await yomichan.api.optionsGetFull();
 
