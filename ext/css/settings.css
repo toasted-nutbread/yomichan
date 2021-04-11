@@ -833,8 +833,7 @@ select.short-height {
     background-color: transparent;
     pointer-events: none;
 }
-.modal.modal-left::after {
-    content: '';
+.modal.modal-left-after {
     display: block;
     overflow-y: scroll;
     overflow-x: hidden;
@@ -954,9 +953,8 @@ button.icon-button.modal-header-button>.icon-button-inner>.icon {
     height: 100%;
     box-sizing: border-box;
 }
-.status-footer-container::after {
+.status-footer-container-after {
     /* Used to add scrollbar width to get better alignment with the main content container */
-    content: '';
     display: block;
     flex: 0 0 auto;
     overflow-y: scroll;
@@ -1009,7 +1007,7 @@ button.icon-button.modal-header-button>.icon-button-inner>.icon {
 
 /* Floating action button container */
 .fab-container {
-    display: flex;
+    display: none;
     visibility: hidden;
     align-items: stretch;
     position: fixed;
@@ -1020,8 +1018,7 @@ button.icon-button.modal-header-button>.icon-button-inner>.icon {
     pointer-events: none;
     z-index: 10;
 }
-.fab-container::after {
-    content: '';
+.fab-container-after {
     display: block;
     overflow-y: scroll;
     overflow-x: hidden;
@@ -2286,6 +2283,7 @@ button.hotkey-list-item-enabled-button[data-scope-count='0'] {
 /* Media-specific styles */
 @media (max-width: 800px), (hover: none) and (max-width: 1100px) {
     .fab-container {
+        display: flex;
         visibility: visible;
     }
 }
