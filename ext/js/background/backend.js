@@ -1288,10 +1288,14 @@ class Backend {
     }
 
     _validatePrivilegedMessageSender(sender) {
-        const url = sender.url;
-        if (!(typeof url === 'string' && yomichan.isExtensionUrl(url))) {
-            throw new Error('Invalid message sender');
+        let {url} = sender;
+        if (typeof url === 'string' && yomichan.isExtensionUrl(url)) { return; }
+        const {tab} = url;
+        if (typeof tab === 'object' && tab !== null) {
+            ({url} = tab);
+            if (typeof url === 'string' && yomichan.isExtensionUrl(url)) { return; }
         }
+        throw new Error('Invalid message sender');
     }
 
     _getBrowserIconTitle() {
