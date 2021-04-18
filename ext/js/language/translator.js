@@ -960,12 +960,14 @@ class Translator {
     }
 
     _createTermDictionaryEntryFromDatabaseEntry(databaseEntry, originalText, transformedText, deinflectedText, reasons, isPrimary, enabledDictionaryMap) {
-        const {term, reading: rawReading, definitionTags, termTags, definitions, score, dictionary, id, sequence, rules} = databaseEntry;
+        const {term, reading: rawReading, definitionTags, termTags, definitions, score, dictionary, id, sequence: rawSequence, rules} = databaseEntry;
         const reading = (rawReading.length > 0 ? rawReading : term);
         const {index: dictionaryIndex, priority: dictionaryPriority} = this._getDictionaryOrder(dictionary, enabledDictionaryMap);
         const sourceTermExactMatchCount = (isPrimary && deinflectedText === term ? 1 : 0);
         const source = this._createSource(originalText, transformedText, deinflectedText, isPrimary);
         const maxTransformedTextLength = transformedText.length;
+        const hasSequence = (rawSequence >= 0);
+        const sequence = hasSequence ? rawSequence : -1;
 
         const headwordTagGroups = [];
         const definitionTagGroups = [];
@@ -976,7 +978,7 @@ class Translator {
             id,
             isPrimary,
             sequence,
-            sequence >= 0 ? dictionary : null,
+            hasSequence ? dictionary : null,
             reasons,
             score,
             dictionaryIndex,
