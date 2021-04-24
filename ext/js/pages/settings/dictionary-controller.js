@@ -20,19 +20,21 @@
  */
 
 class DictionaryEntry {
-    constructor(dictionaryController, node, index, dictionaryInfo) {
+    constructor(dictionaryController, fragment, index, dictionaryInfo) {
         this._dictionaryController = dictionaryController;
-        this._node = node;
         this._index = index;
         this._dictionaryInfo = dictionaryInfo;
         this._eventListeners = new EventListenerCollection();
-        this._detailsContainer = null;
-        this._hasDetails = false;
-        this._hasCounts = false;
-    }
-
-    get node() {
-        return this._node;
+        this._counts = null;
+        this._nodes = [...fragment.childNodes];
+        this._enabledCheckbox = fragment.querySelector('.dictionary-enabled');
+        this._priorityInput = fragment.querySelector('.dictionary-priority');
+        this._menuButton = fragment.querySelector('.dictionary-menu-button');
+        this._outdatedButton = fragment.querySelector('.dictionary-outdated-button');
+        this._integrityButton = fragment.querySelector('.dictionary-integrity-button');
+        this._titleNode = fragment.querySelector('.dictionary-title');
+        this._versionNode = fragment.querySelector('.dictionary-version');
+        this._titleContainer = fragment.querySelector('.dictionary-item-title-container');
     }
 
     get dictionaryTitle() {
@@ -40,77 +42,36 @@ class DictionaryEntry {
     }
 
     prepare() {
-        const node = this._node;
         const index = this._index;
-        const {title, revision, prefixWildcardsSupported, version} = this._dictionaryInfo;
+        const {title, revision, version} = this._dictionaryInfo;
 
-        this._detailsContainer = node.querySelector('.dictionary-details');
-
-        const enabledCheckbox = node.querySelector('.dictionary-enabled');
-        const priorityInput = node.querySelector('.dictionary-priority');
-        const menuButton = node.querySelector('.dictionary-menu-button');
-        const detailsTable = node.querySelector('.dictionary-details-table');
-        const outdatedContainer = node.querySelector('.dictionary-outdated-notification');
-        const titleNode = node.querySelector('.dictionary-title');
-        const versionNode = node.querySelector('.dictionary-version');
-        const wildcardSupportedCheckbox = node.querySelector('.dictionary-prefix-wildcard-searches-supported');
-
-        const hasDetails = (detailsTable !== null && this._setupDetails(detailsTable));
-        this._hasDetails = hasDetails;
-
-        titleNode.textContent = title;
-        versionNode.textContent = `rev.${revision}`;
-        if (wildcardSupportedCheckbox !== null) {
-            wildcardSupportedCheckbox.checked = !!prefixWildcardsSupported;
-        }
-        if (outdatedContainer !== null) {
-            outdatedContainer.hidden = (version >= 3);
-        }
-        if (enabledCheckbox !== null) {
-            enabledCheckbox.dataset.setting = `dictionaries[${index}].enabled`;
-            this._eventListeners.addEventListener(enabledCheckbox, 'settingChanged', this._onEnabledChanged.bind(this), false);
-        }
-        if (priorityInput !== null) {
-            priorityInput.dataset.setting = `dictionaries[${index}].priority`;
-        }
-        if (menuButton !== null) {
-            this._eventListeners.addEventListener(menuButton, 'menuOpen', this._onMenuOpen.bind(this), false);
-            this._eventListeners.addEventListener(menuButton, 'menuClose', this._onMenuClose.bind(this), false);
-        }
+        this._titleNode.textContent = title;
+        this._versionNode.textContent = `rev.${revision}`;
+        this._outdatedButton.hidden = (version >= 3);
+        this._priorityInput.dataset.setting = `dictionaries[${index}].priority`;
+        this._enabledCheckbox.dataset.setting = `dictionaries[${index}].enabled`;
+        this._eventListeners.addEventListener(this._enabledCheckbox, 'settingChanged', this._onEnabledChanged.bind(this), false);
+        this._eventListeners.addEventListener(this._menuButton, 'menuClose', this._onMenuClose.bind(this), false);
+        this._eventListeners.addEventListener(this._outdatedButton, 'click', this._onOutdatedButtonClick.bind(this), false);
+        this._eventListeners.addEventListener(this._integrityButton, 'click', this._onIntegrityButtonClick.bind(this), false);
     }
 
     cleanup() {
         this._eventListeners.removeAllEventListeners();
-        const node = this._node;
-        if (node.parentNode !== null) {
-            node.parentNode.removeChild(node);
+        for (const node of this._nodes) {
+            if (node.parentNode !== null) {
+                node.parentNode.removeChild(node);
+            }
         }
+        this._nodes = [];
     }
 
     setCounts(counts) {
-        const node = this._node.querySelector('.dictionary-counts');
-        node.textContent = JSON.stringify({info: this._dictionaryInfo, counts}, null, 4);
-        node.hidden = false;
-        this._hasCounts = true;
+        this._counts = counts;
+        this._integrityButton.hidden = false;
     }
 
     // Private
-
-    _onMenuOpen(e) {
-        const bodyNode = e.detail.menu.bodyNode;
-        const showDetails = bodyNode.querySelector('.popup-menu-item[data-menu-action="showDetails"]');
-        const hideDetails = bodyNode.querySelector('.popup-menu-item[data-menu-action="hideDetails"]');
-        const hasDetails = (this._detailsContainer !== null);
-        const detailsVisible = (hasDetails && !this._detailsContainer.hidden);
-        if (showDetails !== null) {
-            showDetails.hidden = detailsVisible;
-            showDetails.disabled = !hasDetails;
-        }
-        if (hideDetails !== null) {
-            hideDetails.hidden = !detailsVisible;
-            hideDetails.disabled = !hasDetails;
-        }
-    }
 
     _onMenuClose(e) {
         switch (e.detail.action) {
@@ -118,18 +79,37 @@ class DictionaryEntry {
                 this._delete();
                 break;
             case 'showDetails':
-                if (this._detailsContainer !== null) { this._detailsContainer.hidden = false; }
-                break;
-            case 'hideDetails':
-                if (this._detailsContainer !== null) { this._detailsContainer.hidden = true; }
+                this._showDetails();
                 break;
         }
     }
 
     _onEnabledChanged(e) {
         const {detail: {value}} = e;
-        this._node.dataset.enabled = `${value}`;
+        this._titleContainer.dataset.enabled = `${value}`;
         this._dictionaryController.updateDictionariesEnabled();
+    }
+
+    _onOutdatedButtonClick() {
+        this._showDetails();
+    }
+
+    _onIntegrityButtonClick() {
+        this._showDetails();
+    }
+
+    _showDetails() {
+        const {title, revision, version} = this._dictionaryInfo;
+
+        const modal = this._dictionaryController.dictionaryDetailsModal;
+
+        modal.node.querySelector('.dictionary-title').textContent = title;
+        modal.node.querySelector('.dictionary-version').textContent = `rev.${revision}`;
+        modal.node.querySelector('.dictionary-outdated-notification').hidden = (version >= 3);
+        modal.node.querySelector('.dictionary-counts').textContent = this._counts !== null ? JSON.stringify(this._counts, null, 4) : '';
+        this._setupDetails(modal.node.querySelector('.dictionary-details-table'));
+
+        modal.setVisible(true);
     }
 
     _setupDetails(detailsTable) {
@@ -156,6 +136,7 @@ class DictionaryEntry {
             any = true;
         }
 
+        detailsTable.textContent = '';
         detailsTable.appendChild(fragment);
         return any;
     }
@@ -182,8 +163,13 @@ class DictionaryController {
         this._noDictionariesInstalledWarnings = null;
         this._noDictionariesEnabledWarnings = null;
         this._deleteDictionaryModal = null;
+        this._dictionaryDetailsModal = null;
         this._integrityExtraInfoNode = null;
         this._isDeleting = false;
+    }
+
+    get dictionaryDetailsModal() {
+        return this._dictionaryDetailsModal;
     }
 
     async prepare() {
@@ -195,6 +181,7 @@ class DictionaryController {
         this._noDictionariesInstalledWarnings = document.querySelectorAll('.no-dictionaries-installed-warning');
         this._noDictionariesEnabledWarnings = document.querySelectorAll('.no-dictionaries-enabled-warning');
         this._deleteDictionaryModal = this._modalController.getModal('dictionary-confirm-delete');
+        this._dictionaryDetailsModal = this._modalController.getModal('dictionary-details');
 
         yomichan.on('databaseUpdated', this._onDatabaseUpdated.bind(this));
         this._settingsController.on('optionsChanged', this._onOptionsChanged.bind(this));
@@ -217,6 +204,10 @@ class DictionaryController {
 
     instantiateTemplate(name) {
         return this._settingsController.instantiateTemplate(name);
+    }
+
+    instantiateTemplateFragment(name) {
+        return this._settingsController.instantiateTemplateFragment(name);
     }
 
     async updateDictionariesEnabled() {
@@ -478,12 +469,13 @@ class DictionaryController {
     }
 
     _createDictionaryEntry(index, dictionaryInfo) {
-        const node = this.instantiateTemplate('dictionary');
-        this._dictionaryEntryContainer.appendChild(node);
+        const fragment = this.instantiateTemplateFragment('dictionary');
 
-        const entry = new DictionaryEntry(this, node, index, dictionaryInfo);
+        const entry = new DictionaryEntry(this, fragment, index, dictionaryInfo);
         this._dictionaryEntries.push(entry);
         entry.prepare();
+
+        this._dictionaryEntryContainer.appendChild(fragment);
     }
 
     async _deleteDictionary(dictionaryTitle) {
