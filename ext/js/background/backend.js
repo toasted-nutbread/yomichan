@@ -1896,7 +1896,8 @@ class Backend {
         return {
             wildcard,
             mainDictionary,
-            removeNonJapaneseCharacters: !alphanumeric,
+            removeNonJapaneseCharactersEarly: !alphanumeric,
+            removeNonJapaneseCharactersLate: false,
             convertHalfWidthCharacters,
             convertNumericCharacters,
             convertAlphabeticCharacters,

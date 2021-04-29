@@ -64,7 +64,8 @@ class Translator {
      *   {
      *     wildcard: (enum: null, 'prefix', 'suffix'),
      *     mainDictionary: (string),
-     *     removeNonJapaneseCharacters: (boolean),
+     *     removeNonJapaneseCharactersEarly: (boolean),
+     *     removeNonJapaneseCharactersLate: (boolean),
      *     convertHalfWidthCharacters: (enum: 'false', 'true', 'variant'),
      *     convertNumericCharacters: (enum: 'false', 'true', 'variant'),
      *     convertAlphabeticCharacters: (enum: 'false', 'true', 'variant'),
@@ -170,7 +171,7 @@ class Translator {
 
     async _findTermsInternal(text, enabledDictionaryMap, options) {
         const {wildcard} = options;
-        if (options.removeNonJapaneseCharacters) {
+        if (options.removeNonJapaneseCharactersEarly) {
             text = this._getJapaneseOnlyText(text);
         }
         if (text.length === 0) {
@@ -246,6 +247,7 @@ class Translator {
     // Deinflections and text transformations
 
     _getAllDeinflections(text, options) {
+        const {removeNonJapaneseCharactersLate} = options;
         const textOptionVariantArray = [
             this._getTextReplacementsVariants(options),
             this._getTextOptionEntryVariants(options.convertHalfWidthCharacters),
@@ -282,6 +284,9 @@ class Translator {
             }
             if (collapseEmphatic) {
                 text2 = jp.collapseEmphaticSequences(text2, collapseEmphaticFull, sourceMap);
+            }
+            if (removeNonJapaneseCharactersLate) {
+                text2 = this._getJapaneseOnlyText(text2);
             }
 
             for (let i = text2.length; i > 0; --i) {
