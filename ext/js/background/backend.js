@@ -1889,7 +1889,8 @@ class Backend {
                 convertHiraganaToKatakana,
                 convertKatakanaToHiragana,
                 collapseEmphaticSequences,
-                textReplacements: textReplacementsOptions
+                textReplacements: textReplacementsOptions,
+                removeNonJapaneseCharacters
             }
         } = options;
         const textReplacements = this._getTranslatorTextReplacements(textReplacementsOptions);
@@ -1897,7 +1898,7 @@ class Backend {
             wildcard,
             mainDictionary,
             removeNonJapaneseCharactersEarly: !alphanumeric,
-            removeNonJapaneseCharactersLate: false,
+            removeNonJapaneseCharactersLate: removeNonJapaneseCharacters,
             convertHalfWidthCharacters,
             convertNumericCharacters,
             convertAlphabeticCharacters,

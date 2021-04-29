@@ -405,7 +405,8 @@ function createProfileOptionsUpdatedTestData1() {
             textReplacements: {
                 searchOriginal: true,
                 groups: []
-            }
+            },
+            removeNonJapaneseCharacters: false
         },
         dictionaries: [
             {

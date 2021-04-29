@@ -650,7 +650,8 @@
                                     "convertHiraganaToKatakana",
                                     "convertKatakanaToHiragana",
                                     "collapseEmphaticSequences",
-                                    "textReplacements"
+                                    "textReplacements",
+                                    "removeNonJapaneseCharacters"
                                 ],
                                 "properties": {
                                     "convertHalfWidthCharacters": {
@@ -722,6 +723,10 @@
                                                 }
                                             }
                                         }
+                                    },
+                                    "removeNonJapaneseCharacters": {
+                                        "type": "boolean",
+                                        "default": false
                                     }
                                 }
                             },
