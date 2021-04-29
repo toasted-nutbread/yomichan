@@ -64,7 +64,7 @@ class Translator {
      *   {
      *     wildcard: (enum: null, 'prefix', 'suffix'),
      *     mainDictionary: (string),
-     *     alphanumeric: (boolean),
+     *     removeNonJapaneseCharacters: (boolean),
      *     convertHalfWidthCharacters: (enum: 'false', 'true', 'variant'),
      *     convertNumericCharacters: (enum: 'false', 'true', 'variant'),
      *     convertAlphabeticCharacters: (enum: 'false', 'true', 'variant'),
@@ -170,7 +170,7 @@ class Translator {
 
     async _findTermsInternal(text, enabledDictionaryMap, options) {
         const {wildcard} = options;
-        if (!options.alphanumeric) {
+        if (options.removeNonJapaneseCharacters) {
             text = this._getJapaneseOnlyText(text);
         }
         if (text.length === 0) {
