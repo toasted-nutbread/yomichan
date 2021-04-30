@@ -101,7 +101,7 @@ class DictionaryEntry {
     _showDetails() {
         const {title, revision, version} = this._dictionaryInfo;
 
-        const modal = this._dictionaryController.dictionaryDetailsModal;
+        const modal = this._dictionaryController.modalController.getModal('dictionary-details');
 
         modal.node.querySelector('.dictionary-title').textContent = title;
         modal.node.querySelector('.dictionary-version').textContent = `rev.${revision}`;
@@ -146,6 +146,57 @@ class DictionaryEntry {
     }
 }
 
+class DictionaryExtraInfo {
+    constructor(parent, totalCounts, remainders, totalRemainder) {
+        this._parent = parent;
+        this._totalCounts = totalCounts;
+        this._remainders = remainders;
+        this._totalRemainder = totalRemainder;
+        this._eventListeners = new EventListenerCollection();
+        this._nodes = null;
+    }
+
+    prepare(container) {
+        const fragment = this._parent.instantiateTemplateFragment('dictionary-extra');
+        this._nodes = [...fragment.childNodes];
+
+        this._setTitle(fragment.querySelector('.dictionary-total-count'));
+        this._eventListeners.addEventListener(fragment.querySelector('.dictionary-integrity-button'), 'click', this._onIntegrityButtonClick.bind(this), false);
+
+        container.appendChild(fragment);
+    }
+
+    cleanup() {
+        this._eventListeners.removeAllEventListeners();
+        for (const node of this._nodes) {
+            if (node.parentNode !== null) {
+                node.parentNode.removeChild(node);
+            }
+        }
+        this._nodes = [];
+    }
+
+    // Private
+
+    _onIntegrityButtonClick() {
+        this._showDetails();
+    }
+
+    _showDetails() {
+        const modal = this._parent.modalController.getModal('dictionary-extra-data');
+
+        const info = {counts: this._totalCounts, remainders: this._remainders};
+        modal.node.querySelector('.dictionary-counts').textContent = JSON.stringify(info, null, 4);
+        this._setTitle(modal.node.querySelector('.dictionary-total-count'));
+
+        modal.setVisible(true);
+    }
+
+    _setTitle(node) {
+        node.textContent = `${this._totalRemainder} item${this._totalRemainder !== 1 ? 's' : ''}`;
+    }
+}
+
 class DictionaryController {
     constructor(settingsController, modalController, statusFooter) {
         this._settingsController = settingsController;
@@ -157,31 +208,27 @@ class DictionaryController {
         this._checkingIntegrity = false;
         this._checkIntegrityButton = null;
         this._dictionaryEntryContainer = null;
-        this._integrityExtraInfoContainer = null;
         this._dictionaryInstallCountNode = null;
         this._dictionaryEnabledCountNode = null;
         this._noDictionariesInstalledWarnings = null;
         this._noDictionariesEnabledWarnings = null;
         this._deleteDictionaryModal = null;
-        this._dictionaryDetailsModal = null;
-        this._integrityExtraInfoNode = null;
+        this._extraInfo = null;
         this._isDeleting = false;
     }
 
-    get dictionaryDetailsModal() {
-        return this._dictionaryDetailsModal;
+    get modalController() {
+        return this._modalController;
     }
 
     async prepare() {
         this._checkIntegrityButton = document.querySelector('#dictionary-check-integrity');
         this._dictionaryEntryContainer = document.querySelector('#dictionary-list');
-        this._integrityExtraInfoContainer = document.querySelector('#dictionary-list-extra');
         this._dictionaryInstallCountNode = document.querySelector('#dictionary-install-count');
         this._dictionaryEnabledCountNode = document.querySelector('#dictionary-enabled-count');
         this._noDictionariesInstalledWarnings = document.querySelectorAll('.no-dictionaries-installed-warning');
         this._noDictionariesEnabledWarnings = document.querySelectorAll('.no-dictionaries-enabled-warning');
         this._deleteDictionaryModal = this._modalController.getModal('dictionary-confirm-delete');
-        this._dictionaryDetailsModal = this._modalController.getModal('dictionary-details');
 
         yomichan.on('databaseUpdated', this._onDatabaseUpdated.bind(this));
         this._settingsController.on('optionsChanged', this._onOptionsChanged.bind(this));
@@ -438,34 +485,15 @@ class DictionaryController {
             totalRemainder += remainders[key];
         }
 
-        this._cleanupExtra();
-        if (totalRemainder > 0) {
-            this.extra = this._createExtra(totalCounts, remainders, totalRemainder);
+        if (this._extraInfo !== null) {
+            this._extraInfo.cleanup();
+            this._extraInfo = null;
         }
-    }
 
-    _createExtra(totalCounts, remainders, totalRemainder) {
-        const node = this.instantiateTemplate('dictionary-extra');
-        this._integrityExtraInfoNode = node;
-
-        node.querySelector('.dictionary-total-count').textContent = `${totalRemainder} item${totalRemainder !== 1 ? 's' : ''}`;
-
-        const n = node.querySelector('.dictionary-counts');
-        n.textContent = JSON.stringify({counts: totalCounts, remainders}, null, 4);
-        n.hidden = false;
-
-        this._integrityExtraInfoContainer.appendChild(node);
-    }
-
-    _cleanupExtra() {
-        const node = this._integrityExtraInfoNode;
-        if (node === null) { return; }
-        this._integrityExtraInfoNode = null;
-
-        const parent = node.parentNode;
-        if (parent === null) { return; }
-
-        parent.removeChild(node);
+        if (totalRemainder > 0) {
+            this._extraInfo = new DictionaryExtraInfo(this, totalCounts, remainders, totalRemainder);
+            this._extraInfo.prepare(this._dictionaryEntryContainer);
+        }
     }
 
     _createDictionaryEntry(index, dictionaryInfo) {
@@ -475,7 +503,10 @@ class DictionaryController {
         this._dictionaryEntries.push(entry);
         entry.prepare();
 
-        this._dictionaryEntryContainer.appendChild(fragment);
+        const container = this._dictionaryEntryContainer;
+        const topItems = container.querySelectorAll('.dictionary-item-top');
+        const last = topItems.length > 0 ? topItems[topItems.length - 1].nextSibling : null;
+        container.insertBefore(fragment, last);
     }
 
     async _deleteDictionary(dictionaryTitle) {

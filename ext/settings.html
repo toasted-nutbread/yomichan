@@ -2056,9 +2056,8 @@
             <label class="dictionary-item-top toggle dictionary-item-enabled-toggle-container"><input type="checkbox" id="all-dictionaries-enabled"><span class="toggle-body"><span class="toggle-track"></span><span class="toggle-knob"></span></span></label>
             <div class="dictionary-item-top dictionary-item-title-container">All</div>
             <div class="dictionary-item-top">Priority</div>
-            <div class="dictionary-item-top"></div>
+            <div class="dictionary-item-top dictionary-item-button-height"></div>
         </div>
-        <div id="dictionary-list-extra" class="dictionary-list"></div>
 
         <div hidden><input type="file" id="dictionary-import-file-input" accept=".zip,application/zip" multiple></div>
     </div>
@@ -2187,6 +2186,24 @@
     </div>
 </div></div>
 
+<div id="dictionary-extra-data-modal" class="modal" tabindex="-1" role="dialog" hidden><div class="modal-content">
+    <div class="modal-header">
+        <div class="modal-title">
+            <strong class="dictionary-title">Unassociated Data</strong> <span class="light dictionary-total-count"></span>
+        </div>
+    </div>
+    <div class="modal-body">
+        <p class="warning-text">
+            The database contains extra data which is not associated with any installed dictionary.
+            Purging the database can fix this issue.
+        </p>
+        <div class="dictionary-counts"></div>
+    </div>
+    <div class="modal-footer">
+        <button data-modal-action="hide">Close</button>
+    </div>
+</div></div>
+
 
 <!-- Dictionary templates -->
 <template id="dictionary-template">
@@ -2211,19 +2228,18 @@
     <span class="dictionary-details-entry-info"></span>
 </div></template>
 
-<template id="dictionary-extra-template"><div class="settings-item">
-    <div class="settings-item-inner">
-        <div class="settings-item-left">
-            <div class="settings-item-label"><strong class="dictionary-title">Unassociated Data</strong> <span class="light dictionary-total-count"></span></div>
-        </div>
+<template id="dictionary-extra-template">
+    <div></div>
+    <div class="dictionary-item-title-container">
+        <span>
+            <strong class="dictionary-title">Unassociated Data</strong> <span class="light dictionary-total-count"></span>
+        </span>
+        <button class="dictionary-integrity-button">
+            <div class="badge warning-badge"><span class="icon" data-icon="exclamation-point-short"></span></div>
+        </button>
     </div>
-    <div class="settings-item-children">
-        <p class="warning-text">
-            The database contains extra data which is not associated with any installed dictionary.
-            Purging the database can fix this issue.
-        </p>
-        <div class="dictionary-counts"></div>
-    </div>
+    <div></div>
+    <div class="dictionary-item-button-height"></div>
 </div></template>
 
 <template id="dictionary-menu-template"><div class="popup-menu-container" tabindex="-1" role="dialog"><div class="popup-menu"><div class="popup-menu-body">
