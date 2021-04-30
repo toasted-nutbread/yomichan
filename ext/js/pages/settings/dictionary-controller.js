@@ -238,6 +238,8 @@ class DictionaryController {
             this._checkIntegrityButton.addEventListener('click', this._onCheckIntegrityButtonClick.bind(this), false);
         }
 
+        this._updateDictionaryEntryCount();
+
         await this._onDatabaseUpdated();
     }
 
@@ -349,6 +351,7 @@ class DictionaryController {
             entry.cleanup();
         }
         this._dictionaryEntries = [];
+        this._updateDictionaryEntryCount();
 
         if (this._dictionaryInstallCountNode !== null) {
             this._dictionaryInstallCountNode.textContent = `${dictionaries.length}`;
@@ -507,6 +510,8 @@ class DictionaryController {
         const topItems = container.querySelectorAll('.dictionary-item-top');
         const last = topItems.length > 0 ? topItems[topItems.length - 1].nextSibling : null;
         container.insertBefore(fragment, last);
+
+        this._updateDictionaryEntryCount();
     }
 
     async _deleteDictionary(dictionaryTitle) {
@@ -611,5 +616,9 @@ class DictionaryController {
 
     _triggerStorageChanged() {
         yomichan.trigger('storageChanged');
+    }
+
+    _updateDictionaryEntryCount() {
+        this._dictionaryEntryContainer.dataset.count = `${this._dictionaryEntries.length}`;
     }
 }

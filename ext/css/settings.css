@@ -2129,6 +2129,9 @@ button.hotkey-list-item-enabled-button[data-scope-count='0'] {
     place-items: center start;
     margin-top: 0.5em;
 }
+.dictionary-list[data-count='0']>.dictionary-item-top {
+    display: none;
+}
 .dictionary-item-button-height {
     height: var(--icon-button-size);
 }
