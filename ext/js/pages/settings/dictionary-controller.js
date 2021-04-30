@@ -71,6 +71,10 @@ class DictionaryEntry {
         this._integrityButton.hidden = false;
     }
 
+    setEnabled(value) {
+        this._enabledCheckbox.checked = value;
+    }
+
     // Private
 
     _onMenuClose(e) {
@@ -213,6 +217,7 @@ class DictionaryController {
         this._noDictionariesInstalledWarnings = null;
         this._noDictionariesEnabledWarnings = null;
         this._deleteDictionaryModal = null;
+        this._allCheckbox = null;
         this._extraInfo = null;
         this._isDeleting = false;
     }
@@ -229,10 +234,11 @@ class DictionaryController {
         this._noDictionariesInstalledWarnings = document.querySelectorAll('.no-dictionaries-installed-warning');
         this._noDictionariesEnabledWarnings = document.querySelectorAll('.no-dictionaries-enabled-warning');
         this._deleteDictionaryModal = this._modalController.getModal('dictionary-confirm-delete');
+        this._allCheckbox = document.querySelector('#all-dictionaries-enabled');
 
         yomichan.on('databaseUpdated', this._onDatabaseUpdated.bind(this));
         this._settingsController.on('optionsChanged', this._onOptionsChanged.bind(this));
-
+        this._allCheckbox.addEventListener('change', this._onAllCheckboxChange.bind(this), false);
         document.querySelector('#dictionary-confirm-delete-button').addEventListener('click', this._onDictionaryConfirmDelete.bind(this), false);
         if (this._checkIntegrityButton !== null) {
             this._checkIntegrityButton.addEventListener('click', this._onCheckIntegrityButtonClick.bind(this), false);
@@ -343,6 +349,12 @@ class DictionaryController {
         await this._updateEntries();
     }
 
+    _onAllCheckboxChange() {
+        const value = this._allCheckbox.checked;
+        this._allCheckbox.checked = !value;
+        this._setAllDictionariesEnabled(value);
+    }
+
     async _updateEntries() {
         const dictionaries = this._dictionaries;
         this._updateMainDictionarySelectOptions(dictionaries);
@@ -382,29 +394,40 @@ class DictionaryController {
     }
 
     _updateDictionariesEnabledWarnings(options) {
-        let enabledCount = 0;
+        const {dictionaries} = options;
+        let enabledDictionaryCountValid = 0;
+        let enabledDictionaryCount = 0;
+        const dictionaryCount = dictionaries.length;
         if (this._dictionaries !== null) {
             const enabledDictionaries = new Set();
-            for (const {name, enabled} of options.dictionaries) {
+            for (const {name, enabled} of dictionaries) {
                 if (enabled) {
+                    ++enabledDictionaryCount;
                     enabledDictionaries.add(name);
                 }
             }
 
             for (const {title} of this._dictionaries) {
                 if (enabledDictionaries.has(title)) {
-                    ++enabledCount;
+                    ++enabledDictionaryCountValid;
                 }
             }
         }
 
-        const hasEnabledDictionary = (enabledCount > 0);
+        const hasEnabledDictionary = (enabledDictionaryCountValid > 0);
         for (const node of this._noDictionariesEnabledWarnings) {
             node.hidden = hasEnabledDictionary;
         }
 
         if (this._dictionaryEnabledCountNode !== null) {
-            this._dictionaryEnabledCountNode.textContent = `${enabledCount}`;
+            this._dictionaryEnabledCountNode.textContent = `${enabledDictionaryCountValid}`;
+        }
+
+        this._allCheckbox.checked = (enabledDictionaryCount >= dictionaryCount);
+
+        const entries = this._dictionaryEntries;
+        for (let i = 0, ii = Math.min(entries.length, dictionaryCount); i < ii; ++i) {
+            entries[i].setEnabled(dictionaries[i].enabled);
         }
     }
 
@@ -620,5 +643,22 @@ class DictionaryController {
 
     _updateDictionaryEntryCount() {
         this._dictionaryEntryContainer.dataset.count = `${this._dictionaryEntries.length}`;
+    }
+
+    async _setAllDictionariesEnabled(value) {
+        const options = await this._settingsController.getOptions();
+        const {dictionaries} = options;
+
+        const targets = [];
+        for (let i = 0, ii = dictionaries.length; i < ii; ++i) {
+            targets.push({
+                action: 'set',
+                path: `dictionaries[${i}].enabled`,
+                value
+            });
+        }
+        await this._settingsController.modifyProfileSettings(targets);
+
+        await this.updateDictionariesEnabled();
     }
 }
