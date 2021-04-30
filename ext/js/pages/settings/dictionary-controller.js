@@ -530,9 +530,8 @@ class DictionaryController {
         entry.prepare();
 
         const container = this._dictionaryEntryContainer;
-        const topItems = container.querySelectorAll('.dictionary-item-top');
-        const last = topItems.length > 0 ? topItems[topItems.length - 1].nextSibling : null;
-        container.insertBefore(fragment, last);
+        const relative = container.querySelector('.dictionary-item-bottom');
+        container.insertBefore(fragment, relative);
 
         this._updateDictionaryEntryCount();
     }
