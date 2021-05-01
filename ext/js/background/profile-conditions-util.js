@@ -222,54 +222,56 @@ class ProfileConditionsUtil {
     // modifierKeys schema creation functions
 
     _createSchemaModifierKeysAre(value) {
-        return this._createSchemaModifierKeysGeneric(value, true, false);
+        return this._createSchemaArrayCheck('modifierKeys', value, true, false);
     }
 
     _createSchemaModifierKeysAreNot(value) {
         return {
-            not: [this._createSchemaModifierKeysGeneric(value, true, false)]
+            not: [this._createSchemaArrayCheck('modifierKeys', value, true, false)]
         };
     }
 
     _createSchemaModifierKeysInclude(value) {
-        return this._createSchemaModifierKeysGeneric(value, false, false);
+        return this._createSchemaArrayCheck('modifierKeys', value, false, false);
     }
 
     _createSchemaModifierKeysNotInclude(value) {
-        return this._createSchemaModifierKeysGeneric(value, false, true);
+        return this._createSchemaArrayCheck('modifierKeys', value, false, true);
     }
 
-    _createSchemaModifierKeysGeneric(value, exact, none) {
+    // Generic
+
+    _createSchemaArrayCheck(key, value, exact, none) {
         const containsList = [];
-        for (const modifierKey of this._split(value)) {
-            if (modifierKey.length === 0) { continue; }
+        for (const item of this._split(value)) {
+            if (item.length === 0) { continue; }
             containsList.push({
                 contains: {
-                    const: modifierKey
+                    const: item
                 }
             });
         }
         const containsListCount = containsList.length;
-        const modifierKeysSchema = {
+        const schema = {
             type: 'array'
         };
         if (exact) {
-            modifierKeysSchema.maxItems = containsListCount;
+            schema.maxItems = containsListCount;
         }
         if (none) {
             if (containsListCount > 0) {
-                modifierKeysSchema.not = containsList;
+                schema.not = containsList;
             }
         } else {
-            modifierKeysSchema.minItems = containsListCount;
+            schema.minItems = containsListCount;
             if (containsListCount > 0) {
-                modifierKeysSchema.allOf = containsList;
+                schema.allOf = containsList;
             }
         }
         return {
-            required: ['modifierKeys'],
+            required: [key],
             properties: {
-                modifierKeys: modifierKeysSchema
+                [key]: schema
             }
         };
     }
