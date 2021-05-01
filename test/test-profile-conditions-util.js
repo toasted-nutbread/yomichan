@@ -611,6 +611,266 @@ function testSchemas() {
             ]
         },
 
+        // flags tests
+        {
+            conditionGroups: [
+                {
+                    conditions: [
+                        {
+                            type: 'flags',
+                            operator: 'are',
+                            value: ''
+                        }
+                    ]
+                }
+            ],
+            expectedSchema: {
+                required: ['flags'],
+                properties: {
+                    flags: {
+                        type: 'array',
+                        maxItems: 0,
+                        minItems: 0
+                    }
+                }
+            },
+            inputs: [
+                {expected: true,  context: {}},
+                {expected: true,  context: {flags: []}},
+                {expected: false, context: {flags: ['test1']}},
+                {expected: false, context: {flags: ['test1', 'test2']}},
+                {expected: false, context: {flags: ['test1', 'test2', 'test3']}}
+            ]
+        },
+        {
+            conditionGroups: [
+                {
+                    conditions: [
+                        {
+                            type: 'flags',
+                            operator: 'are',
+                            value: 'test1, test2'
+                        }
+                    ]
+                }
+            ],
+            expectedSchema: {
+                required: ['flags'],
+                properties: {
+                    flags: {
+                        type: 'array',
+                        maxItems: 2,
+                        minItems: 2,
+                        allOf: [
+                            {contains: {const: 'test1'}},
+                            {contains: {const: 'test2'}}
+                        ]
+                    }
+                }
+            },
+            inputs: [
+                {expected: false, context: {}},
+                {expected: false, context: {flags: []}},
+                {expected: false, context: {flags: ['test1']}},
+                {expected: true,  context: {flags: ['test1', 'test2']}},
+                {expected: false, context: {flags: ['test1', 'test2', 'test3']}}
+            ]
+        },
+        {
+            conditionGroups: [
+                {
+                    conditions: [
+                        {
+                            type: 'flags',
+                            operator: 'areNot',
+                            value: ''
+                        }
+                    ]
+                }
+            ],
+            expectedSchema: {
+                not: [
+                    {
+                        required: ['flags'],
+                        properties: {
+                            flags: {
+                                type: 'array',
+                                maxItems: 0,
+                                minItems: 0
+                            }
+                        }
+                    }
+                ]
+            },
+            inputs: [
+                {expected: false, context: {}},
+                {expected: false, context: {flags: []}},
+                {expected: true,  context: {flags: ['test1']}},
+                {expected: true,  context: {flags: ['test1', 'test2']}},
+                {expected: true,  context: {flags: ['test1', 'test2', 'test3']}}
+            ]
+        },
+        {
+            conditionGroups: [
+                {
+                    conditions: [
+                        {
+                            type: 'flags',
+                            operator: 'areNot',
+                            value: 'test1, test2'
+                        }
+                    ]
+                }
+            ],
+            expectedSchema: {
+                not: [
+                    {
+                        required: ['flags'],
+                        properties: {
+                            flags: {
+                                type: 'array',
+                                maxItems: 2,
+                                minItems: 2,
+                                allOf: [
+                                    {contains: {const: 'test1'}},
+                                    {contains: {const: 'test2'}}
+                                ]
+                            }
+                        }
+                    }
+                ]
+            },
+            inputs: [
+                {expected: true,  context: {}},
+                {expected: true,  context: {flags: []}},
+                {expected: true,  context: {flags: ['test1']}},
+                {expected: false, context: {flags: ['test1', 'test2']}},
+                {expected: true,  context: {flags: ['test1', 'test2', 'test3']}}
+            ]
+        },
+        {
+            conditionGroups: [
+                {
+                    conditions: [
+                        {
+                            type: 'flags',
+                            operator: 'include',
+                            value: ''
+                        }
+                    ]
+                }
+            ],
+            expectedSchema: {
+                required: ['flags'],
+                properties: {
+                    flags: {
+                        type: 'array',
+                        minItems: 0
+                    }
+                }
+            },
+            inputs: [
+                {expected: true,  context: {}},
+                {expected: true,  context: {flags: []}},
+                {expected: true,  context: {flags: ['test1']}},
+                {expected: true,  context: {flags: ['test1', 'test2']}},
+                {expected: true,  context: {flags: ['test1', 'test2', 'test3']}}
+            ]
+        },
+        {
+            conditionGroups: [
+                {
+                    conditions: [
+                        {
+                            type: 'flags',
+                            operator: 'include',
+                            value: 'test1, test2'
+                        }
+                    ]
+                }
+            ],
+            expectedSchema: {
+                required: ['flags'],
+                properties: {
+                    flags: {
+                        type: 'array',
+                        minItems: 2,
+                        allOf: [
+                            {contains: {const: 'test1'}},
+                            {contains: {const: 'test2'}}
+                        ]
+                    }
+                }
+            },
+            inputs: [
+                {expected: false, context: {}},
+                {expected: false, context: {flags: []}},
+                {expected: false, context: {flags: ['test1']}},
+                {expected: true,  context: {flags: ['test1', 'test2']}},
+                {expected: true,  context: {flags: ['test1', 'test2', 'test3']}}
+            ]
+        },
+        {
+            conditionGroups: [
+                {
+                    conditions: [
+                        {
+                            type: 'flags',
+                            operator: 'notInclude',
+                            value: ''
+                        }
+                    ]
+                }
+            ],
+            expectedSchema: {
+                required: ['flags'],
+                properties: {
+                    flags: {
+                        type: 'array'
+                    }
+                }
+            },
+            inputs: [
+                {expected: true,  context: {}},
+                {expected: true,  context: {flags: []}},
+                {expected: true,  context: {flags: ['test1']}},
+                {expected: true,  context: {flags: ['test1', 'test2']}},
+                {expected: true,  context: {flags: ['test1', 'test2', 'test3']}}
+            ]
+        },
+        {
+            conditionGroups: [
+                {
+                    conditions: [
+                        {
+                            type: 'flags',
+                            operator: 'notInclude',
+                            value: 'test1, test2'
+                        }
+                    ]
+                }
+            ],
+            expectedSchema: {
+                required: ['flags'],
+                properties: {
+                    flags: {
+                        type: 'array',
+                        not: [
+                            {contains: {const: 'test1'}},
+                            {contains: {const: 'test2'}}
+                        ]
+                    }
+                }
+            },
+            inputs: [
+                {expected: true,  context: {}},
+                {expected: true,  context: {flags: []}},
+                {expected: false, context: {flags: ['test1']}},
+                {expected: false, context: {flags: ['test1', 'test2']}},
+                {expected: false, context: {flags: ['test1', 'test2', 'test3']}}
+            ]
+        },
+
         // Multiple conditions tests
         {
             conditionGroups: [
