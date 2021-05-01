@@ -40,25 +40,25 @@ function testNormalizeContext() {
         // Empty
         {
             context: {},
-            expected: {}
+            expected: {flags: []}
         },
 
         // Domain normalization
         {
             context: {url: ''},
-            expected: {url: ''}
+            expected: {url: '', flags: []}
         },
         {
             context: {url: 'http://example.com/'},
-            expected: {url: 'http://example.com/', domain: 'example.com'}
+            expected: {url: 'http://example.com/', domain: 'example.com', flags: []}
         },
         {
             context: {url: 'http://example.com:1234/'},
-            expected: {url: 'http://example.com:1234/', domain: 'example.com'}
+            expected: {url: 'http://example.com:1234/', domain: 'example.com', flags: []}
         },
         {
             context: {url: 'http://user@example.com:1234/'},
-            expected: {url: 'http://user@example.com:1234/', domain: 'example.com'}
+            expected: {url: 'http://user@example.com:1234/', domain: 'example.com', flags: []}
         }
     ];
 
