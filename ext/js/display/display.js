@@ -194,14 +194,6 @@ class Display extends EventDispatcher {
         return this._progressIndicatorVisible;
     }
 
-    get tabId() {
-        return this._tabId;
-    }
-
-    get frameId() {
-        return this._frameId;
-    }
-
     get parentPopupId() {
         return this._parentPopupId;
     }
