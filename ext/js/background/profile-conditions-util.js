@@ -57,6 +57,17 @@ class ProfileConditionsUtil {
                         ['notInclude', this._createSchemaModifierKeysNotInclude.bind(this)]
                     ])
                 }
+            ],
+            [
+                'flags',
+                {
+                    operators: new Map([
+                        ['are', this._createSchemaFlagsAre.bind(this)],
+                        ['areNot', this._createSchemaFlagsAreNot.bind(this)],
+                        ['include', this._createSchemaFlagsInclude.bind(this)],
+                        ['notInclude', this._createSchemaFlagsNotInclude.bind(this)]
+                    ])
+                }
             ]
         ]);
     }
@@ -120,6 +131,10 @@ class ProfileConditionsUtil {
             } catch (e) {
                 // NOP
             }
+        }
+        const {flags} = normalizedContext;
+        if (!Array.isArray(flags)) {
+            normalizedContext.flags = [];
         }
         return normalizedContext;
     }
@@ -237,6 +252,26 @@ class ProfileConditionsUtil {
 
     _createSchemaModifierKeysNotInclude(value) {
         return this._createSchemaArrayCheck('modifierKeys', value, false, true);
+    }
+
+    // modifierKeys schema creation functions
+
+    _createSchemaFlagsAre(value) {
+        return this._createSchemaArrayCheck('flags', value, true, false);
+    }
+
+    _createSchemaFlagsAreNot(value) {
+        return {
+            not: [this._createSchemaArrayCheck('flags', value, true, false)]
+        };
+    }
+
+    _createSchemaFlagsInclude(value) {
+        return this._createSchemaArrayCheck('flags', value, false, false);
+    }
+
+    _createSchemaFlagsNotInclude(value) {
+        return this._createSchemaArrayCheck('flags', value, false, true);
     }
 
     // Generic
