@@ -30,6 +30,8 @@ class ProfileConditionsUI extends EventDispatcher {
         this._eventListeners = new EventListenerCollection();
         this._defaultType = 'popupLevel';
         this._profileIndex = 0;
+        const validateInteger = this._validateInteger.bind(this);
+        const normalizeInteger = this._normalizeInteger.bind(this);
         this._descriptors = new Map([
             [
                 'popupLevel',
@@ -37,12 +39,12 @@ class ProfileConditionsUI extends EventDispatcher {
                     displayName: 'Popup Level',
                     defaultOperator: 'equal',
                     operators: new Map([
-                        ['equal',              {displayName: '=',      type: 'integer', defaultValue: '0', validate: this._validateInteger.bind(this), normalize: this._normalizeInteger.bind(this)}],
-                        ['notEqual',           {displayName: '\u2260', type: 'integer', defaultValue: '0', validate: this._validateInteger.bind(this), normalize: this._normalizeInteger.bind(this)}],
-                        ['lessThan',           {displayName: '<',      type: 'integer', defaultValue: '0', validate: this._validateInteger.bind(this), normalize: this._normalizeInteger.bind(this)}],
-                        ['greaterThan',        {displayName: '>',      type: 'integer', defaultValue: '0', validate: this._validateInteger.bind(this), normalize: this._normalizeInteger.bind(this)}],
-                        ['lessThanOrEqual',    {displayName: '\u2264', type: 'integer', defaultValue: '0', validate: this._validateInteger.bind(this), normalize: this._normalizeInteger.bind(this)}],
-                        ['greaterThanOrEqual', {displayName: '\u2265', type: 'integer', defaultValue: '0', validate: this._validateInteger.bind(this), normalize: this._normalizeInteger.bind(this)}]
+                        ['equal',              {displayName: '=',      type: 'integer', defaultValue: '0', validate: validateInteger, normalize: normalizeInteger}],
+                        ['notEqual',           {displayName: '\u2260', type: 'integer', defaultValue: '0', validate: validateInteger, normalize: normalizeInteger}],
+                        ['lessThan',           {displayName: '<',      type: 'integer', defaultValue: '0', validate: validateInteger, normalize: normalizeInteger}],
+                        ['greaterThan',        {displayName: '>',      type: 'integer', defaultValue: '0', validate: validateInteger, normalize: normalizeInteger}],
+                        ['lessThanOrEqual',    {displayName: '\u2264', type: 'integer', defaultValue: '0', validate: validateInteger, normalize: normalizeInteger}],
+                        ['greaterThanOrEqual', {displayName: '\u2265', type: 'integer', defaultValue: '0', validate: validateInteger, normalize: normalizeInteger}]
                     ])
                 }
             ],
