@@ -88,7 +88,9 @@ class ProfileConditionsUI extends EventDispatcher {
                 }
             ]
         ]);
-        this._validFlags = new Set();
+        this._validFlags = new Set([
+            'clipboard'
+        ]);
     }
 
     get settingsController() {
