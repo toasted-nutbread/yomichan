@@ -181,7 +181,7 @@ class DictionaryEntry {
     _showMoveToModal() {
         const {title} = this._dictionaryInfo;
         const count = this._dictionaryController.dictionaryOptionCount;
-        const modal = this._dictionaryController.modalController.getModal('dictionary-confirm-delete');
+        const modal = this._dictionaryController.modalController.getModal('dictionary-move-location');
         const input = modal.node.querySelector('#dictionary-move-location');
 
         modal.node.dataset.index = `${this._index}`;
@@ -518,7 +518,7 @@ class DictionaryController {
     }
 
     _onDictionaryMoveButtonClick() {
-        const modal = this._modalController.getModal('dictionary-confirm-delete');
+        const modal = this._modalController.getModal('dictionary-move-location');
         let {index} = modal.node.dataset;
         index = Number.parseInt(index, 10);
 
