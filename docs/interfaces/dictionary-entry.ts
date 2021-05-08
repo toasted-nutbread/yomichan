@@ -297,9 +297,11 @@ namespace Translation {
          */
         dictionary: string;
         /**
-         * Database sequence number for the term. The value will be `-1` if there is no sequence.
+         * A list of database sequence numbers for the term. A value of `-1` corresponds to no sequence.
+         * The list can have multiple values if multiple definitions with different sequences have been merged.
+         * The list should always have at least one item.
          */
-        sequence: number;
+        sequences: number;
         /**
          * Tags for the definition.
          */
