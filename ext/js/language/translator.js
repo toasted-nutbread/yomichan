@@ -620,7 +620,7 @@ class Translator {
                 tag1.order = Math.min(tag1.order, tag2.order);
                 tag1.score = Math.max(tag1.score, tag2.score);
                 tag1.dictionaries.push(...tag2.dictionaries);
-                this._addUniqueStrings(tag1.content, tag2.content);
+                this._addUniqueSimple(tag1.content, tag2.content);
                 tags.splice(j, 1);
                 --tagCount;
                 --j;
@@ -1049,7 +1049,7 @@ class Translator {
 
     // Data collection addition functions
 
-    _addUniqueStrings(list, newItems) {
+    _addUniqueSimple(list, newItems) {
         for (const item of newItems) {
             if (!list.includes(item)) {
                 list.push(item);
@@ -1093,7 +1093,7 @@ class Translator {
                 for (; i < ii; ++i) {
                     const tagGroup = tagGroups[i];
                     if (tagGroup.dictionary === dictionary) {
-                        this._addUniqueStrings(tagGroup.tagNames, newTagGroup.tagNames);
+                        this._addUniqueSimple(tagGroup.tagNames, newTagGroup.tagNames);
                         break;
                     }
                 }
@@ -1114,7 +1114,7 @@ class Translator {
             }
             this._addUniqueSources(headword.sources, sources);
             this._addUniqueTagGroups(headword.tags, tags);
-            this._addUniqueStrings(headword.wordClasses, wordClasses);
+            this._addUniqueSimple(headword.wordClasses, wordClasses);
             headwordIndexMap.push(headword.index);
         }
         return headwordIndexMap;
