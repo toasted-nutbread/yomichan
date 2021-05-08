@@ -201,14 +201,6 @@ namespace Translation {
          */
         isPrimary: boolean;
         /**
-         * Database sequence number for the term, or `-1` if multiple entries have been merged.
-         */
-        sequence: number;
-        /**
-         * The dictionary that the sequence number originated from, or `null` if there is no sequence.
-         */
-        sequenceDictionary: string;
-        /**
          * A list of inflections that was applied to get the term.
          */
         inflections: string[];
