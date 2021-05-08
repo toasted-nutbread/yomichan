@@ -1027,9 +1027,9 @@ class Translator {
                 }
             }
             if (checkDuplicateDefinitions) {
-                this._addTermDefinitions2(definitions, definitionsMap, dictionaryEntry.definitions, headwordIndexMap);
+                this._addTermDefinitions(definitions, definitionsMap, dictionaryEntry.definitions, headwordIndexMap);
             } else {
-                this._addTermDefinitions(definitions, dictionaryEntry.definitions, headwordIndexMap);
+                this._addTermDefinitionsFast(definitions, dictionaryEntry.definitions, headwordIndexMap);
             }
         }
 
@@ -1143,7 +1143,7 @@ class Translator {
         headwordIndices.splice(start, 0, headwordIndex);
     }
 
-    _addTermDefinitions(definitions, newDefinitions, headwordIndexMap) {
+    _addTermDefinitionsFast(definitions, newDefinitions, headwordIndexMap) {
         for (const {headwordIndices, dictionary, sequences, isPrimary, tags, entries} of newDefinitions) {
             const headwordIndicesNew = [];
             for (const headwordIndex of headwordIndices) {
@@ -1153,7 +1153,7 @@ class Translator {
         }
     }
 
-    _addTermDefinitions2(definitions, definitionsMap, newDefinitions, headwordIndexMap) {
+    _addTermDefinitions(definitions, definitionsMap, newDefinitions, headwordIndexMap) {
         for (const {headwordIndices, dictionary, sequences, isPrimary, tags, entries} of newDefinitions) {
             const key = this._createMapKey([dictionary, ...entries]);
             let definition = definitionsMap.get(key);
