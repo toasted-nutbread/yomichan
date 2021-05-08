@@ -353,7 +353,7 @@ class Translator {
         const groupedDictionaryEntriesMap = new Map();
         const ungroupedDictionaryEntriesMap = new Map();
         for (const dictionaryEntry of dictionaryEntries) {
-            const {id, definitions: [{dictionary, sequence}]} = dictionaryEntry;
+            const {id, definitions: [{dictionary, sequences: [sequence]}]} = dictionaryEntry;
             if (mainDictionary === dictionary && sequence >= 0) {
                 let group = groupedDictionaryEntriesMap.get(sequence);
                 if (typeof group === 'undefined') {
@@ -927,8 +927,8 @@ class Translator {
         return {index, term, reading, sources, tags, wordClasses};
     }
 
-    _createTermDefinition(index, headwordIndices, dictionary, sequence, isPrimary, tags, entries) {
-        return {index, headwordIndices, dictionary, sequence, isPrimary, tags, entries};
+    _createTermDefinition(index, headwordIndices, dictionary, sequences, isPrimary, tags, entries) {
+        return {index, headwordIndices, dictionary, sequences, isPrimary, tags, entries};
     }
 
     _createTermPronunciation(index, headwordIndex, dictionary, dictionaryIndex, dictionaryPriority, pitches) {
@@ -982,7 +982,7 @@ class Translator {
             sourceTermExactMatchCount,
             maxTransformedTextLength,
             [this._createTermHeadword(0, term, reading, [source], headwordTagGroups, rules)],
-            [this._createTermDefinition(0, [0], dictionary, sequence, isPrimary, definitionTagGroups, definitions)]
+            [this._createTermDefinition(0, [0], dictionary, [sequence], isPrimary, definitionTagGroups, definitions)]
         );
     }
 
@@ -1144,27 +1144,28 @@ class Translator {
     }
 
     _addTermDefinitions(definitions, newDefinitions, headwordIndexMap) {
-        for (const {headwordIndices, dictionary, sequence, isPrimary, tags, entries} of newDefinitions) {
+        for (const {headwordIndices, dictionary, sequences, isPrimary, tags, entries} of newDefinitions) {
             const headwordIndicesNew = [];
             for (const headwordIndex of headwordIndices) {
                 headwordIndicesNew.push(headwordIndexMap[headwordIndex]);
             }
-            definitions.push(this._createTermDefinition(definitions.length, headwordIndicesNew, dictionary, sequence, isPrimary, tags, entries));
+            definitions.push(this._createTermDefinition(definitions.length, headwordIndicesNew, dictionary, sequences, isPrimary, tags, entries));
         }
     }
 
     _addTermDefinitions2(definitions, definitionsMap, newDefinitions, headwordIndexMap) {
-        for (const {headwordIndices, dictionary, sequence, isPrimary, tags, entries} of newDefinitions) {
-            const key = this._createMapKey([dictionary, sequence, ...entries]);
+        for (const {headwordIndices, dictionary, sequences, isPrimary, tags, entries} of newDefinitions) {
+            const key = this._createMapKey([dictionary, ...entries]);
             let definition = definitionsMap.get(key);
             if (typeof definition === 'undefined') {
-                definition = this._createTermDefinition(definitions.length, [], dictionary, sequence, isPrimary, [], [...entries]);
+                definition = this._createTermDefinition(definitions.length, [], dictionary, [...sequences], isPrimary, [], [...entries]);
                 definitions.push(definition);
                 definitionsMap.set(key, definition);
             } else {
                 if (isPrimary) {
                     definition.isPrimary = true;
                 }
+                this._addUniqueSimple(definition.sequences, sequences);
             }
 
             const newHeadwordIndices = definition.headwordIndices;
