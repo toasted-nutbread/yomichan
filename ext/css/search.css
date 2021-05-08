@@ -167,4 +167,11 @@ h1 {
 #intro>p {
     margin: 0;
 }
-
+:root[data-search-mode=action-popup] #intro,
+:root[data-search-mode=action-popup] #search-option-clipboard-monitor-container {
+    display: none;
+}
+:root[data-search-mode=action-popup] {
+    width: 640px;
+    height: 480px;
+}
