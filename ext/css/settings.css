@@ -2310,6 +2310,9 @@ input[type=number].dictionary-priority {
 .no-wrap {
     white-space: nowrap;
 }
+.overflow-wrap-anywhere {
+    overflow-wrap: anywhere;
+}
 
 
 /* Environment-specific display */
