@@ -171,7 +171,8 @@ h1 {
 :root[data-search-mode=action-popup] #search-option-clipboard-monitor-container {
     display: none;
 }
-:root[data-search-mode=action-popup] {
+:root[data-search-mode=action-popup],
+:root[data-search-mode=action-popup] body {
     width: 640px;
     height: 480px;
 }
