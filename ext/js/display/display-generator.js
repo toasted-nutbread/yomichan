@@ -295,6 +295,8 @@ class DisplayGenerator {
             switch (entry.type) {
                 case 'image':
                     return this._createTermDefinitionEntryImage(entry, dictionary);
+                case 'structured-content':
+                    return this._createTermDefinitionEntryStructuredContent(entry.content, dictionary);
             }
         }
 
@@ -324,6 +326,16 @@ class DisplayGenerator {
             contentContainer.appendChild(fragment);
         }
 
+        return node;
+    }
+
+    _createTermDefinitionEntryStructuredContent(content, dictionary) {
+        const node = this._templates.instantiate('gloss-item');
+        const child = this._createStructuredContent(content, dictionary);
+        if (child !== null) {
+            const contentContainer = node.querySelector('.gloss-content');
+            contentContainer.appendChild(child);
+        }
         return node;
     }
 
@@ -384,6 +396,40 @@ class DisplayGenerator {
             node.removeAttribute('href');
             node.dataset.imageLoadState = unloaded ? 'unloaded' : 'load-error';
         }
+    }
+
+    _createStructuredContent(content, dictionary) {
+        if (typeof content === 'string') {
+            return document.createTextNode(content);
+        }
+        if (!(typeof content === 'object' && content !== null)) {
+            return null;
+        }
+        if (Array.isArray(content)) {
+            const fragment = document.createDocumentFragment();
+            for (const item of content) {
+                const child = this._createStructuredContent(item, dictionary);
+                if (child !== null) { fragment.appendChild(child); }
+            }
+            return fragment;
+        }
+        const {tag} = content;
+        switch (tag) {
+            case 'ruby':
+            case 'rt':
+            case 'rp':
+            {
+                const node = document.createElement(tag);
+                const child = this._createStructuredContent(content.content, dictionary);
+                if (child !== null) {
+                    node.appendChild(child);
+                }
+                return node;
+            }
+            case 'img':
+                return this._createDefinitionImage(content, dictionary);
+        }
+        return null;
     }
 
     _createTermDisambiguation(disambiguation) {
