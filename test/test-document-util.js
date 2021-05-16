@@ -182,6 +182,7 @@ async function testDocumentTextScanningFunctions(dom, {DocumentUtil, TextSourceR
         if (source === null) { continue; }
 
         // Sentence info
+        const terminateAtNewlines = true;
         const terminatorString = '…。．.？?！!';
         const terminatorMap = new Map();
         for (const char of terminatorString) {
@@ -200,6 +201,7 @@ async function testDocumentTextScanningFunctions(dom, {DocumentUtil, TextSourceR
             source,
             false,
             sentenceScanExtent,
+            terminateAtNewlines,
             terminatorMap,
             forwardQuoteMap,
             backwardQuoteMap
