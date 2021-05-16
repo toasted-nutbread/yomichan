@@ -846,6 +846,7 @@ class TextScanner extends EventDispatcher {
     async _findTermDictionaryEntries(textSource, optionsContext) {
         const scanLength = this._scanLength;
         const sentenceScanExtent = this._sentenceScanExtent;
+        const sentenceTerminateAtNewlines = this._sentenceTerminateAtNewlines;
         const sentenceTerminatorMap = this._sentenceTerminatorMap;
         const sentenceForwardQuoteMap = this._sentenceForwardQuoteMap;
         const sentenceBackwardQuoteMap = this._sentenceBackwardQuoteMap;
@@ -861,6 +862,7 @@ class TextScanner extends EventDispatcher {
             textSource,
             layoutAwareScan,
             sentenceScanExtent,
+            sentenceTerminateAtNewlines,
             sentenceTerminatorMap,
             sentenceForwardQuoteMap,
             sentenceBackwardQuoteMap
@@ -871,6 +873,7 @@ class TextScanner extends EventDispatcher {
 
     async _findKanjiDictionaryEntries(textSource, optionsContext) {
         const sentenceScanExtent = this._sentenceScanExtent;
+        const sentenceTerminateAtNewlines = this._sentenceTerminateAtNewlines;
         const sentenceTerminatorMap = this._sentenceTerminatorMap;
         const sentenceForwardQuoteMap = this._sentenceForwardQuoteMap;
         const sentenceBackwardQuoteMap = this._sentenceBackwardQuoteMap;
@@ -886,6 +889,7 @@ class TextScanner extends EventDispatcher {
             textSource,
             layoutAwareScan,
             sentenceScanExtent,
+            sentenceTerminateAtNewlines,
             sentenceTerminatorMap,
             sentenceForwardQuoteMap,
             sentenceBackwardQuoteMap
