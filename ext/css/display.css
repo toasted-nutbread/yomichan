@@ -1588,7 +1588,7 @@ button.definition-item-expansion-button:focus:focus-visible+.definition-item-con
     white-space: normal;
     color: var(--text-color-light3);
 }
-.gloss-item[data-has-image=true][data-image-load-state=load-error] .gloss-image-container-overlay::after {
+.gloss-image-link[data-has-image=true][data-image-load-state=load-error] .gloss-image-container-overlay::after {
     content: 'Image failed to load';
     display: table-cell;
     width: 100%;
