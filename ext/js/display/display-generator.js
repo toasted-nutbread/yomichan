@@ -346,6 +346,7 @@ class DisplayGenerator {
         node.dataset.path = path;
         node.dataset.dictionary = dictionary;
         node.dataset.imageLoadState = 'not-loaded';
+        node.dataset.hasAspectRatio = 'true';
 
         const imageContainer = node.querySelector('.gloss-image-container');
         imageContainer.style.width = `${usedWidth}em`;
