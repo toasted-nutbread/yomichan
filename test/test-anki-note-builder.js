@@ -167,7 +167,9 @@ async function getRenderResults(dictionaryEntries, type, mode, template, AnkiNot
                 text: `${clozePrefix}${source}${clozeSuffix}`,
                 offset: clozePrefix.length
             },
-            documentTitle: 'title'
+            documentTitle: 'title',
+            query: 'query',
+            fullQuery: 'fullQuery'
         };
         const errors = [];
         const noteFields = (await ankiNoteBuilder.createNote({
