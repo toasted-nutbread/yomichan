@@ -110,6 +110,7 @@ function getFieldMarkers(type) {
                 'pitch-accent-positions',
                 'reading',
                 'screenshot',
+                'search-query',
                 'sentence',
                 'tags',
                 'url'
@@ -128,6 +129,7 @@ function getFieldMarkers(type) {
                 'kunyomi',
                 'onyomi',
                 'screenshot',
+                'search-query',
                 'sentence',
                 'stroke-count',
                 'tags',
