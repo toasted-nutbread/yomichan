@@ -1666,6 +1666,7 @@ button.definition-item-expansion-button:focus:focus-visible+.definition-item-con
 :root[data-glossary-layout-mode=compact] .gloss-image-link[data-collapsible=true] .gloss-image-link-text {
     display: inline;
 }
+.gloss-image-link[data-collapsed=true]~.gloss-image-description,
 :root[data-glossary-layout-mode=compact] .gloss-image-description {
     display: inline;
 }
