@@ -1571,6 +1571,7 @@ button.definition-item-expansion-button:focus:focus-visible+.definition-item-con
 .gloss-image-link {
     cursor: inherit;
     color: inherit;
+    display: inline-block;
 }
 .gloss-image-link[href]:hover {
     cursor: pointer;
@@ -1627,6 +1628,9 @@ button.definition-item-expansion-button:focus:focus-visible+.definition-item-con
     vertical-align: top;
     font-size: 0;
 }
+.gloss-image-link-text {
+    display: none;
+}
 .gloss-image-link-text::before {
     content: '[';
 }
@@ -1634,6 +1638,7 @@ button.definition-item-expansion-button:focus:focus-visible+.definition-item-con
     content: ']';
 }
 .gloss-image-description {
+    display: block;
     white-space: pre-line;
 }
 
@@ -1656,11 +1661,11 @@ button.definition-item-expansion-button:focus:focus-visible+.definition-item-con
 :root[data-glossary-layout-mode=compact] .gloss-image-link:focus .gloss-image-container {
     display: block;
 }
-:root:not([data-glossary-layout-mode=compact]) .gloss-image-link-text {
-    display: none;
+:root[data-glossary-layout-mode=compact] .gloss-image-link-text {
+    display: inline;
 }
-:root:not([data-glossary-layout-mode=compact]) .gloss-image-description {
-    display: block;
+:root[data-glossary-layout-mode=compact] .gloss-image-description {
+    display: inline;
 }
 
 
