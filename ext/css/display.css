@@ -1572,6 +1572,7 @@ button.definition-item-expansion-button:focus:focus-visible+.definition-item-con
     cursor: inherit;
     color: inherit;
     display: inline-block;
+    position: relative;
 }
 .gloss-image-link[href]:hover {
     cursor: pointer;
@@ -1642,26 +1643,27 @@ button.definition-item-expansion-button:focus:focus-visible+.definition-item-con
     white-space: pre-line;
 }
 
-:root[data-glossary-layout-mode=compact] .gloss-image-container {
+.gloss-image-link[data-collapsed=true] .gloss-image-container,
+:root[data-glossary-layout-mode=compact] .gloss-image-link[data-collapsible=true] .gloss-image-container {
     display: none;
     position: absolute;
     left: 0;
     top: 100%;
     z-index: 1;
 }
-:root[data-glossary-layout-mode=compact] .entry:nth-last-of-type(1):not(:nth-of-type(1)) .gloss-image-container {
+.entry:nth-last-of-type(1):not(:nth-of-type(1)) .gloss-image-link[data-collapsed=true] .gloss-image-container,
+:root[data-glossary-layout-mode=compact] .entry:nth-last-of-type(1):not(:nth-of-type(1)) .gloss-image-link[data-collapsible=true] .gloss-image-container {
     bottom: 100%;
     top: auto;
 }
-:root[data-glossary-layout-mode=compact] .gloss-image-link {
-    position: relative;
-    display: inline-block;
-}
-:root[data-glossary-layout-mode=compact] .gloss-image-link:hover .gloss-image-container,
-:root[data-glossary-layout-mode=compact] .gloss-image-link:focus .gloss-image-container {
+.gloss-image-link[data-collapsed=true]:hover .gloss-image-container,
+.gloss-image-link[data-collapsed=true]:focus .gloss-image-container,
+:root[data-glossary-layout-mode=compact] .gloss-image-link[data-collapsible=true]:hover .gloss-image-container,
+:root[data-glossary-layout-mode=compact] .gloss-image-link[data-collapsible=true]:focus .gloss-image-container {
     display: block;
 }
-:root[data-glossary-layout-mode=compact] .gloss-image-link-text {
+.gloss-image-link[data-collapsed=true] .gloss-image-link-text,
+:root[data-glossary-layout-mode=compact] .gloss-image-link[data-collapsible=true] .gloss-image-link-text {
     display: inline;
 }
 :root[data-glossary-layout-mode=compact] .gloss-image-description {
