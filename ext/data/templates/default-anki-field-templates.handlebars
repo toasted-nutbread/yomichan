@@ -373,7 +373,7 @@
 {{/inline}}
 
 {{#*inline "search-query"}}
-    {{~context.fullQuery~}}
+    {{~#multiLine}}{{context.fullQuery}}{{/multiLine~}}
 {{/inline}}
 
 {{~> (lookup . "marker") ~}}
