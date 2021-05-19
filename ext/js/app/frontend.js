@@ -294,12 +294,12 @@ class Frontend {
 
     _clearSelection(passive) {
         this._stopClearSelectionDelayed();
-        this._textScanner.clearSelection();
         if (this._popup !== null) {
-            this._popup.hide(!passive);
             this._popup.clearAutoPlayTimer();
+            this._popup.hide(!passive);
             this._isPointerOverPopup = false;
         }
+        this._textScanner.clearSelection();
     }
 
     _clearSelectionDelayed(delay, restart, passive) {
