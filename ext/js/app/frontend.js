@@ -257,15 +257,6 @@ class Frontend {
         this._clearSelection(false);
     }
 
-    _onClearSelection({passive}) {
-        this._stopClearSelectionDelayed();
-        if (this._popup !== null) {
-            this._popup.hide(!passive);
-            this._popup.clearAutoPlayTimer();
-            this._isPointerOverPopup = false;
-        }
-    }
-
     _onSearched({type, dictionaryEntries, sentence, inputInfo: {eventType, passive, detail}, textSource, optionsContext, detail: {documentTitle}, error}) {
         const scanningOptions = this._options.scanning;
 
@@ -303,7 +294,7 @@ class Frontend {
 
     _clearSelection(passive) {
         this._stopClearSelectionDelayed();
-        this._textScanner.clearSelection(passive);
+        this._textScanner.clearSelection();
         if (this._popup !== null) {
             this._popup.hide(!passive);
             this._popup.clearAutoPlayTimer();

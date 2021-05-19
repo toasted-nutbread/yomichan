@@ -1852,7 +1852,7 @@ class Display extends EventDispatcher {
                 contentOrigin: this.getContentOrigin()
             }
         };
-        this._contentTextScanner.clearSelection(true);
+        this._contentTextScanner.clearSelection();
         this.setContent(details);
     }
 
