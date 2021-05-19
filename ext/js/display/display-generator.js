@@ -340,7 +340,7 @@ class DisplayGenerator {
     }
 
     _createDefinitionImage(data, dictionary) {
-        const {path, width, height, preferredWidth, preferredHeight, title, pixelated, collapsed, collapsible} = data;
+        const {path, width, height, preferredWidth, preferredHeight, title, pixelated, collapsed, collapsible, verticalAlign} = data;
 
         const usedWidth = (
             typeof preferredWidth === 'number' ?
@@ -361,6 +361,9 @@ class DisplayGenerator {
         node.dataset.hasAspectRatio = 'true';
         node.dataset.collapsed = typeof collapsed === 'boolean' ? `${collapsed}` : 'false';
         node.dataset.collapsible = typeof collapsible === 'boolean' ? `${collapsible}` : 'true';
+        if (typeof verticalAlign === 'string') {
+            node.dataset.verticalAlign = verticalAlign;
+        }
 
         const imageContainer = node.querySelector('.gloss-image-container');
         imageContainer.style.width = `${usedWidth}em`;

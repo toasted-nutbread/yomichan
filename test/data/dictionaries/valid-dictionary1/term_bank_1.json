@@ -26,7 +26,7 @@
                 "\nmore content 1: ",
                 {"tag": "img", "path": "image.gif", "width": 35, "height": 35, "pixelated": true, "collapsible": true},
                 "\nmore content 2: ",
-                {"tag": "img", "path": "image.gif", "width": 35, "height": 35, "pixelated": true, "collapsible": false, "collapsed": false},
+                {"tag": "img", "path": "image.gif", "width": 35, "height": 35, "pixelated": true, "collapsible": false, "collapsed": false, "verticalAlign": "middle"},
                 " and ",
                 {"tag": "img", "path": "image.gif", "width": 35, "height": 35, "pixelated": true, "collapsible": false, "collapsed": true}
             ]},

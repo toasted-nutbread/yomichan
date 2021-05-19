@@ -79,6 +79,11 @@
                                     "type": "boolean",
                                     "description": "Whether or not the image can be collapsed.",
                                     "default": false
+                                },
+                                "verticalAlign": {
+                                    "type": "string",
+                                    "description": "The vertical alignment of the image.",
+                                    "enum": ["baseline", "sub", "super", "text-top", "text-bottom", "middle", "top", "bottom"]
                                 }
                             }
                         }
