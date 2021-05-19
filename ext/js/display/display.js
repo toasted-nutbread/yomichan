@@ -1771,6 +1771,7 @@ class Display extends EventDispatcher {
         if (!options.scanning.enablePopupSearch) {
             if (this._contentTextScanner !== null) {
                 this._contentTextScanner.setEnabled(false);
+                this._contentTextScanner.clearSelection();
             }
             return;
         }

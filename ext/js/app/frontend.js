@@ -121,7 +121,7 @@ class Frontend {
         yomichan.on('closePopups', this._onClosePopups.bind(this));
         chrome.runtime.onMessage.addListener(this._onRuntimeMessage.bind(this));
 
-        this._textScanner.on('clearSelection', this._onClearSelection.bind(this));
+        this._textScanner.on('clear', this._onTextScannerClear.bind(this));
         this._textScanner.on('searched', this._onSearched.bind(this));
 
         yomichan.crossFrame.registerHandlers([
@@ -253,6 +253,10 @@ class Frontend {
         this._updateContentScale();
     }
 
+    _onTextScannerClear() {
+        this._clearSelection(false);
+    }
+
     _onClearSelection({passive}) {
         this._stopClearSelectionDelayed();
         if (this._popup !== null) {
@@ -300,6 +304,11 @@ class Frontend {
     _clearSelection(passive) {
         this._stopClearSelectionDelayed();
         this._textScanner.clearSelection(passive);
+        if (this._popup !== null) {
+            this._popup.hide(!passive);
+            this._popup.clearAutoPlayTimer();
+            this._isPointerOverPopup = false;
+        }
     }
 
     _clearSelectionDelayed(delay, restart, passive) {
@@ -566,6 +575,7 @@ class Frontend {
     _updateTextScannerEnabled() {
         const enabled = (this._options !== null && this._options.general.enable && !this._disabledOverride);
         this._textScanner.setEnabled(enabled);
+        this._clearSelection(true);
     }
 
     _updateContentScale() {
