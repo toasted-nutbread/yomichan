@@ -69,14 +69,14 @@ class JsonSchema {
     }
 
     getValidValueOrDefault(value) {
-        return this._getValidValueOrDefault(null, value, [{path: null, schema: this._startSchema}]);
+        return this._getValidValueOrDefault(null, value, {schema: this._startSchema, path: null});
     }
 
     getObjectPropertySchema(property) {
         this._schemaPush(this._startSchema, null);
         try {
-            const schemaPath = this._getObjectPropertySchemaPath(property);
-            return schemaPath !== null ? new JsonSchema(schemaPath[schemaPath.length - 1].schema, this._rootSchema) : null;
+            const schemaInfo = this._getObjectPropertySchemaPath(property);
+            return schemaInfo !== null ? new JsonSchema(schemaInfo.schema, this._rootSchema) : null;
         } finally {
             this._schemaPop();
         }
@@ -85,8 +85,8 @@ class JsonSchema {
     getArrayItemSchema(index) {
         this._schemaPush(this._startSchema, null);
         try {
-            const schemaPath = this._getArrayItemSchemaPath(index);
-            return schemaPath !== null ? new JsonSchema(schemaPath[schemaPath.length - 1].schema, this._rootSchema) : null;
+            const schemaInfo = this._getArrayItemSchemaPath(index);
+            return schemaInfo !== null ? new JsonSchema(schemaInfo.schema, this._rootSchema) : null;
         } finally {
             this._schemaPop();
         }
@@ -112,20 +112,8 @@ class JsonSchema {
         this._schema = schema;
     }
 
-    _schemaPushMulti(entries) {
-        this._schemaPath.push(...entries);
-        this._schema = entries[entries.length - 1].schema;
-    }
-
     _schemaPop() {
         this._schemaPath.pop();
-        this._schema = this._schemaPath[this._schemaPath.length - 1].schema;
-    }
-
-    _schemaPopMulti(count) {
-        for (let i = 0; i < count; ++i) {
-            this._schemaPath.pop();
-        }
         this._schema = this._schemaPath[this._schemaPath.length - 1].schema;
     }
 
@@ -179,10 +167,7 @@ class JsonSchema {
         if (this._isObject(properties)) {
             const propertySchema = properties[property];
             if (this._isObject(propertySchema)) {
-                return [
-                    {path: 'properties', schema: properties},
-                    {path: property, schema: propertySchema}
-                ];
+                return {schema: propertySchema, path: ['properties', property]};
             }
         }
 
@@ -190,26 +175,23 @@ class JsonSchema {
         if (additionalProperties === false) {
             return null;
         } else if (this._isObject(additionalProperties)) {
-            return [{path: 'additionalProperties', schema: additionalProperties}];
+            return {schema: additionalProperties, path: 'additionalProperties'};
         } else {
             const result = this._getUnconstrainedSchema();
-            return [{path: null, schema: result}];
+            return {schema: result, path: null};
         }
     }
 
     _getArrayItemSchemaPath(index) {
         const {items} = this._schema;
         if (this._isObject(items)) {
-            return [{path: 'items', schema: items}];
+            return {schema: items, path: 'items'};
         }
         if (Array.isArray(items)) {
             if (index >= 0 && index < items.length) {
                 const propertySchema = items[index];
                 if (this._isObject(propertySchema)) {
-                    return [
-                        {path: 'items', schema: items},
-                        {path: index, schema: propertySchema}
-                    ];
+                    return {schema: propertySchema, path: ['items', index]};
                 }
             }
         }
@@ -218,10 +200,10 @@ class JsonSchema {
         if (additionalItems === false) {
             return null;
         } else if (this._isObject(additionalItems)) {
-            return [{path: 'additionalItems', schema: additionalItems}];
+            return {schema: additionalItems, path: 'additionalItems'};
         } else {
             const result = this._getUnconstrainedSchema();
-            return [{path: null, schema: result}];
+            return {schema: result, path: null};
         }
     }
 
@@ -539,20 +521,20 @@ class JsonSchema {
         this._validateArrayContains(value);
 
         for (let i = 0; i < length; ++i) {
-            const schemaPath = this._getArrayItemSchemaPath(i);
-            if (schemaPath === null) {
+            const schemaInfo = this._getArrayItemSchemaPath(i);
+            if (schemaInfo === null) {
                 throw this._createError(`No schema found for array[${i}]`);
             }
 
             const propertyValue = value[i];
 
-            this._schemaPushMulti(schemaPath);
+            this._schemaPush(schemaInfo.schema, schemaInfo.path);
             this._valuePush(propertyValue, i);
             try {
                 this._validate(propertyValue);
             } finally {
                 this._valuePop();
-                this._schemaPopMulti(schemaPath.length);
+                this._schemaPop();
             }
         }
     }
@@ -604,20 +586,20 @@ class JsonSchema {
         }
 
         for (const property of properties) {
-            const schemaPath = this._getObjectPropertySchemaPath(property);
-            if (schemaPath === null) {
+            const schemaInfo = this._getObjectPropertySchemaPath(property);
+            if (schemaInfo === null) {
                 throw this._createError(`No schema found for ${property}`);
             }
 
             const propertyValue = value[property];
 
-            this._schemaPushMulti(schemaPath);
+            this._schemaPush(schemaInfo.schema, schemaInfo.path);
             this._valuePush(propertyValue, property);
             try {
                 this._validate(propertyValue);
             } finally {
                 this._valuePop();
-                this._schemaPopMulti(schemaPath.length);
+                this._schemaPop();
             }
         }
     }
@@ -655,14 +637,14 @@ class JsonSchema {
         );
     }
 
-    _getValidValueOrDefault(path, value, schemaPath) {
-        this._schemaPushMulti(schemaPath);
+    _getValidValueOrDefault(path, value, schemaInfo) {
+        this._schemaPush(schemaInfo.schema, schemaInfo.path);
         this._valuePush(value, path);
         try {
             return this._getValidValueOrDefaultInner(value);
         } finally {
             this._valuePop();
-            this._schemaPopMulti(schemaPath.length);
+            this._schemaPop();
         }
     }
 
@@ -700,19 +682,19 @@ class JsonSchema {
         if (Array.isArray(required)) {
             for (const property of required) {
                 properties.delete(property);
-                const schemaPath = this._getObjectPropertySchemaPath(property);
-                if (schemaPath === null) { continue; }
+                const schemaInfo = this._getObjectPropertySchemaPath(property);
+                if (schemaInfo === null) { continue; }
                 const propertyValue = Object.prototype.hasOwnProperty.call(value, property) ? value[property] : void 0;
-                value[property] = this._getValidValueOrDefault(property, propertyValue, schemaPath);
+                value[property] = this._getValidValueOrDefault(property, propertyValue, schemaInfo);
             }
         }
 
         for (const property of properties) {
-            const schemaPath = this._getObjectPropertySchemaPath(property);
-            if (schemaPath === null) {
+            const schemaInfo = this._getObjectPropertySchemaPath(property);
+            if (schemaInfo === null) {
                 Reflect.deleteProperty(value, property);
             } else {
-                value[property] = this._getValidValueOrDefault(property, value[property], schemaPath);
+                value[property] = this._getValidValueOrDefault(property, value[property], schemaInfo);
             }
         }
 
@@ -721,18 +703,18 @@ class JsonSchema {
 
     _populateArrayDefaults(value) {
         for (let i = 0, ii = value.length; i < ii; ++i) {
-            const schemaPath = this._getArrayItemSchemaPath(i);
-            if (schemaPath === null) { continue; }
+            const schemaInfo = this._getArrayItemSchemaPath(i);
+            if (schemaInfo === null) { continue; }
             const propertyValue = value[i];
-            value[i] = this._getValidValueOrDefault(i, propertyValue, schemaPath);
+            value[i] = this._getValidValueOrDefault(i, propertyValue, schemaInfo);
         }
 
         const {minItems, maxItems} = this._schema;
         if (typeof minItems === 'number' && value.length < minItems) {
             for (let i = value.length; i < minItems; ++i) {
-                const schemaPath = this._getArrayItemSchemaPath(i);
-                if (schemaPath === null) { break; }
-                const item = this._getValidValueOrDefault(i, void 0, schemaPath);
+                const schemaInfo = this._getArrayItemSchemaPath(i);
+                if (schemaInfo === null) { break; }
+                const item = this._getValidValueOrDefault(i, void 0, schemaInfo);
                 value.push(item);
             }
         }
