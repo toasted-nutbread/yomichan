@@ -30,7 +30,7 @@ self.importScripts(
     '/js/comm/mecab.js',
     '/js/data/anki-util.js',
     '/js/data/database.js',
-    '/js/data/json-schema.js',
+    '/js/data/json-schema2.js',
     '/js/data/options-util.js',
     '/js/data/permissions-util.js',
     '/js/dom/simple-dom-parser.js',

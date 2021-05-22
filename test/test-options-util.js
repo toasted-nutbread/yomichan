@@ -49,7 +49,7 @@ function createVM(extDir) {
     vm.execute([
         'js/core.js',
         'js/general/cache-map.js',
-        'js/data/json-schema.js',
+        'js/data/json-schema2.js',
         'js/templates/template-patcher.js',
         'js/data/options-util.js'
     ]);

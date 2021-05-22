@@ -47,7 +47,7 @@ class TranslatorVM extends DatabaseVM {
             'js/core.js',
             'js/data/anki-note-data-creator.js',
             'js/data/database.js',
-            'js/data/json-schema.js',
+            'js/data/json-schema2.js',
             'js/general/cache-map.js',
             'js/general/regex-util.js',
             'js/general/text-source-map.js',
