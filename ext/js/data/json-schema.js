@@ -59,7 +59,7 @@ class JsonSchema {
 
     validate(value) {
         this._schemaPush(this._startSchema, null);
-        this._valuePush(null, value);
+        this._valuePush(value, null);
         try {
             this._validate(value);
         } finally {
@@ -99,8 +99,8 @@ class JsonSchema {
 
     // Stack
 
-    _valuePush(path, value) {
-        this._valuePath.push({path, value});
+    _valuePush(value, path) {
+        this._valuePath.push({value, path});
     }
 
     _valuePop() {
@@ -134,8 +134,8 @@ class JsonSchema {
     _createError(message) {
         const valuePath = [];
         for (let i = 1, ii = this._valuePath.length; i < ii; ++i) {
-            const {path, value} = this._valuePath[i];
-            valuePath.push({path, value});
+            const {value, path} = this._valuePath[i];
+            valuePath.push({value, path});
         }
 
         const schemaPath = [];
@@ -547,7 +547,7 @@ class JsonSchema {
             const propertyValue = value[i];
 
             this._schemaPushMulti(schemaPath);
-            this._valuePush(i, propertyValue);
+            this._valuePush(propertyValue, i);
             try {
                 this._validate(propertyValue);
             } finally {
@@ -565,7 +565,7 @@ class JsonSchema {
         try {
             for (let i = 0, ii = value.length; i < ii; ++i) {
                 const propertyValue = value[i];
-                this._valuePush(i, propertyValue);
+                this._valuePush(propertyValue, i);
                 try {
                     this._validate(propertyValue);
                     return;
@@ -612,7 +612,7 @@ class JsonSchema {
             const propertyValue = value[property];
 
             this._schemaPushMulti(schemaPath);
-            this._valuePush(property, propertyValue);
+            this._valuePush(propertyValue, property);
             try {
                 this._validate(propertyValue);
             } finally {
@@ -657,7 +657,7 @@ class JsonSchema {
 
     _getValidValueOrDefault(path, value, schemaPath) {
         this._schemaPushMulti(schemaPath);
-        this._valuePush(path, value);
+        this._valuePush(value, path);
         try {
             return this._getValidValueOrDefaultInner(value);
         } finally {
