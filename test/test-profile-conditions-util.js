@@ -24,7 +24,7 @@ const vm = new VM({});
 vm.execute([
     'js/core.js',
     'js/general/cache-map.js',
-    'js/data/json-schema2.js',
+    'js/data/json-schema.js',
     'js/background/profile-conditions-util.js'
 ]);
 const [ProfileConditionsUtil] = vm.get(['ProfileConditionsUtil']);

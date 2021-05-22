@@ -25,7 +25,7 @@ const vm = new DatabaseVM();
 vm.execute([
     'js/core.js',
     'js/general/cache-map.js',
-    'js/data/json-schema2.js',
+    'js/data/json-schema.js',
     'js/media/media-util.js',
     'js/language/dictionary-importer.js',
     'js/data/database.js',

@@ -25,7 +25,7 @@ const vm = new VM();
 vm.execute([
     'js/core.js',
     'js/general/cache-map.js',
-    'js/data/json-schema2.js'
+    'js/data/json-schema.js'
 ]);
 const JsonSchema = vm.get('JsonSchema');
 
