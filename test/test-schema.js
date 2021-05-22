@@ -28,6 +28,15 @@ vm.execute([
 const JsonSchemaValidator = vm.get('JsonSchemaValidator');
 
 
+function schemaValidate(schema, value) {
+    return new JsonSchemaValidator().isValid(value, schema);
+}
+
+function getValidValueOrDefault(schema, value) {
+    return new JsonSchemaValidator().getValidValueOrDefault(schema, value);
+}
+
+
 function testValidate1() {
     const schema = {
         allOf: [
@@ -54,10 +63,6 @@ function testValidate1() {
         ]
     };
 
-    const schemaValidate = (value) => {
-        return new JsonSchemaValidator().isValid(value, schema);
-    };
-
     const jsValidate = (value) => {
         return (
             typeof value === 'number' &&
@@ -77,7 +82,7 @@ function testValidate1() {
     };
 
     for (let i = -111; i <= 111; i++) {
-        const actual = schemaValidate(i, schema);
+        const actual = schemaValidate(schema, i);
         const expected = jsValidate(i);
         assert.strictEqual(actual, expected);
     }
@@ -403,13 +408,9 @@ function testValidate2() {
         }
     ];
 
-    const schemaValidate = (value, schema) => {
-        return new JsonSchemaValidator().isValid(value, schema);
-    };
-
     for (const {schema, inputs} of data) {
         for (const {expected, value} of inputs) {
-            const actual = schemaValidate(value, schema);
+            const actual = schemaValidate(schema, value);
             assert.strictEqual(actual, expected);
         }
     }
@@ -686,7 +687,7 @@ function testGetValidValueOrDefault1() {
 
     for (const {schema, inputs} of data) {
         for (const [value, expected] of inputs) {
-            const actual = new JsonSchemaValidator().getValidValueOrDefault(schema, value);
+            const actual = getValidValueOrDefault(schema, value);
             vm.assert.deepStrictEqual(actual, expected);
         }
     }
