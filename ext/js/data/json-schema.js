@@ -112,8 +112,20 @@ class JsonSchema {
         this._schema = schema;
     }
 
+    _schemaPushMulti(entries) {
+        this._schemaPath.push(...entries);
+        this._schema = entries[entries.length - 1].schema;
+    }
+
     _schemaPop() {
         this._schemaPath.pop();
+        this._schema = this._schemaPath[this._schemaPath.length - 1].schema;
+    }
+
+    _schemaPopMulti(count) {
+        for (let i = 0; i < count; ++i) {
+            this._schemaPath.pop();
+        }
         this._schema = this._schemaPath[this._schemaPath.length - 1].schema;
     }
 
@@ -534,13 +546,13 @@ class JsonSchema {
 
             const propertyValue = value[i];
 
-            for (const {path, schema} of schemaPath) { this._schemaPush(path, schema); }
+            this._schemaPushMulti(schemaPath);
             this._valuePush(i, propertyValue);
             try {
                 this._validate(propertyValue);
             } finally {
                 this._valuePop();
-                for (let j = 0, jj = schemaPath.length; j < jj; ++j) { this._schemaPop(); }
+                this._schemaPopMulti(schemaPath.length);
             }
         }
     }
@@ -599,13 +611,13 @@ class JsonSchema {
 
             const propertyValue = value[property];
 
-            for (const {path, schema} of schemaPath) { this._schemaPush(path, schema); }
+            this._schemaPushMulti(schemaPath);
             this._valuePush(property, propertyValue);
             try {
                 this._validate(propertyValue);
             } finally {
                 this._valuePop();
-                for (let j = 0, jj = schemaPath.length; j < jj; ++j) { this._schemaPop(); }
+                this._schemaPopMulti(schemaPath.length);
             }
         }
     }
@@ -644,13 +656,13 @@ class JsonSchema {
     }
 
     _getValidValueOrDefault(path, value, schemaPath) {
+        this._schemaPushMulti(schemaPath);
         this._valuePush(path, value);
-        for (const {path: path2, schema} of schemaPath) { this._schemaPush(path2, schema); }
         try {
             return this._getValidValueOrDefaultInner(value);
         } finally {
-            for (let i = 0, ii = schemaPath.length; i < ii; ++i) { this._schemaPop(); }
             this._valuePop();
+            this._schemaPopMulti(schemaPath.length);
         }
     }
 
