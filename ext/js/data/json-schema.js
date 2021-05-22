@@ -43,7 +43,7 @@ class JsonSchema {
     createProxy(value) {
         return (
             typeof value === 'object' && value !== null ?
-            new Proxy(value, new JsonSchemaProxyHandler2(this)) :
+            new Proxy(value, new JsonSchemaProxyHandler(this)) :
             value
         );
     }
@@ -733,7 +733,7 @@ class JsonSchema {
     }
 }
 
-class JsonSchemaProxyHandler2 {
+class JsonSchemaProxyHandler {
     constructor(schema) {
         this._schema = schema;
         this._numberPattern = /^(?:0|[1-9]\d*)$/;
