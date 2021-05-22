@@ -25,8 +25,8 @@ class JsonSchema {
         this._startSchema = schema;
         this._rootSchema = typeof rootSchema !== 'undefined' ? rootSchema : schema;
         this._regexCache = null;
-        this._valuePath = [];
-        this._schemaPath = [];
+        this._valueStack = [];
+        this._schemaStack = [];
 
         this._schemaPush(null, null);
         this._valuePush(null, null);
@@ -100,43 +100,43 @@ class JsonSchema {
     // Stack
 
     _valuePush(value, path) {
-        this._valuePath.push({value, path});
+        this._valueStack.push({value, path});
     }
 
     _valuePop() {
-        this._valuePath.pop();
+        this._valueStack.pop();
     }
 
     _schemaPush(schema, path) {
-        this._schemaPath.push({schema, path});
+        this._schemaStack.push({schema, path});
         this._schema = schema;
     }
 
     _schemaPop() {
-        this._schemaPath.pop();
-        this._schema = this._schemaPath[this._schemaPath.length - 1].schema;
+        this._schemaStack.pop();
+        this._schema = this._schemaStack[this._schemaStack.length - 1].schema;
     }
 
     // Private
 
     _createError(message) {
-        const valuePath = [];
-        for (let i = 1, ii = this._valuePath.length; i < ii; ++i) {
-            const {value, path} = this._valuePath[i];
-            valuePath.push({value, path});
+        const valueStack = [];
+        for (let i = 1, ii = this._valueStack.length; i < ii; ++i) {
+            const {value, path} = this._valueStack[i];
+            valueStack.push({value, path});
         }
 
-        const schemaPath = [];
-        for (let i = 1, ii = this._schemaPath.length; i < ii; ++i) {
-            const {schema, path} = this._schemaPath[i];
-            schemaPath.push({schema, path});
+        const schemaStack = [];
+        for (let i = 1, ii = this._schemaStack.length; i < ii; ++i) {
+            const {schema, path} = this._schemaStack[i];
+            schemaStack.push({schema, path});
         }
 
         const error = new Error(message);
-        error.value = valuePath[valuePath.length - 1].value;
+        error.value = valueStack[valueStack.length - 1].value;
         error.schema = this._schema;
-        error.valuePath = valuePath;
-        error.schemaPath = schemaPath;
+        error.valueStack = valueStack;
+        error.schemaStack = schemaStack;
         return error;
     }
 

@@ -253,8 +253,8 @@ class DictionaryImporter {
     }
 
     _formatSchemaError(e, fileName) {
-        const valuePathString = this._getSchemaErrorPathString(e.valuePath, 'dictionary');
-        const schemaPathString = this._getSchemaErrorPathString(e.schemaPath, 'schema');
+        const valuePathString = this._getSchemaErrorPathString(e.valueStack, 'dictionary');
+        const schemaPathString = this._getSchemaErrorPathString(e.schemaStack, 'schema');
 
         const e2 = new Error(`Dictionary has invalid data in '${fileName}' for value '${valuePathString}', validated against '${schemaPathString}': ${e.message}`);
         e2.data = e;
