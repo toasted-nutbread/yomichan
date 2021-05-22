@@ -36,6 +36,10 @@ function getValidValueOrDefault(schema, value) {
     return new JsonSchemaValidator().getValidValueOrDefault(schema, value);
 }
 
+function createProxy(schema, value) {
+    return new JsonSchemaValidator().createProxy(value, schema);
+}
+
 
 function testValidate1() {
     const schema = {
@@ -694,10 +698,125 @@ function testGetValidValueOrDefault1() {
 }
 
 
+function testProxy1() {
+    const data = [
+        // Object tests
+        {
+            schema: {
+                type: 'object',
+                required: ['test'],
+                additionalProperties: false,
+                properties: {
+                    test: {
+                        type: 'string',
+                        default: 'default'
+                    }
+                }
+            },
+            tests: [
+                {error: false, value: {test: 'default'}, action: (value) => { value.test = 'string'; }},
+                {error: true,  value: {test: 'default'}, action: (value) => { value.test = null; }},
+                {error: true,  value: {test: 'default'}, action: (value) => { delete value.test; }},
+                {error: true,  value: {test: 'default'}, action: (value) => { value.test2 = 'string'; }},
+                {error: false, value: {test: 'default'}, action: (value) => { delete value.test2; }}
+            ]
+        },
+        {
+            schema: {
+                type: 'object',
+                required: ['test'],
+                additionalProperties: true,
+                properties: {
+                    test: {
+                        type: 'string',
+                        default: 'default'
+                    }
+                }
+            },
+            tests: [
+                {error: false, value: {test: 'default'}, action: (value) => { value.test = 'string'; }},
+                {error: true,  value: {test: 'default'}, action: (value) => { value.test = null; }},
+                {error: true,  value: {test: 'default'}, action: (value) => { delete value.test; }},
+                {error: false, value: {test: 'default'}, action: (value) => { value.test2 = 'string'; }},
+                {error: false, value: {test: 'default'}, action: (value) => { delete value.test2; }}
+            ]
+        },
+        {
+            schema: {
+                type: 'object',
+                required: ['test1'],
+                additionalProperties: false,
+                properties: {
+                    test1: {
+                        type: 'object',
+                        required: ['test2'],
+                        additionalProperties: false,
+                        properties: {
+                            test2: {
+                                type: 'object',
+                                required: ['test3'],
+                                additionalProperties: false,
+                                properties: {
+                                    test3: {
+                                        type: 'string',
+                                        default: 'default'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            tests: [
+                {error: false, action: (value) => { value.test1.test2.test3 = 'string'; }},
+                {error: true,  action: (value) => { value.test1.test2.test3 = null; }},
+                {error: true,  action: (value) => { delete value.test1.test2.test3; }},
+                {error: true,  action: (value) => { value.test1.test2 = null; }},
+                {error: true,  action: (value) => { value.test1 = null; }},
+                {error: true,  action: (value) => { value.test4 = 'string'; }},
+                {error: false, action: (value) => { delete value.test4; }}
+            ]
+        },
+
+        // Array tests
+        {
+            schema: {
+                type: 'array',
+                items: {
+                    type: 'string',
+                    default: 'default'
+                }
+            },
+            tests: [
+                {error: false, value: ['default'], action: (value) => { value[0] = 'string'; }},
+                {error: true,  value: ['default'], action: (value) => { value[0] = null; }},
+                {error: true,  value: ['default'], action: (value) => { delete value[0]; }},
+                {error: false, value: ['default'], action: (value) => { value[1] = 'string'; }}
+            ]
+        }
+    ];
+
+    for (const {schema, tests} of data) {
+        for (let {error, value, action} of tests) {
+            if (typeof value === 'undefined') { value = getValidValueOrDefault(schema, void 0); }
+            assert.ok(schemaValidate(schema, value));
+            console.log(error, value, schema);
+            const valueProxy = createProxy(schema, value);
+            if (error) {
+                assert.throws(() => action(valueProxy));
+            } else {
+                assert.doesNotThrow(() => action(valueProxy));
+            }
+        }
+    }
+}
+
+
 function main() {
     testValidate1();
     testValidate2();
     testGetValidValueOrDefault1();
+    testProxy1();
 }
 
 
