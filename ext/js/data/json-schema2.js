@@ -41,8 +41,11 @@ class JsonSchema {
     }
 
     createProxy(value) {
-        // TODO
-        throw new Error('Not implemented');
+        return (
+            typeof value === 'object' && value !== null ?
+            new Proxy(value, new JsonSchemaProxyHandler2(this)) :
+            value
+        );
     }
 
     isValid(value) {
@@ -727,5 +730,120 @@ class JsonSchema {
         }
 
         return value;
+    }
+}
+
+class JsonSchemaProxyHandler2 {
+    constructor(schema) {
+        this._schema = schema;
+        this._numberPattern = /^(?:0|[1-9]\d*)$/;
+    }
+
+    getPrototypeOf(target) {
+        return Object.getPrototypeOf(target);
+    }
+
+    setPrototypeOf() {
+        throw new Error('setPrototypeOf not supported');
+    }
+
+    isExtensible(target) {
+        return Object.isExtensible(target);
+    }
+
+    preventExtensions(target) {
+        Object.preventExtensions(target);
+        return true;
+    }
+
+    getOwnPropertyDescriptor(target, property) {
+        return Object.getOwnPropertyDescriptor(target, property);
+    }
+
+    defineProperty() {
+        throw new Error('defineProperty not supported');
+    }
+
+    has(target, property) {
+        return property in target;
+    }
+
+    get(target, property) {
+        if (typeof property === 'symbol') { return target[property]; }
+
+        let propertySchema;
+        if (Array.isArray(target)) {
+            property = this._getArrayIndex(property);
+            if (property === null) {
+                // Note: this does not currently wrap mutating functions like push, pop, shift, unshift, splice
+                return target[property];
+            }
+            propertySchema = this._schema.getArrayItemSchema(property);
+        } else {
+            propertySchema = this._schema.getObjectPropertySchema(property);
+        }
+
+        if (propertySchema === null) { return void 0; }
+
+        const value = target[property];
+        return value !== null && typeof value === 'object' ? propertySchema.createProxy(value) : value;
+    }
+
+    set(target, property, value) {
+        if (typeof property === 'symbol') { throw new Error(`Cannot assign symbol property ${property}`); }
+
+        let propertySchema;
+        if (Array.isArray(target)) {
+            property = this._getArrayIndex(property);
+            if (property === null) { throw new Error(`Property ${property} cannot be assigned to array`); }
+            if (property > target.length) { throw new Error('Array index out of range'); }
+            propertySchema = this._schema.getArrayItemSchema(property);
+        } else {
+            propertySchema = this._schema.getObjectPropertySchema(property);
+        }
+
+        if (propertySchema === null) { throw new Error(`Property ${property} not supported`); }
+
+        value = clone(value);
+        propertySchema.validate(value);
+
+        target[property] = value;
+        return true;
+    }
+
+    deleteProperty(target, property) {
+        const required = (
+            (typeof target === 'object' && target !== null) ?
+            (Array.isArray(target) || this._schema.isObjectPropertyRequired(property)) :
+            true
+        );
+        if (required) {
+            throw new Error(`${property} cannot be deleted`);
+        }
+        return Reflect.deleteProperty(target, property);
+    }
+
+    ownKeys(target) {
+        return Reflect.ownKeys(target);
+    }
+
+    apply() {
+        throw new Error('apply not supported');
+    }
+
+    construct() {
+        throw new Error('construct not supported');
+    }
+
+    // Private
+
+    _getArrayIndex(property) {
+        if (typeof property === 'string' && this._numberPattern.test(property)) {
+            return Number.parseInt(property, 10);
+        } else if (typeof property === 'number' && Math.floor(property) === property && property >= 0) {
+            return property;
+        } else {
+            return null;
+        }
     }
 }
