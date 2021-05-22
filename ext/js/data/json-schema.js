@@ -58,7 +58,7 @@ class JsonSchema {
     }
 
     validate(value) {
-        this._schemaPush(null, this._startSchema);
+        this._schemaPush(this._startSchema, null);
         this._valuePush(null, value);
         try {
             this._validate(value);
@@ -73,7 +73,7 @@ class JsonSchema {
     }
 
     getObjectPropertySchema(property) {
-        this._schemaPush(null, this._startSchema);
+        this._schemaPush(this._startSchema, null);
         try {
             const schemaPath = this._getObjectPropertySchemaPath(property);
             return schemaPath !== null ? new JsonSchema(schemaPath[schemaPath.length - 1].schema, this._rootSchema) : null;
@@ -83,7 +83,7 @@ class JsonSchema {
     }
 
     getArrayItemSchema(index) {
-        this._schemaPush(null, this._startSchema);
+        this._schemaPush(this._startSchema, null);
         try {
             const schemaPath = this._getArrayItemSchemaPath(index);
             return schemaPath !== null ? new JsonSchema(schemaPath[schemaPath.length - 1].schema, this._rootSchema) : null;
@@ -107,8 +107,8 @@ class JsonSchema {
         this._valuePath.pop();
     }
 
-    _schemaPush(path, schema) {
-        this._schemaPath.push({path, schema});
+    _schemaPush(schema, path) {
+        this._schemaPath.push({schema, path});
         this._schema = schema;
     }
 
@@ -140,8 +140,8 @@ class JsonSchema {
 
         const schemaPath = [];
         for (let i = 1, ii = this._schemaPath.length; i < ii; ++i) {
-            const {path, schema} = this._schemaPath[i];
-            schemaPath.push({path, schema});
+            const {schema, path} = this._schemaPath[i];
+            schemaPath.push({schema, path});
         }
 
         const error = new Error(message);
@@ -310,7 +310,7 @@ class JsonSchema {
         if (!this._isObject(ifSchema)) { return; }
 
         let okay = true;
-        this._schemaPush('if', ifSchema);
+        this._schemaPush(ifSchema, 'if');
         try {
             this._validate(value);
         } catch (e) {
@@ -322,7 +322,7 @@ class JsonSchema {
         const nextSchema = okay ? this._schema.then : this._schema.else;
         if (this._isObject(nextSchema)) { return; }
 
-        this._schemaPush(okay ? 'then' : 'else', nextSchema);
+        this._schemaPush(nextSchema, okay ? 'then' : 'else');
         try {
             this._validate(value);
         } finally {
@@ -334,13 +334,13 @@ class JsonSchema {
         const subSchemas = this._schema.allOf;
         if (!Array.isArray(subSchemas)) { return; }
 
-        this._schemaPush('allOf', subSchemas);
+        this._schemaPush(subSchemas, 'allOf');
         try {
             for (let i = 0, ii = subSchemas.length; i < ii; ++i) {
                 const subSchema = subSchemas[i];
                 if (!this._isObject(subSchema)) { continue; }
 
-                this._schemaPush(i, subSchema);
+                this._schemaPush(subSchema, i);
                 try {
                     this._validate(value);
                 } finally {
@@ -356,13 +356,13 @@ class JsonSchema {
         const subSchemas = this._schema.anyOf;
         if (!Array.isArray(subSchemas)) { return; }
 
-        this._schemaPush('anyOf', subSchemas);
+        this._schemaPush(subSchemas, 'anyOf');
         try {
             for (let i = 0, ii = subSchemas.length; i < ii; ++i) {
                 const subSchema = subSchemas[i];
                 if (!this._isObject(subSchema)) { continue; }
 
-                this._schemaPush(i, subSchema);
+                this._schemaPush(subSchema, i);
                 try {
                     this._validate(value);
                     return;
@@ -383,14 +383,14 @@ class JsonSchema {
         const subSchemas = this._schema.oneOf;
         if (!Array.isArray(subSchemas)) { return; }
 
-        this._schemaPush('oneOf', subSchemas);
+        this._schemaPush(subSchemas, 'oneOf');
         try {
             let count = 0;
             for (let i = 0, ii = subSchemas.length; i < ii; ++i) {
                 const subSchema = subSchemas[i];
                 if (!this._isObject(subSchema)) { continue; }
 
-                this._schemaPush(i, subSchema);
+                this._schemaPush(subSchema, i);
                 try {
                     this._validate(value);
                     ++count;
@@ -413,13 +413,13 @@ class JsonSchema {
         const subSchemas = this._schema.not;
         if (!Array.isArray(subSchemas)) { return; }
 
-        this._schemaPush('not', subSchemas);
+        this._schemaPush(subSchemas, 'not');
         try {
             for (let i = 0, ii = subSchemas.length; i < ii; ++i) {
                 const subSchema = subSchemas[i];
                 if (!this._isObject(subSchema)) { continue; }
 
-                this._schemaPush(i, subSchema);
+                this._schemaPush(subSchema, i);
                 try {
                     this._validate(value);
                 } catch (e) {
@@ -561,7 +561,7 @@ class JsonSchema {
         const containsSchema = this._schema.contains;
         if (!this._isObject(containsSchema)) { return; }
 
-        this._schemaPush('contains', containsSchema);
+        this._schemaPush(containsSchema, 'contains');
         try {
             for (let i = 0, ii = value.length; i < ii; ++i) {
                 const propertyValue = value[i];
