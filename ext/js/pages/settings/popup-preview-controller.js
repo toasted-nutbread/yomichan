@@ -15,10 +15,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/* global
- * wanakana
- */
-
 class PopupPreviewController {
     constructor(settingsController) {
         this._settingsController = settingsController;
