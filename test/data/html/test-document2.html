@@ -107,6 +107,11 @@
     </y-test>
 
     <y-test>
+        <y-description>&lt;iframe&gt; element with srcdoc.</y-description>
+        <iframe id="iframe-with-srcdoc" allowfullscreen="true" class="container"></iframe>
+    </y-test>
+
+    <y-test>
         <y-description>SVG &lt;img&gt;.</y-description>
         <img src="test-document2-frame2.svg" class="container" alt="">
     </y-test>
@@ -154,14 +159,19 @@
         return array;
     }
 
-    function dataUrlToBlob(dataUrl) {
-        let [, type, isBase64, data] = /^data:([^;]*);(base64,)?([\w\W]*)$/.exec(dataUrl);
-        data = (
+    function dataUrlToContent(dataUrl) {
+        const [, type, isBase64, data] = /^data:([^;]*);(base64,)?([\w\W]*)$/.exec(dataUrl);
+        const content = (
             isBase64 ?
             new TextDecoder().decode(stringToTypedArray(atob(data))) :
             data
         );
-        return new Blob([data], {type});
+        return {content, type};
+    }
+
+    function dataUrlToBlob(dataUrl) {
+        const {content, type} = dataUrlToContent(dataUrl);
+        return new Blob([content], {type});
     }
 
     for (const element of document.querySelectorAll('y-test')) {
@@ -170,7 +180,9 @@
 
     const iframeWithDataUrl = document.querySelector('#iframe-with-data-url');
     const iframeWithBlobUrl = document.querySelector('#iframe-with-blob-url');
+    const iframeWithSrcdoc = document.querySelector('#iframe-with-srcdoc');
     iframeWithBlobUrl.src = URL.createObjectURL(dataUrlToBlob(iframeWithDataUrl.src));
+    iframeWithSrcdoc.srcdoc = dataUrlToContent(iframeWithDataUrl.src).content;
 })();
     </script>
 
