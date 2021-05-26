@@ -2507,17 +2507,27 @@
 
 
 <!-- Audio templates -->
-<template id="audio-source-template"><div class="audio-source horizontal-flex">
-    <div class="generic-list-index-prefix"></div>
-    <select class="audio-source-select horizontal-flex-fill">
-        <option value="jpod101">JapanesePod101</option>
-        <option value="jpod101-alternate">JapanesePod101 (Alternate)</option>
-        <option value="jisho">Jisho.org</option>
-        <option value="text-to-speech">Text-to-speech</option>
-        <option value="text-to-speech-reading">Text-to-speech (Kana reading)</option>
-        <option value="custom">Custom URL</option>
-        <option value="custom-json">Custom URL (JSON)</option>
-    </select>
+<template id="audio-source-template"><div class="audio-source">
+    <div class="audio-source-index generic-list-index-prefix"></div>
+    <div class="audio-source-inner">
+        <select class="audio-source-type-select">
+            <option value="jpod101">JapanesePod101</option>
+            <option value="jpod101-alternate">JapanesePod101 (Alternate)</option>
+            <option value="jisho">Jisho.org</option>
+            <option value="text-to-speech">Text-to-speech</option>
+            <option value="text-to-speech-reading">Text-to-speech (Kana reading)</option>
+            <option value="custom">Custom URL</option>
+            <option value="custom-json">Custom URL (JSON)</option>
+        </select>
+        <div class="audio-source-parameter-container" data-field="url" hidden>
+            <span class="audio-source-parameter-label">URL:</span>
+            <input type="text" class="audio-source-parameter">
+        </div>
+        <div class="audio-source-parameter-container" data-field="voice" hidden>
+            <span class="audio-source-parameter-label">Voice:</span>
+            <select class="audio-source-parameter"></select>
+        </div>
+    </div>
     <button class="icon-button audio-source-menu-button" data-menu="audio-source-menu" data-menu-position="below left"><span class="icon-button-inner"><span class="icon" data-icon="kebab-menu"></span></span></button>
 </div></template>
 
