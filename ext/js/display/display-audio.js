@@ -518,7 +518,8 @@ class DisplayAudio {
             ['jisho', 'Jisho.org', true],
             ['text-to-speech', 'Text-to-speech', ttsSupported],
             ['text-to-speech-reading', 'Text-to-speech (Kana reading)', ttsSupported],
-            ['custom', 'Custom', customSupported]
+            ['custom', 'Custom URL', customSupported],
+            ['custom-json', 'Custom URL (JSON)', customSupported]
         ];
 
         const results = [];

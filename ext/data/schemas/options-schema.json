@@ -386,7 +386,8 @@
                                                 "jisho",
                                                 "text-to-speech",
                                                 "text-to-speech-reading",
-                                                "custom"
+                                                "custom",
+                                                "custom-json"
                                             ],
                                             "default": "jpod101"
                                         },
