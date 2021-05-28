@@ -151,7 +151,6 @@ class AudioController {
         const eventListeners = new EventListenerCollection();
         const container = this._settingsController.instantiateTemplate('audio-source');
         const select = container.querySelector('.audio-source-select');
-        const removeButton = container.querySelector('.audio-source-remove');
         const menuButton = container.querySelector('.audio-source-menu-button');
 
         select.value = value;
@@ -163,13 +162,8 @@ class AudioController {
         };
 
         eventListeners.addEventListener(select, 'change', this._onAudioSourceSelectChange.bind(this, entry), false);
-        if (removeButton !== null) {
-            eventListeners.addEventListener(removeButton, 'click', this._onAudioSourceRemoveClicked.bind(this, entry), false);
-        }
-        if (menuButton !== null) {
-            eventListeners.addEventListener(menuButton, 'menuOpen', this._onMenuOpen.bind(this, entry), false);
-            eventListeners.addEventListener(menuButton, 'menuClose', this._onMenuClose.bind(this, entry), false);
-        }
+        eventListeners.addEventListener(menuButton, 'menuOpen', this._onMenuOpen.bind(this, entry), false);
+        eventListeners.addEventListener(menuButton, 'menuClose', this._onMenuClose.bind(this, entry), false);
 
         this._audioSourceContainer.appendChild(container);
         this._audioSourceEntries.push(entry);
@@ -218,10 +212,6 @@ class AudioController {
         const value = event.currentTarget.value;
         entry.value = value;
         await this._settingsController.setProfileSetting(`audio.sources[${index}]`, value);
-    }
-
-    _onAudioSourceRemoveClicked(entry) {
-        this._removeAudioSourceEntry(entry);
     }
 
     _onMenuOpen(entry, e) {
