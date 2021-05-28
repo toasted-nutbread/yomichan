@@ -28,7 +28,7 @@ class AudioController extends EventDispatcher {
         this._audioSourceContainer = null;
         this._audioSourceAddButton = null;
         this._audioSourceEntries = [];
-        this._ttsVoiceTestTextInput = null;
+        this._voiceTestTextInput = null;
         this._voices = [];
     }
 
@@ -43,7 +43,7 @@ class AudioController extends EventDispatcher {
     async prepare() {
         this._audioSystem.prepare();
 
-        this._ttsVoiceTestTextInput = document.querySelector('#text-to-speech-voice-test-text');
+        this._voiceTestTextInput = document.querySelector('#text-to-speech-voice-test-text');
         this._audioSourceContainer = document.querySelector('#audio-source-list');
         this._audioSourceAddButton = document.querySelector('#audio-source-add');
         this._audioSourceContainer.textContent = '';
@@ -82,6 +82,10 @@ class AudioController extends EventDispatcher {
         return this._voices;
     }
 
+    setTestVoice(voice) {
+        this._voiceTestTextInput.dataset.voice = voice;
+    }
+
     // Private
 
     _onOptionsChanged({options}) {
@@ -102,9 +106,8 @@ class AudioController extends EventDispatcher {
 
     _onTestTextToSpeech() {
         try {
-            const text = this._ttsVoiceTestTextInput.value || '';
-            const voiceUri = document.querySelector('[data-setting="audio.textToSpeechVoice"]').value;
-
+            const text = this._voiceTestTextInput.value || '';
+            const voiceUri = this._voiceTestTextInput.dataset.voice;
             const audio = this._audioSystem.createTextToSpeechAudio(text, voiceUri);
             audio.volume = 1.0;
             audio.play();
@@ -305,6 +308,8 @@ class AudioSourceEntry {
         switch (this._type) {
             case 'custom':
             case 'custom-json':
+            case 'text-to-speech':
+            case 'text-to-speech-reading':
                 hasHelp = true;
                 break;
         }
@@ -363,6 +368,11 @@ class AudioSourceEntry {
                 break;
             case 'custom-json':
                 this._showModal('audio-source-help-custom-json');
+                break;
+            case 'text-to-speech':
+            case 'text-to-speech-reading':
+                this._parent.setTestVoice(this._voice);
+                this._showModal('audio-source-help-text-to-speech');
                 break;
         }
     }
