@@ -129,25 +129,6 @@ class AudioController extends EventDispatcher {
         voices.sort(this._textToSpeechVoiceCompare.bind(this));
         this._voices = voices;
         this.trigger('voicesUpdated');
-
-        for (const select of document.querySelectorAll('[data-setting="audio.textToSpeechVoice"]')) {
-            const fragment = document.createDocumentFragment();
-
-            let option = document.createElement('option');
-            option.value = '';
-            option.textContent = 'None';
-            fragment.appendChild(option);
-
-            for (const {voice} of voices) {
-                option = document.createElement('option');
-                option.value = voice.voiceURI;
-                option.textContent = `${voice.name} (${voice.lang})`;
-                fragment.appendChild(option);
-            }
-
-            select.textContent = '';
-            select.appendChild(fragment);
-        }
     }
 
     _textToSpeechVoiceCompare(a, b) {
