@@ -584,8 +584,9 @@ class DisplayAudio {
         const {displayGenerator} = this._display;
         let showIcons = false;
         const currentItems = [...menuItemContainer.children];
-        for (const {index, type, displayName, isInOptions, downloadable} of this._audioSources) {
-            const entries = this._getMenuItemEntries(type, term, reading);
+        for (const source of this._audioSources) {
+            const {index, displayName, isInOptions, downloadable} = source;
+            const entries = this._getMenuItemEntries(source, term, reading);
             for (let i = 0, ii = entries.length; i < ii; ++i) {
                 const {valid, index: subIndex, name} = entries[i];
                 let node = this._getOrCreateMenuItem(currentItems, index, subIndex);
@@ -647,7 +648,7 @@ class DisplayAudio {
         const cacheEntry = this._getCacheItem(term, reading, false);
         if (typeof cacheEntry !== 'undefined') {
             const {sourceMap} = cacheEntry;
-            const sourceInfo = sourceMap.get(source);
+            const sourceInfo = sourceMap.get(source.index);
             if (typeof sourceInfo !== 'undefined') {
                 const {infoList} = sourceInfo;
                 if (infoList !== null) {
