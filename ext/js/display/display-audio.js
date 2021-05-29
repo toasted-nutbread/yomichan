@@ -37,6 +37,15 @@ class DisplayAudio {
         this._textToSpeechVoice = '';
         this._customSourceUrl = '';
         this._audioSources = [];
+        this._audioSourceTypeNames = new Map([
+            ['jpod101', 'JapanesePod101'],
+            ['jpod101-alternate', 'JapanesePod101 (Alternate)'],
+            ['jisho', 'Jisho.org'],
+            ['text-to-speech', 'Text-to-speech'],
+            ['text-to-speech-reading', 'Text-to-speech (Kana reading)'],
+            ['custom', 'Custom URL'],
+            ['custom-json', 'Custom URL (JSON)']
+        ]);
     }
 
     get autoPlayAudioDelay() {
@@ -123,16 +132,41 @@ class DisplayAudio {
         this._playbackVolume = Number.isFinite(volume) ? Math.max(0.0, Math.min(1.0, volume / 100.0)) : 1.0;
         this._textToSpeechVoice = textToSpeechVoice;
         this._customSourceUrl = customSourceUrl;
-        this._audioSources = sources.map((type) => ({
-            type,
-            url: customSourceUrl,
-            voice: textToSpeechVoice
-        }));
+
+        const requiredAudioSources = new Set([
+            'jpod101',
+            'jpod101-alternate',
+            'jisho'
+        ]);
+        this._audioSources.length = 0;
+        for (const type of sources) {
+            this._addAudioSourceInfo(type, customSourceUrl, textToSpeechVoice, true);
+            requiredAudioSources.delete(type);
+        }
+        for (const type of requiredAudioSources) {
+            this._addAudioSourceInfo(type, '', '', false);
+        }
 
         const data = document.documentElement.dataset;
         data.audioEnabled = `${enabled && sources.length > 0}`;
 
         this._cache.clear();
+    }
+
+    _addAudioSourceInfo(type, url, voice, isInOptions) {
+        const index = this._audioSources.length;
+        const downloadable = this._sourceIsDownloadable(type);
+        let displayName = this._audioSourceTypeNames.get(type);
+        if (typeof displayName === 'undefined') { displayName = 'Unknown'; }
+        this._audioSources.push({
+            index,
+            type,
+            url,
+            voice,
+            isInOptions,
+            downloadable,
+            displayName
+        });
     }
 
     _onAudioPlayButtonClick(dictionaryEntryIndex, headwordIndex, e) {
@@ -505,57 +539,6 @@ class DisplayAudio {
         }
     }
 
-    _getMenuAudioSources() {
-        const ttsSupported = (this._textToSpeechVoice.length > 0);
-        const customSupported = (this._customSourceUrl.length > 0);
-
-        const sourceTypeIndexMap = new Map();
-        const optionsSourcesCount = this._audioSources.length;
-        for (let i = 0; i < optionsSourcesCount; ++i) {
-            const {type} = this._audioSources[i];
-            if (sourceTypeIndexMap.has(type)) { continue; }
-            sourceTypeIndexMap.set(type, i);
-        }
-        const customIsJson = sourceTypeIndexMap.has('custom-json');
-
-        const rawSources = [
-            ['jpod101', 'JapanesePod101', true],
-            ['jpod101-alternate', 'JapanesePod101 (Alternate)', true],
-            ['jisho', 'Jisho.org', true],
-            ['text-to-speech', 'Text-to-speech', ttsSupported],
-            ['text-to-speech-reading', 'Text-to-speech (Kana reading)', ttsSupported],
-            ['custom', 'Custom URL', customSupported && !customIsJson],
-            ['custom-json', 'Custom URL (JSON)', customSupported && customIsJson]
-        ];
-
-        const results = [];
-        for (const [source, displayName, supported] of rawSources) {
-            if (!supported) { continue; }
-            const downloadable = this._sourceIsDownloadable(source);
-            let optionsIndex = sourceTypeIndexMap.get(source);
-            const isInOptions = typeof optionsIndex !== 'undefined';
-            if (!isInOptions) {
-                optionsIndex = optionsSourcesCount;
-            }
-            results.push({
-                source,
-                displayName,
-                index: results.length,
-                optionsIndex,
-                isInOptions,
-                downloadable
-            });
-        }
-
-        // Sort according to source order in options
-        results.sort((a, b) => {
-            const i = a.optionsIndex - b.optionsIndex;
-            return i !== 0 ? i : a.index - b.index;
-        });
-
-        return results;
-    }
-
     _createMenu(sourceButton, term, reading) {
         // Create menu
         const menuContainerNode = this._display.displayGenerator.instantiateTemplate('audio-button-popup-menu');
@@ -575,15 +558,14 @@ class DisplayAudio {
     }
 
     _createMenuItems(menuContainerNode, menuItemContainer, term, reading) {
-        const sources = this._getMenuAudioSources();
         const {displayGenerator} = this._display;
         let showIcons = false;
         const currentItems = [...menuItemContainer.children];
-        for (const {source, displayName, isInOptions, downloadable} of sources) {
-            const entries = this._getMenuItemEntries(source, term, reading);
+        for (const {type, displayName, isInOptions, downloadable} of this._audioSources) {
+            const entries = this._getMenuItemEntries(type, term, reading);
             for (let i = 0, ii = entries.length; i < ii; ++i) {
                 const {valid, index, name} = entries[i];
-                let node = this._getOrCreateMenuItem(currentItems, source, index);
+                let node = this._getOrCreateMenuItem(currentItems, type, index);
                 if (node === null) {
                     node = displayGenerator.instantiateTemplate('audio-button-popup-menu-item');
                 }
@@ -602,7 +584,7 @@ class DisplayAudio {
                     icon.dataset.icon = valid ? 'checkmark' : 'cross';
                     showIcons = true;
                 }
-                node.dataset.source = source;
+                node.dataset.source = type;
                 if (index !== null) {
                     node.dataset.index = `${index}`;
                 }
