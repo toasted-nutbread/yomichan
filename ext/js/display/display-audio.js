@@ -25,6 +25,8 @@ class DisplayAudio {
         this._display = display;
         this._audioPlaying = null;
         this._audioSystem = new AudioSystem();
+        this._playbackVolume = 1.0;
+        this._autoPlay = false;
         this._autoPlayAudioTimer = null;
         this._autoPlayAudioDelay = 400;
         this._eventListeners = new EventListenerCollection();
@@ -32,6 +34,8 @@ class DisplayAudio {
         this._menuContainer = document.querySelector('#popup-menus');
         this._entriesToken = {};
         this._openMenus = new Set();
+        this._textToSpeechVoice = '';
+        this._customSourceUrl = '';
     }
 
     get autoPlayAudioDelay() {
@@ -44,11 +48,8 @@ class DisplayAudio {
 
     prepare() {
         this._audioSystem.prepare();
-    }
-
-    updateOptions(options) {
-        const data = document.documentElement.dataset;
-        data.audioEnabled = `${options.audio.enabled && options.audio.sources.length > 0}`;
+        this._display.on('optionsUpdated', this._onOptionsUpdated.bind(this));
+        this._onOptionsUpdated({options: this._display.getOptions()});
     }
 
     cleanupEntries() {
@@ -68,8 +69,7 @@ class DisplayAudio {
     }
 
     setupEntriesComplete() {
-        const audioOptions = this._getAudioOptions();
-        if (!audioOptions.enabled || !audioOptions.autoPlay) { return; }
+        if (!this._autoPlay) { return; }
 
         this.clearAutoPlayTimer();
 
@@ -116,7 +116,8 @@ class DisplayAudio {
 
         const {term, reading} = headword;
         const audioOptions = this._getAudioOptions();
-        const {textToSpeechVoice, customSourceUrl, volume} = audioOptions;
+        const textToSpeechVoice = this._textToSpeechVoice;
+        const customSourceUrl = this._customSourceUrl;
         if (!Array.isArray(sources)) {
             ({sources} = audioOptions);
         }
@@ -155,7 +156,7 @@ class DisplayAudio {
 
             // Play
             audio.currentTime = 0;
-            audio.volume = Number.isFinite(volume) ? Math.max(0.0, Math.min(1.0, volume / 100.0)) : 1.0;
+            audio.volume = this._playbackVolume;
 
             const playPromise = audio.play();
             this._audioPlaying = audio;
@@ -181,6 +182,17 @@ class DisplayAudio {
     }
 
     // Private
+
+    _onOptionsUpdated({options}) {
+        const {enabled, autoPlay, textToSpeechVoice, customSourceUrl, volume, sources} = options.audio;
+        this._autoPlay = enabled && autoPlay;
+        this._playbackVolume = Number.isFinite(volume) ? Math.max(0.0, Math.min(1.0, volume / 100.0)) : 1.0;
+        this._textToSpeechVoice = textToSpeechVoice;
+        this._customSourceUrl = customSourceUrl;
+
+        const data = document.documentElement.dataset;
+        data.audioEnabled = `${enabled && sources.length > 0}`;
+    }
 
     _onAudioPlayButtonClick(dictionaryEntryIndex, headwordIndex, e) {
         e.preventDefault();
@@ -502,9 +514,9 @@ class DisplayAudio {
     }
 
     _getAudioSources(audioOptions) {
-        const {sources, textToSpeechVoice, customSourceUrl} = audioOptions;
-        const ttsSupported = (textToSpeechVoice.length > 0);
-        const customSupported = (customSourceUrl.length > 0);
+        const {sources} = audioOptions;
+        const ttsSupported = (this._textToSpeechVoice.length > 0);
+        const customSupported = (this._customSourceUrl.length > 0);
 
         const sourceIndexMap = new Map();
         const optionsSourcesCount = sources.length;

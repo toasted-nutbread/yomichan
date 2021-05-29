@@ -296,7 +296,6 @@ class Display extends EventDispatcher {
         this._updateDocumentOptions(options);
         this._updateTheme(options.general.popupTheme);
         this.setCustomCss(options.general.customPopupCss);
-        this._displayAudio.updateOptions(options);
         this._hotkeyHelpController.setOptions(options);
         this._displayGenerator.updateHotkeys();
         this._hotkeyHelpController.setupNode(document.documentElement);
