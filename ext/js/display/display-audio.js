@@ -105,75 +105,7 @@ class DisplayAudio {
     }
 
     async playAudio(dictionaryEntryIndex, headwordIndex, sources=null, sourceDetailsMap=null) {
-        this.stopAudio();
-        this.clearAutoPlayTimer();
-
-        const headword = this._getHeadword(dictionaryEntryIndex, headwordIndex);
-        if (headword === null) {
-            return {audio: null, source: null, valid: false};
-        }
-
-        const buttons = this._getAudioPlayButtons(dictionaryEntryIndex, headwordIndex);
-
-        const {term, reading} = headword;
-        const audioOptions = this._getAudioOptions();
-        const textToSpeechVoice = this._textToSpeechVoice;
-        const customSourceUrl = this._customSourceUrl;
-        if (!Array.isArray(sources)) {
-            ({sources} = audioOptions);
-        }
-        if (!(sourceDetailsMap instanceof Map)) {
-            sourceDetailsMap = null;
-        }
-
-        const progressIndicatorVisible = this._display.progressIndicatorVisible;
-        const overrideToken = progressIndicatorVisible.setOverride(true);
-        try {
-            // Create audio
-            let audio;
-            let title;
-            let source = null;
-            const info = await this._createTermAudio(sources, sourceDetailsMap, term, reading, {textToSpeechVoice, customSourceUrl});
-            const valid = (info !== null);
-            if (valid) {
-                ({audio, source} = info);
-                const sourceIndex = sources.indexOf(source);
-                title = `From source ${1 + sourceIndex}: ${source}`;
-            } else {
-                audio = this._audioSystem.getFallbackAudio();
-                title = 'Could not find audio';
-            }
-
-            // Stop any currently playing audio
-            this.stopAudio();
-
-            // Update details
-            const potentialAvailableAudioCount = this._getPotentialAvailableAudioCount(term, reading);
-            for (const button of buttons) {
-                const titleDefault = button.dataset.titleDefault || '';
-                button.title = `${titleDefault}\n${title}`;
-                this._updateAudioPlayButtonBadge(button, potentialAvailableAudioCount);
-            }
-
-            // Play
-            audio.currentTime = 0;
-            audio.volume = this._playbackVolume;
-
-            const playPromise = audio.play();
-            this._audioPlaying = audio;
-
-            if (typeof playPromise !== 'undefined') {
-                try {
-                    await playPromise;
-                } catch (e) {
-                    // NOP
-                }
-            }
-
-            return {audio, source, valid};
-        } finally {
-            progressIndicatorVisible.clearOverride(overrideToken);
-        }
+        return await this._playAudio(dictionaryEntryIndex, headwordIndex, sources, sourceDetailsMap);
     }
 
     getPrimaryCardAudio(term, reading) {
@@ -261,6 +193,78 @@ class DisplayAudio {
             index = 0;
         }
         return {source, index, hasIndex};
+    }
+
+    async _playAudio(dictionaryEntryIndex, headwordIndex, sources=null, sourceDetailsMap=null) {
+        this.stopAudio();
+        this.clearAutoPlayTimer();
+
+        const headword = this._getHeadword(dictionaryEntryIndex, headwordIndex);
+        if (headword === null) {
+            return {audio: null, source: null, valid: false};
+        }
+
+        const buttons = this._getAudioPlayButtons(dictionaryEntryIndex, headwordIndex);
+
+        const {term, reading} = headword;
+        const audioOptions = this._getAudioOptions();
+        const textToSpeechVoice = this._textToSpeechVoice;
+        const customSourceUrl = this._customSourceUrl;
+        if (!Array.isArray(sources)) {
+            ({sources} = audioOptions);
+        }
+        if (!(sourceDetailsMap instanceof Map)) {
+            sourceDetailsMap = null;
+        }
+
+        const progressIndicatorVisible = this._display.progressIndicatorVisible;
+        const overrideToken = progressIndicatorVisible.setOverride(true);
+        try {
+            // Create audio
+            let audio;
+            let title;
+            let source = null;
+            const info = await this._createTermAudio(sources, sourceDetailsMap, term, reading, {textToSpeechVoice, customSourceUrl});
+            const valid = (info !== null);
+            if (valid) {
+                ({audio, source} = info);
+                const sourceIndex = sources.indexOf(source);
+                title = `From source ${1 + sourceIndex}: ${source}`;
+            } else {
+                audio = this._audioSystem.getFallbackAudio();
+                title = 'Could not find audio';
+            }
+
+            // Stop any currently playing audio
+            this.stopAudio();
+
+            // Update details
+            const potentialAvailableAudioCount = this._getPotentialAvailableAudioCount(term, reading);
+            for (const button of buttons) {
+                const titleDefault = button.dataset.titleDefault || '';
+                button.title = `${titleDefault}\n${title}`;
+                this._updateAudioPlayButtonBadge(button, potentialAvailableAudioCount);
+            }
+
+            // Play
+            audio.currentTime = 0;
+            audio.volume = this._playbackVolume;
+
+            const playPromise = audio.play();
+            this._audioPlaying = audio;
+
+            if (typeof playPromise !== 'undefined') {
+                try {
+                    await playPromise;
+                } catch (e) {
+                    // NOP
+                }
+            }
+
+            return {audio, source, valid};
+        } finally {
+            progressIndicatorVisible.clearOverride(overrideToken);
+        }
     }
 
     async _playAudioFromSource(dictionaryEntryIndex, headwordIndex, item) {
