@@ -123,7 +123,7 @@ class DisplayAudio {
                 }
             }
         }
-        return await this._playAudio(dictionaryEntryIndex, headwordIndex, sources, null);
+        await this._playAudio(dictionaryEntryIndex, headwordIndex, sources, null);
     }
 
     getPrimaryCardAudio(term, reading) {
@@ -131,8 +131,8 @@ class DisplayAudio {
         const result = this._getPrimaryCardAudio(term, reading);
         if (result === null) { return null; }
         const {index, subIndex} = result;
-        const {type} = this._audioSources[index];
-        return {source: type, index: subIndex};
+        const sourceData = this._getSourceData(this._audioSources[index]);
+        return {source: sourceData, index: subIndex};
     }
 
     // Private
@@ -270,10 +270,11 @@ class DisplayAudio {
             let audio;
             let title;
             let source = null;
+            let subIndex = 0;
             const info = await this._createTermAudio(term, reading, {textToSpeechVoice, customSourceUrl}, sources, audioInfoListIndex);
             const valid = (info !== null);
             if (valid) {
-                ({audio, source} = info);
+                ({audio, source, subIndex} = info);
                 const sourceIndex = sources.indexOf(source);
                 title = `From source ${1 + sourceIndex}: ${source}`;
             } else {
@@ -307,7 +308,7 @@ class DisplayAudio {
                 }
             }
 
-            return {audio, source, valid};
+            return {audio, source, subIndex, valid};
         } finally {
             progressIndicatorVisible.clearOverride(overrideToken);
         }
@@ -377,16 +378,16 @@ class DisplayAudio {
     async _createTermAudio(term, reading, details, sources, audioInfoListIndex) {
         const {sourceMap} = this._getCacheItem(term, reading, true);
 
-        for (let i = 0, ii = sources.length; i < ii; ++i) {
-            const source = sources[i];
+        for (const source of sources) {
+            const {index} = source;
 
             let cacheUpdated = false;
             let infoListPromise;
-            let sourceInfo = sourceMap.get(source);
+            let sourceInfo = sourceMap.get(index);
             if (typeof sourceInfo === 'undefined') {
                 infoListPromise = this._getTermAudioInfoList(source, term, reading, details);
                 sourceInfo = {infoListPromise, infoList: null};
-                sourceMap.set(source, sourceInfo);
+                sourceMap.set(index, sourceInfo);
                 cacheUpdated = true;
             }
 
@@ -396,9 +397,11 @@ class DisplayAudio {
                 sourceInfo.infoList = infoList;
             }
 
-            const {result, cacheUpdated: cacheUpdated2} = await this._createAudioFromInfoList(source, infoList, audioInfoListIndex);
+            const {audio, index: subIndex, cacheUpdated: cacheUpdated2} = await this._createAudioFromInfoList(source, infoList, audioInfoListIndex);
             if (cacheUpdated || cacheUpdated2) { this._updateOpenMenu(); }
-            if (result !== null) { return result; }
+            if (audio !== null) {
+                return {audio, source, subIndex};
+            }
         }
 
         return null;
@@ -412,8 +415,11 @@ class DisplayAudio {
             end = Math.max(0, Math.min(end, audioInfoListIndex + 1));
         }
 
-        let result = null;
-        let cacheUpdated = false;
+        const result = {
+            audio: null,
+            index: -1,
+            cacheUpdated: false
+        };
         for (let i = start; i < end; ++i) {
             const item = infoList[i];
 
@@ -426,7 +432,7 @@ class DisplayAudio {
                     item.audioPromise = audioPromise;
                 }
 
-                cacheUpdated = true;
+                result.cacheUpdated = true;
 
                 try {
                     audio = await audioPromise;
@@ -440,17 +446,18 @@ class DisplayAudio {
             }
 
             if (audio !== null) {
-                result = {audio, source, infoListIndex: i};
+                result.audio = audio;
+                result.index = i;
                 break;
             }
         }
-        return {result, cacheUpdated};
+        return result;
     }
 
     async _createAudioFromInfo(info, source) {
         switch (info.type) {
             case 'url':
-                return await this._audioSystem.createAudio(info.url, source);
+                return await this._audioSystem.createAudio(info.url, source.type);
             case 'tts':
                 return this._audioSystem.createTextToSpeechAudio(info.text, info.voice);
             default:
@@ -459,7 +466,8 @@ class DisplayAudio {
     }
 
     async _getTermAudioInfoList(source, term, reading, details) {
-        const infoList = await yomichan.api.getTermAudioInfoList(source, term, reading, details);
+        const sourceData = this._getSourceData(source);
+        const infoList = await yomichan.api.getTermAudioInfoList(sourceData, term, reading, details);
         return infoList.map((info) => ({info, audioPromise: null, audioResolved: false, audio: null}));
     }
 
@@ -687,5 +695,9 @@ class DisplayAudio {
             this._createMenuItems(menuContainerNode, menu.bodyNode, term, reading);
             menu.updatePosition();
         }
+    }
+
+    _getSourceData(source) {
+        return source.type;
     }
 }
