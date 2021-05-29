@@ -531,6 +531,7 @@ class DisplayAudio {
             if (sourceTypeIndexMap.has(type)) { continue; }
             sourceTypeIndexMap.set(type, i);
         }
+        const customIsJson = sourceTypeIndexMap.has('custom-json');
 
         const rawSources = [
             ['jpod101', 'JapanesePod101', true],
@@ -538,8 +539,8 @@ class DisplayAudio {
             ['jisho', 'Jisho.org', true],
             ['text-to-speech', 'Text-to-speech', ttsSupported],
             ['text-to-speech-reading', 'Text-to-speech (Kana reading)', ttsSupported],
-            ['custom', 'Custom URL', customSupported],
-            ['custom-json', 'Custom URL (JSON)', customSupported]
+            ['custom', 'Custom URL', customSupported && !customIsJson],
+            ['custom-json', 'Custom URL (JSON)', customSupported && customIsJson]
         ];
 
         const results = [];
