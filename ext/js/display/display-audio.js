@@ -199,6 +199,8 @@ class DisplayAudio {
 
         const data = document.documentElement.dataset;
         data.audioEnabled = `${enabled && sources.length > 0}`;
+
+        this._cache.clear();
     }
 
     _onAudioPlayButtonClick(dictionaryEntryIndex, headwordIndex, e) {
