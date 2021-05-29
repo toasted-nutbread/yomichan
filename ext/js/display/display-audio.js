@@ -36,6 +36,7 @@ class DisplayAudio {
         this._openMenus = new Set();
         this._textToSpeechVoice = '';
         this._customSourceUrl = '';
+        this._audioSources = [];
     }
 
     get autoPlayAudioDelay() {
@@ -184,11 +185,17 @@ class DisplayAudio {
     // Private
 
     _onOptionsUpdated({options}) {
+        if (options === null) { return; }
         const {enabled, autoPlay, textToSpeechVoice, customSourceUrl, volume, sources} = options.audio;
         this._autoPlay = enabled && autoPlay;
         this._playbackVolume = Number.isFinite(volume) ? Math.max(0.0, Math.min(1.0, volume / 100.0)) : 1.0;
         this._textToSpeechVoice = textToSpeechVoice;
         this._customSourceUrl = customSourceUrl;
+        this._audioSources = sources.map((type) => ({
+            type,
+            url: customSourceUrl,
+            voice: textToSpeechVoice
+        }));
 
         const data = document.documentElement.dataset;
         data.audioEnabled = `${enabled && sources.length > 0}`;
@@ -513,15 +520,16 @@ class DisplayAudio {
         }
     }
 
-    _getAudioSources(audioOptions) {
-        const {sources} = audioOptions;
+    _getMenuAudioSources() {
         const ttsSupported = (this._textToSpeechVoice.length > 0);
         const customSupported = (this._customSourceUrl.length > 0);
 
-        const sourceIndexMap = new Map();
-        const optionsSourcesCount = sources.length;
+        const sourceTypeIndexMap = new Map();
+        const optionsSourcesCount = this._audioSources.length;
         for (let i = 0; i < optionsSourcesCount; ++i) {
-            sourceIndexMap.set(sources[i], i);
+            const {type} = this._audioSources[i];
+            if (sourceTypeIndexMap.has(type)) { continue; }
+            sourceTypeIndexMap.set(type, i);
         }
 
         const rawSources = [
@@ -538,7 +546,7 @@ class DisplayAudio {
         for (const [source, displayName, supported] of rawSources) {
             if (!supported) { continue; }
             const downloadable = this._sourceIsDownloadable(source);
-            let optionsIndex = sourceIndexMap.get(source);
+            let optionsIndex = sourceTypeIndexMap.get(source);
             const isInOptions = typeof optionsIndex !== 'undefined';
             if (!isInOptions) {
                 optionsIndex = optionsSourcesCount;
@@ -581,7 +589,7 @@ class DisplayAudio {
     }
 
     _createMenuItems(menuContainerNode, menuItemContainer, term, reading) {
-        const sources = this._getAudioSources(this._getAudioOptions());
+        const sources = this._getMenuAudioSources();
         const {displayGenerator} = this._display;
         let showIcons = false;
         const currentItems = [...menuItemContainer.children];
