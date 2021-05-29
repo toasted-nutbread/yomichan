@@ -105,7 +105,7 @@ class DisplayAudio {
     }
 
     async playAudio(dictionaryEntryIndex, headwordIndex, sourceType=null) {
-        return await this._playAudio(dictionaryEntryIndex, headwordIndex, [sourceType], null);
+        return await this._playAudio(dictionaryEntryIndex, headwordIndex, sourceType !== null ? [sourceType] : null, null);
     }
 
     getPrimaryCardAudio(term, reading) {
@@ -195,7 +195,7 @@ class DisplayAudio {
         return {source, index, hasIndex};
     }
 
-    async _playAudio(dictionaryEntryIndex, headwordIndex, sources=null, sourceDetailsMap=null) {
+    async _playAudio(dictionaryEntryIndex, headwordIndex, sources=null, audioInfoListIndex=null) {
         this.stopAudio();
         this.clearAutoPlayTimer();
 
@@ -213,9 +213,6 @@ class DisplayAudio {
         if (!Array.isArray(sources)) {
             ({sources} = audioOptions);
         }
-        if (!(sourceDetailsMap instanceof Map)) {
-            sourceDetailsMap = null;
-        }
 
         const progressIndicatorVisible = this._display.progressIndicatorVisible;
         const overrideToken = progressIndicatorVisible.setOverride(true);
@@ -224,7 +221,7 @@ class DisplayAudio {
             let audio;
             let title;
             let source = null;
-            const info = await this._createTermAudio(sources, sourceDetailsMap, term, reading, {textToSpeechVoice, customSourceUrl});
+            const info = await this._createTermAudio(term, reading, {textToSpeechVoice, customSourceUrl}, sources, audioInfoListIndex);
             const valid = (info !== null);
             if (valid) {
                 ({audio, source} = info);
@@ -272,11 +269,10 @@ class DisplayAudio {
         if (sourceInfo === null) { return; }
 
         const {source, index, hasIndex} = sourceInfo;
-        const sourceDetailsMap = hasIndex ? new Map([[source, {start: index, end: index + 1}]]) : null;
 
         try {
             const token = this._entriesToken;
-            const {valid} = await this._playAudio(dictionaryEntryIndex, headwordIndex, [source], sourceDetailsMap);
+            const {valid} = await this._playAudio(dictionaryEntryIndex, headwordIndex, [source], hasIndex ? index : null);
             if (valid && token === this._entriesToken) {
                 this._setPrimaryAudio(dictionaryEntryIndex, headwordIndex, item, null, false);
             }
@@ -329,7 +325,7 @@ class DisplayAudio {
         return results;
     }
 
-    async _createTermAudio(sources, sourceDetailsMap, term, reading, details) {
+    async _createTermAudio(term, reading, details, sources, audioInfoListIndex) {
         const {sourceMap} = this._getCacheItem(term, reading, true);
 
         for (let i = 0, ii = sources.length; i < ii; ++i) {
@@ -351,19 +347,7 @@ class DisplayAudio {
                 sourceInfo.infoList = infoList;
             }
 
-            let start = 0;
-            let end = infoList.length;
-
-            if (sourceDetailsMap !== null) {
-                const sourceDetails = sourceDetailsMap.get(source);
-                if (typeof sourceDetails !== 'undefined') {
-                    const {start: start2, end: end2} = sourceDetails;
-                    if (this._isInteger(start2)) { start = this._clamp(start2, start, end); }
-                    if (this._isInteger(end2)) { end = this._clamp(end2, start, end); }
-                }
-            }
-
-            const {result, cacheUpdated: cacheUpdated2} = await this._createAudioFromInfoList(source, infoList, start, end);
+            const {result, cacheUpdated: cacheUpdated2} = await this._createAudioFromInfoList(source, infoList, audioInfoListIndex);
             if (cacheUpdated || cacheUpdated2) { this._updateOpenMenu(); }
             if (result !== null) { return result; }
         }
@@ -371,7 +355,14 @@ class DisplayAudio {
         return null;
     }
 
-    async _createAudioFromInfoList(source, infoList, start, end) {
+    async _createAudioFromInfoList(source, infoList, audioInfoListIndex) {
+        let start = 0;
+        let end = infoList.length;
+        if (audioInfoListIndex !== null) {
+            start = Math.max(0, Math.min(end, audioInfoListIndex));
+            end = Math.max(0, Math.min(end, audioInfoListIndex + 1));
+        }
+
         let result = null;
         let cacheUpdated = false;
         for (let i = start; i < end; ++i) {
@@ -442,18 +433,6 @@ class DisplayAudio {
 
     _getAudioOptions() {
         return this._display.getOptions().audio;
-    }
-
-    _isInteger(value) {
-        return (
-            typeof value === 'number' &&
-            Number.isFinite(value) &&
-            Math.floor(value) === value
-        );
-    }
-
-    _clamp(value, min, max) {
-        return Math.max(min, Math.min(max, value));
     }
 
     _updateAudioPlayButtonBadge(button, potentialAvailableAudioCount) {
