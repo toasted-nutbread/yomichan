@@ -34,8 +34,6 @@ class DisplayAudio {
         this._menuContainer = document.querySelector('#popup-menus');
         this._entriesToken = {};
         this._openMenus = new Set();
-        this._textToSpeechVoice = '';
-        this._customSourceUrl = '';
         this._audioSources = [];
         this._audioSourceTypeNames = new Map([
             ['jpod101', 'JapanesePod101'],
@@ -142,8 +140,6 @@ class DisplayAudio {
         const {enabled, autoPlay, textToSpeechVoice, customSourceUrl, volume, sources} = options.audio;
         this._autoPlay = enabled && autoPlay;
         this._playbackVolume = Number.isFinite(volume) ? Math.max(0.0, Math.min(1.0, volume / 100.0)) : 1.0;
-        this._textToSpeechVoice = textToSpeechVoice;
-        this._customSourceUrl = customSourceUrl;
 
         const requiredAudioSources = new Set([
             'jpod101',
@@ -256,8 +252,6 @@ class DisplayAudio {
         const buttons = this._getAudioPlayButtons(dictionaryEntryIndex, headwordIndex);
 
         const {term, reading} = headword;
-        const textToSpeechVoice = this._textToSpeechVoice;
-        const customSourceUrl = this._customSourceUrl;
 
         const progressIndicatorVisible = this._display.progressIndicatorVisible;
         const overrideToken = progressIndicatorVisible.setOverride(true);
@@ -267,7 +261,7 @@ class DisplayAudio {
             let title;
             let source = null;
             let subIndex = 0;
-            const info = await this._createTermAudio(term, reading, {textToSpeechVoice, customSourceUrl}, sources, audioInfoListIndex);
+            const info = await this._createTermAudio(term, reading, sources, audioInfoListIndex);
             const valid = (info !== null);
             if (valid) {
                 ({audio, source, subIndex} = info);
@@ -371,7 +365,7 @@ class DisplayAudio {
         return results;
     }
 
-    async _createTermAudio(term, reading, details, sources, audioInfoListIndex) {
+    async _createTermAudio(term, reading, sources, audioInfoListIndex) {
         const {sourceMap} = this._getCacheItem(term, reading, true);
 
         for (const source of sources) {
@@ -381,7 +375,7 @@ class DisplayAudio {
             let infoListPromise;
             let sourceInfo = sourceMap.get(index);
             if (typeof sourceInfo === 'undefined') {
-                infoListPromise = this._getTermAudioInfoList(source, term, reading, details);
+                infoListPromise = this._getTermAudioInfoList(source, term, reading);
                 sourceInfo = {infoListPromise, infoList: null};
                 sourceMap.set(index, sourceInfo);
                 cacheUpdated = true;
@@ -461,8 +455,12 @@ class DisplayAudio {
         }
     }
 
-    async _getTermAudioInfoList(source, term, reading, details) {
+    async _getTermAudioInfoList(source, term, reading) {
         const sourceData = this._getSourceData(source);
+        const details = {
+            customSourceUrl: source.url,
+            textToSpeechVoice: source.voice
+        };
         const infoList = await yomichan.api.getTermAudioInfoList(sourceData, term, reading, details);
         return infoList.map((info) => ({info, audioPromise: null, audioResolved: false, audio: null}));
     }
