@@ -256,12 +256,8 @@ class DisplayAudio {
         const buttons = this._getAudioPlayButtons(dictionaryEntryIndex, headwordIndex);
 
         const {term, reading} = headword;
-        const audioOptions = this._getAudioOptions();
         const textToSpeechVoice = this._textToSpeechVoice;
         const customSourceUrl = this._customSourceUrl;
-        if (!Array.isArray(sources)) {
-            ({sources} = audioOptions);
-        }
 
         const progressIndicatorVisible = this._display.progressIndicatorVisible;
         const overrideToken = progressIndicatorVisible.setOverride(true);
@@ -486,10 +482,6 @@ class DisplayAudio {
 
     _getTermReadingKey(term, reading) {
         return JSON.stringify([term, reading]);
-    }
-
-    _getAudioOptions() {
-        return this._display.getOptions().audio;
     }
 
     _updateAudioPlayButtonBadge(button, potentialAvailableAudioCount) {
