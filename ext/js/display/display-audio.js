@@ -114,13 +114,25 @@ class DisplayAudio {
     }
 
     async playAudio(dictionaryEntryIndex, headwordIndex, sourceType=null) {
-        return await this._playAudio(dictionaryEntryIndex, headwordIndex, sourceType !== null ? [sourceType] : null, null);
+        let sources = this._audioSources;
+        if (sourceType !== null) {
+            sources = [];
+            for (const source of this._audioSources) {
+                if (source.type === sourceType) {
+                    sources.push(source);
+                }
+            }
+        }
+        return await this._playAudio(dictionaryEntryIndex, headwordIndex, sources, null);
     }
 
     getPrimaryCardAudio(term, reading) {
-        const cacheEntry = this._getCacheItem(term, reading, false);
-        const primaryCardAudio = typeof cacheEntry !== 'undefined' ? cacheEntry.primaryCardAudio : null;
-        return primaryCardAudio;
+        // TODO : This will need to be refactored to support multiple audio sources with the same type
+        const result = this._getPrimaryCardAudio(term, reading);
+        if (result === null) { return null; }
+        const {index, subIndex} = result;
+        const {type} = this._audioSources[index];
+        return {source: type, index: subIndex};
     }
 
     // Private
@@ -216,20 +228,23 @@ class DisplayAudio {
 
     _getMenuItemSourceInfo(item) {
         const group = item.closest('.popup-menu-item-group');
-        if (group === null) { return null; }
-
-        let {source, index} = group.dataset;
-        if (typeof index !== 'undefined') {
+        if (group !== null) {
+            let {index, subIndex} = group.dataset;
             index = Number.parseInt(index, 10);
+            if (index >= 0 && index < this._audioSources.length) {
+                const source = this._audioSources[index];
+                if (typeof subIndex === 'string') {
+                    subIndex = Number.parseInt(subIndex, 10);
+                } else {
+                    subIndex = null;
+                }
+                return {source, subIndex};
+            }
         }
-        const hasIndex = (Number.isFinite(index) && Math.floor(index) === index);
-        if (!hasIndex) {
-            index = 0;
-        }
-        return {source, index, hasIndex};
+        return {source: null, subIndex: null};
     }
 
-    async _playAudio(dictionaryEntryIndex, headwordIndex, sources=null, audioInfoListIndex=null) {
+    async _playAudio(dictionaryEntryIndex, headwordIndex, sources, audioInfoListIndex) {
         this.stopAudio();
         this.clearAutoPlayTimer();
 
@@ -299,14 +314,12 @@ class DisplayAudio {
     }
 
     async _playAudioFromSource(dictionaryEntryIndex, headwordIndex, item) {
-        const sourceInfo = this._getMenuItemSourceInfo(item);
-        if (sourceInfo === null) { return; }
-
-        const {source, index, hasIndex} = sourceInfo;
+        const {source, subIndex} = this._getMenuItemSourceInfo(item);
+        if (source === null) { return; }
 
         try {
             const token = this._entriesToken;
-            const {valid} = await this._playAudio(dictionaryEntryIndex, headwordIndex, [source], hasIndex ? index : null);
+            const {valid} = await this._playAudio(dictionaryEntryIndex, headwordIndex, [source], subIndex);
             if (valid && token === this._entriesToken) {
                 this._setPrimaryAudio(dictionaryEntryIndex, headwordIndex, item, null, false);
             }
@@ -316,11 +329,8 @@ class DisplayAudio {
     }
 
     _setPrimaryAudio(dictionaryEntryIndex, headwordIndex, item, menu, canToggleOff) {
-        const sourceInfo = this._getMenuItemSourceInfo(item);
-        if (sourceInfo === null) { return; }
-
-        const {source, index} = sourceInfo;
-        if (!this._sourceIsDownloadable(source)) { return; }
+        const {source, subIndex} = this._getMenuItemSourceInfo(item);
+        if (source === null || !source.downloadable) { return; }
 
         const headword = this._getHeadword(dictionaryEntryIndex, headwordIndex);
         if (headword === null) { return; }
@@ -329,7 +339,12 @@ class DisplayAudio {
         const cacheEntry = this._getCacheItem(term, reading, true);
 
         let {primaryCardAudio} = cacheEntry;
-        primaryCardAudio = (!canToggleOff || primaryCardAudio === null || primaryCardAudio.source !== source || primaryCardAudio.index !== index) ? {source, index} : null;
+        primaryCardAudio = (
+            !canToggleOff ||
+            primaryCardAudio === null ||
+            primaryCardAudio.source !== source ||
+            primaryCardAudio.index !== subIndex
+        ) ? {index: source.index, subIndex} : null;
         cacheEntry.primaryCardAudio = primaryCardAudio;
 
         if (menu !== null) {
@@ -561,11 +576,11 @@ class DisplayAudio {
         const {displayGenerator} = this._display;
         let showIcons = false;
         const currentItems = [...menuItemContainer.children];
-        for (const {type, displayName, isInOptions, downloadable} of this._audioSources) {
+        for (const {index, type, displayName, isInOptions, downloadable} of this._audioSources) {
             const entries = this._getMenuItemEntries(type, term, reading);
             for (let i = 0, ii = entries.length; i < ii; ++i) {
-                const {valid, index, name} = entries[i];
-                let node = this._getOrCreateMenuItem(currentItems, type, index);
+                const {valid, index: subIndex, name} = entries[i];
+                let node = this._getOrCreateMenuItem(currentItems, index, subIndex);
                 if (node === null) {
                     node = displayGenerator.instantiateTemplate('audio-button-popup-menu-item');
                 }
@@ -584,9 +599,9 @@ class DisplayAudio {
                     icon.dataset.icon = valid ? 'checkmark' : 'cross';
                     showIcons = true;
                 }
-                node.dataset.source = type;
-                if (index !== null) {
-                    node.dataset.index = `${index}`;
+                node.dataset.index = `${index}`;
+                if (subIndex !== null) {
+                    node.dataset.subIndex = `${subIndex}`;
                 }
                 node.dataset.valid = `${valid}`;
                 node.dataset.sourceInOptions = `${isInOptions}`;
@@ -603,16 +618,16 @@ class DisplayAudio {
         menuContainerNode.dataset.showIcons = `${showIcons}`;
     }
 
-    _getOrCreateMenuItem(currentItems, source, index) {
-        if (index === null) { index = 0; }
+    _getOrCreateMenuItem(currentItems, index, subIndex) {
         index = `${index}`;
+        subIndex = `${subIndex !== null ? subIndex : 0}`;
         for (let i = 0, ii = currentItems.length; i < ii; ++i) {
             const node = currentItems[i];
-            if (source !== node.dataset.source) { continue; }
+            if (index !== node.dataset.index) { continue; }
 
-            let index2 = node.dataset.index;
-            if (typeof index2 === 'undefined') { index2 = '0'; }
-            if (index !== index2) { continue; }
+            let subIndex2 = node.dataset.subIndex;
+            if (typeof subIndex2 === 'undefined') { subIndex2 = '0'; }
+            if (subIndex !== subIndex2) { continue; }
 
             currentItems.splice(i, 1);
             return node;
@@ -647,23 +662,20 @@ class DisplayAudio {
         return [{valid: null, index: null, name: null}];
     }
 
+    _getPrimaryCardAudio(term, reading) {
+        const cacheEntry = this._getCacheItem(term, reading, false);
+        return typeof cacheEntry !== 'undefined' ? cacheEntry.primaryCardAudio : null;
+    }
+
     _updateMenuPrimaryCardAudio(menuBodyNode, term, reading) {
-        const primaryCardAudio = this.getPrimaryCardAudio(term, reading);
-        const {source: primaryCardAudioSource, index: primaryCardAudioIndex} = (primaryCardAudio !== null ? primaryCardAudio : {source: null, index: -1});
-
+        const primaryCardAudio = this._getPrimaryCardAudio(term, reading);
+        const primaryCardAudioIndex = (primaryCardAudio !== null ? primaryCardAudio.index : null);
+        const primaryCardAudioSubIndex = (primaryCardAudio !== null ? primaryCardAudio.subIndex : null);
         const itemGroups = menuBodyNode.querySelectorAll('.popup-menu-item-group');
-        let sourceIndex = 0;
-        let sourcePre = null;
         for (const node of itemGroups) {
-            const {source} = node.dataset;
-            if (source !== sourcePre) {
-                sourcePre = source;
-                sourceIndex = 0;
-            } else {
-                ++sourceIndex;
-            }
-
-            const isPrimaryCardAudio = (source === primaryCardAudioSource && sourceIndex === primaryCardAudioIndex);
+            const index = Number.parseInt(node.dataset.index, 10);
+            const subIndex = Number.parseInt(node.dataset.subIndex, 10);
+            const isPrimaryCardAudio = (index === primaryCardAudioIndex && subIndex === primaryCardAudioSubIndex);
             node.dataset.isPrimaryCardAudio = `${isPrimaryCardAudio}`;
         }
     }
