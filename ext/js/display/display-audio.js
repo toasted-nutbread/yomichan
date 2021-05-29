@@ -104,8 +104,8 @@ class DisplayAudio {
         this._audioPlaying = null;
     }
 
-    async playAudio(dictionaryEntryIndex, headwordIndex, sources=null, sourceDetailsMap=null) {
-        return await this._playAudio(dictionaryEntryIndex, headwordIndex, sources, sourceDetailsMap);
+    async playAudio(dictionaryEntryIndex, headwordIndex, sourceType=null) {
+        return await this._playAudio(dictionaryEntryIndex, headwordIndex, [sourceType], null);
     }
 
     getPrimaryCardAudio(term, reading) {
@@ -276,7 +276,7 @@ class DisplayAudio {
 
         try {
             const token = this._entriesToken;
-            const {valid} = await this.playAudio(dictionaryEntryIndex, headwordIndex, [source], sourceDetailsMap);
+            const {valid} = await this._playAudio(dictionaryEntryIndex, headwordIndex, [source], sourceDetailsMap);
             if (valid && token === this._entriesToken) {
                 this._setPrimaryAudio(dictionaryEntryIndex, headwordIndex, item, null, false);
             }

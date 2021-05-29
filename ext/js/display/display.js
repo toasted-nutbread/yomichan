@@ -1905,7 +1905,7 @@ class Display extends EventDispatcher {
     }
 
     _onHotkeyActionPlayAudioFromSource(source) {
-        this._displayAudio.playAudio(this._index, 0, [source]);
+        this._displayAudio.playAudio(this._index, 0, source);
     }
 
     _closeAllPopupMenus() {
