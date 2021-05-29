@@ -1329,7 +1329,7 @@ class Display extends EventDispatcher {
     }
 
     async _playAudioCurrent() {
-        return await this._displayAudio.playAudio(this._index, 0);
+        await this._displayAudio.playAudio(this._index, 0);
     }
 
     _getEntry(index) {
