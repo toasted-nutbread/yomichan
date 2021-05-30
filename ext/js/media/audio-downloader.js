@@ -38,11 +38,11 @@ class AudioDownloader {
         ]);
     }
 
-    async getTermAudioInfoList(source, term, reading, details) {
-        const handler = this._getInfoHandlers.get(source);
+    async getTermAudioInfoList(source, term, reading) {
+        const handler = this._getInfoHandlers.get(source.type);
         if (typeof handler === 'function') {
             try {
-                return await handler(term, reading, details);
+                return await handler(term, reading, source);
             } catch (e) {
                 // NOP
             }
@@ -50,9 +50,9 @@ class AudioDownloader {
         return [];
     }
 
-    async downloadTermAudio(sources, preferredAudioIndex, term, reading, details) {
+    async downloadTermAudio(sources, preferredAudioIndex, term, reading) {
         for (const source of sources) {
-            let infoList = await this.getTermAudioInfoList(source, term, reading, details);
+            let infoList = await this.getTermAudioInfoList(source, term, reading);
             if (typeof preferredAudioIndex === 'number') {
                 infoList = (preferredAudioIndex >= 0 && preferredAudioIndex < infoList.length ? [infoList[preferredAudioIndex]] : []);
             }
@@ -60,7 +60,7 @@ class AudioDownloader {
                 switch (info.type) {
                     case 'url':
                         try {
-                            return await this._downloadAudioFromUrl(info.url, source);
+                            return await this._downloadAudioFromUrl(info.url, source.type);
                         } catch (e) {
                             // NOP
                         }
@@ -178,27 +178,27 @@ class AudioDownloader {
         throw new Error('Failed to find audio URL');
     }
 
-    async _getInfoTextToSpeech(term, reading, {textToSpeechVoice}) {
-        if (!textToSpeechVoice) {
+    async _getInfoTextToSpeech(term, reading, {voice}) {
+        if (!voice) {
             throw new Error('No voice');
         }
-        return [{type: 'tts', text: term, voice: textToSpeechVoice}];
+        return [{type: 'tts', text: term, voice: voice}];
     }
 
-    async _getInfoTextToSpeechReading(term, reading, {textToSpeechVoice}) {
-        if (!textToSpeechVoice) {
+    async _getInfoTextToSpeechReading(term, reading, {voice}) {
+        if (!voice) {
             throw new Error('No voice');
         }
-        return [{type: 'tts', text: reading, voice: textToSpeechVoice}];
+        return [{type: 'tts', text: reading, voice: voice}];
     }
 
-    async _getInfoCustom(term, reading, {customSourceUrl}) {
-        const url = this._getCustomUrl(term, reading, customSourceUrl);
+    async _getInfoCustom(term, reading, {url}) {
+        url = this._getCustomUrl(term, reading, url);
         return [{type: 'url', url}];
     }
 
-    async _getInfoCustomJson(term, reading, {customSourceUrl}) {
-        const url = this._getCustomUrl(term, reading, customSourceUrl);
+    async _getInfoCustomJson(term, reading, {url}) {
+        url = this._getCustomUrl(term, reading, url);
 
         const response = await this._requestBuilder.fetchAnonymous(url, {
             method: 'GET',
@@ -230,15 +230,15 @@ class AudioDownloader {
         return results;
     }
 
-    _getCustomUrl(term, reading, customSourceUrl) {
-        if (typeof customSourceUrl !== 'string') {
+    _getCustomUrl(term, reading, url) {
+        if (typeof url !== 'string') {
             throw new Error('No custom URL defined');
         }
         const data = {term, reading};
-        return customSourceUrl.replace(/\{([^}]*)\}/g, (m0, m1) => (Object.prototype.hasOwnProperty.call(data, m1) ? `${data[m1]}` : m0));
+        return url.replace(/\{([^}]*)\}/g, (m0, m1) => (Object.prototype.hasOwnProperty.call(data, m1) ? `${data[m1]}` : m0));
     }
 
-    async _downloadAudioFromUrl(url, source) {
+    async _downloadAudioFromUrl(url, sourceType) {
         const response = await this._requestBuilder.fetchAnonymous(url, {
             method: 'GET',
             mode: 'cors',
@@ -254,7 +254,7 @@ class AudioDownloader {
 
         const arrayBuffer = await response.arrayBuffer();
 
-        if (!await this._isAudioBinaryValid(arrayBuffer, source)) {
+        if (!await this._isAudioBinaryValid(arrayBuffer, sourceType)) {
             throw new Error('Could not retrieve audio');
         }
 
@@ -263,8 +263,8 @@ class AudioDownloader {
         return {data, contentType};
     }
 
-    async _isAudioBinaryValid(arrayBuffer, source) {
-        switch (source) {
+    async _isAudioBinaryValid(arrayBuffer, sourceType) {
+        switch (sourceType) {
             case 'jpod101':
             {
                 const digest = await this._arrayBufferDigest(arrayBuffer);

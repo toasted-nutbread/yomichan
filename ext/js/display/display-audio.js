@@ -699,6 +699,7 @@ class DisplayAudio {
     }
 
     _getSourceData(source) {
-        return source.type;
+        const {type, url, voice} = source;
+        return {type, url, voice};
     }
 }
