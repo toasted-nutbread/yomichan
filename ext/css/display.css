@@ -2078,6 +2078,9 @@ button.footer-notification-close-button {
 .popup-menu-item-group .popup-menu-item-set-primary-audio-button:focus:not(:focus-visible) .popup-menu-item-icon {
     opacity: 0;
 }
+.popup-menu-item-group:hover .popup-menu-item-set-primary-audio-button:not(:focus-visible) .popup-menu-item-icon {
+    opacity: 0.25;
+}
 .popup-menu-item-group .popup-menu-item-set-primary-audio-button:hover:not(:focus-visible) .popup-menu-item-icon,
 .popup-menu-item-group .popup-menu-item-set-primary-audio-button:active:not(:focus-visible) .popup-menu-item-icon {
     opacity: 0.375;
