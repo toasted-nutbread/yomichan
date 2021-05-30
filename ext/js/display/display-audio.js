@@ -139,8 +139,7 @@ class DisplayAudio {
                 sources.push(this._getSourceData(source));
             }
         }
-        const customSourceUrl = (sources.length > 0 ? sources[0].url : '');
-        return {sources, preferredAudioIndex, customSourceUrl};
+        return {sources, preferredAudioIndex};
     }
 
     // Private
@@ -467,11 +466,7 @@ class DisplayAudio {
 
     async _getTermAudioInfoList(source, term, reading) {
         const sourceData = this._getSourceData(source);
-        const details = {
-            customSourceUrl: source.url,
-            textToSpeechVoice: source.voice
-        };
-        const infoList = await yomichan.api.getTermAudioInfoList(sourceData, term, reading, details);
+        const infoList = await yomichan.api.getTermAudioInfoList(sourceData, term, reading);
         return infoList.map((info) => ({info, audioPromise: null, audioResolved: false, audio: null}));
     }
 
