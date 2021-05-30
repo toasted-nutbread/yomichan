@@ -352,6 +352,7 @@ class DisplayAudio {
         const headword = this._getHeadword(dictionaryEntryIndex, headwordIndex);
         if (headword === null) { return; }
 
+        const {index} = source;
         const {term, reading} = headword;
         const cacheEntry = this._getCacheItem(term, reading, true);
 
@@ -359,9 +360,9 @@ class DisplayAudio {
         primaryCardAudio = (
             !canToggleOff ||
             primaryCardAudio === null ||
-            primaryCardAudio.source !== source ||
-            primaryCardAudio.index !== subIndex
-        ) ? {index: source.index, subIndex} : null;
+            primaryCardAudio.index !== index ||
+            primaryCardAudio.subIndex !== subIndex
+        ) ? {index: index, subIndex} : null;
         cacheEntry.primaryCardAudio = primaryCardAudio;
 
         if (menu !== null) {
