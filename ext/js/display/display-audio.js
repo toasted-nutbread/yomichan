@@ -146,7 +146,7 @@ class DisplayAudio {
 
     _onOptionsUpdated({options}) {
         if (options === null) { return; }
-        const {enabled, autoPlay, textToSpeechVoice, customSourceUrl, volume, sources} = options.audio;
+        const {enabled, autoPlay, volume, sources} = options.audio;
         this._autoPlay = enabled && autoPlay;
         this._playbackVolume = Number.isFinite(volume) ? Math.max(0.0, Math.min(1.0, volume / 100.0)) : 1.0;
 
@@ -156,8 +156,8 @@ class DisplayAudio {
             'jisho'
         ]);
         this._audioSources.length = 0;
-        for (const type of sources) {
-            this._addAudioSourceInfo(type, customSourceUrl, textToSpeechVoice, true);
+        for (const {type, url, voice} of sources) {
+            this._addAudioSourceInfo(type, url, voice, true);
             requiredAudioSources.delete(type);
         }
         for (const type of requiredAudioSources) {
