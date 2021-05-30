@@ -698,8 +698,9 @@ class DisplayAudio {
         const primaryCardAudioSubIndex = (primaryCardAudio !== null ? primaryCardAudio.subIndex : null);
         const itemGroups = menuBodyNode.querySelectorAll('.popup-menu-item-group');
         for (const node of itemGroups) {
-            const index = Number.parseInt(node.dataset.index, 10);
-            const subIndex = Number.parseInt(node.dataset.subIndex, 10);
+            let {index, subIndex} = node.dataset;
+            index = Number.parseInt(index, 10);
+            subIndex = typeof subIndex === 'string' ? Number.parseInt(subIndex, 10) : null;
             const isPrimaryCardAudio = (index === primaryCardAudioIndex && subIndex === primaryCardAudioSubIndex);
             node.dataset.isPrimaryCardAudio = `${isPrimaryCardAudio}`;
         }
