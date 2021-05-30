@@ -124,13 +124,23 @@ class DisplayAudio {
         await this._playAudio(dictionaryEntryIndex, headwordIndex, sources, null);
     }
 
-    getPrimaryCardAudio(term, reading) {
-        // TODO : This will need to be refactored to support multiple audio sources with the same type
-        const result = this._getPrimaryCardAudio(term, reading);
-        if (result === null) { return null; }
-        const {index, subIndex} = result;
-        const sourceData = this._getSourceData(this._audioSources[index]);
-        return {source: sourceData, index: subIndex};
+    getAnkiNoteMediaAudioDetails(term, reading) {
+        const sources = [];
+        let preferredAudioIndex = null;
+        const primaryCardAudio = this._getPrimaryCardAudio(term, reading);
+        if (primaryCardAudio !== null) {
+            const {index, subIndex} = primaryCardAudio;
+            const source = this._audioSources[index];
+            sources.push(this._getSourceData(source));
+            preferredAudioIndex = subIndex;
+        } else {
+            for (const source of this._audioSources) {
+                if (!source.isInOptions) { continue; }
+                sources.push(this._getSourceData(source));
+            }
+        }
+        const customSourceUrl = (sources.length > 0 ? sources[0].url : '');
+        return {sources, preferredAudioIndex, customSourceUrl};
     }
 
     // Private
