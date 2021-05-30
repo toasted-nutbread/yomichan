@@ -26,7 +26,6 @@ class AudioDownloader {
         this._japaneseUtil = japaneseUtil;
         this._requestBuilder = requestBuilder;
         this._customAudioListSchema = null;
-        this._customAudioListSchema = null;
         this._getInfoHandlers = new Map([
             ['jpod101', this._getInfoJpod101.bind(this)],
             ['jpod101-alternate', this._getInfoJpod101Alternate.bind(this)],
@@ -304,20 +303,15 @@ class AudioDownloader {
     }
 
     async _getCustomAudioListSchema() {
-        let schema = this._customAudioListSchema;
-        if (schema === null) {
-            const url = chrome.runtime.getURL('/data/schemas/custom-audio-list-schema.json');
-            const response = await fetch(url, {
-                method: 'GET',
-                mode: 'no-cors',
-                cache: 'default',
-                credentials: 'omit',
-                redirect: 'follow',
-                referrerPolicy: 'no-referrer'
-            });
-            schema = await response.json();
-            this._customAudioListSchema = schema;
-        }
-        return schema;
+        const url = chrome.runtime.getURL('/data/schemas/custom-audio-list-schema.json');
+        const response = await fetch(url, {
+            method: 'GET',
+            mode: 'no-cors',
+            cache: 'default',
+            credentials: 'omit',
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer'
+        });
+        return await response.json();
     }
 }
