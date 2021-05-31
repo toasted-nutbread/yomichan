@@ -364,6 +364,26 @@ function ensureFilesExist(directory, files) {
     }
 }
 
+function getDefaultManifest(details, args, variantMap) {
+    const {manifest, defaultVariant} = details;
+
+    if (!args.get('default') && args.get('manifest') !== null) {
+        const variant = variantMap.get(args.get('manifest'));
+        if (typeof variant !== 'undefined') {
+            return createVariantManifest(manifest, variant, variantMap);
+        }
+    }
+
+    if (typeof defaultVariant === 'string') {
+        const variant = variantMap.get(defaultVariant);
+        if (typeof variant !== 'undefined') {
+            return createVariantManifest(manifest, variant, variantMap);
+        }
+    }
+
+    return manifest;
+}
+
 
 async function main(argv) {
     const args = getArgs(argv, new Map([
@@ -378,7 +398,8 @@ async function main(argv) {
     const dryRun = args.get('dry-run');
     const dryRunBuildZip = args.get('dry-run-build-zip');
 
-    const {manifest, variants} = getDefaultManifestAndVariants();
+    const details = getDefaultManifestAndVariants();
+    const {manifest, variants} = details;
 
     const rootDir = path.join(__dirname, '..');
     const extDir = path.join(rootDir, 'ext');
@@ -395,13 +416,7 @@ async function main(argv) {
         await build(manifest, buildDir, extDir, manifestPath, variantMap, variantNames, dryRun, dryRunBuildZip);
     } finally {
         // Restore manifest
-        let restoreManifest = manifest;
-        if (!args.get('default') && args.get('manifest') !== null) {
-            const variant = variantMap.get(args.get('manifest'));
-            if (typeof variant !== 'undefined') {
-                restoreManifest = createVariantManifest(manifest, variant, variantMap);
-            }
-        }
+        const restoreManifest = getDefaultManifest(details, args, variantMap);
         process.stdout.write('Restoring manifest...\n');
         if (!dryRun) {
             fs.writeFileSync(manifestPath, createManifestString(restoreManifest));

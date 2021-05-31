@@ -105,8 +105,8 @@ function getDefaultManifest() {
 
 function getDefaultManifestAndVariants() {
     const fileName = path.join(__dirname, 'data', 'manifest-variants.json');
-    const {manifest, variants} = JSON.parse(fs.readFileSync(fileName));
-    return {manifest, variants};
+    const {manifest, variants, defaultVariant} = JSON.parse(fs.readFileSync(fileName));
+    return {manifest, variants, defaultVariant};
 }
 
 function createManifestString(manifest) {
