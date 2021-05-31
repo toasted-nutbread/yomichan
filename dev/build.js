@@ -21,7 +21,8 @@ const assert = require('assert');
 const readline = require('readline');
 const childProcess = require('child_process');
 const util = require('./util');
-const {getAllFiles, getDefaultManifestAndVariants, createManifestString, getArgs, testMain} = util;
+const {getAllFiles, getArgs, testMain} = util;
+const {getDefaultManifestAndVariants, createManifestString} = require('./manifest-util');
 
 
 function clone(value) {
