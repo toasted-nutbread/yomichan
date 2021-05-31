@@ -306,7 +306,7 @@ async function build(manifest, buildDir, extDir, manifestPath, variantMap, varia
 
     for (const variantName of variantNames) {
         const variant = variantMap.get(variantName);
-        if (typeof variant === 'undefined') { continue; }
+        if (typeof variant === 'undefined' || variant.buildable === false) { continue; }
 
         const {name, fileName, fileCopies} = variant;
         let {excludeFiles} = variant;
@@ -373,7 +373,7 @@ async function main(argv) {
     }
 
     try {
-        const variantNames = (argv.length === 0 || args.get('all') ? variants.map(({name}) => name) : args.get(null));
+        const variantNames = (argv.length === 0 || args.get('all') ? variants.filter(({buildable}) => buildable !== false).map(({name}) => name) : args.get(null));
         await build(manifest, buildDir, extDir, manifestPath, variantMap, variantNames, dryRun, dryRunBuildZip);
     } finally {
         // Restore manifest
