@@ -116,6 +116,7 @@
         ],
         "content_security_policy": "default-src 'self'; img-src blob: 'self'; style-src 'self' 'unsafe-inline'; media-src *; connect-src *"
     },
+    "defaultVariant": "base",
     "variants": [
         {
             "name": "base",
