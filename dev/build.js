@@ -110,6 +110,21 @@ function getIndexOfFilePath(array, item) {
     return -1;
 }
 
+function evaluateModificationCommand(data) {
+    const {command, args, trim} = data;
+    const {stdout, status} = childProcess.spawnSync(command, args, {
+        cwd: __dirname,
+        stdio: 'pipe',
+        shell: false
+    });
+    if (status !== 0) {
+        throw new Error(`Failed to execute ${command} ${args.join(' ')}`);
+    }
+    let result = stdout.toString('utf8');
+    if (trim) { result = result.trim(); }
+    return result;
+}
+
 function applyModifications(manifest, modifications) {
     if (Array.isArray(modifications)) {
         for (const modification of modifications) {
@@ -117,7 +132,7 @@ function applyModifications(manifest, modifications) {
             switch (action) {
                 case 'set':
                     {
-                        const {value, before, after} = modification;
+                        let {value, before, after, command} = modification;
                         const object = getObjectProperties(manifest, path2, path2.length - 1);
                         const key = path2[path2.length - 1];
 
@@ -131,6 +146,9 @@ function applyModifications(manifest, modifications) {
                         if (typeof after === 'string') {
                             index = getObjectKeyIndex(object, after);
                             if (index >= 0) { ++index; }
+                        }
+                        if (typeof command === 'object' && command !== null) {
+                            value = evaluateModificationCommand(command);
                         }
 
                         setObjectKeyAtIndex(object, key, value, index);
