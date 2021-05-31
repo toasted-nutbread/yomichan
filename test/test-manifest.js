@@ -30,7 +30,7 @@ function loadManifestString() {
 function validateManifest() {
     const manifestUtil = new ManifestUtil();
     const manifest1 = loadManifestString();
-    const manifest2 = ManifestUtil.createManifestString(manifestUtil.getDefaultManifest());
+    const manifest2 = ManifestUtil.createManifestString(manifestUtil.getManifest());
     assert.strictEqual(manifest1, manifest2, 'Manifest data does not match.');
 }
 
