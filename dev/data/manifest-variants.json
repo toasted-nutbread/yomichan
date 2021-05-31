@@ -118,7 +118,12 @@
     },
     "variants": [
         {
+            "name": "base",
+            "buildable": false
+        },
+        {
             "name": "chrome",
+            "inherit": "base",
             "fileName": "yomichan-chrome.zip",
             "excludeFiles": [
                 "sw.js",
@@ -149,6 +154,7 @@
         },
         {
             "name": "chrome-mv3",
+            "inherit": "base",
             "fileName": "yomichan-chrome-mv3.zip",
             "modifications": [
                 {"action": "set",    "path": ["manifest_version"], "value": 3},
@@ -176,6 +182,7 @@
         },
         {
             "name": "firefox",
+            "inherit": "base",
             "fileName": "yomichan-firefox.xpi",
             "modifications": [
                 {
