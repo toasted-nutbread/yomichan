@@ -1630,6 +1630,10 @@ button.definition-item-expansion-button:focus:focus-visible+.definition-item-con
     image-rendering: -webkit-optimize-contrast;
     image-rendering: crisp-edges;
 }
+:root[data-browser=firefox] .gloss-image[data-image-rendering=crisp-edges],
+:root[data-browser=firefox-mobile] .gloss-image[data-image-rendering=crisp-edges] {
+    image-rendering: auto;
+}
 .gloss-image-link[data-has-aspect-ratio=true] .gloss-image-aspect-ratio-sizer {
     display: inline-block;
     width: 0;
