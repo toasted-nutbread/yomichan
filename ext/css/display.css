@@ -1617,11 +1617,17 @@ button.definition-item-expansion-button:focus:focus-visible+.definition-item-con
 .gloss-image:not([src]) {
     display: none;
 }
-.gloss-image[data-pixelated=true] {
+.gloss-image[data-image-rendering=pixelated] {
     image-rendering: auto;
     image-rendering: -moz-crisp-edges;
     image-rendering: -webkit-optimize-contrast;
     image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+.gloss-image[data-image-rendering=crisp-edges] {
+    image-rendering: auto;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-optimize-contrast;
     image-rendering: crisp-edges;
 }
 .gloss-image-link[data-has-aspect-ratio=true] .gloss-image-aspect-ratio-sizer {

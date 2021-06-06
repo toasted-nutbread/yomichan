@@ -70,6 +70,12 @@
                                     "description": "Whether or not the image should appear pixelated at sizes larger than the image's native resolution.",
                                     "default": false
                                 },
+                                "imageRendering": {
+                                    "type": "string",
+                                    "description": "Controls how the image is rendered. The value of this field supersedes the pixelated field.",
+                                    "enum": ["auto", "pixelated", "crisp-edges"],
+                                    "default": "auto"
+                                },
                                 "collapsed": {
                                     "type": "boolean",
                                     "description": "Whether or not the image is collapsed by default.",
@@ -218,6 +224,12 @@
                                             "type": "boolean",
                                             "description": "Whether or not the image should appear pixelated at sizes larger than the image's native resolution.",
                                             "default": false
+                                        },
+                                        "imageRendering": {
+                                            "type": "string",
+                                            "description": "Controls how the image is rendered. The value of this field supersedes the pixelated field.",
+                                            "enum": ["auto", "pixelated", "crisp-edges"],
+                                            "default": "auto"
                                         },
                                         "collapsed": {
                                             "type": "boolean",

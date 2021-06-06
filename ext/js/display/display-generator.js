@@ -340,7 +340,7 @@ class DisplayGenerator {
     }
 
     _createDefinitionImage(data, dictionary) {
-        const {path, width, height, preferredWidth, preferredHeight, title, pixelated, collapsed, collapsible, verticalAlign, sizeUnits} = data;
+        const {path, width, height, preferredWidth, preferredHeight, title, pixelated, imageRendering, collapsed, collapsible, verticalAlign, sizeUnits} = data;
 
         const hasPreferredWidth = (typeof preferredWidth === 'number');
         const hasPreferredHeight = (typeof preferredHeight === 'number');
@@ -379,7 +379,11 @@ class DisplayGenerator {
         aspectRatioSizer.style.paddingTop = `${aspectRatio * 100.0}%`;
 
         const image = node.querySelector('img.gloss-image');
-        image.dataset.pixelated = `${pixelated === true}`;
+        image.dataset.imageRendering = (
+            typeof imageRendering === 'string' ?
+            imageRendering :
+            (pixelated ? 'pixelated' : 'auto')
+        );
 
         if (this._mediaLoader !== null) {
             this._mediaLoader.loadMedia(
