@@ -370,6 +370,10 @@ class DisplayGenerator {
         );
 
         const node = this._templates.instantiate('gloss-item-image');
+        const imageContainer = node.querySelector('.gloss-image-container');
+        const aspectRatioSizer = node.querySelector('.gloss-image-aspect-ratio-sizer');
+        const image = node.querySelector('.gloss-image');
+
         node.dataset.path = path;
         node.dataset.dictionary = dictionary;
         node.dataset.imageLoadState = 'not-loaded';
@@ -385,16 +389,12 @@ class DisplayGenerator {
             node.dataset.sizeUnits = sizeUnits;
         }
 
-        const imageContainer = node.querySelector('.gloss-image-container');
         imageContainer.style.width = `${usedWidth}em`;
         if (typeof title === 'string') {
             imageContainer.title = title;
         }
 
-        const aspectRatioSizer = node.querySelector('.gloss-image-aspect-ratio-sizer');
         aspectRatioSizer.style.paddingTop = `${aspectRatio * 100.0}%`;
-
-        const image = node.querySelector('img.gloss-image');
 
         if (this._mediaLoader !== null) {
             this._mediaLoader.loadMedia(
