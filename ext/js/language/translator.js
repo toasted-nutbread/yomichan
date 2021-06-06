@@ -425,17 +425,13 @@ class Translator {
                 let target = targetMap.get(key);
                 if (typeof target === 'undefined') {
                     target = {
-                        groups: [],
-                        searchSecondary: false
+                        groups: []
                     };
                     targetMap.set(key, target);
                 }
                 target.groups.push(group);
-                if (!target.searchSecondary) {
-                    target.searchSecondary = true;
-                    termList.push({term, reading});
-                    targetList.push(target);
-                }
+                termList.push({term, reading});
+                targetList.push(target);
             }
         }
 
