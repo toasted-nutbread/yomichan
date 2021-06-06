@@ -431,7 +431,7 @@ class Translator {
                     targetMap.set(key, target);
                 }
                 target.groups.push(group);
-                if (!dictionaryEntry.isPrimary && !target.searchSecondary) {
+                if (!target.searchSecondary) {
                     target.searchSecondary = true;
                     termList.push({term, reading});
                     targetList.push(target);
@@ -494,6 +494,8 @@ class Translator {
         }
         return newDictionaryEntries;
     }
+
+    // Removing data
 
     _removeExcludedDefinitions(dictionaryEntries, excludeDictionaryDefinitions) {
         for (let i = dictionaryEntries.length - 1; i >= 0; --i) {
