@@ -1118,7 +1118,8 @@
         "global": {
             "type": "object",
             "required": [
-                "database"
+                "database",
+                "apiKeys"
             ],
             "properties": {
                 "database": {
@@ -1130,6 +1131,44 @@
                         "prefixWildcardsSupported": {
                             "type": "boolean",
                             "default": false
+                        }
+                    }
+                },
+                "apiKeys": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                            "enabled",
+                            "apiKey",
+                            "permissions",
+                            "origins"
+                        ],
+                        "properties": {
+                            "enabled": {
+                                "type": "boolean",
+                                "default": false
+                            },
+                            "apiKey": {
+                                "type": "string",
+                                "default": ""
+                            },
+                            "permissions": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "enum": ["translator"],
+                                    "default": "translator"
+                                }
+                            },
+                            "origins": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "default": ""
+                                }
+                            }
                         }
                     }
                 }
