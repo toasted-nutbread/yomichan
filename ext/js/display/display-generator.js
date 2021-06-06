@@ -374,6 +374,7 @@ class DisplayGenerator {
         node.dataset.dictionary = dictionary;
         node.dataset.imageLoadState = 'not-loaded';
         node.dataset.hasAspectRatio = 'true';
+        node.dataset.imageRendering = typeof imageRendering === 'string' ? imageRendering : (pixelated ? 'pixelated' : 'auto');
         node.dataset.background = typeof background === 'boolean' ? `${background}` : 'true';
         node.dataset.collapsed = typeof collapsed === 'boolean' ? `${collapsed}` : 'false';
         node.dataset.collapsible = typeof collapsible === 'boolean' ? `${collapsible}` : 'true';
@@ -394,11 +395,6 @@ class DisplayGenerator {
         aspectRatioSizer.style.paddingTop = `${aspectRatio * 100.0}%`;
 
         const image = node.querySelector('img.gloss-image');
-        image.dataset.imageRendering = (
-            typeof imageRendering === 'string' ?
-            imageRendering :
-            (pixelated ? 'pixelated' : 'auto')
-        );
 
         if (this._mediaLoader !== null) {
             this._mediaLoader.loadMedia(
