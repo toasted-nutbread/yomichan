@@ -369,6 +369,7 @@ class DictionaryImporter {
             description,
             pixelated,
             imageRendering,
+            background,
             collapsed,
             collapsible
         } = data;
@@ -380,6 +381,7 @@ class DictionaryImporter {
         if (typeof description === 'string') { newData.description = description; }
         if (typeof pixelated === 'boolean') { newData.pixelated = pixelated; }
         if (typeof imageRendering === 'string') { newData.imageRendering = imageRendering; }
+        if (typeof background === 'boolean') { newData.background = background; }
         if (typeof collapsed === 'boolean') { newData.collapsed = collapsed; }
         if (typeof collapsible === 'boolean') { newData.collapsible = collapsible; }
         return newData;

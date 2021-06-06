@@ -349,6 +349,7 @@ class DisplayGenerator {
             title,
             pixelated,
             imageRendering,
+            background,
             collapsed,
             collapsible,
             verticalAlign,
@@ -373,6 +374,7 @@ class DisplayGenerator {
         node.dataset.dictionary = dictionary;
         node.dataset.imageLoadState = 'not-loaded';
         node.dataset.hasAspectRatio = 'true';
+        node.dataset.background = typeof background === 'boolean' ? `${background}` : 'true';
         node.dataset.collapsed = typeof collapsed === 'boolean' ? `${collapsed}` : 'false';
         node.dataset.collapsible = typeof collapsible === 'boolean' ? `${collapsible}` : 'true';
         if (typeof verticalAlign === 'string') {

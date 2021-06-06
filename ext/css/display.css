@@ -1566,6 +1566,8 @@ button.definition-item-expansion-button:focus:focus-visible+.definition-item-con
     line-height: 0;
     font-size: calc(1em / var(--font-size-no-units));
     overflow: hidden;
+}
+.gloss-image-link[data-background=true]>.gloss-image-container {
     background-color: var(--gloss-image-background-color);
 }
 .gloss-image-link {
