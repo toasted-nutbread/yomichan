@@ -448,12 +448,10 @@ class Translator {
 
             for (const {ids, dictionaryEntries} of target.groups) {
                 if (ids.has(id)) { continue; }
-
                 dictionaryEntries.push(dictionaryEntry);
                 ids.add(id);
-                ungroupedDictionaryEntriesMap.delete(id);
-                break;
             }
+            ungroupedDictionaryEntriesMap.delete(id);
         }
 
         // Search database for additional secondary terms
