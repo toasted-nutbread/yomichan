@@ -349,6 +349,7 @@ class DisplayGenerator {
             title,
             pixelated,
             imageRendering,
+            appearance,
             background,
             collapsed,
             collapsible,
@@ -373,12 +374,14 @@ class DisplayGenerator {
         const imageContainer = node.querySelector('.gloss-image-container');
         const aspectRatioSizer = node.querySelector('.gloss-image-aspect-ratio-sizer');
         const image = node.querySelector('.gloss-image');
+        const imageBackground = node.querySelector('.gloss-image-background');
 
         node.dataset.path = path;
         node.dataset.dictionary = dictionary;
         node.dataset.imageLoadState = 'not-loaded';
         node.dataset.hasAspectRatio = 'true';
         node.dataset.imageRendering = typeof imageRendering === 'string' ? imageRendering : (pixelated ? 'pixelated' : 'auto');
+        node.dataset.appearance = typeof appearance === 'string' ? appearance : 'auto';
         node.dataset.background = typeof background === 'boolean' ? `${background}` : 'true';
         node.dataset.collapsed = typeof collapsed === 'boolean' ? `${collapsed}` : 'false';
         node.dataset.collapsible = typeof collapsible === 'boolean' ? `${collapsible}` : 'true';
@@ -400,23 +403,25 @@ class DisplayGenerator {
             this._mediaLoader.loadMedia(
                 path,
                 dictionary,
-                (url) => this._setImageData(node, image, url, false),
-                () => this._setImageData(node, image, null, true)
+                (url) => this._setImageData(node, image, imageBackground, url, false),
+                () => this._setImageData(node, image, imageBackground, null, true)
             );
         }
 
         return node;
     }
 
-    _setImageData(node, image, url, unloaded) {
+    _setImageData(node, image, imageBackground, url, unloaded) {
         if (url !== null) {
             image.src = url;
             node.href = url;
             node.dataset.imageLoadState = 'loaded';
+            imageBackground.style.setProperty('--image', `url("${url}")`);
         } else {
             image.removeAttribute('src');
             node.removeAttribute('href');
             node.dataset.imageLoadState = unloaded ? 'unloaded' : 'load-error';
+            imageBackground.style.removeProperty('--image');
         }
     }
 

@@ -76,6 +76,12 @@
                                     "enum": ["auto", "pixelated", "crisp-edges"],
                                     "default": "auto"
                                 },
+                                "appearance": {
+                                    "type": "string",
+                                    "description": "Controls the appearance of the image. The \"monochrome\" value will mask the opaque parts of the image using the current text color.",
+                                    "enum": ["auto", "monochrome"],
+                                    "default": "auto"
+                                },
                                 "background": {
                                     "type": "boolean",
                                     "description": "Whether or not a background color is displayed behind the image.",
@@ -234,6 +240,12 @@
                                             "type": "string",
                                             "description": "Controls how the image is rendered. The value of this field supersedes the pixelated field.",
                                             "enum": ["auto", "pixelated", "crisp-edges"],
+                                            "default": "auto"
+                                        },
+                                        "appearance": {
+                                            "type": "string",
+                                            "description": "Controls the appearance of the image. The \"monochrome\" value will mask the opaque parts of the image using the current text color.",
+                                            "enum": ["auto", "monochrome"],
                                             "default": "auto"
                                         },
                                         "background": {
