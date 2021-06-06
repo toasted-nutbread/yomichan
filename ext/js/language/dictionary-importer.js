@@ -361,7 +361,17 @@ class DictionaryImporter {
     }
 
     async _createImageData(data, context, entry, attributes) {
-        const {path, width: preferredWidth, height: preferredHeight, title, description, pixelated, imageRendering, collapsed, collapsible} = data;
+        const {
+            path,
+            width: preferredWidth,
+            height: preferredHeight,
+            title,
+            description,
+            pixelated,
+            imageRendering,
+            collapsed,
+            collapsible
+        } = data;
         const {width, height} = await this._getImageMedia(path, context, entry);
         const newData = Object.assign({}, attributes, {path, width, height});
         if (typeof preferredWidth === 'number') { newData.preferredWidth = preferredWidth; }

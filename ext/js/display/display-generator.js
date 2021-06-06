@@ -340,7 +340,20 @@ class DisplayGenerator {
     }
 
     _createDefinitionImage(data, dictionary) {
-        const {path, width, height, preferredWidth, preferredHeight, title, pixelated, imageRendering, collapsed, collapsible, verticalAlign, sizeUnits} = data;
+        const {
+            path,
+            width,
+            height,
+            preferredWidth,
+            preferredHeight,
+            title,
+            pixelated,
+            imageRendering,
+            collapsed,
+            collapsible,
+            verticalAlign,
+            sizeUnits
+        } = data;
 
         const hasPreferredWidth = (typeof preferredWidth === 'number');
         const hasPreferredHeight = (typeof preferredHeight === 'number');
