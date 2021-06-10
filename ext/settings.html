@@ -1838,6 +1838,14 @@
                 </p>
             </div>
         </div>
+        <div class="settings-item settings-item-button" data-modal-action="show,api-keys"><div class="settings-item-inner">
+            <div class="settings-item-left">
+                <div class="settings-item-label">Configure API keys&hellip;</div>
+            </div>
+            <div class="settings-item-right open-panel-button-container">
+                <button class="icon-button"><span class="icon-button-inner"><span class="icon" data-icon="material-right-arrow"></span></span></button>
+            </div>
+        </div></div>
     </div>
 
     <div class="footer-padding"></div>
@@ -3377,6 +3385,48 @@
         <option value="custom">Custom</option>
     </select>
 </div></template>
+
+
+<!-- API keys modal -->
+<div id="api-keys-modal" class="modal" tabindex="-1" role="dialog" hidden><div class="modal-content">
+    <div class="modal-header">
+        <div class="modal-title">API keys</div>
+        <div class="modal-header-button-container">
+            <div class="modal-header-button-group">
+                <button class="icon-button modal-header-button" data-modal-action="expand"><span class="icon-button-inner"><span class="icon" data-icon="expand"></span></span></button>
+                <button class="icon-button modal-header-button" data-modal-action="collapse"><span class="icon-button-inner"><span class="icon" data-icon="collapse"></span></span></button>
+            </div>
+        </div>
+    </div>
+    <div class="modal-body">
+        <table><tbody>
+            <tr>
+                <td>
+                    API Key:
+                </td>
+                <td>
+                    <div class="anki-card-field-value-container">
+                        <input type="text" autocomplete="off">
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Origins:
+                </td>
+                <td>
+                    <div class="anki-card-field-value-container">
+                        <input type="text" class="input-with-suffix-button" autocomplete="off">
+                        <button class="input-suffix-button input-suffix-icon-button" data-menu-position="below left"><span class="icon" data-icon="cross"></span></button>
+                    </div>
+                </td>
+            </tr>
+        </tbody></table>
+    </div>
+    <div class="modal-footer">
+        <button data-modal-action="hide">Close</button>
+    </div>
+</div></div>
 
 
 <!-- Scripts -->
