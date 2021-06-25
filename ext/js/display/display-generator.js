@@ -469,7 +469,7 @@ class DisplayGenerator {
 
     _createStructuredContentTableElement(tag, content, dictionary) {
         const container = document.createElement('div');
-        container.classList = 'gloss-table-container';
+        container.classList = 'gloss-sc-table-container';
         const table = this._createStructuredContentElement(tag, content, dictionary, 'table', true, false);
         container.appendChild(table);
         return container;
@@ -477,13 +477,10 @@ class DisplayGenerator {
 
     _createStructuredContentElement(tag, content, dictionary, type, hasChildren, hasStyle) {
         const node = document.createElement(tag);
+        node.className = `gloss-sc-${tag}`;
         switch (type) {
-            case 'table':
-                node.className = `gloss-table-${tag}`;
-                break;
             case 'table-cell':
                 {
-                    node.className = `gloss-table-${tag}`;
                     const {colSpan, rowSpan} = content;
                     if (typeof colSpan === 'number') { node.colSpan = colSpan; }
                     if (typeof rowSpan === 'number') { node.rowSpan = rowSpan; }
