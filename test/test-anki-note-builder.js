@@ -68,6 +68,25 @@ async function createVM() {
             return this._serializeMulti(this._templateRenderer.renderMulti(items));
         }
 
+        _serializeError(error) {
+            try {
+                if (typeof error === 'object' && error !== null) {
+                    return {
+                        name: error.name,
+                        message: error.message,
+                        stack: error.stack,
+                        data: error.data
+                    };
+                }
+            } catch (e) {
+                // NOP
+            }
+            return {
+                value: error,
+                hasValue: true
+            };
+        }
+
         _serializeMulti(array) {
             for (let i = 0, ii = array.length; i < ii; ++i) {
                 const value = array[i];
