@@ -358,7 +358,7 @@ class Translator {
         const groupedDictionaryEntriesMap = new Map();
         const ungroupedDictionaryEntriesMap = new Map();
         for (const dictionaryEntry of dictionaryEntries) {
-            const {ids: [id], definitions: [{dictionary, sequences: [sequence]}]} = dictionaryEntry;
+            const {definitions: [{id, dictionary, sequences: [sequence]}]} = dictionaryEntry;
             if (mainDictionary === dictionary && sequence >= 0) {
                 let group = groupedDictionaryEntriesMap.get(sequence);
                 if (typeof group === 'undefined') {
@@ -1035,10 +1035,9 @@ class Translator {
         return {index, headwordIndex, dictionary, dictionaryIndex, dictionaryPriority, hasReading, frequency};
     }
 
-    _createTermDictionaryEntry(ids, isPrimary, inflections, score, dictionaryIndex, dictionaryPriority, sourceTermExactMatchCount, maxTransformedTextLength, headwords, definitions) {
+    _createTermDictionaryEntry(isPrimary, inflections, score, dictionaryIndex, dictionaryPriority, sourceTermExactMatchCount, maxTransformedTextLength, headwords, definitions) {
         return {
             type: 'term',
-            ids,
             isPrimary,
             inflections,
             score,
@@ -1069,7 +1068,6 @@ class Translator {
         if (definitionTags.length > 0) { definitionTagGroups.push(this._createTagGroup(dictionary, definitionTags)); }
 
         return this._createTermDictionaryEntry(
-            [id],
             isPrimary,
             reasons,
             score,
@@ -1107,7 +1105,6 @@ class Translator {
         const definitions = [];
         const definitionsMap = checkDuplicateDefinitions ? new Map() : null;
         let inflections = null;
-        const ids = new Set();
 
         for (const {dictionaryEntry, headwordIndexMap} of definitionEntries) {
             score = Math.max(score, dictionaryEntry.score);
@@ -1121,7 +1118,6 @@ class Translator {
                     inflections = dictionaryEntryInflections;
                 }
             }
-            for (const id of dictionaryEntry.ids) { ids.add(id); }
             if (checkDuplicateDefinitions) {
                 this._addTermDefinitions(definitions, definitionsMap, dictionaryEntry.definitions, headwordIndexMap);
             } else {
@@ -1142,7 +1138,6 @@ class Translator {
         }
 
         return this._createTermDictionaryEntry(
-            [...ids],
             isPrimary,
             inflections !== null ? inflections : [],
             score,
@@ -1378,7 +1373,7 @@ class Translator {
 
     _sortTermDictionaryEntriesById(dictionaryEntries) {
         if (dictionaryEntries.length <= 1) { return; }
-        dictionaryEntries.sort((a, b) => a.ids[0] - b.ids[0]);
+        dictionaryEntries.sort((a, b) => a.definitions[0].id - b.definitions[0].id);
     }
 
     _sortTermDictionaryEntryData(dictionaryEntries) {
