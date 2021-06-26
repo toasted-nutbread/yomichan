@@ -142,10 +142,6 @@ class AnkiNoteBuilder {
         return (await Promise.all(parts)).join('');
     }
 
-    async _renderTemplate(template, marker, commonData) {
-        return await this._templateRenderer.render(template, {marker, commonData}, 'ankiNote');
-    }
-
     _getBatchedTemplateGroup(template) {
         for (const item of this._batchedRequests) {
             if (item.template === template) {
