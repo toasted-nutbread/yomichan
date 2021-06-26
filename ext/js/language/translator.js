@@ -108,20 +108,21 @@ class Translator {
             this._removeExcludedDefinitions(dictionaryEntries, excludeDictionaryDefinitions);
         }
 
-        for (const {definitions} of dictionaryEntries) {
-            if (definitions.length <= 1) { continue; }
-            this._sortTermDictionaryEntryDefinitions(definitions);
-        }
-        if (dictionaryEntries.length > 1) {
-            this._sortTermDictionaryEntries(dictionaryEntries);
-        }
-
         if (mode === 'simple') {
             this._clearTermTags(dictionaryEntries);
         } else {
             await this._addTermMeta(dictionaryEntries, enabledDictionaryMap);
             await this._expandTermTags(dictionaryEntries);
-            this._sortTermDictionaryEntryData(dictionaryEntries);
+        }
+
+        if (dictionaryEntries.length > 1) {
+            this._sortTermDictionaryEntries(dictionaryEntries);
+        }
+        for (const {definitions, frequencies, pronunciations} of dictionaryEntries) {
+            this._flagRedundantDefinitionTags(definitions);
+            if (definitions.length > 1) { this._sortTermDictionaryEntryDefinitions(definitions); }
+            if (frequencies.length > 1) { this._sortTermDictionaryEntrySimpleData(frequencies); }
+            if (pronunciations.length > 1) { this._sortTermDictionaryEntrySimpleData(pronunciations); }
         }
 
         return {dictionaryEntries, originalTextLength};
@@ -1369,7 +1370,7 @@ class Translator {
         dictionaryEntries.sort((a, b) => a.definitions[0].id - b.definitions[0].id);
     }
 
-    _sortTermDictionaryEntryData(dictionaryEntries) {
+    _sortTermDictionaryEntrySimpleData(dataList) {
         const compare = (v1, v2) => {
             // Sort by dictionary priority
             let i = v2.dictionaryPriority - v1.dictionaryPriority;
@@ -1387,12 +1388,7 @@ class Translator {
             i = v1.index - v2.index;
             return i;
         };
-
-        for (const {definitions, frequencies, pronunciations} of dictionaryEntries) {
-            this._flagRedundantDefinitionTags(definitions);
-            frequencies.sort(compare);
-            pronunciations.sort(compare);
-        }
+        dataList.sort(compare);
     }
 
     _sortKanjiDictionaryEntryData(dictionaryEntries) {
