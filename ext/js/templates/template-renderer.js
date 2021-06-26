@@ -161,7 +161,8 @@ class TemplateRenderer {
             ['typeof',           this._getTypeof.bind(this)],
             ['join',             this._join.bind(this)],
             ['concat',           this._concat.bind(this)],
-            ['pitchCategories',  this._pitchCategories.bind(this)]
+            ['pitchCategories',  this._pitchCategories.bind(this)],
+            ['formatGlossary',   this._formatGlossary.bind(this)]
         ];
 
         for (const [name, helper] of helpers) {
@@ -244,8 +245,12 @@ class TemplateRenderer {
         return result;
     }
 
+    _stringToMultiLineHtml(string) {
+        return string.split('\n').join('<br>');
+    }
+
     _multiLine(context, options) {
-        return options.fn(context).split('\n').join('<br>');
+        return this._stringToMultiLineHtml(options.fn(context));
     }
 
     _sanitizeCssClass(context, options) {
@@ -496,5 +501,26 @@ class TemplateRenderer {
             }
         }
         return [...categories];
+    }
+
+    _formatGlossary(context, dictionary, options) {
+        const content = options.fn(context);
+        if (typeof content === 'string') { return this._stringToMultiLineHtml(content); }
+        if (!(typeof content === 'object' && content !== null)) { return ''; }
+        switch (content.type) {
+            case 'image': return this._formatGlossaryImage(content, dictionary);
+            case 'structured-content': return this._formatStructuredContent(content, dictionary);
+        }
+        return '';
+    }
+
+    _formatGlossaryImage() {
+        // TODO
+        return '&lt;image definitions implemented&gt;';
+    }
+
+    _formatStructuredContent() {
+        // TODO
+        return '&lt;structured-content definitions implemented&gt;';
     }
 }
