@@ -95,11 +95,29 @@ class StructuredContentGenerator {
             (hasPreferredHeight ? preferredHeight * aspectRatio : width)
         );
 
-        const node = this._templates.instantiate('gloss-item-image');
-        const imageContainer = node.querySelector('.gloss-image-container');
-        const aspectRatioSizer = node.querySelector('.gloss-image-aspect-ratio-sizer');
-        const image = node.querySelector('.gloss-image');
-        const imageBackground = node.querySelector('.gloss-image-background');
+        const node = this._createElement('a', 'gloss-image-link');
+        node.target = '_blank';
+        node.rel = 'noreferrer noopener';
+
+        const imageContainer = this._createElement('span', 'gloss-image-container');
+        node.appendChild(imageContainer);
+
+        const aspectRatioSizer = this._createElement('span', 'gloss-image-aspect-ratio-sizer');
+        imageContainer.appendChild(aspectRatioSizer);
+
+        const imageBackground = this._createElement('span', 'gloss-image-background icon');
+        imageContainer.appendChild(imageBackground);
+
+        const image = this._createElement('img', 'gloss-image');
+        image.alt = '';
+        imageContainer.appendChild(image);
+
+        const overlay = this._createElement('span', 'gloss-image-container-overlay');
+        imageContainer.appendChild(overlay);
+
+        const linkText = this._createElement('span', 'gloss-image-link-text');
+        linkText.textContent = 'Image';
+        node.appendChild(linkText);
 
         node.dataset.path = path;
         node.dataset.dictionary = dictionary;
