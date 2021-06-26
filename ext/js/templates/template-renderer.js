@@ -29,6 +29,7 @@ class TemplateRenderer {
         this._stateStack = null;
         this._dataTypes = new Map();
         this._requirements = null;
+        this._cleanupCallbacks = null;
     }
 
     registerDataType(name, {modifier=null, composeData=null}) {
@@ -85,15 +86,19 @@ class TemplateRenderer {
     }
 
     _renderTemplate(instance, data) {
+        const cleanupCallbacks = [];
         try {
             const requirements = [];
             this._stateStack = [new Map()];
             this._requirements = requirements;
+            this._cleanupCallbacks = cleanupCallbacks;
             const result = instance(data).trim();
             return {result, requirements};
         } finally {
+            for (const callback of cleanupCallbacks) { callback(); }
             this._stateStack = null;
             this._requirements = null;
+            this._cleanupCallbacks = null;
         }
     }
 
