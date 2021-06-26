@@ -138,8 +138,10 @@ class StructuredContentGenerator {
 
     // Private
 
-    _createElement(tagName) {
-        return this._document.createElement(tagName);
+    _createElement(tagName, className) {
+        const node = this._document.createElement(tagName);
+        node.className = className;
+        return node;
     }
 
     _createTextNode(data) {
@@ -165,16 +167,14 @@ class StructuredContentGenerator {
     }
 
     _createStructuredContentTableElement(tag, content, dictionary) {
-        const container = this._createElement('div');
-        container.classList = 'gloss-sc-table-container';
+        const container = this._createElement('div', 'gloss-sc-table-container');
         const table = this._createStructuredContentElement(tag, content, dictionary, 'table', true, false);
         container.appendChild(table);
         return container;
     }
 
     _createStructuredContentElement(tag, content, dictionary, type, hasChildren, hasStyle) {
-        const node = this._createElement(tag);
-        node.className = `gloss-sc-${tag}`;
+        const node = this._createElement(tag, `gloss-sc-${tag}`);
         switch (type) {
             case 'table-cell':
                 {
