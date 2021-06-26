@@ -522,10 +522,43 @@ class TemplateRenderer {
         return result;
     }
 
-    _createStructuredContentGenerator() {
+    _getDictionaryMedia(data, dictionary, path) {
+        const {media} = data;
+        if (typeof media === 'object' && media !== null && Object.prototype.hasOwnProperty.call(media, 'dictionaryMedia')) {
+            const {dictionaryMedia} = media;
+            if (typeof dictionaryMedia === 'object' && dictionaryMedia !== null && Object.prototype.hasOwnProperty.call(dictionaryMedia, dictionary)) {
+                const dictionaryMedia2 = dictionaryMedia[dictionary];
+                if (Object.prototype.hasOwnProperty.call(dictionaryMedia2, path)) {
+                    return dictionaryMedia2[path];
+                }
+            }
+        }
+        return null;
+    }
+
+    _createStructuredContentGenerator(data) {
         const mediaLoader = {
             loadMedia: async (path, dictionary, onLoad, onUnload) => {
-                // TODO
+                const imageUrl = this._getDictionaryMedia(data, dictionary, path);
+                if (imageUrl !== null) {
+                    onLoad(imageUrl);
+                    this._cleanupCallbacks.push(() => onUnload(true));
+                } else {
+                    let set = this._customData.requiredDictionaryMedia;
+                    if (typeof set === 'undefined') {
+                        set = new Set();
+                        this._customData.requiredDictionaryMedia = set;
+                    }
+                    const key = JSON.stringify([dictionary, path]);
+                    if (!set.has(key)) {
+                        set.add(key);
+                        this._requirements.push({
+                            type: 'dictionaryMedia',
+                            dictionary,
+                            path
+                        });
+                    }
+                }
             }
         };
         return new StructuredContentGenerator(mediaLoader, document);
