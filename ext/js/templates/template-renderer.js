@@ -532,24 +532,25 @@ class TemplateRenderer {
     }
 
     _formatGlossary(context, dictionary, options) {
+        const data = options.data.root;
         const content = options.fn(context);
         if (typeof content === 'string') { return this._stringToMultiLineHtml(content); }
         if (!(typeof content === 'object' && content !== null)) { return ''; }
         switch (content.type) {
-            case 'image': return this._formatGlossaryImage(content, dictionary);
-            case 'structured-content': return this._formatStructuredContent(content, dictionary);
+            case 'image': return this._formatGlossaryImage(content, dictionary, data);
+            case 'structured-content': return this._formatStructuredContent(content, dictionary, data);
         }
         return '';
     }
 
-    _formatGlossaryImage(content, dictionary) {
-        const structuredContentGenerator = this._createStructuredContentGenerator();
+    _formatGlossaryImage(content, dictionary, data) {
+        const structuredContentGenerator = this._createStructuredContentGenerator(data);
         const node = structuredContentGenerator.createDefinitionImage(content, dictionary);
         return this._getHtml(node);
     }
 
-    _formatStructuredContent(content, dictionary) {
-        const structuredContentGenerator = this._createStructuredContentGenerator();
+    _formatStructuredContent(content, dictionary, data) {
+        const structuredContentGenerator = this._createStructuredContentGenerator(data);
         const node = structuredContentGenerator.createStructuredContent(content.content, dictionary);
         return node !== null ? this._getHtml(node) : '';
     }
