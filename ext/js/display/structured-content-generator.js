@@ -16,8 +16,7 @@
  */
 
 class StructuredContentGenerator {
-    constructor(templates, mediaLoader, document) {
-        this._templates = templates;
+    constructor(mediaLoader, document) {
         this._mediaLoader = mediaLoader;
         this._document = document;
     }
