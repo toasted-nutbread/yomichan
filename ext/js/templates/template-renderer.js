@@ -87,8 +87,8 @@ class TemplateRenderer {
 
     _renderTemplate(instance, data) {
         const cleanupCallbacks = [];
+        const requirements = [];
         try {
-            const requirements = [];
             this._stateStack = [new Map()];
             this._requirements = requirements;
             this._cleanupCallbacks = cleanupCallbacks;
