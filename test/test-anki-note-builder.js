@@ -39,6 +39,7 @@ async function createVM() {
     vm.execute([
         'js/data/anki-note-builder.js',
         'js/data/anki-util.js',
+        'js/display/structured-content-generator.js',
         'js/templates/template-renderer.js',
         'lib/handlebars.min.js'
     ]);

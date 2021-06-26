@@ -18,6 +18,7 @@
 /* global
  * DictionaryDataUtil
  * Handlebars
+ * StructuredContentGenerator
  */
 
 class TemplateRenderer {
@@ -31,6 +32,7 @@ class TemplateRenderer {
         this._requirements = null;
         this._cleanupCallbacks = null;
         this._customData = null;
+        this._temporaryElement = null;
     }
 
     registerDataType(name, {modifier=null, composeData=null}) {
@@ -503,6 +505,32 @@ class TemplateRenderer {
         return [...categories];
     }
 
+    _getTemporaryElement() {
+        let element = this._temporaryElement;
+        if (element === null) {
+            element = document.createElement('div');
+            this._temporaryElement = element;
+        }
+        return element;
+    }
+
+    _getHtml(node) {
+        const container = this._getTemporaryElement();
+        container.appendChild(node);
+        const result = container.innerHTML;
+        container.textContent = '';
+        return result;
+    }
+
+    _createStructuredContentGenerator() {
+        const mediaLoader = {
+            loadMedia: async (path, dictionary, onLoad, onUnload) => {
+                // TODO
+            }
+        };
+        return new StructuredContentGenerator(mediaLoader, document);
+    }
+
     _formatGlossary(context, dictionary, options) {
         const content = options.fn(context);
         if (typeof content === 'string') { return this._stringToMultiLineHtml(content); }
@@ -514,13 +542,15 @@ class TemplateRenderer {
         return '';
     }
 
-    _formatGlossaryImage() {
-        // TODO
-        return '&lt;image definitions implemented&gt;';
+    _formatGlossaryImage(content, dictionary) {
+        const structuredContentGenerator = this._createStructuredContentGenerator();
+        const node = structuredContentGenerator.createDefinitionImage(content, dictionary);
+        return this._getHtml(node);
     }
 
-    _formatStructuredContent() {
-        // TODO
-        return '&lt;structured-content definitions implemented&gt;';
+    _formatStructuredContent(content, dictionary) {
+        const structuredContentGenerator = this._createStructuredContentGenerator();
+        const node = structuredContentGenerator.createStructuredContent(content.content, dictionary);
+        return node !== null ? this._getHtml(node) : '';
     }
 }
