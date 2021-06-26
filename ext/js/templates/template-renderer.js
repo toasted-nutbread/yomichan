@@ -30,6 +30,7 @@ class TemplateRenderer {
         this._dataTypes = new Map();
         this._requirements = null;
         this._cleanupCallbacks = null;
+        this._customData = null;
     }
 
     registerDataType(name, {modifier=null, composeData=null}) {
@@ -89,6 +90,7 @@ class TemplateRenderer {
         const cleanupCallbacks = [];
         const requirements = [];
         try {
+            this._customData = {};
             this._stateStack = [new Map()];
             this._requirements = requirements;
             this._cleanupCallbacks = cleanupCallbacks;
@@ -99,6 +101,7 @@ class TemplateRenderer {
             this._stateStack = null;
             this._requirements = null;
             this._cleanupCallbacks = null;
+            this._customData = null;
         }
     }
 
