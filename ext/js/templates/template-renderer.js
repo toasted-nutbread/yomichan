@@ -22,8 +22,9 @@
  */
 
 class TemplateRenderer {
-    constructor(japaneseUtil) {
+    constructor(japaneseUtil, cssStyleApplier) {
         this._japaneseUtil = japaneseUtil;
+        this._cssStyleApplier = cssStyleApplier;
         this._cache = new Map();
         this._cacheMaxSize = 5;
         this._helpersRegistered = false;
@@ -517,6 +518,7 @@ class TemplateRenderer {
     _getHtml(node) {
         const container = this._getTemporaryElement();
         container.appendChild(node);
+        this._cssStyleApplier.applyClassStyles(container.querySelectorAll('*'));
         const result = container.innerHTML;
         container.textContent = '';
         return result;
