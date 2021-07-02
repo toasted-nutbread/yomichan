@@ -57,9 +57,6 @@ class CssStyleApplier {
             const {className} = element;
             if (className.length === 0) { continue; }
             let cssTextNew = '';
-            if (className.indexOf('th') >= 0) {
-                console.log(className, this._getRulesForClass(className));
-            }
             for (const {selectorText, styles} of this._getRulesForClass(className)) {
                 if (!element.matches(selectorText)) { continue; }
                 cssTextNew += this._getCssText(styles);
