@@ -66,7 +66,11 @@ class CssStyleApplier {
         }
         for (const {element, style} of elementStyles) {
             element.removeAttribute('class');
-            element.setAttribute('style', style);
+            if (style.length > 0) {
+                element.setAttribute('style', style);
+            } else {
+                element.removeAttribute('style');
+            }
         }
     }
 
