@@ -518,10 +518,52 @@ class TemplateRenderer {
     _getHtml(node) {
         const container = this._getTemporaryElement();
         container.appendChild(node);
-        this._cssStyleApplier.applyClassStyles(container.querySelectorAll('*'));
+        this._normalizeHtml(container);
         const result = container.innerHTML;
         container.textContent = '';
         return result;
+    }
+
+    _normalizeHtml(root) {
+        const {ELEMENT_NODE, TEXT_NODE} = Node;
+        const treeWalker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT);
+        const elements = [];
+        const textNodes = [];
+        while (true) {
+            const node = treeWalker.nextNode();
+            if (node === null) { break; }
+            switch (node.nodeType) {
+                case ELEMENT_NODE:
+                    elements.push(node);
+                    break;
+                case TEXT_NODE:
+                    textNodes.push(node);
+                    break;
+            }
+        }
+        this._cssStyleApplier.applyClassStyles(elements);
+        for (const element of elements) {
+            const {dataset} = element;
+            for (const key of Object.keys(dataset)) {
+                delete dataset[key];
+            }
+        }
+        for (const textNode of textNodes) {
+            this._replaceNewlines(textNode);
+        }
+    }
+
+    _replaceNewlines(textNode) {
+        const parts = textNode.nodeValue.split('\n');
+        if (parts.length <= 1) { return; }
+        const {parentNode} = textNode;
+        if (parentNode === null) { return; }
+        const fragment = document.createDocumentFragment();
+        for (let i = 0, ii = parts.length; i < ii; ++i) {
+            if (i > 0) { fragment.appendChild(document.createElement('br')); }
+            fragment.appendChild(document.createTextNode(parts[i]));
+        }
+        parentNode.replaceChild(fragment, textNode);
     }
 
     _getDictionaryMedia(data, dictionary, path) {
