@@ -189,6 +189,22 @@ class Display extends EventDispatcher {
         return this._footerNotificationContainer;
     }
 
+    get selectedIndex() {
+        return this._index;
+    }
+
+    get history() {
+        return this._history;
+    }
+
+    get query() {
+        return this._query;
+    }
+
+    get fullQuery() {
+        return this._fullQuery;
+    }
+
     async prepare() {
         // State setup
         const {documentElement} = document;
@@ -431,6 +447,10 @@ class Display extends EventDispatcher {
         if (node === null) { return -1; }
         const index = parseInt(node.dataset.index, 10);
         return Number.isFinite(index) ? index : -1;
+    }
+
+    getAnkiNoteMediaAudioDetails(term, reading) {
+        return this._displayAudio.getAnkiNoteMediaAudioDetails(term, reading);
     }
 
     // Message handlers
