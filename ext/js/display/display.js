@@ -426,6 +426,13 @@ class Display extends EventDispatcher {
         return await yomichan.crossFrame.invoke(this._parentFrameId, action, params);
     }
 
+    getElementDictionaryEntryIndex(element) {
+        const node = element.closest('.entry');
+        if (node === null) { return -1; }
+        const index = parseInt(node.dataset.index, 10);
+        return Number.isFinite(index) ? index : -1;
+    }
+
     // Message handlers
 
     _onDirectMessage(data) {
@@ -723,7 +730,7 @@ class Display extends EventDispatcher {
 
     _onDebugLogClick(e) {
         const link = e.currentTarget;
-        const index = this._getClosestDictionaryEntryIndex(link);
+        const index = this.getElementDictionaryEntryIndex(link);
         this._logDictionaryEntryData(index);
     }
 
@@ -781,7 +788,7 @@ class Display extends EventDispatcher {
             this._tagNotification = new DisplayNotification(this._footerNotificationContainer, node);
         }
 
-        const index = this._getClosestDictionaryEntryIndex(tagNode);
+        const index = this.getElementDictionaryEntryIndex(tagNode);
         const dictionaryEntry = (index >= 0 && index < this._dictionaryEntries.length ? this._dictionaryEntries[index] : null);
 
         const content = this._displayGenerator.createTagFooterNotificationDetails(tagNode, dictionaryEntry);
@@ -1117,17 +1124,6 @@ class Display extends EventDispatcher {
     _getEntry(index) {
         const entries = this._dictionaryEntryNodes;
         return index >= 0 && index < entries.length ? entries[index] : null;
-    }
-
-    _getClosestDictionaryEntryIndex(element) {
-        return this._getClosestIndex(element, '.entry');
-    }
-
-    _getClosestIndex(element, selector) {
-        const node = element.closest(selector);
-        if (node === null) { return -1; }
-        const index = parseInt(node.dataset.index, 10);
-        return Number.isFinite(index) ? index : -1;
     }
 
     _getElementTop(element) {
