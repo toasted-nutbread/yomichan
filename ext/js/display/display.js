@@ -16,6 +16,7 @@
  */
 
 /* global
+ * DisplayAnki
  * DisplayAudio
  * DisplayGenerator
  * DisplayHistory
@@ -108,6 +109,7 @@ class Display extends EventDispatcher {
         this._queryPostProcessor = null;
         this._optionToggleHotkeyHandler = new OptionToggleHotkeyHandler(this);
         this._elementOverflowController = new ElementOverflowController();
+        this._displayAnki = new DisplayAnki(this);
 
         this._hotkeyHandler.registerActions([
             ['close',             () => { this._onHotkeyClose(); }],
@@ -219,6 +221,7 @@ class Display extends EventDispatcher {
         await this._hotkeyHelpController.prepare();
         await this._displayGenerator.prepare();
         this._displayAudio.prepare();
+        this._displayAnki.prepare();
         this._queryParser.prepare();
         this._history.prepare();
         this._optionToggleHotkeyHandler.prepare();
@@ -542,6 +545,7 @@ class Display extends EventDispatcher {
             this._eventListeners.removeAllEventListeners();
             this._mediaLoader.unloadAll();
             this._displayAudio.cleanupEntries();
+            this._displayAnki.cleanupEntries();
             this._hideTagNotification(false);
             this._dictionaryEntries = [];
             this._dictionaryEntryNodes = [];
@@ -958,6 +962,7 @@ class Display extends EventDispatcher {
             this._dictionaryEntryNodes.push(entry);
             this._addEntryEventListeners(entry);
             this._displayAudio.setupEntry(entry, i);
+            this._displayAnki.setupEntry(entry, i);
             container.appendChild(entry);
             if (focusEntry === i) {
                 this._focusEntry(i, false);
@@ -975,6 +980,7 @@ class Display extends EventDispatcher {
         }
 
         this._displayAudio.setupEntriesComplete();
+        this._displayAnki.setupEntriesComplete(isTerms, dictionaryEntries);
     }
 
     _setContentExtensionUnloaded() {
@@ -1516,6 +1522,8 @@ class Display extends EventDispatcher {
         const dictionaryEntry = this._dictionaryEntries[index];
         const result = {dictionaryEntry};
 
+        const result2 = await this._displayAnki.getLogData(dictionaryEntry);
+        Object.assign(result, result2);
 
         console.log(result);
     }
