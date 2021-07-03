@@ -168,7 +168,7 @@ class AnkiTemplatesController {
                 let template = options.anki.fieldTemplates;
                 if (typeof template !== 'string') { template = this._defaultFieldTemplates; }
                 const {general: {resultOutputMode, glossaryLayoutMode, compactTags}} = options;
-                const note = await this._ankiNoteBuilder.createNote({
+                const {note} = await this._ankiNoteBuilder.createNote({
                     dictionaryEntry,
                     mode,
                     context,

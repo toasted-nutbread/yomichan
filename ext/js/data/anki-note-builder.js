@@ -68,7 +68,7 @@ class AnkiNoteBuilder {
             noteFields[fieldName] = formattedFieldValue;
         }
 
-        return {
+        const note = {
             fields: noteFields,
             tags,
             deckName,
@@ -82,6 +82,7 @@ class AnkiNoteBuilder {
                 }
             }
         };
+        return {note};
     }
 
     async getRenderingData({

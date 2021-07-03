@@ -1535,7 +1535,7 @@ class Display extends EventDispatcher {
             }
         }
 
-        return await this._ankiNoteBuilder.createNote({
+        const {note} = await this._ankiNoteBuilder.createNote({
             dictionaryEntry,
             mode,
             context,
@@ -1552,6 +1552,7 @@ class Display extends EventDispatcher {
             injectedMedia,
             errors
         });
+        return note;
     }
 
     async _injectAnkiNoteMedia(dictionaryEntry, options, fields) {

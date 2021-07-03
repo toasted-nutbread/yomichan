@@ -236,7 +236,7 @@ async function getRenderResults(dictionaryEntries, type, mode, template, AnkiNot
             glossaryLayoutMode: 'default',
             compactTags: false,
             errors
-        })).fields;
+        })).note.fields;
         if (!write) {
             assert.deepStrictEqual(errors, []);
         }
