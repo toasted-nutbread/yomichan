@@ -68,6 +68,7 @@ class DisplayAnki {
 
     cleanupEntries() {
         this._updateDictionaryEntryDetailsToken = null;
+        this._dictionaryEntryDetails = null;
         this._hideAnkiNoteErrors(false);
     }
 
