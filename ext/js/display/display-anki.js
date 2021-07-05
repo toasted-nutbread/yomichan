@@ -269,12 +269,7 @@ class DisplayAnki {
         try {
             this._updateAdderButtonsPromise = promise;
 
-            let states;
-            try {
-                states = await this._areDictionaryEntriesAddable(dictionaryEntries);
-            } catch (e) {
-                return;
-            }
+            const states = await this._areDictionaryEntriesAddable(dictionaryEntries);
 
             if (this._updateAdderButtonsToken !== token) { return; }
 
@@ -288,17 +283,16 @@ class DisplayAnki {
         const displayTags = this._displayTags;
         for (let i = 0, ii = states.length; i < ii; ++i) {
             let noteId = null;
-            for (const {mode, canAdd, noteIds, noteInfos} of states[i]) {
+            for (const {mode, canAdd, noteIds, noteInfos, ankiError} of states[i]) {
                 const button = this._adderButtonFind(i, mode);
-                if (button === null) {
-                    continue;
+                if (button !== null) {
+                    button.disabled = !canAdd;
+                    button.hidden = (ankiError !== null);
                 }
 
                 if (Array.isArray(noteIds) && noteIds.length > 0) {
                     noteId = noteIds[0];
                 }
-                button.disabled = !canAdd;
-                button.hidden = false;
 
                 if (displayTags !== 'never' && Array.isArray(noteInfos)) {
                     this._setupTagsIndicator(i, noteInfos);
@@ -481,13 +475,19 @@ class DisplayAnki {
         const notes = noteInfoList.map(({note}) => note);
 
         let infos;
-        if (forceCanAddValue !== null) {
-            if (!await yomichan.api.isAnkiConnected()) {
-                throw new Error('Anki not connected');
+        let ankiError = null;
+        try {
+            if (forceCanAddValue !== null) {
+                if (!await yomichan.api.isAnkiConnected()) {
+                    throw new Error('Anki not connected');
+                }
+                infos = this._getAnkiNoteInfoForceValue(notes, forceCanAddValue);
+            } else {
+                infos = await yomichan.api.getAnkiNoteInfo(notes, fetchAdditionalInfo);
             }
-            infos = this._getAnkiNoteInfoForceValue(notes, forceCanAddValue);
-        } else {
-            infos = await yomichan.api.getAnkiNoteInfo(notes, fetchAdditionalInfo);
+        } catch (e) {
+            infos = this._getAnkiNoteInfoForceValue(notes, false);
+            ankiError = e;
         }
 
         const results = [];
@@ -498,7 +498,7 @@ class DisplayAnki {
             while (index >= results.length) {
                 results.push([]);
             }
-            results[index].push({mode, note, errors, canAdd, valid, noteIds, noteInfos});
+            results[index].push({mode, note, errors, canAdd, valid, noteIds, noteInfos, ankiError});
         }
         return results;
     }
