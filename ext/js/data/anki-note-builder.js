@@ -52,20 +52,21 @@ class AnkiNoteBuilder {
             duplicateScopeCheckChildren = true;
         }
 
-        const errors = [];
         const commonData = this._createData(dictionaryEntry, mode, context, resultOutputMode, glossaryLayoutMode, compactTags, injectedMedia);
         const formattedFieldValuePromises = [];
         for (const [, fieldValue] of fields) {
-            const formattedFieldValuePromise = this._formatField(fieldValue, commonData, template, errors);
+            const formattedFieldValuePromise = this._formatField(fieldValue, commonData, template);
             formattedFieldValuePromises.push(formattedFieldValuePromise);
         }
 
         const formattedFieldValues = await Promise.all(formattedFieldValuePromises);
+        const errors = [];
         const noteFields = {};
         for (let i = 0, ii = fields.length; i < ii; ++i) {
             const fieldName = fields[i][0];
-            const formattedFieldValue = formattedFieldValues[i];
-            noteFields[fieldName] = formattedFieldValue;
+            const {value, errors: fieldErrors} = formattedFieldValues[i];
+            noteFields[fieldName] = value;
+            errors.push(...fieldErrors);
         }
 
         const note = {
@@ -113,8 +114,9 @@ class AnkiNoteBuilder {
         };
     }
 
-    async _formatField(field, commonData, template, errors) {
-        return await this._stringReplaceAsync(field, this._markerPattern, async (g0, marker) => {
+    async _formatField(field, commonData, template) {
+        const errors = [];
+        const value = await this._stringReplaceAsync(field, this._markerPattern, async (g0, marker) => {
             try {
                 const {result} = await this._renderTemplateBatched(template, commonData, marker);
                 return result;
@@ -125,6 +127,7 @@ class AnkiNoteBuilder {
                 return `{${marker}-render-error}`;
             }
         });
+        return {value, errors};
     }
 
     async _stringReplaceAsync(str, regex, replacer) {
