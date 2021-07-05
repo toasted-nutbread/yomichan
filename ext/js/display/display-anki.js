@@ -263,7 +263,9 @@ class DisplayAnki {
         const {dictionaryEntries} = this._display;
         const token = {};
         this._updateAdderButtonsToken = token;
-        await this._updateAdderButtonsPromise;
+        if (this._updateAdderButtonsPromise !== null) {
+            await this._updateAdderButtonsPromise;
+        }
         if (this._updateAdderButtonsToken !== token) { return; }
 
         const {promise, resolve} = deferPromise();
@@ -275,6 +277,9 @@ class DisplayAnki {
             this._updateAdderButtons2();
         } finally {
             resolve();
+            if (this._updateAdderButtonsPromise === promise) {
+                this._updateAdderButtonsPromise = null;
+            }
         }
     }
 
