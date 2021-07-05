@@ -31,7 +31,7 @@ class DisplayAnki {
         this._ankiNoteNotificationEventListeners = null;
         this._ankiTagNotification = null;
         this._updateAdderButtonsPromise = Promise.resolve();
-        this._updateAdderButtonsToken = null;
+        this._updateDictionaryEntryDetailsToken = null;
         this._eventListeners = new EventListenerCollection();
         this._dictionaryEntryDetails = null;
         this._noteContext = null;
@@ -67,7 +67,7 @@ class DisplayAnki {
     }
 
     cleanupEntries() {
-        this._updateAdderButtonsToken = null;
+        this._updateDictionaryEntryDetailsToken = null;
         this._hideAnkiNoteErrors(false);
     }
 
@@ -82,7 +82,7 @@ class DisplayAnki {
     }
 
     setupEntriesComplete() {
-        this._updateAdderButtons();
+        this._updateDictionaryEntryDetails();
     }
 
     async getLogData(dictionaryEntry) {
@@ -259,20 +259,20 @@ class DisplayAnki {
         return {type, term, reading};
     }
 
-    async _updateAdderButtons() {
+    async _updateDictionaryEntryDetails() {
         const {dictionaryEntries} = this._display;
         const token = {};
-        this._updateAdderButtonsToken = token;
+        this._updateDictionaryEntryDetailsToken = token;
         if (this._updateAdderButtonsPromise !== null) {
             await this._updateAdderButtonsPromise;
         }
-        if (this._updateAdderButtonsToken !== token) { return; }
+        if (this._updateDictionaryEntryDetailsToken !== token) { return; }
 
         const {promise, resolve} = deferPromise();
         try {
             this._updateAdderButtonsPromise = promise;
             const dictionaryEntryDetails = await this._areDictionaryEntriesAddable(dictionaryEntries);
-            if (this._updateAdderButtonsToken !== token) { return; }
+            if (this._updateDictionaryEntryDetailsToken !== token) { return; }
             this._dictionaryEntryDetails = dictionaryEntryDetails;
             this._updateAdderButtons2();
         } finally {
