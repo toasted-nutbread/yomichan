@@ -390,8 +390,15 @@ class DisplayAnki {
         const progressIndicatorVisible = this._display.progressIndicatorVisible;
         const overrideToken = progressIndicatorVisible.setOverride(true);
         try {
-            const {note, errors} = await this._createNote(dictionaryEntry, mode, true, requirements);
+            const {note, errors, requirements: outputRequirements} = await this._createNote(dictionaryEntry, mode, true, requirements);
             allErrors.push(...errors);
+
+            if (outputRequirements.length > 0) {
+                const error = new Error('The created card may not have some content');
+                error.requirements = requirements;
+                error.outputRequirements = outputRequirements;
+                allErrors.push(error);
+            }
 
             let noteId = null;
             let addNoteOkay = false;
