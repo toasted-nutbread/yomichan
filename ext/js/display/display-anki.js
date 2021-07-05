@@ -275,7 +275,7 @@ class DisplayAnki {
             const dictionaryEntryDetails = await this._areDictionaryEntriesAddable(dictionaryEntries);
             if (this._updateDictionaryEntryDetailsToken !== token) { return; }
             this._dictionaryEntryDetails = dictionaryEntryDetails;
-            this._updateAdderButtons2();
+            this._updateAdderButtons();
         } finally {
             resolve();
             if (this._updateAdderButtonsPromise === promise) {
@@ -284,7 +284,7 @@ class DisplayAnki {
         }
     }
 
-    _updateAdderButtons2() {
+    _updateAdderButtons() {
         const displayTags = this._displayTags;
         const dictionaryEntryDetails = this._dictionaryEntryDetails;
         for (let i = 0, ii = dictionaryEntryDetails.length; i < ii; ++i) {
