@@ -272,7 +272,7 @@ class DisplayAnki {
         const {promise, resolve} = deferPromise();
         try {
             this._updateAdderButtonsPromise = promise;
-            const dictionaryEntryDetails = await this._areDictionaryEntriesAddable(dictionaryEntries);
+            const dictionaryEntryDetails = await this._getDictionaryEntryDetails(dictionaryEntries);
             if (this._updateDictionaryEntryDetailsToken !== token) { return; }
             this._dictionaryEntryDetails = dictionaryEntryDetails;
             this._updateAdderButtons();
@@ -459,7 +459,7 @@ class DisplayAnki {
         return templates;
     }
 
-    async _areDictionaryEntriesAddable(dictionaryEntries) {
+    async _getDictionaryEntryDetails(dictionaryEntries) {
         const forceCanAddValue = (this._checkForDuplicates ? null : true);
         const fetchAdditionalInfo = (this._displayTags !== 'never');
 
