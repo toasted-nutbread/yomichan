@@ -289,7 +289,7 @@ class DisplayAnki {
         const dictionaryEntryDetails = this._dictionaryEntryDetails;
         for (let i = 0, ii = dictionaryEntryDetails.length; i < ii; ++i) {
             let noteId = null;
-            for (const {mode, canAdd, noteIds, noteInfos, ankiError} of dictionaryEntryDetails[i]) {
+            for (const {mode, canAdd, noteIds, noteInfos, ankiError} of dictionaryEntryDetails[i].modeMap.values()) {
                 const button = this._adderButtonFind(i, mode);
                 if (button !== null) {
                     button.disabled = !canAdd;
@@ -497,14 +497,17 @@ class DisplayAnki {
         }
 
         const results = [];
+        for (let i = 0, ii = dictionaryEntries.length; i < ii; ++i) {
+            results.push({
+                modeMap: new Map()
+            });
+        }
+
         for (let i = 0, ii = noteInfoList.length; i < ii; ++i) {
             const {note, errors, requirements} = noteInfoList[i];
             const {canAdd, valid, noteIds, noteInfos} = infos[i];
             const {mode, index} = noteTargets[i];
-            while (index >= results.length) {
-                results.push([]);
-            }
-            results[index].push({mode, note, errors, requirements, canAdd, valid, noteIds, noteInfos, ankiError});
+            results[index].modeMap.set(mode, {mode, note, errors, requirements, canAdd, valid, noteIds, noteInfos, ankiError});
         }
         return results;
     }
