@@ -33,6 +33,7 @@ class DisplayAnki {
         this._updateAdderButtonsPromise = Promise.resolve();
         this._updateAdderButtonsToken = null;
         this._eventListeners = new EventListenerCollection();
+        this._dictionaryEntryDetails = null;
         this._noteContext = null;
         this._checkForDuplicates = false;
         this._suspendNewCards = false;
@@ -268,22 +269,21 @@ class DisplayAnki {
         const {promise, resolve} = deferPromise();
         try {
             this._updateAdderButtonsPromise = promise;
-
-            const states = await this._areDictionaryEntriesAddable(dictionaryEntries);
-
+            const dictionaryEntryDetails = await this._areDictionaryEntriesAddable(dictionaryEntries);
             if (this._updateAdderButtonsToken !== token) { return; }
-
-            this._updateAdderButtons2(states);
+            this._dictionaryEntryDetails = dictionaryEntryDetails;
+            this._updateAdderButtons2();
         } finally {
             resolve();
         }
     }
 
-    _updateAdderButtons2(states) {
+    _updateAdderButtons2() {
         const displayTags = this._displayTags;
-        for (let i = 0, ii = states.length; i < ii; ++i) {
+        const dictionaryEntryDetails = this._dictionaryEntryDetails;
+        for (let i = 0, ii = dictionaryEntryDetails.length; i < ii; ++i) {
             let noteId = null;
-            for (const {mode, canAdd, noteIds, noteInfos, ankiError} of states[i]) {
+            for (const {mode, canAdd, noteIds, noteInfos, ankiError} of dictionaryEntryDetails[i]) {
                 const button = this._adderButtonFind(i, mode);
                 if (button !== null) {
                     button.disabled = !canAdd;
