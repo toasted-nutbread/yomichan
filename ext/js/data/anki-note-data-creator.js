@@ -53,6 +53,7 @@ class AnkiNoteDataCreator {
         const context2 = this.createCachedValue(this._getPublicContext.bind(this, context));
         const pitches = this.createCachedValue(this._getPitches.bind(this, dictionaryEntry));
         const pitchCount = this.createCachedValue(this._getPitchCount.bind(this, pitches));
+        if (typeof media !== 'object' || media === null || Array.isArray(media)) { media = {}; }
         const result = {
             marker,
             get definition() { return self.getCachedValue(definition); },
