@@ -83,7 +83,8 @@ class Display extends EventDispatcher {
         this._queryParserContainer = document.querySelector('#query-parser-container');
         this._queryParser = new QueryParser({
             getSearchContext: this._getSearchContext.bind(this),
-            documentUtil: this._documentUtil
+            documentUtil: this._documentUtil,
+            japaneseUtil
         });
         this._contentScrollElement = document.querySelector('#content-scroll');
         this._contentScrollBodyElement = document.querySelector('#content-body');

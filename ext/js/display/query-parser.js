@@ -20,10 +20,11 @@
  */
 
 class QueryParser extends EventDispatcher {
-    constructor({getSearchContext, documentUtil}) {
+    constructor({getSearchContext, documentUtil, japaneseUtil}) {
         super();
         this._getSearchContext = getSearchContext;
         this._documentUtil = documentUtil;
+        this._japaneseUtil = japaneseUtil;
         this._text = '';
         this._setTextToken = null;
         this._selectedParser = null;
@@ -207,6 +208,8 @@ class QueryParser extends EventDispatcher {
     }
 
     _createParseResult(data) {
+        const jp = this._japaneseUtil;
+        const readingMode = this._readingMode;
         const fragment = document.createDocumentFragment();
         for (const term of data) {
             const termNode = document.createElement('span');
@@ -215,7 +218,8 @@ class QueryParser extends EventDispatcher {
                 if (reading.length === 0) {
                     termNode.appendChild(document.createTextNode(text));
                 } else {
-                    termNode.appendChild(this._createSegment(text, reading));
+                    const reading2 = jp.convertReading(text, reading, readingMode);
+                    termNode.appendChild(this._createSegment(text, reading2));
                 }
             }
             fragment.appendChild(termNode);
