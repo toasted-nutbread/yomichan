@@ -418,20 +418,23 @@ class Backend {
     }
 
     async _onApiParseText({text, optionsContext, scanLength, useInternalParser, useMecabParser}) {
+        const [internalResults, mecabResults] = await Promise.all([
+            (useInternalParser ? this._textParseScanning(text, scanLength, optionsContext) : null),
+            (useMecabParser ? this._textParseMecab(text) : null)
+        ]);
+
         const results = [];
 
-        if (useInternalParser) {
-            const content = await this._textParseScanning(text, scanLength, optionsContext);
+        if (internalResults !== null) {
             results.push({
                 id: 'scan',
                 source: 'scanning-parser',
                 dictionary: null,
-                content
+                content: internalResults
             });
         }
 
-        if (useMecabParser) {
-            const mecabResults = await this._textParseMecab(text);
+        if (mecabResults !== null) {
             for (const [dictionary, content] of mecabResults) {
                 results.push({
                     id: `mecab-${dictionary}`,
