@@ -296,8 +296,8 @@ class AnkiNoteBuilder {
                 case 'selectionText': injectSelectionText = true; break;
                 case 'textFurigana':
                     {
-                        const {text} = requirement;
-                        textFuriganaDetails.push({text});
+                        const {text, readingMode} = requirement;
+                        textFuriganaDetails.push({text, readingMode});
                     }
                     break;
                 case 'dictionaryMedia':
@@ -381,7 +381,7 @@ class AnkiNoteBuilder {
 
     async _getTextFurigana(entries, optionsContext, scanLength) {
         const results = [];
-        for (const {text} of entries) {
+        for (const {text, readingMode} of entries) {
             const parseResults = await yomichan.api.parseText(text, optionsContext, scanLength, true, false);
             let data = null;
             for (const {source, content} of parseResults) {
@@ -390,22 +390,31 @@ class AnkiNoteBuilder {
                 break;
             }
             if (data !== null) {
-                const html = this._createFuriganaHtml(data);
-                results.push({text, details: {html}});
+                const html = this._createFuriganaHtml(data, readingMode);
+                results.push({text, readingMode, details: {html}});
             }
         }
         return results;
     }
 
-    _createFuriganaHtml(data) {
+    _createFuriganaHtml(data, readingMode) {
         let result = '';
         for (const term of data) {
             result += '<span class="term">';
             for (const {text, reading} of term) {
-                result += (reading.length > 0 ? `<ruby>${text}<rt>${reading}</rt></ruby>` : text);
+                if (reading.length > 0) {
+                    const reading2 = this._convertReading(reading, readingMode);
+                    result += `<ruby>${text}<rt>${reading2}</rt></ruby>`;
+                } else {
+                    result += text;
+                }
             }
             result += '</span>';
         }
         return result;
+    }
+
+    _convertReading(reading, readingMode) {
+        return reading;
     }
 }

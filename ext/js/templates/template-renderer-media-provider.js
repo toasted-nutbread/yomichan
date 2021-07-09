@@ -102,17 +102,19 @@ class TemplateRendererMediaProvider {
         return null;
     }
 
-    _getTextFurigana(media, text) {
+    _getTextFurigana(media, text, namedArgs) {
+        const {readingMode=null} = namedArgs;
         const {textFurigana} = media;
         if (Array.isArray(textFurigana)) {
             for (const entry of textFurigana) {
-                if (entry.text !== text) { continue; }
+                if (entry.text !== text || entry.readingMode !== readingMode) { continue; }
                 return entry.details;
             }
         }
         this._addRequirement({
             type: 'textFurigana',
-            text
+            text,
+            readingMode
         });
         return null;
     }
