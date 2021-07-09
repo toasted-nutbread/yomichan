@@ -284,6 +284,7 @@ class AnkiNoteBuilder {
         let injectClipboardImage = false;
         let injectClipboardText = false;
         let injectSelectionText = false;
+        const textFuriganaDetails = [];
         const dictionaryMediaDetails = [];
         for (const requirement of requirements) {
             const {type} = requirement;
@@ -293,6 +294,12 @@ class AnkiNoteBuilder {
                 case 'clipboardImage': injectClipboardImage = true; break;
                 case 'clipboardText': injectClipboardText = true; break;
                 case 'selectionText': injectSelectionText = true; break;
+                case 'textFurigana':
+                    {
+                        const {text} = requirement;
+                        textFuriganaDetails.push({text});
+                    }
+                    break;
                 case 'dictionaryMedia':
                     {
                         const {dictionary, path} = requirement;
@@ -323,6 +330,14 @@ class AnkiNoteBuilder {
                 }
             }
         }
+        let textFuriganaPromise = null;
+        if (textFuriganaDetails.length > 0) {
+            const textParsingOptions = mediaOptions.textParsing;
+            if (typeof textParsingOptions === 'object' && textParsingOptions !== null) {
+                const {optionsContext, scanLength} = textParsingOptions;
+                textFuriganaPromise = this._getTextFurigana(textFuriganaDetails, optionsContext, scanLength);
+            }
+        }
 
         // Inject media
         const selectionText = injectSelectionText ? this._getSelectionText() : null;
@@ -335,6 +350,7 @@ class AnkiNoteBuilder {
             dictionaryMediaDetails
         );
         const {audioFileName, screenshotFileName, clipboardImageFileName, clipboardText, dictionaryMedia: dictionaryMediaArray, errors} = injectedMedia;
+        const textFurigana = textFuriganaPromise !== null ? await textFuriganaPromise : [];
 
         // Format results
         const dictionaryMedia = {};
@@ -353,6 +369,7 @@ class AnkiNoteBuilder {
             clipboardImage: (typeof clipboardImageFileName === 'string' ? {fileName: clipboardImageFileName} : null),
             clipboardText: (typeof clipboardText === 'string' ? {text: clipboardText} : null),
             selectionText: (typeof selectionText === 'string' ? {text: selectionText} : null),
+            textFurigana,
             dictionaryMedia
         };
         return {media, errors};
@@ -360,5 +377,35 @@ class AnkiNoteBuilder {
 
     _getSelectionText() {
         return document.getSelection().toString();
+    }
+
+    async _getTextFurigana(entries, optionsContext, scanLength) {
+        const results = [];
+        for (const {text} of entries) {
+            const parseResults = await yomichan.api.parseText(text, optionsContext, scanLength, true, false);
+            let data = null;
+            for (const {source, content} of parseResults) {
+                if (source !== 'scanning-parser') { continue; }
+                data = content;
+                break;
+            }
+            if (data !== null) {
+                const html = this._createFuriganaHtml(data);
+                results.push({text, details: {html}});
+            }
+        }
+        return results;
+    }
+
+    _createFuriganaHtml(data) {
+        let result = '';
+        for (const term of data) {
+            result += '<span class="term">';
+            for (const {text, reading} of term) {
+                result += (reading.length > 0 ? `<ruby>${text}<rt>${reading}</rt></ruby>` : text);
+            }
+            result += '</span>';
+        }
+        return result;
     }
 }
