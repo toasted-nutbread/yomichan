@@ -277,6 +277,10 @@ const JapaneseUtil = (() => {
             return this._getWanakana().toKana(text);
         }
 
+        convertToKanaSupported() {
+            return this._wanakana !== null;
+        }
+
         convertKatakanaToHiragana(text) {
             let result = '';
             const offset = (HIRAGANA_CONVERSION_RANGE[0] - KATAKANA_CONVERSION_RANGE[0]);
@@ -313,6 +317,10 @@ const JapaneseUtil = (() => {
         convertToRomaji(text) {
             const wanakana = this._getWanakana();
             return wanakana.toRomaji(text);
+        }
+
+        convertToRomajiSupported() {
+            return this._wanakana !== null;
         }
 
         convertReading(term, reading, readingMode) {
@@ -424,6 +432,10 @@ const JapaneseUtil = (() => {
                 result += this._convertAlphabeticPartToKana(part, sourceMap, result.length);
             }
             return result;
+        }
+
+        convertAlphabeticToKanaSupported() {
+            return this._wanakana !== null;
         }
 
         // Furigana distribution
