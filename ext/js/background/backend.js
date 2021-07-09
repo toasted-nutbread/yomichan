@@ -1044,7 +1044,7 @@ class Backend {
 
     async _textParseScanning(text, options) {
         const jp = this._japaneseUtil;
-        const {scanning: {length: scanningLength}} = options;
+        const {scanning: {length: scanLength}} = options;
         const mode = 'simple';
         const findTermsOptions = this._getTranslatorFindTermsOptions(mode, {wildcard: null}, options);
         const results = [];
@@ -1054,7 +1054,7 @@ class Backend {
         while (i < ii) {
             const {dictionaryEntries, originalTextLength} = await this._translator.findTerms(
                 mode,
-                text.substring(i, i + scanningLength),
+                text.substring(i, i + scanLength),
                 findTermsOptions
             );
             const codePoint = text.codePointAt(i);
