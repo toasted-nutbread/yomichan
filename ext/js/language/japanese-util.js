@@ -323,27 +323,6 @@ const JapaneseUtil = (() => {
             return this._wanakana !== null;
         }
 
-        convertReading(term, reading, readingMode) {
-            switch (readingMode) {
-                case 'hiragana':
-                    return this.convertKatakanaToHiragana(reading);
-                case 'katakana':
-                    return this.convertHiraganaToKatakana(reading);
-                case 'romaji':
-                    if (reading.length > 0) {
-                        return this.convertToRomaji(reading);
-                    } else if (this.isStringEntirelyKana(term)) {
-                        return this.convertToRomaji(term);
-                    } else {
-                        return reading;
-                    }
-                case 'none':
-                    return '';
-                default:
-                    return reading;
-            }
-        }
-
         convertNumericToFullWidth(text) {
             let result = '';
             for (const char of text) {
