@@ -93,7 +93,7 @@ class QueryParser extends EventDispatcher {
 
         const token = {};
         this._setTextToken = token;
-        this._parseResults = await yomichan.api.textParse(text, this._getOptionsContext());
+        this._parseResults = await yomichan.api.parseText(text, this._getOptionsContext());
         if (this._setTextToken !== token) { return; }
 
         this._refreshSelectedParser();

@@ -90,7 +90,7 @@ class Backend {
             ['optionsGetFull',               {async: false, contentScript: true,  handler: this._onApiOptionsGetFull.bind(this)}],
             ['kanjiFind',                    {async: true,  contentScript: true,  handler: this._onApiKanjiFind.bind(this)}],
             ['termsFind',                    {async: true,  contentScript: true,  handler: this._onApiTermsFind.bind(this)}],
-            ['textParse',                    {async: true,  contentScript: true,  handler: this._onApiTextParse.bind(this)}],
+            ['parseText',                    {async: true,  contentScript: true,  handler: this._onApiParseText.bind(this)}],
             ['getAnkiConnectVersion',        {async: true,  contentScript: true,  handler: this._onApGetAnkiConnectVersion.bind(this)}],
             ['isAnkiConnected',              {async: true,  contentScript: true,  handler: this._onApiIsAnkiConnected.bind(this)}],
             ['addAnkiNote',                  {async: true,  contentScript: true,  handler: this._onApiAddAnkiNote.bind(this)}],
@@ -417,7 +417,7 @@ class Backend {
         return {dictionaryEntries, originalTextLength};
     }
 
-    async _onApiTextParse({text, optionsContext}) {
+    async _onApiParseText({text, optionsContext}) {
         const options = this._getProfileOptions(optionsContext);
         const results = [];
 
