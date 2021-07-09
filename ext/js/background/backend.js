@@ -418,14 +418,15 @@ class Backend {
     }
 
     async _onApiParseText({text, optionsContext, scanLength, useInternalParser, useMecabParser}) {
-        const options = this._getProfileOptions(optionsContext);
         const results = [];
 
         if (useInternalParser) {
+            const options = this._getProfileOptions(optionsContext);
+            const content = await this._textParseScanning(text, scanLength, options);
             results.push({
                 source: 'scanning-parser',
                 id: 'scan',
-                content: await this._textParseScanning(text, scanLength, options)
+                content
             });
         }
 
