@@ -22,11 +22,11 @@
  */
 
 class DisplayAnki {
-    constructor(display) {
+    constructor(display, japaneseUtil) {
         this._display = display;
         this._ankiFieldTemplates = null;
         this._ankiFieldTemplatesDefault = null;
-        this._ankiNoteBuilder = new AnkiNoteBuilder();
+        this._ankiNoteBuilder = new AnkiNoteBuilder({japaneseUtil});
         this._ankiNoteNotification = null;
         this._ankiNoteNotificationEventListeners = null;
         this._ankiTagNotification = null;

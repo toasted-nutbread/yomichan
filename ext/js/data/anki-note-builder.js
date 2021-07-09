@@ -21,7 +21,8 @@
  */
 
 class AnkiNoteBuilder {
-    constructor() {
+    constructor({japaneseUtil}) {
+        this._japaneseUtil = japaneseUtil;
         this._markerPattern = AnkiUtil.cloneFieldMarkerPattern(true);
         this._templateRenderer = new TemplateRendererProxy();
         this._batchedRequests = [];
@@ -415,6 +416,13 @@ class AnkiNoteBuilder {
     }
 
     _convertReading(reading, readingMode) {
-        return reading;
+        switch (readingMode) {
+            case 'hiragana':
+                return this._japaneseUtil.convertKatakanaToHiragana(reading);
+            case 'katakana':
+                return this._japaneseUtil.convertHiraganaToKatakana(reading);
+            default:
+                return reading;
+        }
     }
 }
