@@ -206,16 +206,16 @@ class QueryParser extends EventDispatcher {
         select.selectedIndex = selectedIndex;
     }
 
-    _createParseResult(terms) {
+    _createParseResult(data) {
         const fragment = document.createDocumentFragment();
-        for (const term of terms) {
+        for (const term of data) {
             const termNode = document.createElement('span');
             termNode.className = 'query-parser-term';
-            for (const segment of term) {
-                if (segment.reading.trim().length === 0) {
-                    termNode.appendChild(document.createTextNode(segment.text));
+            for (const {text, reading} of term) {
+                if (reading.length === 0) {
+                    termNode.appendChild(document.createTextNode(text));
                 } else {
-                    termNode.appendChild(this._createSegment(segment));
+                    termNode.appendChild(this._createSegment(text, reading));
                 }
             }
             fragment.appendChild(termNode);
@@ -223,7 +223,7 @@ class QueryParser extends EventDispatcher {
         return fragment;
     }
 
-    _createSegment(segment) {
+    _createSegment(text, reading) {
         const segmentNode = document.createElement('ruby');
         segmentNode.className = 'query-parser-segment';
 
@@ -236,8 +236,8 @@ class QueryParser extends EventDispatcher {
         segmentNode.appendChild(textNode);
         segmentNode.appendChild(readingNode);
 
-        textNode.textContent = segment.text;
-        readingNode.textContent = segment.reading;
+        textNode.textContent = text;
+        readingNode.textContent = reading;
 
         return segmentNode;
     }
