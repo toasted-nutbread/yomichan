@@ -430,7 +430,7 @@ class Backend {
         }
 
         if (options.parsing.enableMecabParser) {
-            const mecabResults = await this._textParseMecab(text, options);
+            const mecabResults = await this._textParseMecab(text);
             for (const [mecabDictName, mecabDictResults] of mecabResults) {
                 results.push({
                     source: 'mecab',
@@ -1044,7 +1044,7 @@ class Backend {
 
     async _textParseScanning(text, options) {
         const jp = this._japaneseUtil;
-        const {scanning: {length: scanningLength}, parsing: {readingMode}} = options;
+        const {scanning: {length: scanningLength}} = options;
         const mode = 'simple';
         const findTermsOptions = this._getTranslatorFindTermsOptions(mode, {wildcard: null}, options);
         const results = [];
@@ -1069,8 +1069,7 @@ class Backend {
                 const source = text.substring(i, i + originalTextLength);
                 const textSegments = [];
                 for (const {text: text2, reading: reading2} of jp.distributeFuriganaInflected(term, reading, source)) {
-                    const reading3 = jp.convertReading(text2, reading2, readingMode);
-                    textSegments.push({text: text2, reading: reading3});
+                    textSegments.push({text: text2, reading: reading2});
                 }
                 results.push(textSegments);
                 i += originalTextLength;
@@ -1087,9 +1086,8 @@ class Backend {
         return results;
     }
 
-    async _textParseMecab(text, options) {
+    async _textParseMecab(text) {
         const jp = this._japaneseUtil;
-        const {parsing: {readingMode}} = options;
 
         let parseTextResults;
         try {
@@ -1109,8 +1107,7 @@ class Backend {
                         jp.convertKatakanaToHiragana(reading),
                         source
                     )) {
-                        const reading3 = jp.convertReading(text2, reading2, readingMode);
-                        termParts.push({text: text2, reading: reading3});
+                        termParts.push({text: text2, reading: reading2});
                     }
                     result.push(termParts);
                 }
