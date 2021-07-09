@@ -312,6 +312,9 @@ class Display extends EventDispatcher {
         this._queryParser.setOptions({
             selectedParser: options.parsing.selectedParser,
             termSpacing: options.parsing.termSpacing,
+            readingMode: options.parsing.readingMode,
+            useInternalParser: options.parsing.enableScanningParser,
+            useMecabParser: options.parsing.enableMecabParser,
             scanning: {
                 inputs: scanningOptions.inputs,
                 deepContentScan: scanningOptions.deepDomScan,

@@ -27,6 +27,10 @@ class QueryParser extends EventDispatcher {
         this._text = '';
         this._setTextToken = null;
         this._selectedParser = null;
+        this._readingMode = 'none';
+        this._scanLength = 1;
+        this._useInternalParser = true;
+        this._useMecabParser = false;
         this._parseResults = [];
         this._queryParser = document.querySelector('#query-parser-content');
         this._queryParserModeContainer = document.querySelector('#query-parser-mode-container');
@@ -52,7 +56,7 @@ class QueryParser extends EventDispatcher {
         this._queryParserModeSelect.addEventListener('change', this._onParserChange.bind(this), false);
     }
 
-    setOptions({selectedParser, termSpacing, scanning}) {
+    setOptions({selectedParser, termSpacing, readingMode, useInternalParser, useMecabParser, scanning}) {
         let selectedParserChanged = false;
         if (selectedParser === null || typeof selectedParser === 'string') {
             selectedParserChanged = (this._selectedParser !== selectedParser);
@@ -61,7 +65,20 @@ class QueryParser extends EventDispatcher {
         if (typeof termSpacing === 'boolean') {
             this._queryParser.dataset.termSpacing = `${termSpacing}`;
         }
+        if (typeof readingMode === 'string') {
+            this._readingMode = readingMode;
+        }
+        if (typeof useInternalParser === 'boolean') {
+            this._useInternalParser = useInternalParser;
+        }
+        if (typeof useMecabParser === 'boolean') {
+            this._useMecabParser = useMecabParser;
+        }
         if (scanning !== null && typeof scanning === 'object') {
+            const {scanLength} = scanning;
+            if (typeof scanLength === 'number') {
+                this._scanLength = scanLength;
+            }
             this._textScanner.setOptions(scanning);
         }
         this._textScanner.setEnabled(true);
