@@ -424,20 +424,21 @@ class Backend {
             const options = this._getProfileOptions(optionsContext);
             const content = await this._textParseScanning(text, scanLength, options);
             results.push({
-                source: 'scanning-parser',
                 id: 'scan',
+                source: 'scanning-parser',
+                dictionary: null,
                 content
             });
         }
 
         if (useMecabParser) {
             const mecabResults = await this._textParseMecab(text);
-            for (const [mecabDictName, mecabDictResults] of mecabResults) {
+            for (const [dictionary, content] of mecabResults) {
                 results.push({
+                    id: `mecab-${dictionary}`,
                     source: 'mecab',
-                    dictionary: mecabDictName,
-                    id: `mecab-${mecabDictName}`,
-                    content: mecabDictResults
+                    dictionary,
+                    content
                 });
             }
         }
