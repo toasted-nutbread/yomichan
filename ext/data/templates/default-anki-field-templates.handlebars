@@ -384,7 +384,11 @@
 
 {{#*inline "sentence-furigana"}}
     {{~#if definition.cloze~}}
-        {{~#if (hasMedia "textFurigana" definition.cloze.sentence)}}{{#getMedia "textFurigana" definition.cloze.sentence format="html"}}{{/getMedia}}{{/if~}}
+        {{~#if (hasMedia "textFurigana" definition.cloze.sentence)~}}
+            {{#getMedia "textFurigana" definition.cloze.sentence format="html"}}{{/getMedia}}
+        {{~else~}}
+            {{definition.cloze.sentence}}
+        {{~/if~}}
     {{~/if~}}
 {{/inline}}
 
