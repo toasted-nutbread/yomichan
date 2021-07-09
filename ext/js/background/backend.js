@@ -417,19 +417,19 @@ class Backend {
         return {dictionaryEntries, originalTextLength};
     }
 
-    async _onApiParseText({text, optionsContext}) {
+    async _onApiParseText({text, optionsContext, scanLength, useInternalParser, useMecabParser}) {
         const options = this._getProfileOptions(optionsContext);
         const results = [];
 
-        if (options.parsing.enableScanningParser) {
+        if (useInternalParser) {
             results.push({
                 source: 'scanning-parser',
                 id: 'scan',
-                content: await this._textParseScanning(text, options)
+                content: await this._textParseScanning(text, scanLength, options)
             });
         }
 
-        if (options.parsing.enableMecabParser) {
+        if (useMecabParser) {
             const mecabResults = await this._textParseMecab(text);
             for (const [mecabDictName, mecabDictResults] of mecabResults) {
                 results.push({
@@ -1042,9 +1042,8 @@ class Backend {
         return true;
     }
 
-    async _textParseScanning(text, options) {
+    async _textParseScanning(text, scanLength, options) {
         const jp = this._japaneseUtil;
-        const {scanning: {length: scanLength}} = options;
         const mode = 'simple';
         const findTermsOptions = this._getTranslatorFindTermsOptions(mode, {wildcard: null}, options);
         const results = [];
