@@ -38,8 +38,7 @@ class TemplateRendererMediaProvider {
         const {media} = root;
         const data = this._getMediaData(media, args, namedArgs);
         if (data !== null) {
-            const {format} = namedArgs;
-            const result = this._getFormattedValue(data, format);
+            const result = this._getFormattedValue(data, namedArgs);
             if (typeof result === 'string') { return result; }
         }
         const defaultValue = namedArgs.default;
@@ -53,8 +52,9 @@ class TemplateRendererMediaProvider {
         this._requirements.push(value);
     }
 
-    _getFormattedValue(data, format) {
-        return Object.prototype.hasOwnProperty.call(data, format) ? data[format] : null;
+    _getFormattedValue(data) {
+        const {value} = data;
+        return value;
     }
 
     _getMediaData(media, args, namedArgs) {
