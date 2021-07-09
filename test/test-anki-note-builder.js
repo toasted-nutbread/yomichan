@@ -160,6 +160,7 @@ function getFieldMarkers(type) {
                 'search-query',
                 'selection-text',
                 'sentence',
+                'sentence-furigana',
                 'tags',
                 'url'
             ];
@@ -180,6 +181,7 @@ function getFieldMarkers(type) {
                 'search-query',
                 'selection-text',
                 'sentence',
+                'sentence-furigana',
                 'stroke-count',
                 'tags',
                 'url'

@@ -2,6 +2,12 @@
     {{~#if (hasMedia "selectionText")}}{{#getMedia "selectionText" format="text"}}{{/getMedia}}{{/if~}}
 {{/inline}}
 
+{{#*inline "sentence-furigana"}}
+    {{~#if definition.cloze~}}
+        {{~#if (hasMedia "textFurigana" definition.cloze.sentence)}}{{#getMedia "textFurigana" definition.cloze.sentence format="html"}}{{/getMedia}}{{/if~}}
+    {{~/if~}}
+{{/inline}}
+
 {{<<<<<<<}}
 {{#each glossary}}{{#multiLine}}{{.}}{{/multiLine}}{{/each}}
 {{=======}}
