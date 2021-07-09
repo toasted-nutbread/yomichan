@@ -421,8 +421,7 @@ class Backend {
         const results = [];
 
         if (useInternalParser) {
-            const options = this._getProfileOptions(optionsContext);
-            const content = await this._textParseScanning(text, scanLength, options);
+            const content = await this._textParseScanning(text, scanLength, optionsContext);
             results.push({
                 id: 'scan',
                 source: 'scanning-parser',
@@ -1044,9 +1043,10 @@ class Backend {
         return true;
     }
 
-    async _textParseScanning(text, scanLength, options) {
+    async _textParseScanning(text, scanLength, optionsContext) {
         const jp = this._japaneseUtil;
         const mode = 'simple';
+        const options = this._getProfileOptions(optionsContext);
         const findTermsOptions = this._getTranslatorFindTermsOptions(mode, {wildcard: null}, options);
         const results = [];
         let previousUngroupedSegment = null;
