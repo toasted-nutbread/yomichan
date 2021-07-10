@@ -655,9 +655,9 @@ structured-content generation.
 
   <code>{{#formatGlossary <i>dictionary</i>}}{{{definitionEntry}}}{{/pitchCategories}}</code><br>
 
-  * _`@dictionary`_ <br>
+  * _`dictionary`_ <br>
     The dictionary that the glossary entry belongs to.
-  * _`@definitionEntry`_ <br>
+  * _`definitionEntry`_ <br>
     The definition entry object in raw form.
 </details>
 <details>
