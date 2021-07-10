@@ -15,6 +15,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+/* global
+ * Handlebars
+ */
+
 class TemplateRendererMediaProvider {
     constructor() {
         this._requirements = null;
@@ -52,8 +56,12 @@ class TemplateRendererMediaProvider {
         this._requirements.push(value);
     }
 
-    _getFormattedValue(data) {
-        const {value} = data;
+    _getFormattedValue(data, namedArgs) {
+        let {value} = data;
+        const {escape=true} = namedArgs;
+        if (escape) {
+            value = Handlebars.Utils.escapeExpression(value);
+        }
         return value;
     }
 
