@@ -609,18 +609,30 @@ class DisplayAnki {
     }
 
     _updateViewNoteButton(index, noteIds, prepend) {
-        const viewerButton = this._viewerButtonFind(index);
-        if (viewerButton === null) { return; }
+        const button = this._viewerButtonFind(index);
+        if (button === null) { return; }
         if (prepend) {
-            const currentNoteIds = viewerButton.dataset.noteIds;
+            const currentNoteIds = button.dataset.noteIds;
             if (typeof currentNoteIds === 'string' && currentNoteIds.length > 0) {
                 noteIds = [...noteIds, currentNoteIds.split(' ')];
             }
         }
         const disabled = (noteIds.length === 0);
-        viewerButton.disabled = disabled;
-        viewerButton.hidden = disabled;
-        viewerButton.dataset.noteIds = noteIds.join(' ');
+        button.disabled = disabled;
+        button.hidden = disabled;
+        button.dataset.noteIds = noteIds.join(' ');
+
+        const badge = button.querySelector('.action-button-badge');
+        if (badge !== null) {
+            const badgeData = badge.dataset;
+            if (noteIds.length > 1) {
+                badgeData.icon = 'plus-thick';
+                badgeData.hidden = false;
+            } else {
+                delete badgeData.icon;
+                badgeData.hidden = true;
+            }
+        }
     }
 
     _viewNote(node) {
