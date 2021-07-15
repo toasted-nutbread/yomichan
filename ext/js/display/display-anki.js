@@ -67,7 +67,7 @@ class DisplayAnki {
             ['addNoteKanji',      () => { this._tryAddAnkiNoteForSelectedEntry('kanji'); }],
             ['addNoteTermKanji',  () => { this._tryAddAnkiNoteForSelectedEntry('term-kanji'); }],
             ['addNoteTermKana',   () => { this._tryAddAnkiNoteForSelectedEntry('term-kana'); }],
-            ['viewNote',          () => { this._tryViewAnkiNoteForSelectedEntry(); }]
+            ['viewNote',          this._viewNoteForSelectedEntry.bind(this)]
         ]);
         this._display.on('optionsUpdated', this._onOptionsUpdated.bind(this));
     }
@@ -202,11 +202,6 @@ class DisplayAnki {
         return entry !== null ? entry.querySelector('.action-view-tags') : null;
     }
 
-    _viewerButtonFind(index) {
-        const entry = this._getEntry(index);
-        return entry !== null ? entry.querySelector('.action-view-note') : null;
-    }
-
     _getEntry(index) {
         const entries = this._display.dictionaryEntryNodes;
         return index >= 0 && index < entries.length ? entries[index] : null;
@@ -319,14 +314,6 @@ class DisplayAnki {
     _tryAddAnkiNoteForSelectedEntry(mode) {
         const index = this._display.selectedIndex;
         this._addAnkiNote(index, mode);
-    }
-
-    _tryViewAnkiNoteForSelectedEntry() {
-        const index = this._display.selectedIndex;
-        const button = this._viewerButtonFind(index);
-        if (button !== null && !button.disabled) {
-            yomichan.api.noteView(button.dataset.noteId);
-        }
     }
 
     async _addAnkiNote(dictionaryEntryIndex, mode) {
@@ -609,7 +596,7 @@ class DisplayAnki {
     }
 
     _updateViewNoteButton(index, noteIds, prepend) {
-        const button = this._viewerButtonFind(index);
+        const button = this._getViewNoteButton(index);
         if (button === null) { return; }
         if (prepend) {
             const currentNoteIds = button.dataset.noteIds;
@@ -665,5 +652,18 @@ class DisplayAnki {
     _getNodeNoteIds(node) {
         const {noteIds} = node.dataset;
         return typeof noteIds === 'string' && noteIds.length > 0 ? noteIds.split(' ') : [];
+    }
+
+    _getViewNoteButton(index) {
+        const entry = this._getEntry(index);
+        return entry !== null ? entry.querySelector('.action-view-note') : null;
+    }
+
+    _viewNoteForSelectedEntry() {
+        const index = this._display.selectedIndex;
+        const button = this._getViewNoteButton(index);
+        if (button !== null) {
+            this._viewNote(button);
+        }
     }
 }
